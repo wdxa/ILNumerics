@@ -54,11 +54,19 @@ namespace ILNumerics.Drawing.Internal
 
         #region constructors 
 
-        public ILOGLPlot2DGraph  ( IGraphicsContext context, ILBaseArray sourceArray,
+        internal ILOGLPlot2DGraph  ( IGraphicsContext context, ILBaseArray sourceArray,
                                   ILClippingData clippingContainer) 
                                 : base(sourceArray,clippingContainer) {
             m_context = context; 
             if (sourceArray.Dimensions.NonSingletonDimensions != 1)
+                throw new ILArgumentException ("Plot2D: supplied data must be a real vector!"); 
+            create();
+        }
+        internal ILOGLPlot2DGraph  ( IGraphicsContext context, ILBaseArray xData, ILBaseArray yData,
+                                  ILClippingData clippingContainer) 
+                                : base(xData, yData, clippingContainer) {
+            m_context = context; 
+            if (yData.Dimensions.NonSingletonDimensions != 1)
                 throw new ILArgumentException ("Plot2D: supplied data must be a real vector!"); 
             create();
         }
@@ -90,20 +98,20 @@ namespace ILNumerics.Drawing.Internal
                     valY = m_sourceArray.GetValue(i);
                     if (m_localClipping.YMax < valY) m_localClipping.m_yMax = valY; 
                     if (m_localClipping.YMin > valY) m_localClipping.m_yMin = valY; 
-                    m_vertexArray[2*i]  = (float)i; 
+                    m_vertexArray[2*i]  = m_xData.GetValue(i); 
                     m_vertexArray[2*i+1]= valY; 
                 }
                 m_localClipping.m_zMax = 0.0f; 
                 m_localClipping.m_zMin = 0.0f; 
-                m_localClipping.m_xMin = 0; 
-                m_localClipping.m_xMax = len-1;
+                m_localClipping.m_xMin = m_xData.MinValue; 
+                m_localClipping.m_xMax = m_xData.MaxValue;
             } else {
                 // scalar case 
                 valY = m_sourceArray.GetValue(0);
                 m_localClipping.m_yMax = valY; 
                 m_localClipping.m_yMin = valY; 
-                m_localClipping.m_xMax = 0.0f; 
-                m_localClipping.m_xMin = 0.0f; 
+                m_localClipping.m_xMax = m_xData.GetValue(0); 
+                m_localClipping.m_xMin = m_xData.GetValue(0); 
                 m_localClipping.m_zMax = 0.0f; 
                 m_localClipping.m_zMin = 0.0f; 
                 m_vertexArray[0] = 0.0f; 
@@ -177,14 +185,14 @@ namespace ILNumerics.Drawing.Internal
             #region draw points
             if (m_marker.Style != MarkerStyle.None) {
                 ILOGLPanel.SetupMarkerStyle(m_marker); 
-                if (m_textureName == 0) {
-                    uploadTextures(); 
-                }
-                if (m_marker.Style == MarkerStyle.Triangle) {
-                    GL.BindTexture(TextureTarget.Texture2D,m_textureName); 
-                    //GL.PointParameter(PointParameterName.PointSpriteCoordOrigin,4);
-                    //GL.Enable(EnableCap.Texture2D); 
-                }
+                //if (m_textureName == 0) {
+                //    uploadTextures(); 
+                //}
+                //if (m_marker.Style == MarkerStyle.Triangle) {
+                //    GL.BindTexture(TextureTarget.Texture2D,m_textureName); 
+                //    //GL.PointParameter(PointParameterName.PointSpriteCoordOrigin,4);
+                //    //GL.Enable(EnableCap.Texture2D); 
+                //}
                 unsafe { 
                     fixed(float* pVertArr = m_vertexArray) {
                         GL.TexCoord2(0.5,0.5); 

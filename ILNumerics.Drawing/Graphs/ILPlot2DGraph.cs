@@ -26,11 +26,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ILNumerics.BuiltInFunctions; 
 
 namespace ILNumerics.Drawing.Graphs {
     public abstract class ILPlot2DGraph : ILGraph {
         protected ILLineProperties m_properties; 
         protected ILMarker m_marker; 
+        protected ILArray<float> m_xData; 
 
         /// <summary>
         /// Get properties of lines
@@ -52,6 +54,17 @@ namespace ILNumerics.Drawing.Graphs {
         public ILPlot2DGraph (ILBaseArray sourceArray,
                               ILClippingData clippingContainer) 
             : base (sourceArray,clippingContainer) {
+            m_xData = ILMath.tosingle(ILMath.counter(sourceArray.Length,1));
+            m_properties = new ILLineProperties(); 
+            m_properties.Changed += new EventHandler(m_properties_Changed);
+            m_marker = new ILMarker(); 
+            m_marker.Changed += new EventHandler(m_properties_Changed);
+            m_graphType = GraphType.Plot2D; 
+        }
+        public ILPlot2DGraph (ILBaseArray XData, ILBaseArray YData,
+                              ILClippingData clippingContainer) 
+            : base (YData,clippingContainer) {
+            m_xData = ILMath.tosingle(XData);
             m_properties = new ILLineProperties(); 
             m_properties.Changed += new EventHandler(m_properties_Changed);
             m_marker = new ILMarker(); 

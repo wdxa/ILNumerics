@@ -388,7 +388,12 @@ namespace ILNumerics.Drawing.Internal {
         public override ILGraph CreateGraph(ILBaseArray data, GraphType graphType, params object[] parameter) {
             switch (graphType) {
                 case GraphType.Plot2D:
-                    return new ILOGLPlot2DGraph(this.m_context, data,m_graphs.Clipping);
+                    if (parameter != null && parameter.Length == 1 
+                        && parameter[0] != null && parameter[0] is ILBaseArray)
+                        return new ILOGLPlot2DGraph(this.m_context,parameter[0] as ILBaseArray,
+                                                    data,m_graphs.Clipping); 
+                    else 
+                        return new ILOGLPlot2DGraph(this.m_context, data,m_graphs.Clipping);
                 case GraphType.Surf:
                     return new ILOGLSurfaceGraph(this,data,m_graphs.Clipping);
                 case GraphType.Imagesc:

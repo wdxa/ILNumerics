@@ -140,12 +140,24 @@ namespace ILNumerics.Drawing.Collections {
             return ret.ToArray(); 
         }
         /// <summary>
+        /// Add new X/Y 2D line graph(s) to collection
+        /// </summary>
+        /// <param name="data">vector/array with date to be plotted. For arrays, the columns will be used.</param>
+        /// <returns>Array of newly created graph(s)</returns>
+        public ILPlot2DGraph[] AddPlot2DGraph(ILBaseArray XData, ILBaseArray YData) {
+            List<ILGraph> graphs = Add(XData,YData,GraphType.Plot2D);    
+            List<ILPlot2DGraph> ret = new List<ILPlot2DGraph>(); 
+            foreach (ILGraph g in graphs) 
+                ret.Add((ILPlot2DGraph)g); 
+            ILColorProvider.Colorize(ret);
+            return ret.ToArray(); 
+        }
+        /// <summary>
         /// Add new graph(s) of arbitrary type
         /// </summary>
-        /// <param name="key">key used to identify the (first) graph.</param>
         /// <param name="data">data to be plotted</param>
-        /// <param name="properties">determines more (needed) properties, as GraphType etc.</param>
-        /// <returns>List of keys used to identify the new graph(s)</returns>
+        /// <param name="properties">determine GraphType</param>
+        /// <returns>List with newly created graph(s)</returns>
         public List<ILGraph> Add (ILBaseArray data, GraphType graphType) {
             if (!data.IsNumeric) 
                 throw new ILArgumentException("Add graph: data array must be numeric!");
@@ -219,6 +231,54 @@ namespace ILNumerics.Drawing.Collections {
                         break;
                     default: 
                         throw new ILDrawingException ("the type of drawing is not supported!");
+                }
+                #endregion
+            }
+            return ret; 
+        }
+        /// <summary>
+        /// Add new graph(s) of arbitrary type, provide both axis data
+        /// </summary>
+        /// <param name="xData">data to be plotted</param>
+        /// <param name="properties">determine GraphType</param>
+        /// <returns>List with newly created graph(s)</returns>
+        public List<ILGraph> Add (ILBaseArray xData, ILBaseArray yData, GraphType graphType) {
+            if (!yData.IsNumeric || !xData.IsNumeric) 
+                throw new ILArgumentException("Add graph: data arrays must be numeric!");
+            List<ILGraph> ret = new List<ILGraph>();
+            ILGraph newGraph; 
+            ILArray<float> tmpDataY, tmpDataX;
+            lock (this) {
+                #region add each graph type seperately
+                switch (graphType) {
+                    case GraphType.Plot2D: 
+                        if (!yData.Dimensions.IsSameSize(xData.Dimensions))
+                            throw new ILArgumentException("Add graph: for X/Y plots, the size of X and Y must be equal!");
+                        if (yData.IsVector || yData.IsScalar) {
+                            newGraph = m_graphFact.CreateGraph(yData,graphType,xData); 
+                            Add(newGraph); 
+                            newGraph.Changed += new EventHandler(Graph_Changed);
+                            m_clippingData.Update(newGraph.Limits); 
+                            ret.Add(newGraph);
+                        } else if (yData.IsMatrix) {
+                            // plot columns
+                            m_clippingData.EventingSuspend();
+                            tmpDataY = ILMath.tosingle(yData); 
+                            tmpDataX = ILMath.tosingle(xData); 
+                            for (int c = 0; c < tmpDataY.Dimensions[1]; c++) {
+                                newGraph = m_graphFact.CreateGraph(tmpDataY[null,c],graphType,tmpDataX[null,c]);  
+                                Add(newGraph);
+                                newGraph.Changed += new EventHandler(Graph_Changed);
+                                ret.Add(newGraph); 
+                                m_clippingData.Update(newGraph.Limits); 
+                            } 
+                            m_clippingData.EventingResume(); 
+                        }
+                        // trigger change event
+                        OnChange(ret[0],GraphCollectionChangeReason.Added); 
+                        break; 
+                    default: 
+                        throw new ILDrawingException ("that graph type is not supported yet!");
                 }
                 #endregion
             }
