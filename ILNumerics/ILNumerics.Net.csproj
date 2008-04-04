@@ -1,0 +1,360 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3D3902F7-8F28-43AC-8584-4F515A5697C6}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>ILNumerics.Net</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ILNumerics</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\bin\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;DEBUG;WIN32</DefineConstants>
+    <DocumentationFile>ILNumerics.Net.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>219,168,1587,414</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\bin\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;WIN32 RELEASE</DefineConstants>
+    <DocumentationFile>..\bin\ILNumerics.Net.xml</DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>219,168,1587,414</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <FxCopRules>
+    </FxCopRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ILLibrary Release only|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ILLibrary Release only\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WIN32</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>ILNumerics.Net.xml</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>c:\Programme\Microsoft Visual Studio 8\Team Tools\Static Analysis Tools\FxCop\\rules</CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Algorithms\ILAsyncAlgorithm.cs" />
+    <Compile Include="Algorithms\SimpleAsyncSample.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Algorithms\Sorting\ILBucketSort.cs" />
+    <Compile Include="Algorithms\Sorting\ILKeyMapper.cs" />
+    <Compile Include="Algorithms\Sorting\ILQueue.cs" />
+    <Compile Include="Algorithms\Sorting\ILQuickSort.cs" />
+    <Compile Include="Algorithms\Special\ILSpecialData.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Data\ILBinTree.cs" />
+    <Compile Include="Data\ILProrityQueue.cs" />
+    <Compile Include="Functions\builtin\abs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\acos.cs" />
+    <Compile Include="Algorithms\LDA.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\Add.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\all.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\any.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\asin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\atan.cs" />
+    <Compile Include="Functions\builtin\ceil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\cos.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\cosh.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\det.cs" />
+    <Compile Include="Functions\builtin\dimensionWrapper.cs" />
+    <Compile Include="Functions\builtin\DivideElem.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Functions\builtin\chol.cs" />
+    <Compile Include="Functions\builtin\convert.cs" />
+    <Compile Include="Functions\builtin\diag.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\eig.cs" />
+    <Compile Include="Functions\builtin\eps.cs" />
+    <Compile Include="Functions\builtin\exp.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\Find.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\fix.cs" />
+    <Compile Include="Functions\builtin\floor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\Horzcat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\imag.cs" />
+    <Compile Include="Functions\builtin\ind2sub.cs" />
+    <Compile Include="Functions\builtin\Invert.cs" />
+    <Compile Include="Functions\builtin\isfinite.cs" />
+    <Compile Include="Functions\builtin\isinf.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\isnan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\isneginf.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\isposinf.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\linspace.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\log.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\log10.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\logspace.cs" />
+    <Compile Include="Functions\builtin\lu.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\matrixTest.cs" />
+    <Compile Include="Functions\builtin\maxall.cs" />
+    <Compile Include="Functions\builtin\Norm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\qr.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\real.cs" />
+    <Compile Include="Functions\builtin\real2complex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\real2fcomplex.cs" />
+    <Compile Include="Functions\builtin\repmat.cs" />
+    <Compile Include="Functions\builtin\reshape.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\round.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\set.cs" />
+    <Compile Include="Functions\builtin\sign.cs" />
+    <Compile Include="Functions\builtin\sin.cs" />
+    <Compile Include="Functions\builtin\single.cs" />
+    <Compile Include="Algorithms\ILAlgorithm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Algorithms\ILAlgorithmEventArgs.cs" />
+    <Compile Include="Functions\builtin\sinh.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\slash.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\sort.cs" />
+    <Compile Include="Functions\builtin\sqrt.cs" />
+    <Compile Include="Functions\builtin\sub2ind.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\Subtract.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\Sum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\sumall.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\Svd.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\tan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\tanh.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\trace.cs" />
+    <Compile Include="Functions\builtin\tril_u.cs" />
+    <Compile Include="Functions\ILMath_Logical.cs" />
+    <Compile Include="Functions\ILMath_Walker.cs" />
+    <Compile Include="Functions\ILMathBasic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\ILMathBasicCmplx.cs" />
+    <Compile Include="Functions\builtin\Max.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\mean.cs" />
+    <Compile Include="Functions\builtin\Min.cs" />
+    <Compile Include="Functions\builtin\pinv.cs" />
+    <Compile Include="Functions\builtin\prod.cs" />
+    <Compile Include="Functions\builtin\rank.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\Vertcat.cs" />
+    <Compile Include="Functions\ILMath_BasicExtensions.cs" />
+    <Compile Include="Functions\ILMath_General.cs" />
+    <Compile Include="Functions\ILMathCreation.cs" />
+    <Compile Include="ILArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ILArray_Overloads.cs" />
+    <Compile Include="ILArray_Constructors.cs" />
+    <Compile Include="ILBaseArray.cs" />
+    <Compile Include="ILCell.cs" />
+    <Compile Include="ILComplex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ILComplexFloat.cs" />
+    <Compile Include="Misc\ILCPUID.cs" />
+    <Compile Include="Misc\ILDimension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Misc\ILException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Misc\ILFormatter.cs" />
+    <Compile Include="Misc\ILIndexOffset.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Misc\ILIterator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ILLogicalArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ILPerformer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Misc\ILMatFile5.cs" />
+    <Compile Include="Misc\ILMemoryPool.cs" />
+    <Compile Include="Misc\ILNRandom.cs" />
+    <Compile Include="Misc\ILRand.cs" />
+    <Compile Include="Misc\ILRange.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Misc\ILSettings.cs" />
+    <Compile Include="Misc\ILTest.cs" />
+    <Compile Include="Misc\MatFile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\MultiplyElem.cs" />
+    <Compile Include="Native\lapack\IILLapack.cs" />
+    <Compile Include="Native\lapack\ILACML3_6.cs" />
+    <Compile Include="Native\lapack\ILLapackGeneric.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Native\lapack\ILLapackGenLinux.cs" />
+    <Compile Include="Native\lapack\ILLapackMKL10.0C.cs" />
+    <Compile Include="ReferenceManagement.cs" />
+    <Compile Include="Tests\TESTBucketSort.cs" />
+    <Compile Include="Tests\TESTIArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\TESTILAlgorithm.cs" />
+    <Compile Include="Tests\TESTILCell.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\TESTILLapack.cs" />
+    <Compile Include="Tests\TESTILMath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\TESTILMemoryPool.cs" />
+    <Compile Include="Tests\TESTILNumericArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\TESTILStorage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\TESTLogical.cs" />
+    <Compile Include="Tests\TESTMatFile.cs" />
+    <Compile Include="Tests\TESTQuickSort.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NamespaceSummaries.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

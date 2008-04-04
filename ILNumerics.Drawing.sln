@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILNumerics.Drawing", "ILNumerics.Drawing\ILNumerics.Drawing.csproj", "{638FA579-A984-48A2-B3D0-D89991982134}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		ILLibrary Release only|Any CPU = ILLibrary Release only|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{638FA579-A984-48A2-B3D0-D89991982134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{638FA579-A984-48A2-B3D0-D89991982134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{638FA579-A984-48A2-B3D0-D89991982134}.ILLibrary Release only|Any CPU.ActiveCfg = ILLibrary Release only|Any CPU
+		{638FA579-A984-48A2-B3D0-D89991982134}.ILLibrary Release only|Any CPU.Build.0 = ILLibrary Release only|Any CPU
+		{638FA579-A984-48A2-B3D0-D89991982134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{638FA579-A984-48A2-B3D0-D89991982134}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

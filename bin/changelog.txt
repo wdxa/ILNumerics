@@ -1,0 +1,54 @@
+Changes in version 1.3.10
+===========================
+* new ILArray member: ExportValues(ref BaseT[] result)
+* bugfix on ILMath.ccomplex (had empty imag part)
+* new special data provider: ILSpecialData
+* renamed ILFigure.dll -> ILNumerics.Drawing.dll
+* removed binary installer
+
+Changes in version 1.3.9
+===========================
+* ILMath.convert supports numeric ILBaseArray as argument
+* Intel MKL merged into single lib
+* Redesign for OpenGL plot panel (beta)
+
+Changes in version 1.3.8
+===========================
+* support for generalized eigenproblems for symmetrical/hermitian matrices A and B
+* improved string/debug display for complex number types
+* performance optimiziations for MKL working arrays (utilizing ILMemoryPool)
+
+Changes in version 1.3.7
+===========================
+* License changed to LGPL v3
+* implemented Intel's MKL v10.0 (sequential)
+
+Changes in version 1.3.6
+===========================
+* bugfix: expanding ILArray with left side ranges out of bounds, would not expand correctly in a special case
+* ILArray<T> A -> comparison with 'null' now also possible in boolean expressions like 'if (A==null) {...'
+* Improved array naming when writing to Matlab *.mat file. 
+
+Changes in version 1.3.5
+===========================
+* all ILMath.* functions now lowercase!
+-> PLEASE RENAME! find,vertact,horzcat!
+* bugfix: ILAsyncAlgorithm possibly caused
+  dead lock on start
+* bugfix: in certain situations sort(A,out B)
+  returned wrong indices
+
+Changes in version 1.3.4
+===========================
++ new determinant function: ILMath.det(A)
+* implicit cast System.Array ->ILArray
+* some changes/corrections for docu
+
+Changes in version 1.3.3
+===========================
+* Bugfix: calling linsolve with hermitian, pos.def. matrix A 
+  on non-AMD-processors was causing exception
+* added xml documentation files for IDE support: 
+  -> +ILNumerics.Net.xml, 
+  -> +ILFigure.xml
+

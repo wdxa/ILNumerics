@@ -1,0 +1,175 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{638FA579-A984-48A2-B3D0-D89991982134}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ILNumerics.Drawing</RootNamespace>
+    <AssemblyName>ILNumerics.Drawing</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>..\bin\ILNumerics.Drawing.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\ILNumerics.Drawing.xml</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ILLibrary Release only|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>c:\Programme\Microsoft Visual Studio 8\Team Tools\Static Analysis Tools\FxCop\\rules</CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <DocumentationFile>..\bin\ILNumerics.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ILNumerics.Net, Version=1.3.8.14, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="OpenTK, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="OpenTK.Utilities, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Collections\ILTickCollection.cs" />
+    <Compile Include="Controls\ILSubfigure.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Misc\Definitions.cs" />
+    <Compile Include="Misc\Events.cs" />
+    <Compile Include="Graphs\ILImageSCGraph.cs" />
+    <Compile Include="Misc\ILAxisLabel.cs" />
+    <Compile Include="Misc\ILClippingData.cs" />
+    <Compile Include="Misc\ILGrid.cs" />
+    <Compile Include="Graphs\ILPlot2DGraph.cs" />
+    <Compile Include="Graphs\ILFilledGraph.cs" />
+    <Compile Include="Misc\ILCamera.cs" />
+    <Compile Include="Misc\ILMarker.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLImageSCGraph.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLSurfaceGraph.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLXAxis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Platform\OpenGL\ILOGLYAxis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Platform\OpenGL\ILOGLZAxis.cs" />
+    <Compile Include="Graphs\ILSurfaceGraph.cs" />
+    <Compile Include="Resources\Images.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Images.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Interfaces\IILGraphFactory.cs" />
+    <Compile Include="Misc\ILAxis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Collections\ILAxisCollection.cs" />
+    <Compile Include="Controls\ILBorderFitLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ILColorBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ILControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ILControl.Designer.cs">
+      <DependentUpon>ILControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Collections\ILGraphCollection.cs" />
+    <Compile Include="Misc\ILColorProvider.cs" />
+    <Compile Include="Controls\ILMovingDockPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IILTextRenderer.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLAxis.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLPlot2DGraph.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Collections\ILSubfigureCollection.cs" />
+    <Compile Include="Controls\ILTextBoxAutoHide.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Misc\ILDrawingException.cs" />
+    <Compile Include="Controls\ILFigure.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Graphs\ILGraph.cs" />
+    <Compile Include="Controls\ILPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Resources\Markers.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Markers.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextRenderer\ILGDIRenderer.cs" />
+    <Compile Include="TextRenderer\ILOTKRenderer.cs" />
+    <Compile Include="TextRenderer\ILTextRendererAttribute.cs" />
+    <Compile Include="TextRenderer\ILTextRendererManager.cs" />
+    <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\ILColorBar.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ILColorBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Images.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Images.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Markers.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Markers.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ILNumerics.Drawing.dll.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\close.bmp" />
+    <None Include="Resources\Triangle.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obsolete\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,6 @@
+how to create lapack_gen.dll for use with visual studio / ILLibrary 
+
+1) start cygwin as admin
+2) navigate into this dir (via /cygdrive)
+3) edit the linkAtlas....bash script to include all needed references
+4)  

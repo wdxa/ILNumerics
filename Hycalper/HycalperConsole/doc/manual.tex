@@ -1,0 +1,176 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[ansinew]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{ae,aecompl}
+\usepackage[ngerman]{babel}
+\usepackage{graphicx}
+\usepackage{pstricks}
+\usepackage{hyperref}
+%\usepackage{wasysym}
+\newcommand{\diff}[1]{\,\mathrm{d}#1} 
+%\newenvironment{vec}[3]{\,\begin{array}{c}#1\\#2\\#3}{\end{array}
+\newcommand\smallmath[1]{\mbox{\small $#1$}}
+\newcommand\tinymath[1]{\mbox{\tiny $#1$}}
+\newcommand\sm[1]{\mbox{\small $#1$}}
+\newcommand\tm[1]{\mbox{\tiny $#1$}}
+\date{27. 03. 2006}
+\author{Haymo Kutschbach, 2007}
+\title{Hycalper \\ - automatische Code Generierung - }
+
+
+\begin{document}
+
+\maketitle %Titel mit Autor und Datum
+\thispagestyle{empty}
+\vfill
+\textbf{quick start guide} \\ \\
+\newpage
+
+\tableofcontents
+\newpage
+
+\pagestyle{myheadings}
+\markright{Hycalper - automatische Codegenerierung}
+
+\section{Funktionsweise}
+Hycalper dient zum automatischen Duplizieren und Vervielfältigen von Sourcecode. Es ist im Rahmen des ILNumerics.Net Projektes der idalab GmbH entstanden. Die Verwendung ist ausschließlich intern erlaubt! (Wer weiß, wem das gefällt... $\smile$ ) \\
+Hycalper ist ein Kommandozeilentool. Es liest die Anweisungen, welcher Kode wie repliziert wird aus Quelldateien ("`\textit{templates}"'). Es ist so konzipiert, daß diese Templates selbst vollwertigen Kode darstellen. Dadurch ist es möglich, ein File (z.B. C\# Klasse) zuerst in einer einfachen Ausfertigung zu erstellen, zu kompilieren und zu debuggen, um es erst dann direkt als Ausgangspunkt für ein Template zu verwenden. Das Template bleibt dabei stets kompilierbar. Anhand von Tags innerhalb des Templates werden die Regeln und Bereiche festgelegt, die Hycalper zum Replizieren verwendet.
+\subsection{Einbindung in Projektstruktur}
+Ein template stellt eine Anweisung dar, wie \textbf{ein} einzelnes Output file erzeugt werden soll. Dabei werden genau definierbare Bereiche innerhalb des Templates extrahiert und anhand flexibler Ersetzungsregeln in eine neue Datei geschrieben. Diese Ausgabe sollte als Source Kode im Projekt verwendet werden. Alternativ kann auch das template selbst als Ausgabe verwendet werden. In diesem Fall ist natürlich das Template selbst auch in die Projektstruktur eingebunden. Letzterer Fall zeigt vor allem den Vorteil, daß der Sourcecode direkt im Template kompiliert und debugged werden kann. 
+\subsection{Aufruf, Parameter} 
+Hycalper hat 2 Kommandozeilenparamter:
+\begin{enumerate}
+	\item Der Pfad, in welchem nach Source Files gesucht wird. Innerhalb des Verzeichnisses werden alle Dateien mit der Endung \emph{*.cs} gesucht und bearbeitet. Wird Hycalper ohne Parameter aufgerufen, wird im aktuellen Verzeichnis der exe-Datei gesucht. (Die Extension kann im Source Kode geändert werden.)
+	\item wird Hycalper mit einem 2. Parameter aufgerufen (inhalt ist egal), wartet Hycalper nicht auf eine Usereingabe, nachdem alle Files bearbeitet wurden, und beendet sich stillschweigend selbst. 
+\end{enumerate}
+\subsection {XML Typdefinitionen} \label{sec:typdefinition}
+Jedes Template beinhaltet (an \emph{fast} beliebiger Stelle) einen oder mehrere XML Bereiche, in welchen alle Informationen kodiert sind, die Hycalper benötigt. Jeder XML Bereich sollte in weitere (Block-)Kommentare eingeschlossen werden, um ein Aufbrechen der Programmsyntax zu vermeiden. Das Root Tag des XML Bereiches wird mittels des Strings "`!HC:TYPELIST:"' lokalisiert. Als Root Tag erwartet Hycalper das nächste Vorkommen von $\langle hycalper \rangle$. Das identifizierende Tag $!HC:TYPELIST:$ kann mit dem internen Settings \ref{sec:typelist} verändert werden. Die Informationen im XML Abschnitt enthalten: 
+\begin{itemize}
+	\item Angaben zum Outputfile. Die Angabe erfolgt entweder als absoluter oder als relativer Pfad. Relative Pfade sollten bevorzugt werden. Der Filename ist ein Tag direkt unterhalb des Root Tags. Es heißt "`outfile"'. Ein Bsp. könnte so aussehen: 
+	\[\langle outfile \rangle ..\max.cs \langle /outfile \rangle  
+	\]
+	Der output-file tag ist optional. Nur im ersten XML Abschnitt eines templates wird er überhaupt berücksichtigt. Findet sich im ersten Hycalper XML Abschnitt eines Templates \emph{kein} $\langle outfile \rangle$ tag, so wird das aktuelle template file selbst modifiziert und unter selben Namen gespeichert. Details -> siehe \ref{sec:write2self}.
+	\item beliebige \emph{Typ Definitionen mit Ersetzungs-Attributen} (Anweisungen). Ebenfalls auf oberster Ebene im XML befinden sich beliebig viele Typ-Definitionen. Dabei verweist ein Typ auf alle Vorkommen des Tags innerhalb eines bzw. aller Kode-Loops (\ref{sec:loops}) einer Datei. Jedes Vorkommen wird dabei sukzessive mit allen Ersetzungen des Typs ersetzt. Die Anzahl der Ersetzungen ist beliebig. Allerdings müssen alle Typdefinitionen die selbe Anzahl von Ersetzungen haben. Hycalper erstellt für jede Ersetzung aller Typen eine separate Loop-Kopie, in der jeweils die Vorkommen des Suchstrings des Typs mit der Ersetzung an der entsprechenden Stelle ersetzt wurden. 	
+\end{itemize} 
+Ein \textbf{Beispiel} für eine XML Typdefinition, welche mit C\#-Kommentar in ein \textit{template} eingebettet wurde:  
+
+\begin{verbatim}
+/*!HC:TYPELIST:
+<hycalper>
+<outfile>..\max.cs</outfile>
+<type>
+    <source locate="after">
+        TinCls
+    </source>
+    <destination>complex</destination>
+    <destination>float</destination>
+    <destination>fcomplex</destination>
+</type>
+<type>
+    <source locate="after">
+        ToutCls
+    </source>
+    <destination>double</destination>
+    <destination>float</destination>
+    <destination>float</destination>
+</type>
+</hycalper>
+*/
+\end{verbatim}
+Hier werden 2 Typen definiert: \verb|TinCls| und \verb|ToutCls|. Jeder Typ hat 3 Ersetzungen. Diese werden in \verb|<destination>| Tags eingeschlossen. Findet Hycalper nun im weiteren Text des Files in einem Loop Bereich (siehe \ref{sec:loops}) Vorkommen von \verb|TinCls| oder \verb|ToutCls|, werden unter dem Loop 3 Kopien desselben Loops erstellt, in welchen die entsprechenden Vorkommen ersetzt wurden. Dabei ersetzt Hycalper in der ersten Loop Kopie alle Vorkommen von \verb|TinCls| mit \verb|complex|, in der zweiten Kopie mit \verb|float| usw., und alle Vorkommen von \verb|ToutCls| in der ersten Kopie mit \verb|double|, in der zweiten Kopie mit \verb|float| usw. Nach Abarbeiten aller Loops, wird der Output im File max.cs im übergeordneten Ordner gespeichert.
+Die Tags innerhalb der \verb|source| Abschnitte sind beliebig wählbar. 
+\subsubsection {gloabale- , lokale Typedefinitionen}
+Der erste XML Typedefinitionsabschnitt in einem Template definiert eine globale Definition von Ersetzungsregeln. Diese wird für alle Loops und für alle Enums verwendet. Es ist zusätzlich möglich, für einen Loop diese Definition (quasi lokal) zu überschreiben. Dazu kann innerhalb der einschließenden Loop Markierungen (i.d.R. 'region HYCALPER LOOPSTART' und 'endregion HYCALPER LOOPEND', s.u.) ein neuer XML Abschnitt definiert werden. Dieser muß genau den selben Regel folgen, wie der globale Abschnitt (s.o.). Es ist ohne weiteres möglich, komplett andere Tags und/oder Pattern zu verwenden. Auch die Anzahl der Pattern darf von der globalen Definition abweichen. Dieses lokale Pattern ist nur innerhalb des aktuellen Loops gültig. Nach Abarbeiten des Loops wird wieder der gloabale XML Abschnitt bzw. ein neuer lokale XML Abschnitt (falls vorhanden) verwandt.
+\subsubsection {Pfadangaben} Als Pfadangaben sind relative und absolute Pfade zulässig. Relative Pfade sollten bevorzugt verwandt werden und sind dabei relativ zum Pfad des aktuellen Templates zu verstehen. 
+\subsection{Loops} \label{sec:loops}
+Zur Identifikation der Loop Bereiche innerhalb des Source Kodes werden vordefinierte Strings verwendet. Per Default lauten diese Strings:
+\begin{itemize}
+	\item Loopanfang: \#region HYCALPER LOOPSTART 
+	\item Loopende:  \#endregion HYCALPER LOOPEND
+\end{itemize}
+Diese Strings können im Source Kode geändert werden (\ref{sec:permsettings}). Die Zeilen, in denen sich diese Tags befinden, zählen \emph{nicht} zum Loop selbst.
+\subsubsection {Identifikation lokaler Loops}
+Steht in der Zeile eines LOOPSTART Tags nach dem identifizierenden Tag weitere non whitespace Zeichen, werden diese als Loop Name interpretiert. Mittels dieses Namens kann man von anderen Loos oder sogar aus anderen Files diesen Loop referenzieren.
+\subsubsection {Import aus Datei}
+Enthält der Loop Name ein $@$ Charakter, wird der Loop als Referenz interpretiert. Der lokale Inhalt des Loops wird dabei ignoriert und anstelle dessen der Loop-Inhalt aus der referenzierten Loop genommen. Referenzen folgen dem Format: 
+\[
+	LOOPSTART \; loopname@sourcefile
+\]
+\emph{Bsp:} 
+\begin{verbatim}
+		#region HYCALPER LOOPSTART initialize@_sum.cs
+		#endregion HYCALPER LOOPEND initialize@_sum.cs
+\end{verbatim}
+Hier wird auf den Inhalt des Loops mit dem Namen 'initialize' innerhalb der Datei '\_sum.cs' referenziert. \\
+Wie im letzten Beispiel kann der Name des Loops oder der Reference in der LOOPEND Zeile wiederholt werden. Dies ist optional, dient aber der Übersichtlichkeit und ist daher zu empfehlen. Die Angabe des Files, aus dem Loop gelesen werden soll, kann entweder als absolute oder als relative Pfadangabe erfolgen. Bei einer relativen Pfadangabe werden die folgenden Pfade in dieser Reihenfolge durchsucht: 
+\begin{itemize}
+	\item das Verzeichnis des aktuellen Files, welches Hycalper bearbeitet
+	\item das Verzeichnis der Hycalper exe. 
+\end{itemize}
+\emph{Beachte:} Referenzen bewirken nur, daß der Loop Inhalt eines fremde Files an dieser einen Stelle (lokaler Loop) verwendet wird. Als Typdefinitionen dient aber immernoch der XML Bereich aus dem lokalen File!
+\subsubsection {Pattern aus Loop ausnehmen} 
+Enhält der Loop Name eine Sequence wie
+\begin{eqnarray*}
+	HCEXCLUDE=1,2,3,4,6 
+\end{eqnarray*}
+, so werden duese Idicies aus der Loop Generierung ausgeschlossen. Das EXCLUDEPATTERN ist per Default auf 'HCEXCLUDE' (GroßSchreibung beachten!) eingestellt. Dies kann im HycalperConsole Quelltext geändert werden. 
+\subsection{Enumerations}
+Enums zählen alle <destination> Tags eines XML types auf. Dies findet vor allem Verwendung in XML-Source-Dokumentationen. Beispielsweise kann man so alle Typen aufzählen, für die eine Funktion überladen ist.\\
+Das ENUMPATTERN ist das Tag zur Identifikation der Positionen innerhalb des Source Kodes, an welchen diese Aufzählungen eingesetzt werden sollen. Es kann bislang nur innerhalb des Hycalper Source Kodes geändert werden. Beim Ersetzen wird als Startpunkt das erste Zeichen des Wortes genommen, in welchem sich das Tag befindet. Als Endpunkt das Ende des Wortes. Ein enum-Wort besteht aus folgenden Bestandteilen: 
+\[
+	ENUMPATTERN \; key :
+\]
+Dabei gibt der Key an, aus welcher XML Typedefinition alle <destination>- Tags aufgezählt werden sollen. Dieser Key muß lokal im XML abschnitt der Datei definiert worden sein. Im Default ENUM-Wort wird der Key also mit colons eingeschlossen. Bei der Ausgabe der Aufzählung, werden die Tags mit Komma getrennt und nach das ENUM Wort in den Text eingefügt. Am Ende folgt kein Komma. Default ENUMPATTERN: \verb|!HC:ENUM:|. \\ \emph{Bsp.:} \verb|ENUM Wort: /*!HC:ENUM:inputType:*/| 
+\\
+\textbf{Das Verhalten von Enumeration innerhalb eines Templates, welches sich selbst als Ausgabe ersetzt ist nicht definiert!}
+
+\subsection{Ausgabe ins selbe File} \label{sec:write2self}
+Wird die Angabe eines Outfiles im ersten XML Tag ausgelassen, so werden die modifizierten Loops direkt an deren lokale Definitionen angehängt und der Output ins selbe File gespeichert. Vorteil hierbei ist, daß man direkt das Template in eine Projektstruktur einbinden, kompilieren, debuggen und modifizieren kann. Modifikationen innerhalb des Projektes müssen nicht mehr in das externe Template übertragen werden. Ein Nachteil ist die zerbrechlichere Markierung, Die meisten Hycalper Tags müssen im Source Kode verbleiben. Die Loop Sources enthalten aúch im Resultat noch viele Tags und u.U. auch zusätzliche XML-Definitionen. Alle Hycalper einstellungen, die diese Tags aus der Ausgabe entfernen, sind dementsprechend außer Kraft gesetzt. 
+\\
+\textbf{Das Verhalten von Enumeration innerhalb eines Templates, welches sich selbst als Ausgabe ersetzt ist nicht definiert!}
+
+\subsection{vordefinierte Attribute}
+In der XML Typdefinition muß für jeden Typ bestimmt werden, wie sein Suchstring gefunden wird, bzw. wie der durch ihn referenzierte Inhalt in der Datei ersetzt wird. 
+Die Definition erfolgt mit Hilfe eines \verb|<locate>| - Attributes im \verb|<source>| - Tag der XML Typdefinition (siehe Bsp. \ref{sec:typdefinition}). 
+\subsubsection{after}
+	Zum Ersetzen wird das Wort genommen, welches unmittelbar nach dem Wort steht, in welchem der Suchstring vorkommt. Es ist darauf zu achten, daß das zu ersetzende Wort von beiden Seiten mit mindestens einem Leerzeichen eingeschlossen wird. 
+\subsubsection{here}
+Das Wort, in welchem der Suchstring vorkommt, wird direkt ersetzt. 
+\subsubsection{nextline}
+Die gesamte nächste Zeile nach der Zeile, in welchem der Suchstring vorkommt wird ersetzt.
+\subsubsection{enregion}
+Der Bereich beginnend mit der Zeile, in welcher der Suchstring vorkommt bis zu der Zeile, in welchem das nächste Vorkommen von \verb|#endregion HYCALPER| gefunden wurde.
+
+\subsection {Spezialzeichen}
+Kommen in einem XML Tag speziellen Zeichen vor, die entweder den umliegenden SourceCode oder die XML Syntax zerbrechen würden, müssen diese Zeichen wie bei XML üblich in \verb|<![CDATA[ ... spezialzeichen ... ]]>| eingeschlossen werden. 
+\section{Settings}
+\subsection{feste Einstellungen} \label{sec:permsettings}
+Die folgenden Einstellungen können nur im SourceKode geändert werden (HycalperConsole.cs).
+\subsubsection{LOOPSTART}
+Tag zum Finden der Loopstartpunkte. Als Startpunkt wird dann der Beginn der Zeile genommen. Default: "'\#region HYCALPER LOOPSTART"' 
+\subsubsection{LOOPEND}
+Tag zum Finden der Loopendtpunkte. Als Endpunkt wird dann das Ende der Zeile genommen, in welcher der Tag gefunden wurde. Default: "`\#endregion HYCALPER LOOPEND"'
+\subsubsection{TYPELIST} \label{sec:typelist}
+Tag zum Finden der XML Konfiguration. Die erste Zeile des XML Abschnittes (Root - Tag) muß sich am Anfang der Zeile befinden, welche der Zeile mit dem TYPELIST Tag folgt. Per default ist TYPELIST ein Alias für "`!HC:TYPELIST:"'.
+\subsubsection{ENUMPATTERN}
+Tag zum Lokalisieren der Enums innerhalb des Source Codes. Per Default gesetzt auf \verb|!HC:ENUM:|.
+\subsubsection{include secure}
+[true]: Wenn true, werden die Aufzählungen (Enums) in \verb|<![CDATA[...]]>| Tags eingeschlossen. 
+\subsubsection{parenthesize}
+[true]: Automatisch generierte Code Abschnitte werden in regionen eingeschlossen, welche Code Folding unterstützen : \#region HYCALPER AUTOGENERATED CODE
+\subsubsection{comment}
+[true]: User will be warned for altering the output by including a comment into the output file. 
+\subsubsection{remove comments}
+[true]: Alle Vorkommen von Kommentaren, welche mit \verb|\*!HC| beginnen, werden \emph{nach} der Bearbeitung aus dem Output entfernt. Dies gilt nur, sofern ein outfile tag angeben wurde, der Output also nicht direkt im Source-Template gespeichert wird. 
+\subsubsection{keep tags}
+[false]: ALle Vorkommen von HYCALPER Marks verbleiben nach der Bearbeitung im Kode. 
+
+\section{Tips'n Tricks}
+\begin{itemize}
+	\item 
+Hycalper eignet sich zur Verwendung als Pre-Build Event. Dabei ist unbedingt zu beachten, daß alle beiden Parameter angegeben werden, da sonst der Build Prozeß locken kann! Auch ist abzuwägen, ob wirklich bei jedem Build ein neuer Hycalper Prozeß notwendig ist, da dieser je nach template Konfiguration einige Zeit in Anspruch nehmen kann. Ggf. ist ein manuelles Starten (z.B. per Batch file) vorzuziehen. 
+	\item 
+Bei der Angabe eines Verzeichnisses als Eingabepfad, bearbeitet Hycalper nur die Files, welche jünger sind, als die in ihnen definierten Outfiles. Besitzt ein Template keine Outfile-Angabe im ersten XML Abschnitt(\ref{sec:write2self}), wird dieses File in jedem Fall bearbeitet.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,26 @@
+BUILDING shared Library of ATLAS for use with compiler versions other than gcc
+===============================================================================
+
+References: 
+[1] http://www.rdrop.com/users/twest/code/atlas/#Top
+[2] http://www.kevinsheppard.com/research/matlabatlas/matlab_atlas.aspx
+
+ATLAS sollte aus Performance Gründen mit gcc kompiliert werden!
+(Aber siehe auch: http://math-atlas.sourceforge.net/errata.html#gcc3.0 - bei gcc3.0+Athlon gibts nen performance problem!)
+
+ Um eine Library (*.dll) zu erstellen, die 
+zb. von MS VC Kompiler gelinkt werden kann, muß man
+
+* innerhalb von Cygwin ATLAS erstellen: make config (immer defaults nehmen)
+* dann: make install (viel Zeit für Kaffee...) 
+* das shell script von [2] innerhalb lib/ ausführen (liegt auch hier lokal im ATLAS root) 
+
+dabei wir  
+  - aus den statischen (UNix-) 'a' libs eine .dll gebunden,
+  - eine .lib für use mit gcc und 
+  - eine .lib für use mit msvc (z.B) erstellt <- dafür muss das Skript modifiziert werden! 
+
+
+
+
+	
