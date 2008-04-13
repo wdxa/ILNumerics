@@ -60,6 +60,7 @@ namespace ILNumerics.Drawing.Graphs {
             m_marker = new ILMarker(); 
             m_marker.Changed += new EventHandler(m_properties_Changed);
             m_graphType = GraphType.Plot2D; 
+            updateClipping(); 
         }
         public ILPlot2DGraph (ILBaseArray XData, ILBaseArray YData,
                               ILClippingData clippingContainer) 
@@ -69,7 +70,14 @@ namespace ILNumerics.Drawing.Graphs {
             m_properties.Changed += new EventHandler(m_properties_Changed);
             m_marker = new ILMarker(); 
             m_marker.Changed += new EventHandler(m_properties_Changed);
-            m_graphType = GraphType.Plot2D; 
+            m_graphType = GraphType.Plot2D;
+            updateClipping(); 
+        }
+
+        private void updateClipping() {
+            m_localClipping.Update (
+                new ILPoint3Df(m_xData.MinValue,m_sourceArray.MinValue,0.0f),
+                new ILPoint3Df(m_xData.MaxValue,m_sourceArray.MaxValue,0.0f)); 
         }
         protected virtual void m_properties_Changed(object sender, EventArgs e) {
             m_isReady = false; 
