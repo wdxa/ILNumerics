@@ -111,7 +111,7 @@ namespace ILNumerics.Drawing.Internal
                 m_localClipping.m_yMax = valY; 
                 m_localClipping.m_yMin = valY; 
                 m_localClipping.m_xMax = m_xData.GetValue(0); 
-                m_localClipping.m_xMin = m_xData.GetValue(0); 
+                m_localClipping.m_xMin = m_localClipping.m_xMax; 
                 m_localClipping.m_zMax = 0.0f; 
                 m_localClipping.m_zMin = 0.0f; 
                 m_vertexArray[0] = 0.0f; 

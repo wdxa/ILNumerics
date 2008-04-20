@@ -223,14 +223,6 @@ namespace ILNumerics.Drawing.Internal
             base.Draw(); 
             GL.BlendFunc (OpenTK.Graphics.OpenGL.BlendingFactorSrc.SrcAlpha,
                           OpenTK.Graphics.OpenGL.BlendingFactorDest.OneMinusSrcAlpha);            
-            //GL.ColorMaterial(MaterialFace.Front,ColorMaterialParameter.AmbientAndDiffuse);
-            //GL.Enable(EnableCap.Lighting);
-            //GL.Enable(EnableCap.Light0);
-            //GL.LightModel(LightModelParameter.LightModelTwoSide,0.4f);
-            //float[] lpos = new float[]{1000.0f,1.0f,1.0f,1.0f};
-            //GL.Lightv(LightName.Light0,LightParameter.Position,lpos);
-            //lpos = new float[]{-1000.0f,1.0f,1.0f,0.0f};
-            //GL.Lightv(LightName.Light0,LightParameter.Specular,lpos);
             ILLineProperties wireprops = m_wireLines;
             ILOGLPanel.SetupLineStyle(wireprops);
             unsafe {
@@ -370,6 +362,7 @@ namespace ILNumerics.Drawing.Internal
                     }
                 }
             }
+            GL.Disable(EnableCap.Lighting); 
             //GL.PopMatrix(); 
         }
 

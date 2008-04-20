@@ -401,7 +401,8 @@ namespace ILNumerics.Drawing.Collections {
                     ret = NiceLabelsEven(min,max,numMaxLabels,format,5.0f);
                     break;
                 default:
-                    ret = NiceLabelsAuto(min,max,numMaxLabels,format);
+                    //ret = NiceLabelsAuto(min,max,numMaxLabels,format);
+                    ret = loose_label(min,max,numMaxLabels,format);
                     break; 
             }
             return ret; 
@@ -481,22 +482,25 @@ namespace ILNumerics.Drawing.Collections {
             //minimal distance required for ticks
             float minDist = (max - min) / (numberTicks + 1); 
             // determine prominent range for optimal spacing
-            List<LabeledTick> ticks = new List<LabeledTick>(); 
-            if (Math.Abs(minDist) < 1e-10) return ticks; 
+            if (Math.Abs(minDist) < 1e-10) return new List<LabeledTick>(); 
             float relevExp = (float)Math.Log10((max - min));
             if (float.IsNaN(relevExp)) {
-                return ticks;    
+                return new List<LabeledTick>();    
             }
             float multRound; 
-            if (relevExp < 1) {
-                relevExp = (float)Math.Round(relevExp);
-                multRound = (float) (1 / Math.Pow(10,relevExp-1)); 
-            } else {
-                relevExp = (float) (Math.Sign(relevExp) * Math.Floor(Math.Abs(relevExp)));
-                multRound = (float) Math.Pow(10,relevExp-1);
+            if (relevExp >= 1) {
+                return NiceLabelsEvenGE10(min,max,numberTicks,format,divisor); 
             }
-            float step = divisor / multRound, cur = min, origStep = step; 
-            while (step < minDist) step += origStep; 
+            List<LabeledTick> ticks = new List<LabeledTick>(); 
+            relevExp = (float)Math.Round(relevExp);
+            multRound = (float) (1 / Math.Pow(10,relevExp-1)); 
+            //float step = divisor / multRound, cur = min, origStep = step;
+            float step = multRound/ divisor, cur = min, origStep = step; 
+            // TODO: check for step beeing too small for resonable min..max distance! 
+            // OR: prevent for infinite loop!
+            while (step < minDist) {
+                step += origStep; 
+            }
             // find the first auto tick value, matching the divisor
             cur = (float)(Math.Round((min + minDist) * multRound / divisor) / multRound * divisor); 
             ticks.Add(new LabeledTick(cur,cur.ToString(format))); 
@@ -514,6 +518,94 @@ namespace ILNumerics.Drawing.Collections {
             }
             return ticks; 
         }
+        private static List<LabeledTick> NiceLabelsEvenGE10(float min, float max, int numberTicks, string format, float divisor) {
+            //minimal distance required for ticks
+            float minDist = (max - min) / (numberTicks + 1); 
+            // determine prominent range for optimal spacing
+            List<LabeledTick> ticks = new List<LabeledTick>(); 
+            // has been checked, if comming from NiceLabelsEven: 
+            //if (Math.Abs(minDist) < 1e-10) return ticks; 
+            float relevExp = (float)Math.Log10((max - min));
+            if (float.IsNaN(relevExp)) {
+                return ticks;    
+            }
+            float multRound; 
+            relevExp = (float) (Math.Sign(relevExp) * Math.Floor(Math.Abs(relevExp)));
+            multRound = (float) Math.Pow(10,relevExp-1);
+            //float step = divisor / multRound, cur = min, origStep = step;
+            float step = multRound/ divisor, cur = min, origStep = step; 
+            // TODO: check for step beeing too small for resonable min..max distance! 
+            // OR: prevent for infinite loop!
+            while (step < minDist) {
+                // increase the multRRound by factor 10 
+                relevExp ++; 
+                multRound = (float) (Math.Pow(10,relevExp-1));
+                step = multRound/ divisor; 
+            }
+            // find the first auto tick value, matching the divisor
+            cur = (float)niceNumber(min,false); 
+            ticks.Add(new LabeledTick(cur,cur.ToString(format))); 
+            // add all ticks in _between_, keep margin to axis limits!
+            while (cur < max) {
+                cur = (float)niceNumber(cur + step,false); 
+                ticks.Add(new LabeledTick(cur,cur.ToString(format)));
+                if (ticks.Count > numberTicks) {
+                    // emergency break - float cannot handle this distance!
+                    ticks.Clear(); 
+                    break; 
+                }
+            }
+            return ticks; 
+        }
+
+        /// <summary>
+        /// create "nice" number in fractions of 2 or 5
+        /// </summary>
+        /// <param name="value">value</param>
+        /// <returns>This code was adopted from Paul Heckbert
+        /// from "Graphics Gems", Academic Press, 1990. </returns>
+        private static double niceNumber(double val, bool round) {
+            int expv; 
+            double f;                                /* fractional part of x */
+            double nf;                                /* nice, rounded fraction */
+
+            expv = (int)Math.Floor(Math.Log10(val));
+            f = val/Math.Pow(10, expv);                /* between 1 and 10 */
+            if (round) {
+                if (f<1.5) nf = 1;
+                else if (f<3) nf = 2;
+                else if (f<7) nf = 5;
+                else nf = 10;
+            } else {
+                if (f<=1) nf = 1;
+                else if (f<=2) nf = 2;
+                else if (f<=5) nf = 5;
+                else nf = 10;
+            }
+            return (nf* Math.Pow(10, expv));
+        }
+        private static List<LabeledTick> loose_label(float min,float max, int numberTicks, string format) {
+            int nfrac;
+            double d;                                /* tick mark spacing */
+            double graphmin, graphmax;                /* graph range min and max */
+            double range, x;
+
+            /* we expect min!=max */
+            range = niceNumber(max-min, false);
+            d = niceNumber(range/(Math.Min(numberTicks,10)-1), true);
+            graphmin = Math.Floor(min/d)*d;
+            graphmax = Math.Ceiling(max/d)*d;
+            nfrac = (int)Math.Max(-Math.Floor(Math.Log10(d)), 0);
+            List<LabeledTick> ticks = new List<LabeledTick>(); 
+            ticks.Add(new LabeledTick(nfrac,nfrac.ToString(format)));
+            for (x=graphmin; x<graphmax+.5*d; x+=d) {
+                ticks.Add(new LabeledTick((float)x,((float)x).ToString(format)));
+            }
+            return ticks;
+        }
+
+
+
         #region Oli's labels implementaion (incomplete)
         private static List<LabeledTick> niceLabels (float start, float end, int maxNumbers,string format) {
             float[] labelPositions = berechneLabel(start,end,maxNumbers);

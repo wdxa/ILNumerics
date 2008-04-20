@@ -217,7 +217,26 @@ namespace ILNumerics.Drawing.Internal {
                 ab = m_clippingView.ScaleToUnitCube();
                 GL.Scale(ab.X, ab.Y, ab.Z); //Identity; //RotationZ(m_cameraPhi); 
                 // update model matrix (to be avilable for zooming etc.)
-                GL.GetDouble(GetPName.ModelviewMatrix,m_modelViewMatrix); 
+                GL.GetDouble(GetPName.ModelviewMatrix,m_modelViewMatrix);
+                #region lighting  - not implemented yet
+                //GL.Enable(EnableCap.Lighting);
+                //GL.Enable(EnableCap.Light0);
+                ////GL.Enable(EnableCap.DepthTest); 
+                //GL.Enable(EnableCap.ColorMaterial);
+                ////GL.LightModelv(LightModelParameter.LightModelAmbient,new float [4]{0.2f, 0.2f, 0.2f, 1.0f});
+                ////GL.Materialv(MaterialFace.FrontAndBack, MaterialParameter.Specular,new float[]{0.3f, 0.3f, 1.0f, 0.2f});
+                ////GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Shininess,25f);
+                //GL.ColorMaterial(MaterialFace.FrontAndBack,ColorMaterialParameter.Diffuse); 
+                //GL.Materialv(MaterialFace.FrontAndBack,MaterialParameter.Diffuse,
+                //             new float[]{0.1f, 0.1f, 0.1f, 0.0f});
+
+                //float[] lpos = new float[]{1f,1f, 0.2f,0};
+                //GL.Lightv(LightName.Light0,LightParameter.Position,lpos);
+                //lpos[0] = tempParameter; lpos[1] = tempParameter; lpos[2] = tempParameter; lpos[3] = 1.0f;
+                //GL.Lightv(LightName.Light0,LightParameter.Specular,lpos);
+                //lpos = new float[]{-10.0f,1.0f,1.0f,0.0f};
+                //GL.Lightv(LightName.Light0,LightParameter.LinearAttenuation,lpos);
+                #endregion
                 #region enable clipping planes
                 if (m_clipOutsideUnitCube) {
                     m_tmpresult[0] = -1.0; m_tmpresult[3] = 0.5; 

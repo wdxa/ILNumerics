@@ -288,6 +288,14 @@ namespace ILNumerics.Drawing {
             Set ((float)(phi/180.0 * Math.PI),(float)(rho / 180.0f * Math.PI),distance); 
             OnChange(); 
         }
+        /// <summary>
+        /// true, when looking from top on the un-rotated scene (common for 2D plots)
+        /// </summary>
+        public bool Is2DView {
+            get {
+                return Math.Abs(SinPhi) < 1e-5 && Math.Abs(SinRho) < 1e-5; 
+            }
+        }
 
         /// <summary>
         /// Convert camera position to string

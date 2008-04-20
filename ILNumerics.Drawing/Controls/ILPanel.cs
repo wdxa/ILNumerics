@@ -46,6 +46,8 @@ namespace ILNumerics.Drawing.Controls {
     /// <remarks>This control is the main plot control of ILNumerics.Net.</remarks>
     public abstract class ILPanel : Control,IILCreationFactory {
 
+        public float tempParameter; 
+
         #region member / properties 
         protected ILTextRendererManager m_textRendererManager; 
         protected ILClippingData m_clippingView; 
@@ -770,8 +772,7 @@ namespace ILNumerics.Drawing.Controls {
                     end.X = 0.5f; 
                     end.Y = start.Y; 
                     end.Z = start.Z; 
-                    align = TickLabelAlign.left 
-                            | TickLabelAlign.top; 
+                    align = TickLabelAlign.left | TickLabelAlign.top;
                     padX *= -m_camera.SinPhi; 
                     padY = (m_camera.CosPhi - m_camera.SinRho * m_camera.SinPhi) * padY + m_camera.SinPhi * ticks.Font.Height / 2; 
                     break;
@@ -806,8 +807,11 @@ namespace ILNumerics.Drawing.Controls {
                     end.X = 0.5f; 
                     end.Y = start.Y; 
                     end.Z = start.Z; 
-                    align = TickLabelAlign.right 
-                            | TickLabelAlign.top; 
+                    if (m_camera.Is2DView) {
+                        align = TickLabelAlign.center | TickLabelAlign.top; 
+                    } else {
+                        align = TickLabelAlign.right | TickLabelAlign.top; 
+                    }
                     padX *= -m_camera.SinPhi; 
                     padY = (m_camera.CosPhi + m_camera.SinRho * m_camera.SinPhi) * padY - m_camera.SinPhi * ticks.Font.Height / 2;
                     break;
@@ -890,8 +894,7 @@ namespace ILNumerics.Drawing.Controls {
                     end.X = start.X;  
                     end.Y = 0.5f; 
                     end.Z = start.Z; 
-                    align = TickLabelAlign.right 
-                            | TickLabelAlign.top; 
+                    align = TickLabelAlign.right | TickLabelAlign.top; 
                     padX *= -m_camera.CosPhi; 
                     padY = (-m_camera.SinPhi + m_camera.SinRho * m_camera.CosPhi) * padY - m_camera.CosPhi * ticks.Font.Height / 2;
                     break;
@@ -926,8 +929,7 @@ namespace ILNumerics.Drawing.Controls {
                     end.X = start.X; 
                     end.Y = 0.5f; 
                     end.Z = start.Z; 
-                    align = TickLabelAlign.left 
-                            | TickLabelAlign.top; 
+                    align = TickLabelAlign.left | TickLabelAlign.top; 
                     padX *= m_camera.CosPhi; 
                     padY = (m_camera.SinPhi + m_camera.SinRho * m_camera.CosPhi) * padY - m_camera.CosPhi * ticks.Font.Height / 2;
                     break;

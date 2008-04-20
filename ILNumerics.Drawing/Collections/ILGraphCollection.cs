@@ -278,7 +278,7 @@ namespace ILNumerics.Drawing.Collections {
                         OnChange(ret[0],GraphCollectionChangeReason.Added); 
                         break; 
                     default: 
-                        throw new ILDrawingException ("that graph type is not supported yet!");
+                        throw new ILDrawingException ("graph type is not supported in that mode yet!");
                 }
                 #endregion
             }

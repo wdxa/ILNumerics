@@ -19,7 +19,7 @@
 //   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 //  Non-free licenses are also available. Contact info@ilnumerics.net 
-//  for details.
+//  for details. 
 //
 #endregion
 
