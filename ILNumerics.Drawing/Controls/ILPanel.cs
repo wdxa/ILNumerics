@@ -58,7 +58,8 @@ namespace ILNumerics.Drawing.Controls {
         protected bool m_active = false; 
         protected bool m_drawHidden = true; 
         protected bool m_ready = false; 
-        protected ILCamera m_camera; 
+        protected ILCamera m_camera;
+        protected ILCamera m_defaultView; 
         protected InteractiveModes m_selectingMode = InteractiveModes.Rotating; 
         protected ILPoint3Df m_scaling;
         protected Projection m_projection = Projection.Orthographic; 
@@ -269,6 +270,24 @@ namespace ILNumerics.Drawing.Controls {
             } 
         }
 
+        /// <summary>
+        /// Get or set default camera position for reset of the scene
+        /// </summary>
+        /// <remarks>The default position is used when the scene is reset. That
+        /// reset is usually triggered by double clicking the panel with the mouse.
+        /// <para>setting this value to null will make the panel ignore any double
+        /// clicks, which enables the user to manually react to double click via the 
+        /// common DoubleClick event of the panel and reset the camera position from
+        /// outside the component.</para></remarks>
+        public ILCamera DefaultView {
+            get {
+                return m_defaultView; 
+            }
+            set {
+                m_defaultView = value; 
+            }
+        }
+
         #endregion
 
         #region constructors
@@ -289,6 +308,7 @@ namespace ILNumerics.Drawing.Controls {
             m_textRendererManager = new ILTextRendererManager(this,GetDeviceContext()); 
             m_clippingView = new ILClippingData();
             m_camera = new ILCamera(0.0f,0.0f,5.0f);
+            m_defaultView = new ILCamera(0.0f,0.0f,5.0f); 
             m_layoutData = new ILLayoutData(m_camera);
             m_camera.Changed += new EventHandler(m_camera_Change);
             m_clippingView.Changed += new ILClippingDataChangedEvent(m_clippingView_Changed);
@@ -739,9 +759,10 @@ namespace ILNumerics.Drawing.Controls {
         }
 
         protected virtual void ResetView (bool resetRotation) {
-            if (resetRotation) {
-                m_camera.Phi = 0.0f; 
-                m_camera.Rho = 0.0f;
+            if (m_defaultView != null && resetRotation) {
+                m_camera.Phi = m_defaultView.Phi; 
+                m_camera.Rho = m_defaultView.Rho;
+                m_camera.Distance = m_defaultView.Distance; 
                 //UpdateMatrices(); 
             }
             m_clippingView.CopyFrom(m_graphs.Clipping);
