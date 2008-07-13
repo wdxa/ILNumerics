@@ -38,6 +38,8 @@ namespace ILNumerics.Test {
 			// tests: creation
 			// =================
 			Header();
+            Test_diff(); 
+			Test_Sum();
             Test_MMult(); 
             Test_Max();
             Test_Cat(); 
@@ -54,7 +56,6 @@ namespace ILNumerics.Test {
             Test_istriup();
             Test_istrilow(); 
             Test_Find();
-			Test_Sum();
 			Test_Apply(); 
             Test_vector(); 
             Test_Basic(); 
@@ -66,6 +67,99 @@ namespace ILNumerics.Test {
 			// summary
 			Footer();
 		}
+        public void Test_diff() {
+            int errorCode = 0;
+            try {
+                // test vector
+                ILArray<double> A = ILMath.pow(ILMath.vector(1,10),2);
+                ILArray<double> B = ILMath.diff(A); 
+                ILArray<double> Res = new double[]{3,5,7,9,11,13,15,17,19}; 
+                if (!B.Equals(Res)) 
+                    throw new Exception("diff: invalid results (dense, vector)");
+                B = ILMath.diff((ILArray<double>)A.CreateReference()); 
+                if (!B.Equals(Res))
+                    throw new Exception("diff: invalid results (reference, vector)");
+                // test matrix 
+                A = ILMath.pow(ILMath.counter(1.0,1.0,4,6),2);
+                B = ILMath.diff(A); 
+                Res = ILMath.counter(3.0,2.0,4,6)["0:2;:"]; 
+                if (!Res.Equals(B))
+                    throw new Exception("diff: invalid results (dense, matrix)");
+                B = ILMath.diff(A.R); 
+                if (!Res.Equals(B))
+                    throw new Exception("diff: invalid results (reference, matrix)");
+                // matrx along 2nd dimension
+                Res = ILMath.counter(24.0,8.0,4,5); 
+                B= ILMath.diff(A,1,1); 
+                if (!B.Equals(Res))
+                    throw new Exception("diff: invalid results (dense, matrix, leadDim:1)");
+                B= ILMath.diff(A.R,1,1); 
+                if (!B.Equals(Res))
+                    throw new Exception("diff: invalid results (reference, matrix, leadDim:1)");
+                // test n-dim array
+                A = ILMath.pow(ILMath.counter(4,3,2),2); 
+                Res = ILMath.counter(3.0,2.0,4,3,2)["0:2;:;:"];
+                B = ILMath.diff(A); 
+                if (!B.Equals(Res)) 
+                    throw new Exception("diff: invalid results (dense, n-d)");
+                B = ILMath.diff(A.R); 
+                if (!B.Equals(Res)) 
+                    throw new Exception("diff: invalid results (reference, n-d)");
+                // along non-first dimension
+                Res = new double[]{24,32,40,48,56,64,72,80,120,128,136,144,152,160,168,176}; 
+                Res = ILMath.reshape(Res,4,2,2); 
+                B = ILMath.diff(A,1,1); 
+                if (!B.Equals(Res)) 
+                    throw new Exception("diff: invalid results (dense, n-d, leadDim:1)");
+                B = ILMath.diff(A.R,1,1); 
+                if (!B.Equals(Res)) 
+                    throw new Exception("diff: invalid results (reference, n-d, leadDim:1)");
+                // along 3rd dimension
+                Res = new ILArray<double>(new double[]{168,192,216,240,264,288,312,336,360,384,408,432},4,3); 
+                B = ILMath.diff(A,1,2); 
+                if (!B.Equals(Res)) 
+                    throw new Exception("diff: invalid results (dense, n-d, leadDim:2)");
+                B = ILMath.diff(A.R,1,2); 
+                if (!B.Equals(Res)) 
+                    throw new Exception("diff: invalid results (reference, n-d, leadDim:2)");
+                // 2nd derivative
+                Res = ILMath.ones(4,1,2) * 32.0; 
+                B = ILMath.diff(A,2,1); 
+                if (!B.Equals(Res)) 
+                    throw new Exception("diff: invalid results (dense, n-d, leadDim:1, deriv:2)");
+                B = ILMath.diff(A.R,2,1); 
+                if (!B.Equals(Res)) 
+                    throw new Exception("diff: invalid results (reference, n-d, leadDim:1, deriv:2)");
+                // test empty, scalar -> should return empty
+                A = 1.0; 
+                if (!(ILMath.diff(A)).IsEmpty) 
+                    throw new Exception("diff: invalid result: diff([scalar]) should return empty array");
+                A[0] = null; // makes A an empty array
+                if (!(ILMath.diff(A)).IsEmpty) 
+                    throw new Exception("diff: invalid result: diff([empty]) should return empty array");
+                A = 1.0; 
+                if (!(ILMath.diff(A,1,0)).IsEmpty) 
+                    throw new Exception("diff: invalid result: diff([scalar]) should return empty array");
+                A[0] = null; // makes A an empty array
+                if (!(ILMath.diff(A,1,0)).IsEmpty) 
+                    throw new Exception("diff: invalid result: diff([empty]) should return empty array");
+                A = 1.0; 
+                if (!(ILMath.diff(A,1,2)).IsEmpty) 
+                    throw new Exception("diff: invalid result: diff([scalar]) should return empty array");
+                A[0] = null; // makes A an empty array
+                if (!(ILMath.diff(A,1,2)).IsEmpty) 
+                    throw new Exception("diff: invalid result: diff([empty]) should return empty array");
+                A = 1.0; 
+                if (!(ILMath.diff(A,3,2)).IsEmpty) 
+                    throw new Exception("diff: invalid result: diff([scalar]) should return empty array");
+                A[0] = null; // makes A an empty array
+                if (!(ILMath.diff(A,3,2)).IsEmpty) 
+                    throw new Exception("diff: invalid result: diff([empty]) should return empty array");
+                Success();
+            } catch (Exception e) {
+                Error(errorCode,e.Message);
+            }
+        }
         public void Test_basicOps() {
             int errorCode = 0; 
             try {
@@ -1321,7 +1415,18 @@ namespace ILNumerics.Test {
 					throw new Exception("Wrong values of Sum result! ");
 				
 				errorCode = 1;
-				ILArray<double> C = new ILArray<double>(data, 1, 1, 4, 5, 6);
+                // test non-matrix, reference case 
+                A = (ILArray<double>)ILMath.counter(4,3,2).CreateReference();
+                if (!A.IsReference) 
+                    throw new Exception("sum: test data creation failed: A should be reference array!"); 
+                Res = new double[,]{{15,18,21,24},{51,54,57,60}};  
+                Res = ILMath.reshape(Res ,4,1,2);
+                B = ILMath.sum(A,1); 
+                if (!Res.Equals(B)) 
+                    throw new Exception("sum: invalid result (n-d, reference)"); 
+
+				
+                ILArray<double> C = new ILArray<double>(data, 1, 1, 4, 5, 6);
 				Res = new ILArray<double>(new double[30] {
 					10,26,42,58,74,90,106,122,138,154,170,186,202,218,234,250,266
 					,282,298,314,330,346,362,378,394,410,426,442,458,474},1,1,1,5,6);
@@ -1347,9 +1452,8 @@ namespace ILNumerics.Test {
                 p.Toc();
                 Info("Sum(5x4x6)[Ref ohne Zuweisung] needed: " + p.ToString());
 				
-				data = new double[24]{65,215,365,515,70,220,370,520,75,225
-					,375,525,80,230,380,530,85,235,385,535,90,240,390,540};
-				Res = new ILArray<double>(data,1,4,6);
+				data = new double[8]{15,51,18,54,21,57,24,60};
+				Res = new ILArray<double>(data,1,2,4);
 				if (!Res.Equals(B))
 					throw new Exception("Wrong values of Sum result! ");
 				
@@ -1456,6 +1560,7 @@ namespace ILNumerics.Test {
 				B = null;
 				C = null;
 				Res = null; 
+                errorCode = 10; 
 				Success("Test_Sum successfull");
             } catch (SerializationException e) {
 				Error("Test_Sum failed at errorCode: "+errorCode +" Reason: " + e.Message);

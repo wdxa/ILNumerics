@@ -25,7 +25,8 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\ILNumerics.Drawing.xml</DocumentationFile>
@@ -45,9 +46,7 @@
     <DocumentationFile>..\bin\ILNumerics.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ILNumerics.Net, Version=1.3.8.14, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="OpenTK, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="OpenTK.Utilities, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="ILNumerics.Net, Version=1.3.12.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -61,18 +60,25 @@
     <Compile Include="Controls\ILSubfigure.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Interfaces\IILTextInterpreter.cs" />
+    <Compile Include="Labeling\ILHashCreator.cs" />
+    <Compile Include="Labeling\ILLabelingElement.cs" />
+    <Compile Include="Labeling\ILRenderQueue.cs" />
+    <Compile Include="Labeling\ILSimpleTexInterpreter.cs" />
     <Compile Include="Misc\Definitions.cs" />
     <Compile Include="Misc\Events.cs" />
     <Compile Include="Graphs\ILImageSCGraph.cs" />
     <Compile Include="Misc\ILAxisLabel.cs" />
     <Compile Include="Misc\ILClippingData.cs" />
-    <Compile Include="Misc\ILGrid.cs" />
     <Compile Include="Graphs\ILPlot2DGraph.cs" />
     <Compile Include="Graphs\ILFilledGraph.cs" />
     <Compile Include="Misc\ILCamera.cs" />
+    <Compile Include="Misc\ILLineProperties.cs" />
     <Compile Include="Misc\ILMarker.cs" />
     <Compile Include="Platform\OpenGL\ILOGLImageSCGraph.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLRenderer.cs" />
     <Compile Include="Platform\OpenGL\ILOGLSurfaceGraph.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLTextureStorage.cs" />
     <Compile Include="Platform\OpenGL\ILOGLXAxis.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -108,7 +114,7 @@
     <Compile Include="Controls\ILMovingDockPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Interfaces\IILTextRenderer.cs" />
+    <Compile Include="Interfaces\IILRenderer.cs" />
     <Compile Include="Platform\OpenGL\ILOGLAxis.cs" />
     <Compile Include="Platform\OpenGL\ILOGLPlot2DGraph.cs" />
     <Compile Include="Platform\OpenGL\ILOGLPanel.cs">
@@ -132,10 +138,16 @@
       <DependentUpon>Markers.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextRenderer\ILGDIRenderer.cs" />
-    <Compile Include="TextRenderer\ILOTKRenderer.cs" />
-    <Compile Include="TextRenderer\ILTextRendererAttribute.cs" />
-    <Compile Include="TextRenderer\ILTextRendererManager.cs" />
+    <Compile Include="Labeling\ILRendererAttribute.cs" />
+    <Compile Include="Labeling\ILRenderQueueItem.cs" />
+    <Compile Include="Labeling\ILTextRendererManager.cs" />
+    <Compile Include="Labeling\ILTextureData.cs" />
+    <Compile Include="Labeling\ILTextureManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Labeling\ILTextureStorage.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +172,15 @@
     </None>
     <None Include="Resources\close.bmp" />
     <None Include="Resources\Triangle.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\test.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Misc\opentk\trunk\Source\OpenTK\OpenTK.csproj">
+      <Project>{9AD3A0D9-5DE6-4745-8099-5CCF9B780226}</Project>
+      <Name>OpenTK</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="obsolete\" />

@@ -71,6 +71,14 @@ namespace ILNumerics.Misc
                 // if last dimension is singleton -> must be trimmed
                 if (m_dims[t-1] == 1) 
                     Trim(); 
+                if (m_numberOfElements == 0) {
+                    // dimension object for empty array
+                    m_nrDims = 2;
+                    m_dims = new int[2]; 
+                    m_dims[0] = 0; 
+                    m_dims[1] = 0; 
+                }
+
 			}
 		}
 		/// <summary>		

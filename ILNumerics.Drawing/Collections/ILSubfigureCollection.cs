@@ -32,19 +32,25 @@ using ILNumerics.Drawing.Controls;
 namespace ILNumerics.Drawing.Collections {
     
     /// <summary>
-    /// Collection of all subfigures contained in a ILFigureControl
+    /// Collection of all subfigures contained in an ILFigureControl
     /// </summary>
     [Serializable]
     public class ILSubfigureCollection {
-        
-        private Dictionary<int,ILSubfigure> m_subfigures; 
 
+        #region attributes 
+        private Dictionary<int,ILSubfigure> m_subfigures;
+        #endregion
+
+        #region constructor
         /// <summary>
         /// create new ILSubfigureCollection
         /// </summary>
         public ILSubfigureCollection() {
-            m_subfigures = new Dictionary<int,ILSubfigure>();  
+            m_subfigures = new Dictionary<int,ILSubfigure>();
         }
+        #endregion
+
+        #region indexer
         /// <summary>
         /// Get / set subfigure by key
         /// </summary>
@@ -64,6 +70,9 @@ namespace ILNumerics.Drawing.Collections {
                     m_subfigures[key] = value; 
             }
         }
+        #endregion
+
+        #region properties
         /// <summary>
         /// number of subfigures currently stored in the collection
         /// </summary>
@@ -72,6 +81,9 @@ namespace ILNumerics.Drawing.Collections {
                 return m_subfigures.Count; 
             }
         }
+        #endregion
+
+        #region public interface 
         /// <summary>
         /// Add subfigure to subfigure collection
         /// </summary>
@@ -96,7 +108,7 @@ namespace ILNumerics.Drawing.Collections {
         /// <summary>
         /// Get all subfigures as value collection
         /// </summary>
-        public Dictionary<int, ILSubfigure>.ValueCollection FigureValues {
+        public Dictionary<int, ILSubfigure>.ValueCollection Figures {
             get {
                 return m_subfigures.Values; 
             }
@@ -114,7 +126,7 @@ namespace ILNumerics.Drawing.Collections {
         /// </summary>
         /// <param name="number">number of subfigures to remain</param>
         /// <remarks>If more than number subfigures exist, they will be removed. Highest keys will be removed first.</remarks>
-        public void Reduce (int number) {
+        public void Purge (int number) {
             int[] keys = new int[m_subfigures.Count];
             m_subfigures.Keys.CopyTo(keys,0);  
             System.Array.Sort(keys); 
@@ -122,5 +134,6 @@ namespace ILNumerics.Drawing.Collections {
                 m_subfigures.Remove(keys[i]); 
             }
         }
+        #endregion
     }
 }

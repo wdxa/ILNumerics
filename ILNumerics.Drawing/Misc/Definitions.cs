@@ -47,28 +47,6 @@ namespace ILNumerics.Drawing {
         Middle,
         Upper
     }
-    /// <summary>
-    /// Event arguments for axis changed events
-    /// </summary>
-    public class ILAxisChangedEventArgs : EventArgs {
-        /// <summary>
-        /// Name of changed axis (X-,Y-,ZAxis)
-        /// </summary>
-        public AxisNames AxisName;
-        /// <summary>
-        /// construct a new instance 
-        /// </summary>
-        /// <param name="name"></param>
-        public ILAxisChangedEventArgs (AxisNames name) {
-            AxisName = name; 
-        }
-    }
-    /// <summary>
-    /// delegate for functions handling AxisChanged events
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="args"></param>
-    public delegate void AxisChangedEventHandler (object sender, ILAxisChangedEventArgs args); 
  
     /// <summary>
     /// Suggest, how label positions for axis ticks are to be choosen
@@ -106,29 +84,6 @@ namespace ILNumerics.Drawing {
         ZAxis = 2
     }
 
-    /// <summary>
-    /// simple single labeled tick
-    /// </summary>
-    public struct LabeledTick {
-        /// <summary>
-        /// tick label
-        /// </summary>
-        public string Label; 
-        /// <summary>
-        /// tick position
-        /// </summary>
-        public float Position; 
-        /// <summary>
-        /// create single labeled tick
-        /// </summary>
-        /// <param name="position">position</param>
-        /// <param name="label">tick label</param>
-        public LabeledTick(float position, string label) {
-            Position = position; 
-            Label = label; 
-        }
-    }
-    
     /// <summary>
     /// simple single unlabled tick
     /// </summary>
@@ -319,160 +274,6 @@ namespace ILNumerics.Drawing {
         BottomRightFront
     }
     /// <summary>
-    /// properties for line graphs
-    /// </summary>
-    public class ILLineProperties {
-        /// <summary>
-        /// fires if the properties were changed
-        /// </summary>
-        public event EventHandler Changed; 
-        protected void OnChanged() {
-            if (Changed != null) {
-                Changed(this,new EventArgs()); 
-            }
-        }
-       /// <summary>
-        /// line width (default: 1)
-        /// </summary>
-        /// <remarks>if antialiasing is active, it will be disabled 
-        /// as long as the width is less than 2 and automatically 
-        /// reenabled if the width gets larger than 1 again.</remarks>
-        public int Width {
-            get {
-                return m_lineWidth; 
-            }
-            set {
-                // for width = 1, antialiasing will not work and 
-                // must get disabled temporarily here 
-                if (value <= 1) {
-                    if (m_antialiasing) {
-                        m_antialiasing = false; 
-                        m_setAntialiasing = true; 
-                    }
-                } else {
-                    if (m_setAntialiasing) {
-                        m_setAntialiasing = false; 
-                        m_antialiasing = true; 
-                    }
-                }
-                m_lineWidth = value; 
-                OnChanged(); 
-            }
-        }
-        private int m_lineWidth; 
-        /// <summary>
-        /// line style (default: solid)
-        /// </summary>
-        public LineStyle Style {
-            get {
-                return m_lineStyle; 
-            }
-            set {
-                m_lineStyle = value; 
-                OnChanged(); 
-            }
-        }
-        private LineStyle m_lineStyle; 
-        /// <summary>
-        /// user defined line stipple pattern for line style 'UserPattern'
-        /// </summary>
-        /// <remarks>the pattern is defined by corresponding bits 
-        /// set in the short value. It may be stretched via the 
-        /// LinePatternScale parameter. Default: 15</remarks>
-        public short Pattern {
-            get {
-                return m_linePattern; 
-            }
-            set {
-                m_linePattern = value; 
-                OnChanged(); 
-            }
-        }
-        private short m_linePattern; 
-        /// <summary>
-        /// scaling for line stipple patterns (default: 4.0f)
-        /// </summary>
-        public float PatternScale {
-            get {
-                return m_linePatternScale; 
-            }
-            set {
-                m_linePatternScale = value; 
-                OnChanged(); 
-            }
-        }
-        private float m_linePatternScale; 
-        /// <summary>
-        /// Line color (default: DarkOliveGreen)
-        /// </summary>
-        public Color Color {
-            get {
-                return m_foreColor; 
-            }
-            set {
-                m_foreColor = value; 
-                OnChanged(); 
-            }
-        }
-        private Color m_foreColor; 
-        private bool m_visible; 
-        /// <summary>
-        /// get / set if lines are visible (default: true)
-        /// </summary>
-        public bool Visible {
-            get {
-                return m_visible; 
-            }
-            set {
-                m_visible = value; 
-                OnChanged(); 
-            }
-        }
-
-        private bool m_setAntialiasing = false;
-        private bool m_antialiasing;
-        /// <summary>
-        /// draw lines with smooth antialiasing (if possible and supported)
-        /// </summary>
-        /// <remarks>If the object supports antialiased lines, edges will be drawn 
-        /// smoothly. This sometimes comes with the drawback of the lines beeing 
-        /// more thick. Not all objects support antialiasing. Default value is 'false'.</remarks>
-        public bool Antialiasing {
-            get {
-                return m_antialiasing; 
-            }
-            set {
-                if (m_setAntialiasing && !value) {
-                    m_setAntialiasing = false; 
-                }
-                m_antialiasing = value; 
-                OnChanged(); 
-            }
-        }
-
-        /// <summary>
-        /// create default properties for graphs
-        /// </summary>
-        public ILLineProperties() {
-            m_lineStyle = LineStyle.Solid; 
-            m_foreColor = Color.AntiqueWhite;
-            m_lineWidth = 1; 
-            m_linePattern = 15; 
-            m_linePatternScale = 4.0f;
-            m_visible = true; 
-            m_antialiasing = false; 
-        }
-        public ILLineProperties(ILLineProperties props) {
-            m_lineStyle = props.Style; 
-            m_foreColor = props.Color;
-            m_lineWidth = props.Width; 
-            m_linePattern = props.Pattern; 
-            m_linePatternScale = props.PatternScale; 
-            m_visible = true; 
-            m_antialiasing = props.m_antialiasing; 
-        }
-    }
-    /// <summary>
     /// Shading styles for surface graphs
     /// </summary>
     public enum ShadingStyles {
@@ -524,6 +325,7 @@ namespace ILNumerics.Drawing {
         ZoomRectangle, 
         Rotating,
         Selecting,
+        None
     }
     /// <summary>
     /// single precision 3D point definition
@@ -649,17 +451,18 @@ namespace ILNumerics.Drawing {
         World3D
     }
     /// <summary>
-    /// occours if a graphics device has been reset by the underlying graphics framework
+    /// possible types of renderable items 
     /// </summary>
-    /// <param name="sender">objects who hosts the graphics device</param>
-    /// <param name="eventArgs"></param>
-    public delegate void ILGraphicsDeviceResetEvent(object sender, EventArgs eventArgs); 
-    /// <summary>
-    /// occours if a graphics device has been (re)created by an output panel
-    /// </summary>
-    /// <param name="sender">objects who hosts the graphics device</param>
-    /// <param name="eventArgs"></param>
-    public delegate void ILGraphicsDeviceCreatedEvent(object sender, EventArgs eventArgs); 
+    public enum RenderItemType {
+        /// <summary>
+        /// the item defines a character 
+        /// </summary>
+        Character,
+        /// <summary>
+        /// the item defines a bitmap
+        /// </summary>
+        Bitmap
+    }
     /// <summary>
     /// possible reason for an ILGraphCollectionChangedEvent to occur
     /// </summary>
@@ -668,27 +471,6 @@ namespace ILNumerics.Drawing {
         Deleted,
         Changed
     }
-    /// <summary>
-    /// arguements for ILGraphCollectionChanged events
-    /// </summary>
-    public class ILGraphCollectionChangedEventArgs: EventArgs {
-        public readonly GraphCollectionChangeReason Reason; 
-        public readonly ILGraph Graph; 
-        public ILGraphCollectionChangedEventArgs (ILGraph graph, GraphCollectionChangeReason reason) {
-            this.Graph = graph; 
-            this.Reason = reason; 
-        }
-    }
-    /// <summary>
-    /// occurs on changes to the graph collection: add, delete
-    /// </summary>
-    /// <param name="sender">graph collection</param>
-    /// <param name="args"></param>
-    public delegate void ILGraphCollectionChangedEvent(object sender, ILGraphCollectionChangedEventArgs args);  
-
-}
-
-namespace ILNumerics.Drawing.Internal {
     public class ILLayoutData {
         public ILLayoutData(ILCamera camera) {
             CameraPosition = camera; 
@@ -697,5 +479,32 @@ namespace ILNumerics.Drawing.Internal {
         public ILLayoutData() {
         }
     }
+}
+
+namespace ILNumerics.Drawing.Labeling {
+    /// <summary>
+    /// simple single labeled tick
+    /// </summary>
+    public struct LabeledTick {
+        /// <summary>
+        /// tick label
+        /// </summary>
+        public readonly ILRenderQueue Queue; 
+        /// <summary>
+        /// tick position
+        /// </summary>
+        public readonly float Position; 
+        /// <summary>
+        /// create single labeled tick
+        /// </summary>
+        /// <param name="position">position</param>
+        /// <param name="queue">render queue used to render the item</param>
+        public LabeledTick(float position, ILRenderQueue queue) { 
+            Position = position; 
+            Queue    = queue; 
+        }
+    }
+    
+
 }
     

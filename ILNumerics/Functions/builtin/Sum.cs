@@ -329,7 +329,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 /*!HC:HCscalarOp*/
                 return new /*!HC:outCls1*/ ILArray<double> (new /*!HC:inArr1*/ double []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             /*!HC:singletonDimOp*/
@@ -340,7 +340,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New</*!HC:outArr1*/ double >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -388,14 +391,15 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed (/*!HC:outArr1*/ double * pOutArr = retDblArr)
 							fixed (/*!HC:inArr1*/ double * pInArr = A.m_data) {
 								/*!HC:outArr1*/ double * tmpOut = pOutArr;
-								/*!HC:outArr1*/ double * lastElementOut = tmpOut + retDblArr.Length;
-								/*!HC:inArr1*/ double * tmpIn = pInArr;
+								/*!HC:outArr1*/ double * lastElementOut = tmpOut + retDblArr.Length - 1;
+								/*!HC:inArr1*/ double * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     /*!HC:HCzero*/ 
                                     *tmpOut = 0.0; 
@@ -403,21 +407,21 @@ namespace ILNumerics.BuiltInFunctions  {
 										/*!HC:tmpOutStorage*/ *tmpOut += /*!HC:preEvalOp*/ (double) (*(tmpIn + *leadDimIdx++)) /*!HC:postEvalOp*/ ;
 									/*!HC:operationResult*/ 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}
@@ -505,7 +509,7 @@ namespace ILNumerics.BuiltInFunctions  {
                
                 return new  ILArray<UInt64> (new  UInt64 []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
@@ -516,7 +520,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New< UInt64 >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -563,35 +570,36 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed ( UInt64 * pOutArr = retDblArr)
 							fixed ( UInt64 * pInArr = A.m_data) {
 								 UInt64 * tmpOut = pOutArr;
-								 UInt64 * lastElementOut = tmpOut + retDblArr.Length;
-								 UInt64 * tmpIn = pInArr;
+								 UInt64 * lastElementOut = tmpOut + retDblArr.Length - 1;
+								 UInt64 * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     *tmpOut = 0;
 									while (leadDimIdx < leadDimEnd)
 										 *tmpOut +=  (UInt64) (*(tmpIn + *leadDimIdx++))  ;
 									 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}
@@ -674,7 +682,7 @@ namespace ILNumerics.BuiltInFunctions  {
                
                 return new  ILArray<UInt32> (new  UInt32 []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
@@ -685,7 +693,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New< UInt32 >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -732,35 +743,36 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed ( UInt32 * pOutArr = retDblArr)
 							fixed ( UInt32 * pInArr = A.m_data) {
 								 UInt32 * tmpOut = pOutArr;
-								 UInt32 * lastElementOut = tmpOut + retDblArr.Length;
-								 UInt32 * tmpIn = pInArr;
+								 UInt32 * lastElementOut = tmpOut + retDblArr.Length - 1;
+								 UInt32 * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     *tmpOut = 0;
 									while (leadDimIdx < leadDimEnd)
 										 *tmpOut +=  (UInt32) (*(tmpIn + *leadDimIdx++))  ;
 									 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}
@@ -843,7 +855,7 @@ namespace ILNumerics.BuiltInFunctions  {
                
                 return new  ILArray<UInt16> (new  UInt16 []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
@@ -854,7 +866,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New< UInt16 >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -901,35 +916,36 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed ( UInt16 * pOutArr = retDblArr)
 							fixed ( UInt16 * pInArr = A.m_data) {
 								 UInt16 * tmpOut = pOutArr;
-								 UInt16 * lastElementOut = tmpOut + retDblArr.Length;
-								 UInt16 * tmpIn = pInArr;
+								 UInt16 * lastElementOut = tmpOut + retDblArr.Length - 1;
+								 UInt16 * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     *tmpOut = 0;
 									while (leadDimIdx < leadDimEnd)
 										 *tmpOut +=  (UInt16) (*(tmpIn + *leadDimIdx++))  ;
 									 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}
@@ -1012,7 +1028,7 @@ namespace ILNumerics.BuiltInFunctions  {
                
                 return new  ILArray<Int64> (new  Int64 []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
@@ -1023,7 +1039,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New< Int64 >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -1070,35 +1089,36 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed ( Int64 * pOutArr = retDblArr)
 							fixed ( Int64 * pInArr = A.m_data) {
 								 Int64 * tmpOut = pOutArr;
-								 Int64 * lastElementOut = tmpOut + retDblArr.Length;
-								 Int64 * tmpIn = pInArr;
+								 Int64 * lastElementOut = tmpOut + retDblArr.Length - 1;
+								 Int64 * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     *tmpOut = 0;
 									while (leadDimIdx < leadDimEnd)
 										 *tmpOut +=  (Int64) (*(tmpIn + *leadDimIdx++))  ;
 									 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}
@@ -1181,7 +1201,7 @@ namespace ILNumerics.BuiltInFunctions  {
                
                 return new  ILArray<Int32> (new  Int32 []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
@@ -1192,7 +1212,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New< Int32 >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -1239,35 +1262,36 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed ( Int32 * pOutArr = retDblArr)
 							fixed ( Int32 * pInArr = A.m_data) {
 								 Int32 * tmpOut = pOutArr;
-								 Int32 * lastElementOut = tmpOut + retDblArr.Length;
-								 Int32 * tmpIn = pInArr;
+								 Int32 * lastElementOut = tmpOut + retDblArr.Length - 1;
+								 Int32 * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     *tmpOut = 0;
 									while (leadDimIdx < leadDimEnd)
 										 *tmpOut +=  (Int32) (*(tmpIn + *leadDimIdx++))  ;
 									 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}
@@ -1350,7 +1374,7 @@ namespace ILNumerics.BuiltInFunctions  {
                
                 return new  ILArray<Int16> (new  Int16 []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
@@ -1361,7 +1385,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New< Int16 >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -1408,35 +1435,36 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed ( Int16 * pOutArr = retDblArr)
 							fixed ( Int16 * pInArr = A.m_data) {
 								 Int16 * tmpOut = pOutArr;
-								 Int16 * lastElementOut = tmpOut + retDblArr.Length;
-								 Int16 * tmpIn = pInArr;
+								 Int16 * lastElementOut = tmpOut + retDblArr.Length - 1;
+								 Int16 * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     *tmpOut = 0;
 									while (leadDimIdx < leadDimEnd)
 										 *tmpOut +=  (Int16) (*(tmpIn + *leadDimIdx++))  ;
 									 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}
@@ -1519,7 +1547,7 @@ namespace ILNumerics.BuiltInFunctions  {
                
                 return new  ILArray<char> (new  char []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
@@ -1530,7 +1558,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New< char >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -1577,35 +1608,36 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed ( char * pOutArr = retDblArr)
 							fixed ( char * pInArr = A.m_data) {
 								 char * tmpOut = pOutArr;
-								 char * lastElementOut = tmpOut + retDblArr.Length;
-								 char * tmpIn = pInArr;
+								 char * lastElementOut = tmpOut + retDblArr.Length - 1;
+								 char * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     *tmpOut = (char)0;
 									while (leadDimIdx < leadDimEnd)
 										 *tmpOut +=  (char) (*(tmpIn + *leadDimIdx++))  ;
 									 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}
@@ -1688,7 +1720,7 @@ namespace ILNumerics.BuiltInFunctions  {
                
                 return new  ILArray<byte> (new  byte []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
@@ -1699,7 +1731,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New< byte >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -1746,35 +1781,36 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed ( byte * pOutArr = retDblArr)
 							fixed ( byte * pInArr = A.m_data) {
 								 byte * tmpOut = pOutArr;
-								 byte * lastElementOut = tmpOut + retDblArr.Length;
-								 byte * tmpIn = pInArr;
+								 byte * lastElementOut = tmpOut + retDblArr.Length - 1;
+								 byte * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     *tmpOut = 0;
 									while (leadDimIdx < leadDimEnd)
 										 *tmpOut +=  (byte) (*(tmpIn + *leadDimIdx++))  ;
 									 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}
@@ -1857,7 +1893,7 @@ namespace ILNumerics.BuiltInFunctions  {
                
                 return new  ILArray<fcomplex> (new  fcomplex []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
@@ -1868,7 +1904,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New< fcomplex >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -1915,35 +1954,36 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed ( fcomplex * pOutArr = retDblArr)
 							fixed ( fcomplex * pInArr = A.m_data) {
 								 fcomplex * tmpOut = pOutArr;
-								 fcomplex * lastElementOut = tmpOut + retDblArr.Length;
-								 fcomplex * tmpIn = pInArr;
+								 fcomplex * lastElementOut = tmpOut + retDblArr.Length - 1;
+								 fcomplex * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     *tmpOut = 0.0f;
 									while (leadDimIdx < leadDimEnd)
 										 *tmpOut +=  (fcomplex) (*(tmpIn + *leadDimIdx++))  ;
 									 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}
@@ -2026,7 +2066,7 @@ namespace ILNumerics.BuiltInFunctions  {
                
                 return new  ILArray<float> (new  float []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
@@ -2037,7 +2077,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New< float >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -2084,35 +2127,36 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed ( float * pOutArr = retDblArr)
 							fixed ( float * pInArr = A.m_data) {
 								 float * tmpOut = pOutArr;
-								 float * lastElementOut = tmpOut + retDblArr.Length;
-								 float * tmpIn = pInArr;
+								 float * lastElementOut = tmpOut + retDblArr.Length - 1;
+								 float * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     *tmpOut = 0.0f;
 									while (leadDimIdx < leadDimEnd)
 										 *tmpOut +=  (float) (*(tmpIn + *leadDimIdx++))  ;
 									 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}
@@ -2195,7 +2239,7 @@ namespace ILNumerics.BuiltInFunctions  {
                
                 return new  ILArray<complex> (new  complex []{A.GetValue(0)},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
-                throw new ILArgumentException("the dimension parameter was out of range!");
+                throw new ILArgumentException("dimension parameter out of range!");
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
@@ -2206,7 +2250,10 @@ namespace ILNumerics.BuiltInFunctions  {
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
 			retDblArr = ILMemoryPool.Pool.New< complex >(newLength);
+            ILDimension newDimension = new ILDimension(newDims); 
+            int incOut = newDimension.SequentialIndexDistance(leadDim); 
             int leadDimLen = inDim[leadDim];
+            int posCounter; 
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             if (A.IsReference) {
 #region Reference storage
@@ -2253,35 +2300,36 @@ namespace ILNumerics.BuiltInFunctions  {
 							fixed ( complex * pOutArr = retDblArr)
 							fixed ( complex * pInArr = A.m_data) {
 								 complex * tmpOut = pOutArr;
-								 complex * lastElementOut = tmpOut + retDblArr.Length;
-								 complex * tmpIn = pInArr;
+								 complex * lastElementOut = tmpOut + retDblArr.Length - 1;
+								 complex * tmpIn = pInArr + A.m_indexOffset.Map(0);
 								int* leadDimIdx = leadDimStart;
 								int* leadDimEnd = leadDimStart + leadDimLen;
 								int dimLen = curPosition.Length;
 								int d, curD;
 								// start at first element
-								while (tmpOut < lastElementOut) {
+                                posCounter = retDblArr.Length; 
+								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     *tmpOut = 0.0;
 									while (leadDimIdx < leadDimEnd)
 										 *tmpOut +=  (complex) (*(tmpIn + *leadDimIdx++))  ;
 									 
                                     /**/
-                                    tmpOut++;
+                                    tmpOut += incOut;
+                                    if (tmpOut > lastElementOut)
+                                        tmpOut -= (retDblArr.Length - 1);
 									// increment higher dimensions 
 									d = 1;
 									while (d < dimLen) {
 										curD = (d + leadDim) % dimLen;
-										tmpIn -= idxOffset[curD, curPosition[curD]];
 										curPosition[curD]++;
 										if (curPosition[curD] < idxOffset[curD].Length) {
-											tmpIn += idxOffset[curD, curPosition[curD]];
 											break;
 										}
 										curPosition[curD] = 0;
-										tmpIn += idxOffset[curD, curPosition[curD]];
 										d++;
 									}
+                                    tmpIn = pInArr + A.m_indexOffset.IndexFromArray(curPosition); 
 								}
 							}
 						}

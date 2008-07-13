@@ -33,8 +33,11 @@ namespace ILNumerics.Drawing.Graphs {
     /// </summary>
     public abstract class ILSurfaceGraph : ILFilledGraph {
 
-        #region attributes / properties
+        #region attributes
+        protected ShadingStyles m_shading;
+        #endregion
 
+        #region properties
         /// <summary>
         /// determine, how the color for surface tiles will be drawn
         /// </summary>
@@ -51,9 +54,9 @@ namespace ILNumerics.Drawing.Graphs {
                 OnChanged(); 
             }
         }
-        protected ShadingStyles m_shading;
         #endregion
 
+        #region constructor
         /// <summary>
         /// constructs new surface graph
         /// </summary>
@@ -68,7 +71,9 @@ namespace ILNumerics.Drawing.Graphs {
             m_wireLines.Color = System.Drawing.Color.Blue;
             m_opacity = 0.84f;
         }
+        #endregion
 
+        #region ILFilledGraph overloads 
         /// <summary>
         /// create indices for ILSurfaceGraph triangles 
         /// </summary>
@@ -119,16 +124,6 @@ namespace ILNumerics.Drawing.Graphs {
                 base.CreateIndices();
             }
         }
-        protected override void OnWireLinesChanged() {
-            base.OnWireLinesChanged();
-            //if (m_wireLines.Width == 1 && m_wireLines.Antialiasing) {
-            //    m_wireLines.m_antialiasing = false; 
-            //    m_setAntialiasing = true; 
-            //} else if (m_wireLines.Width > 1 && m_setAntialiasing) {
-            //    m_setAntialiasing = false; 
-            //    m_wireLines.Antialiasing = true; 
-            //}
-        }
-
+        #endregion
     }
 }

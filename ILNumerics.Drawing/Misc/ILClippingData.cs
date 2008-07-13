@@ -33,26 +33,24 @@ namespace ILNumerics.Drawing {
     /// </summary>
     public class ILClippingData {
 
-        private bool m_eventingActive = true; 
-        /// <summary>
-        /// suspend the firing of events until EventingResume has been called
-        /// </summary>
-        public void EventingSuspend() {
-            m_eventingActive = false;
-        }
-        /// <summary>
-        /// Resume previously suspended eventing. Start sending events again.
-        /// </summary>
-        public void EventingResume() {
-            m_eventingActive = true;
-            if (Changed != null)
-                Changed(this,new ClippingChangedEventArgs(this)); 
-        }
-
+        #region eventing 
         /// <summary>
         /// fires if the data range have changed
         /// </summary>
         public event ILClippingDataChangedEvent Changed; 
+        #endregion
+
+        #region attributes 
+        private bool m_eventingActive = true;
+        internal float m_xMin = float.MaxValue; 
+        internal float m_yMin = float.MaxValue; 
+        internal float m_zMin = float.MaxValue; 
+        internal float m_xMax = float.MinValue; 
+        internal float m_yMax = float.MinValue; 
+        internal float m_zMax = float.MinValue; 
+        #endregion
+
+        #region properties 
         /// <summary>
         /// minimum value for x axis
         /// </summary>
@@ -66,7 +64,6 @@ namespace ILNumerics.Drawing {
                     Changed(this,new ClippingChangedEventArgs(this)); 
             }
         }
-        internal float m_xMin = float.MaxValue; 
         /// <summary>
         /// minimum value for y axis
         /// </summary>
@@ -80,7 +77,6 @@ namespace ILNumerics.Drawing {
                     Changed(this,new ClippingChangedEventArgs(this)); 
             }
         }
-        internal float m_yMin = float.MaxValue; 
         /// <summary>
         /// minimum value for z axis
         /// </summary>
@@ -94,7 +90,6 @@ namespace ILNumerics.Drawing {
                     Changed(this,new ClippingChangedEventArgs(this)); 
             }
         }
-        internal float m_zMin = float.MaxValue; 
         /// <summary>
         /// maximum value for x axis
         /// </summary>
@@ -108,7 +103,6 @@ namespace ILNumerics.Drawing {
                     Changed(this,new ClippingChangedEventArgs(this)); 
             }
         }
-        internal float m_xMax = float.MinValue; 
         /// <summary>
         /// maximum value for y axis
         /// </summary>
@@ -122,7 +116,6 @@ namespace ILNumerics.Drawing {
                     Changed(this,new ClippingChangedEventArgs(this)); 
             }
         }
-        internal float m_yMax = float.MinValue; 
         /// <summary>
         /// maximum value for z axis
         /// </summary>
@@ -136,7 +129,75 @@ namespace ILNumerics.Drawing {
                     Changed(this,new ClippingChangedEventArgs(this)); 
             }
         }
-        internal float m_zMax = float.MinValue; 
+        /// <summary>
+        /// minimum (coordinate)
+        /// </summary>
+        public ILPoint3Df Min {
+            get {
+                return new ILPoint3Df(XMin,YMin,ZMin);
+            }
+        }
+        /// <summary>
+        /// maximum (coordinate)
+        /// </summary>
+        public ILPoint3Df Max {
+            get {
+                return new ILPoint3Df(XMax,YMax,ZMax); 
+            }
+        }
+        /// <summary>
+        /// get center of this clipping range
+        /// </summary>
+        public ILPoint3Df CenterF {
+            get { 
+                ILPoint3Df ret; 
+                ret.X = (XMax + XMin) / 2.0f; 
+                ret.Y = (YMax + YMin) / 2.0f; 
+                ret.Z = (ZMax + ZMin) / 2.0f; 
+                return ret; 
+            }
+        }
+        /// <summary>
+        /// get width (x-direction) of this clipping range
+        /// </summary>
+        public float WidthF {
+            get {
+                return (XMax - XMin);
+            }
+        }
+        /// <summary>
+        /// get height (y-direction) of this clipping range
+        /// </summary>
+        public float HeightF {
+            get {
+                return (YMax - YMin);
+            }
+        }
+        /// <summary>
+        /// get depth (z-direction) of this clipping range
+        /// </summary>
+        public float DepthF {
+            get {
+                return (ZMax - ZMin);
+            }
+        }
+        #endregion
+
+        #region public interface
+        /// <summary>
+        /// suspend the firing of events until EventingResume has been called
+        /// </summary>
+        public void EventingSuspend() {
+            m_eventingActive = false;
+        }
+        /// <summary>
+        /// Resume previously suspended eventing. Start sending events again.
+        /// </summary>
+        public void EventingResume() {
+            m_eventingActive = true;
+            if (Changed != null)
+                Changed(this,new ClippingChangedEventArgs(this));
+        }
         /// <summary>
         /// update ranges for this object with union of both ranges. 
         /// </summary>
@@ -214,44 +275,6 @@ namespace ILNumerics.Drawing {
             if (m_eventingActive && Changed != null) 
                 Changed(this,new ClippingChangedEventArgs(this)); 
         }
-
-
-        /// <summary>
-        /// get center of this clipping range
-        /// </summary>
-        public ILPoint3Df CenterF {
-            get { 
-                ILPoint3Df ret; 
-                ret.X = (XMax + XMin) / 2.0f; 
-                ret.Y = (YMax + YMin) / 2.0f; 
-                ret.Z = (ZMax + ZMin) / 2.0f; 
-                return ret; 
-            }
-        }
-        /// <summary>
-        /// get width (x-direction) of this clipping range
-        /// </summary>
-        public float WidthF {
-            get {
-                return (XMax - XMin);
-            }
-        }
-        /// <summary>
-        /// get height (y-direction) of this clipping range
-        /// </summary>
-        public float HeightF {
-            get {
-                return (YMax - YMin);
-            }
-        }
-        /// <summary>
-        /// get depth (z-direction) of this clipping range
-        /// </summary>
-        public float DepthF {
-            get {
-                return (ZMax - ZMin);
-            }
-        }
         /// <summary>
         /// reset this clipping range to initial (all empty)
         /// </summary>
@@ -313,23 +336,15 @@ namespace ILNumerics.Drawing {
             else b.Z = 0.0f; 
             return b; 
         }
-        public ILPoint3Df Min {
-            get {
-                return new ILPoint3Df(XMin,YMin,ZMin);
-            }
-        }
-        public ILPoint3Df Max {
-            get {
-                return new ILPoint3Df(XMax,YMax,ZMax); 
-            }
-        }
-
+        /// <summary>
+        /// Clone this instance and return clone
+        /// </summary>
+        /// <returns>clone</returns>
         public ILClippingData Clone() {
             ILClippingData ret = new ILClippingData(); 
             ret.Update(this); 
             return ret;
         }
-
         /// <summary>
         /// Map coordinat from unit cube space [-0.5..0.5] into the space limited by this clipping data
         /// </summary>
@@ -344,5 +359,7 @@ namespace ILNumerics.Drawing {
             ret.Z = (z + 0.5f) * (m_zMax-m_zMin) + m_zMin; 
             return ret; 
         }
+        #endregion
+
     }
 }

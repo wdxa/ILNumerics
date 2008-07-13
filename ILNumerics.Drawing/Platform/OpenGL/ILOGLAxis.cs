@@ -27,32 +27,38 @@ using System;
 using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Platform;
+using OpenTK.Graphics; 
 using OpenTK.Graphics.OpenGL; 
 using OpenTK.Graphics.OpenGL.Enums; 
-using OpenTK.Math; 
 using System.Drawing;
 using ILNumerics.Drawing.Interfaces; 
-using ILNumerics.Drawing.TextRenderer; 
+using ILNumerics.Drawing.Labeling; 
 using ILNumerics.Drawing.Controls; 
 
-namespace ILNumerics.Drawing.Internal {
+namespace ILNumerics.Drawing.Platform.OpenGL {
+    /// <summary>
+    /// OpenGL implementation for ILAxis 
+    /// </summary>
     public abstract class ILOGLAxis : ILAxis, IDisposable {
-        ILOGLPanel m_panel; 
-        private int m_primitivCount; 
 
+        #region attributes
+        ILOGLPanel m_panel; 
+        private int m_primitivCount;
+        #endregion
+
+        #region constructor
         internal ILOGLAxis (AxisNames name, ILClippingData clippingView,
                             ILLayoutData layoutData,
                             ILOGLPanel panel)
-            : base (name,clippingView,layoutData) {
+            : base (name,clippingView,layoutData,panel) {
             m_invalidated = true;
-            m_labeledTicks.TextRenderer = panel.TextRendererManager.GetDefault(); 
-            m_label.TextRenderer = panel.TextRendererManager.GetDefault(); 
-
             panel.GraphicsDeviceCreated += new ILGraphicsDeviceCreatedEvent(initialize);
             panel.GraphicsDeviceReset += new ILGraphicsDeviceResetEvent(configure);
-            m_panel = panel; 
+            m_panel = panel;
         }
+        #endregion
 
+        #region helper functions
         private void initialize(object sender, EventArgs eventArgs) {
             if (m_panel == null || m_panel.GetDeviceContext() == null)
                 return; 
@@ -65,77 +71,13 @@ namespace ILNumerics.Drawing.Internal {
             //            "ILNumerics.Drawing.TextRenderer.ILGDIRenderer" ,null); 
         }
 
-        void configure(object sender, EventArgs eventArgs) {       
+        void configure(object sender, EventArgs eventArgs) {
         }
-
-        public override void Dispose()
-        {
-            m_invalidated = true;
-            base.Dispose();
-        }
-
-        #region ILAxis abstract overrides
-        
         private void debub_write_mat(string prefix) {
             double[] modmat = new double[16]; 
             GL.GetDouble(GetPName.ProjectionMatrix,modmat); 
             System.Diagnostics.Debug.Write(prefix + new ILArray<double>(modmat,4,4).ToString()); 
         }
-        
-        internal void UpdateMeshes(ILAxis axis, ILClippingData clipping) {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public override void PrepareMeshes(Graphics g) {
-            return; 
-        }
-
-        public override void PrepareLabels(Graphics g) {
-            return; 
-        }
-
-        #endregion
-
-        protected override void iDrawLabel(Graphics g) {
-            if (!m_visible) return; 
-            // draw the main axis label 
-            m_label.TextRenderer.Prepare(g); 
-            m_label.TextRenderer.Draw(m_label.Text,m_label.m_position,m_label.Color);
-            m_label.TextRenderer.Free(); 
-        }
- 
-        protected override void iDrawTickLabels(Graphics g) {
-            if (!m_visible) return; 
-            int axisIdx = Index; 
-            Point start = new Point(), end = new Point(); 
-            TickLabelAlign align = m_labeledTicks.m_align;
-            m_labeledTicks.TextRenderer.Alignment = align;
-            m_labeledTicks.TextRenderer.Prepare(g); 
-            start = m_labeledTicks.m_lineStart; 
-            end = m_labeledTicks.m_lineEnd;
-            float clipRange = m_clipping.Max[axisIdx] - m_clipping.Min[axisIdx]; 
-
-            ILPoint3Df mult = new ILPoint3Df(
-                        ((float)(end.X - start.X) / clipRange),
-                        ((float)(end.Y - start.Y) / clipRange),
-                        0);
-            float tmp;
-            Point point = new Point(0,0); 
-            Color col = m_labeledTicks.LabelColor; 
-            float min = m_clipping.Min[Index], max = m_clipping.Max[Index]; 
-            foreach (LabeledTick lt in m_labeledTicks) {
-                if (! String.IsNullOrEmpty( lt.Label)
-                    && lt.Position >= min 
-                    && lt.Position <= max) {
-                    tmp = lt.Position-m_clipping.Min[axisIdx]; 
-                    point.X = (int)(start.X + mult.X * tmp);
-                    point.Y = (int)(start.Y + mult.Y * tmp); 
-                    m_labeledTicks.TextRenderer.Draw(lt.Label,point,col); 
-                }
-            } 
-            m_labeledTicks.TextRenderer.Free(); 
-        }
-        
         protected void ConfigureOGLLineProperties(LineStyle style, int width) { 
             int stipFact = 0; 
             short stipple = ILPanel.StippleFromLineStyle(style,ref stipFact); 
@@ -147,6 +89,25 @@ namespace ILNumerics.Drawing.Internal {
                 GL.LineStipple (stipFact,stipple); 
             }
         }
+        #endregion 
+
+        #region ILAxis abstract overrides
+        public override void Dispose()
+        {
+            m_invalidated = true;
+            base.Dispose();
+        }
+
+        public override void PrepareMeshes(Graphics g) {
+            return; 
+        }
+
+        public override void PrepareLabels(Graphics g) {
+            return; 
+        }
+
+        #endregion
+         
 
     }
 }

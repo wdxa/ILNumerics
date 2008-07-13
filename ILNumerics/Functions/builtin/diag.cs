@@ -49,7 +49,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// the elements of X on the 'diagPosition's diagonal.</param>
         /// <param name="diagPosition">index of diagonal to extract/ create. Here 0 means the 
         /// main diagonal, diagPosition > 0 is above the main diagonal, diagPosition smaller 0 means 
-        /// above the main diagonal.</param>
+        /// below the main diagonal.</param>
         /// <returns>depending on 'X' a matrix or a vector with the elements of/on a diagonal.</returns>
         /// <remarks>The type of return Array will be the same as the type of X.</remarks>
         public static ILArray<T> diag<T>(ILArray<T> X, int diagPosition) {

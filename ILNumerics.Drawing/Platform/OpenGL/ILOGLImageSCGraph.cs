@@ -25,19 +25,24 @@
 
 using System;
 using ILNumerics.Exceptions; 
-using ILNumerics.BuiltInFunctions;
 using ILNumerics.Drawing.Controls;
-using System.Resources; 
 using OpenTK; 
-using OpenTK.Graphics.OpenGL; 
+using OpenTK.Graphics; 
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Graphics.OpenGL.Enums; 
-using ILNumerics.Drawing.Graphs; 
-using VERTEXTYPEDEF = ILNumerics.Drawing.Internal.ILOGLImageSCGraph.VertexC4V2; 
+using ILNumerics.Drawing.Graphs;
+using ILNumerics.Drawing.Internal;  
+using VERTEXTYPEDEF = ILNumerics.Drawing.Platform.OpenGL.ILOGLImageSCGraph.VertexC4V2; 
 
-namespace ILNumerics.Drawing.Internal {
+namespace ILNumerics.Drawing.Platform.OpenGL {
+    /// <summary>
+    /// OpenGL implementation for ILImageSCGraph
+    /// </summary>
     public class ILOGLImageSCGraph : ILImageSCGraph {
 
+        #region attributes
         protected VERTEXTYPEDEF[] m_vertices;
+        #endregion
 
         #region vertex definition
         /// <summary>
@@ -54,7 +59,6 @@ namespace ILNumerics.Drawing.Internal {
             public float Vy; 
         }
         #endregion
-        
 
         #region constructors 
         public ILOGLImageSCGraph (ILOGLPanel panel, ILBaseArray sourceArray,
@@ -64,6 +68,7 @@ namespace ILNumerics.Drawing.Internal {
         }
         #endregion 
 
+        #region helper functions
         protected override void CreateVertices() {
             if (m_vertices == null) {
                 m_vertices = Misc.ILMemoryPool.Pool.New<VERTEXTYPEDEF>(m_Vertcount); 
@@ -118,6 +123,25 @@ namespace ILNumerics.Drawing.Internal {
             }
             m_vertexReady = true;
         }
+        protected override void updateClipping() {
+            m_localClipping.m_zMax = 0; 
+            m_localClipping.m_zMin = 0; 
+            m_localClipping.m_xMax = (float)m_cols+0.5f;
+            m_localClipping.m_xMin = -0.5f; 
+            m_localClipping.m_yMax = (float)m_rows+0.5f; 
+            m_localClipping.m_yMin = -0.5f; 
+        }
+        protected override void m_globalClipping_Changed(object sender, ClippingChangedEventArgs e) {
+            base.m_globalClipping_Changed(sender, e);
+            //m_vertexReady = false; 
+            //m_indexReady = false; 
+        }
+        #endregion
+
+        #region public interface 
+        /// <summary>
+        /// Draws the graph into existing context
+        /// </summary>
         public override void Draw() {
             if (m_panel.Camera.Rho > Math.PI/2) return; 
             if (!m_isReady)
@@ -131,13 +155,13 @@ namespace ILNumerics.Drawing.Internal {
             GL.Translate(0.0f, 0.0f, zPos); 
             GL.Enable(EnableCap.Blend); 
             GL.Disable(EnableCap.DepthTest); 
-            GL.BlendFunc (OpenTK.Graphics.OpenGL.BlendingFactorSrc.SrcAlpha,
-                          OpenTK.Graphics.OpenGL.BlendingFactorDest.OneMinusSrcAlpha);            
+            GL.BlendFunc (BlendingFactorSrc.SrcAlpha,
+                          BlendingFactorDest.OneMinusSrcAlpha);            
             GL.ShadeModel(ShadingModel.Flat); 
             unsafe {
                 fixed (VERTEXTYPEDEF* pVertices = m_vertices) {
                     GL.InterleavedArrays(
-                           OpenTK.Graphics.OpenGL.InterleavedArrayFormat.C4ubV2f,0,(IntPtr)pVertices); 
+                           InterleavedArrayFormat.C4ubV2f,0,(IntPtr)pVertices); 
                     if (m_filled) {
                         fixed (UInt32* pIndices = m_indices) {
                             for (int i = 0; i < m_stripesCount; i++) {
@@ -174,9 +198,9 @@ namespace ILNumerics.Drawing.Internal {
                             GL.Color3(m_wireLines.Color); 
                         } 
                         fixed (UInt32* pIndices = m_gridIndices) { 
-                            GL.DrawElements(OpenTK.Graphics.OpenGL.BeginMode.Lines,
+                            GL.DrawElements(BeginMode.Lines,
                                         m_gridIndicesCount,
-                                        OpenTK.Graphics.OpenGL.DrawElementsType.UnsignedInt,
+                                        DrawElementsType.UnsignedInt,
                                         (IntPtr)pIndices);
                             GL.Finish();
                         }
@@ -186,33 +210,26 @@ namespace ILNumerics.Drawing.Internal {
             }
             GL.Translate(0.0f, 0.0f, -zPos); 
         }
-        
+        /// <summary>
+        /// Dispose off this graph's vertices
+        /// </summary>
         public override void Dispose() {
             base.Dispose(); 
             if (m_vertices != null) {
                 Misc.ILMemoryPool.Pool.RegisterObject<VERTEXTYPEDEF>(m_vertices); 
             }
         }
+        /// <summary>
+        /// Ensures the recalculation of vertices if neccessary
+        /// </summary>
         public override void Invalidate() {
             if (Math.Floor(m_panel.Camera.Phi / (Math.PI / 4.0)) != m_oldSubQuadrant) {    
                 //must only recalculate indices, and only if the camera subquadrant has changed
                 m_indexReady = false; 
                 m_isReady = false; 
-            } 
+            }
         }
-        protected override void updateClipping() {
-            m_localClipping.m_zMax = 0; 
-            m_localClipping.m_zMin = 0; 
-            m_localClipping.m_xMax = (float)m_cols+0.5f;
-            m_localClipping.m_xMin = -0.5f; 
-            m_localClipping.m_yMax = (float)m_rows+0.5f; 
-            m_localClipping.m_yMin = -0.5f; 
-        }
-        protected override void m_globalClipping_Changed(object sender, ClippingChangedEventArgs e) {
-            base.m_globalClipping_Changed(sender, e);
-            //m_vertexReady = false; 
-            //m_indexReady = false; 
-        }
+        #endregion 
 
     }
 }

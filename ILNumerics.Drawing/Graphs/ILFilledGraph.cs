@@ -29,6 +29,9 @@ using System.Text;
 using ILNumerics.Exceptions; 
 
 namespace ILNumerics.Drawing.Graphs {
+    /// <summary>
+    /// Class representing abstract implementation of filled graphs
+    /// </summary>
     public abstract class ILFilledGraph : ILGraph {
     
         #region attributes / properties 
@@ -91,13 +94,14 @@ namespace ILNumerics.Drawing.Graphs {
 
         #endregion
 
+        #region constructor
         public ILFilledGraph (ILBaseArray sourceArray, 
                             ILClippingData clippingContainer) 
                 : base (sourceArray,clippingContainer) {
             if (sourceArray.Dimensions.NonSingletonDimensions != 2) 
-                throw new ILArgumentException ("ILRotatableGraph3D: source arrray must be matrix!"); 
+                throw new ILArgumentException ("ILFilledGraph: source arrray must be matrix!"); 
             if (!sourceArray.IsNumeric) 
-                throw new ILArgumentException ("ILRotatableGraph3D: source arrray must be numeric!"); 
+                throw new ILArgumentException ("ILFilledGraph: source arrray must be numeric!"); 
             m_rows = m_sourceArray.Dimensions[0]; 
             m_cols = m_sourceArray.Dimensions[1]; 
             m_Vertcount = m_rows * m_cols; 
@@ -108,10 +112,12 @@ namespace ILNumerics.Drawing.Graphs {
             m_wireLines = new ILLineProperties();
             m_wireLines.Changed += new EventHandler(m_wireLines_Changed);
             m_filled = true; 
-            updateClipping(); 
+            updateClipping();
         }
+        #endregion
 
-        #region protected/private helper 
+        #region protected/private helper
+        
         protected virtual void updateClipping() {
             m_localClipping.m_zMax = m_sourceArray.MaxValue; 
             m_localClipping.m_zMin = m_sourceArray.MinValue; 
@@ -120,7 +126,9 @@ namespace ILNumerics.Drawing.Graphs {
             m_localClipping.m_yMax = (float)m_sourceArray.Dimensions[0]; 
             m_localClipping.m_yMin = 0; 
         }
+        
         protected virtual void CreateVertices() {}
+        
         /// <summary>
         /// Create indices for filled graphs
         /// </summary>
@@ -474,7 +482,6 @@ namespace ILNumerics.Drawing.Graphs {
                 }
             m_indexReady = true; 
         }
-
         /// <summary>
         /// checks the length of index vector and allocate more memory if needed
         /// </summary>
@@ -508,7 +515,9 @@ namespace ILNumerics.Drawing.Graphs {
             m_gridStripsCount = gridStrCount; 
             m_gridStripsLen = gridStrLen; 
         }
-
+        /// <summary>
+        /// Dispose off this filled graph (grid-)indices
+        /// </summary>
         public override void Dispose() {
             if (m_indices != null) {
                 Misc.ILMemoryPool.Pool.RegisterObject<uint>(m_indices); 
@@ -518,7 +527,12 @@ namespace ILNumerics.Drawing.Graphs {
             }
             base.Dispose();
         }
-
+        /// <summary>
+        /// checks &amp; if neccessary triggers recreation of all vertices and indices
+        /// </summary>
+        /// <remarks>This function is called by the enclosing panel, f.e. when rotation
+        /// occours, which makes a reconfiguration neccessary. It internally calls CreateVertices() 
+        /// and CreateIndices().</remarks>
         protected override void Configure() {
             m_isReady = false; 
             if (!m_vertexReady) CreateVertices(); 

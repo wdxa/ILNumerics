@@ -32,7 +32,16 @@ namespace ILNumerics.Drawing {
     /// Drawing exception
     /// </summary>
     public class ILDrawingException : Exception {
+        /// <summary>
+        /// create new drawing exception
+        /// </summary>
+        /// <param name="message">message</param>
         public ILDrawingException(string message) : base(message) { }
+        /// <summary>
+        /// create new drawing exception
+        /// </summary>
+        /// <param name="message">message</param>
+        /// <param name="innerException">inner (nested) exception</param>
         public ILDrawingException(string message, Exception innerException) : base(message,innerException) { }
     }
 }

@@ -30,7 +30,6 @@ using ILNumerics.Exceptions;
 using ILNumerics.Drawing.Internal;
 using System.Drawing; 
 using ILNumerics.Drawing.Interfaces; 
-using ILNumerics.Drawing.TextRenderer;
 using System.Reflection;  
 
 
@@ -180,7 +179,7 @@ namespace ILNumerics.Drawing.Collections {
         }
         #endregion
 
-        #region helper
+        #region helper functions
         protected void Axis_Changed(object sender, EventArgs e) {
             Invalidate();
             if (sender is ILAxis && sender != null) {
@@ -190,7 +189,7 @@ namespace ILNumerics.Drawing.Collections {
         }
         internal Size MeasureMaxTickLabelSize(Graphics gr) {
             for (int i = 0; i < m_axes.Length; i++) {
-                Size tmp = m_axes[i].LabeledTicks.MeasureMaxScreenSize(gr); 
+                Size tmp = m_axes[i].LabeledTicks.Size; 
                 if (tmp.Height > m_maximumSize.Height) {
                     m_maximumSize.Height = tmp.Height; 
                 }

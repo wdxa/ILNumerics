@@ -30,10 +30,26 @@ using ILNumerics.Drawing.Controls;
 
 namespace ILNumerics.Drawing.Interfaces {
     /// <summary>
-    /// interface for a painter factory, capable of creating device dependend axis painters and graphs
+    /// interface for a painter factory, capable of creating device dependend axes and graphs 
     /// </summary>
+    /// <remarks>The interface is implemented by (device dependent) panel implementations. 
+    /// It is used to create the ILPanel's object hirarchy on startup. </remarks>
     public interface IILCreationFactory {
+        /// <summary>
+        /// create an axis according to the current 
+        /// </summary>
+        /// <param name="name">axis name</param>
+        /// <param name="clippingView">clipping of the host</param>
+        /// <param name="parameters">additional parameters</param>
+        /// <returns>newly created axis object</returns>
         ILAxis CreateAxis(AxisNames name, ILClippingData clippingView, params object[] parameters);
+        /// <summary>
+        /// Create a new specific ILGraph object (device dependent)
+        /// </summary>
+        /// <param name="data">numeric data for the new graph</param>
+        /// <param name="graphType">type of graph</param>
+        /// <param name="additionalParams">additional parameter</param>
+        /// <returns>newly created graph instance</returns>
         ILGraph CreateGraph(ILBaseArray data, GraphType graphType, params object[] additionalParams);
     }
 }

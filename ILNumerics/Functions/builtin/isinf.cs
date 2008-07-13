@@ -101,10 +101,10 @@ using ILNumerics.Misc;
         <source locate="comment">
             summary
         </source>
-        <destination>Finds infinite value elements</destination>
-        <destination>Finds infinite value elements</destination>
-        <destination>Finds infinite value elements</destination>
-        <destination>Finds infinite value elements</destination>
+        <destination>Locate infinite value elements</destination>
+        <destination>Locate infinite value elements</destination>
+        <destination>Locate infinite value elements</destination>
+        <destination>Locate infinite value elements</destination>
     </type>
     <type>
         <source locate="comment">

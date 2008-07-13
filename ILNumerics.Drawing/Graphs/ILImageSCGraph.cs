@@ -28,8 +28,17 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace ILNumerics.Drawing.Graphs {
+    /// <summary>
+    /// class rendering plain color-coded area graphs
+    /// </summary>
+    /// <remarks>This class derives from ILFilledGraph and adds a ZPosition property.</remarks>
     public class ILImageSCGraph : ILFilledGraph {
-        protected float m_zPosition; 
+
+        #region attributes 
+        protected float m_zPosition;
+        #endregion
+
+        #region Properties
         /// <summary>
         /// Z position for ImageSC graph (default: -Inf)
         /// </summary>
@@ -49,7 +58,9 @@ namespace ILNumerics.Drawing.Graphs {
                 OnChanged(); 
             }
         }
+        #endregion
 
+        #region constructor
         public ILImageSCGraph ( ILBaseArray sourceArray,
                                 ILClippingData clippingContainer)
             : base (sourceArray,clippingContainer) {
@@ -57,7 +68,8 @@ namespace ILNumerics.Drawing.Graphs {
             m_rows = sourceArray.Dimensions[0]+1; 
             m_Vertcount = m_rows * m_cols;
             // defaults
-            m_zPosition = float.NegativeInfinity; 
+            m_zPosition = float.NegativeInfinity;
         }
+        #endregion
     }
 }

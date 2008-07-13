@@ -32,10 +32,9 @@ using System.Windows.Forms;
 using System.IO; 
 using ILNumerics.Drawing; 
 using ILNumerics.Drawing.Interfaces;
-using ILNumerics.Drawing.TextRenderer; 
-using ILNumerics.Drawing.Internal;
 using ILNumerics.Drawing.Collections; 
 using ILNumerics.Drawing.Graphs; 
+using ILNumerics.Drawing.Labeling; 
 using System.Diagnostics; 
 
 namespace ILNumerics.Drawing.Controls {
@@ -48,11 +47,12 @@ namespace ILNumerics.Drawing.Controls {
 
         public float tempParameter; 
 
-        #region member / properties 
-        protected ILTextRendererManager m_textRendererManager; 
+        #region attributes 
+        protected ILRendererManager m_textRendererManager; 
         protected ILClippingData m_clippingView; 
         protected ILAxisCollection m_axes;
         protected ILGraphCollection m_graphs;
+        protected ILTextureManager m_textureManager; 
         protected Point m_mouseStart; 
         protected bool m_isMoving; 
         protected bool m_active = false; 
@@ -74,12 +74,20 @@ namespace ILNumerics.Drawing.Controls {
         protected const float pi32 = (float) Math.PI / 2 * 3; 
         protected const float pi4 = (float) Math.PI / 4; 
         protected const float pi8 = (float) Math.PI / 8; 
-        protected Internal.ILLayoutData m_layoutData = new ILLayoutData(); 
+        protected ILLayoutData m_layoutData = new ILLayoutData(); 
         internal float m_cubeWidth;  // used to propagate view size to matrices in derived classes
         internal float m_cubeHeight; 
+        #endregion
 
-        public abstract object GetDeviceContext(); 
-
+        #region properties
+        /// <summary>
+        /// Get texture manager instance, storing all textures used in the scene
+        /// </summary>
+        internal ILTextureManager TextureManager {
+            get {
+                return m_textureManager; 
+            }
+        }
         /// <summary>
         /// Determines if background of the rendering cube will be filled with the CubeBackgroundColor property value
         /// </summary>
@@ -229,7 +237,7 @@ namespace ILNumerics.Drawing.Controls {
         /// <remarks>IILTextRenderer are used to draw labels for axis of this panel (device specific).
         /// <para>Text renderer objects must be instantiated through the ILTextRendererManager instance's
         /// CreateInstance() method.</para></remarks>
-        public ILTextRendererManager TextRendererManager {
+        public ILRendererManager TextRendererManager {
             get {
                 return m_textRendererManager; 
             }
@@ -299,13 +307,16 @@ namespace ILNumerics.Drawing.Controls {
             this.DoubleBuffered = false; 
             //BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             m_graphicsDevice = graphicsDevice; 
+            m_textureManager = new ILTextureManager(m_graphicsDevice);
+            m_textureManager.DefaultHeight = 500; 
+            m_textureManager.DefaultWidth = 500; 
             m_selectionRectangle = new ILLineProperties();
             m_selectionRectangle.Antialiasing = false; 
             m_selectionRectangle.Color = Color.Blue; 
             m_selectionRectangle.Width = 1; 
             m_selectionRectangle.Style = LineStyle.Solid; 
             m_selectionRectangle.Changed += new EventHandler(m_selectionRectangle_Changed);
-            m_textRendererManager = new ILTextRendererManager(this,GetDeviceContext()); 
+            m_textRendererManager = new ILRendererManager(this,GetDeviceContext()); 
             m_clippingView = new ILClippingData();
             m_camera = new ILCamera(0.0f,0.0f,5.0f);
             m_defaultView = new ILCamera(0.0f,0.0f,5.0f); 
@@ -320,7 +331,7 @@ namespace ILNumerics.Drawing.Controls {
 
         #region public interface function 
         /// <summary>
-        /// Dispose this panel, frees all devicec, graph- and axis collection
+        /// Dispose this panel, frees all devices, graph- and axis collection
         /// </summary>
         public new void Dispose () {
             Dispose(false); 
@@ -340,6 +351,8 @@ namespace ILNumerics.Drawing.Controls {
                 m_graphs.Dispose(); 
             if (m_axes != null)
                 m_axes.Dispose(); 
+            if (m_textureManager != null)
+                m_textureManager.Dispose(); 
             base.Dispose(disposing);
 #if TRACE 
             Trace.Unindent(); 
@@ -538,6 +551,10 @@ namespace ILNumerics.Drawing.Controls {
         }
 
         protected override void OnPaint(System.Windows.Forms.PaintEventArgs e) {
+            if (DesignMode) {
+                e.Graphics.Clear(Color.LightGray); 
+                return; 
+            }
             if (e.ClipRectangle.Width == 0 || e.ClipRectangle.Height == 0) {
 #if TRACE 
                 Trace.TraceInformation("{0},{1} ILPanel.OnPaint(): ClipRectangle.Size = empty -> skipping",DateTime.Now, Environment.TickCount); 
@@ -689,8 +706,6 @@ namespace ILNumerics.Drawing.Controls {
                 default:
                     break;
             }
-            // reset clipping view  (but not the rotation)
-            //OnGraphicsDeviceReset(); 
         }
         protected void m_clippingView_Changed(object sender, ClippingChangedEventArgs e) {
             OnViewLimitsChanged(e); 
@@ -707,7 +722,11 @@ namespace ILNumerics.Drawing.Controls {
         #endregion event handler 
 
         #region virtual abstract interface
-
+        /// <summary>
+        /// Get current rendering device (implementation dependent)
+        /// </summary>
+        /// <returns></returns>
+        public abstract object GetDeviceContext(); 
         /// <summary>
         /// Cause a reconfiguration of all axes and graphs on the next paint event
         /// </summary>
@@ -718,13 +737,12 @@ namespace ILNumerics.Drawing.Controls {
             base.Invalidate(this.ClientRectangle, true);
         }
         /// <summary>
-        /// Confgure all panel, to make them ready for output, set "m_ready = true" at end!
+        /// [internal] Configure this panel, to make it ready for output, set "m_ready = true" at end!
         /// </summary>
         protected abstract void Configure(); 
-
         /// <summary>
         /// Get size of projected view cube - after (!) rotation but before projection -> world space
-        /// includes bounding box and ticks for all axis respectively
+        /// includes bounding box and ticks for all axis respectively (no labels)
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -745,9 +763,10 @@ namespace ILNumerics.Drawing.Controls {
         protected abstract void UpdateMatrices();
 
         protected virtual void RenderScene(Graphics g) {
-            computeLayoutData(g);
+            if (!DesignMode) {
+                computeLayoutData(g);
+            }
         }
-
         /// <summary>
         /// initialize all device specific classes, first called after the panel has been created
         /// </summary>
@@ -1016,7 +1035,7 @@ namespace ILNumerics.Drawing.Controls {
         protected TickLabelAlign GetZTickLabelLine(
                                         out Point start2D, 
                                         out Point end2D) {
-            TickLabelAlign align = TickLabelAlign.bottom | TickLabelAlign.right;
+            TickLabelAlign align = TickLabelAlign.vertCenter | TickLabelAlign.right;
             ILPoint3Df start = new ILPoint3Df(),end = new ILPoint3Df(); 
             ILTickCollection ticks = m_axes[2].LabeledTicks; 
             float tickLen = 0; 
@@ -1067,33 +1086,15 @@ namespace ILNumerics.Drawing.Controls {
             return align;
         }
 
-        
-        //public virtual void OptimalTickLabelLine(AxisNames axis, out Point start, out Point end, out AxisLabelAlign align) {
-        //    ILPoint3Df start3F = new ILPoint3Df(); 
-        //    ILPoint3Df end3F = new ILPoint3Df(); 
-        //    align = GetXTickLabelLine(axis, ref start3F, ref end3F);
-        //    world2Screen(start3F, end3F, out start, out end);
-        //    //// include tick label padding 
-        //    //if ((align & AxisLabelAlign.bottom) != 0) {
-        //    //    start.Y -= m_axis[axis].LabeledTicks.Padding;   
-        //    //    end.Y -= m_axis[axis].LabeledTicks.Padding;  
-        //    //} else if ((align & AxisLabelAlign.vertCenter) != 0) {
-        //    //    start.Y += m_axis[axis].LabeledTicks.Padding; 
-        //    //    end.Y += m_axis[axis].LabeledTicks.Padding;  
-        //    //} else { // top
-        //    //    start.Y += m_axis[axis].LabeledTicks.Padding; 
-        //    //    end.Y += m_axis[axis].LabeledTicks.Padding;  
-        //    //}
-        //    //if ((align & AxisLabelAlign.right) != 0) {
-        //    //    start.X -= m_axis[axis].LabeledTicks.Padding;   
-        //    //    end.X -= m_axis[axis].LabeledTicks.Padding;  
-        //    //} else if ((align & AxisLabelAlign.center) != 0) {
-        //    //} else {
-        //    //    start.X += m_axis[axis].LabeledTicks.Padding;   
-        //    //    end.X += m_axis[axis].LabeledTicks.Padding;  
-        //    //}
-        //}
-
+        /// <summary>
+        /// Transform two coordinates for a line from world to screen coordinates
+        /// </summary>
+        /// <param name="start">1st coordinate (world)</param>
+        /// <param name="end">2nd coordinate (world)</param>
+        /// <param name="start2D">[output] 1st coordinate (screen pixels)</param>
+        /// <param name="end2D">[output] 2nd coordinate (screen pixels)</param>
+        /// <remarks>This function is provided by the concrete derived class, using the
+        /// current rendering framework.</remarks>
         public abstract void World2Screen(ILPoint3Df start, ILPoint3Df end, out Point start2D, out Point end2D);
 
         /// <summary>
@@ -1194,14 +1195,14 @@ namespace ILNumerics.Drawing.Controls {
 
             // add label's size to increase margin
             Size ticksSize = m_axes.MeasureMaxTickLabelSize(gr); 
-            Size xLabelSize = m_axes.XAxis.Label.GetSize(gr); 
-            Size yLabelSize = m_axes.YAxis.Label.GetSize(gr);
+            Size xLabelSize = m_axes.XAxis.Label.Size;  
+            Size yLabelSize = m_axes.YAxis.Label.Size;
             int padX = m_axes[0].LabeledTicks.Padding + m_axes[0].Label.Padding * 2; 
             int padY = m_axes[1].LabeledTicks.Padding + m_axes[1].Label.Padding * 2; 
             int padZ = m_axes[2].LabeledTicks.Padding + m_axes[2].Label.Padding * 2; 
             int xHeight = xLabelSize.Height + padX; 
             int yHeight = yLabelSize.Height + padY; 
-            int zHeight =  m_axes.ZAxis.Label.GetSize(gr).Height + padZ; 
+            int zHeight =  m_axes.ZAxis.Label.Size.Height + padZ; 
             if (xHeight < yHeight) 
                 xHeight = yHeight; 
             ticksSize.Width += xHeight; 
@@ -1222,11 +1223,11 @@ namespace ILNumerics.Drawing.Controls {
             UpdateMatrices(); 
             // determine tick label lines
             ILTickCollection ticks = m_axes[2].LabeledTicks; 
-            ticks.m_align = GetZTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd); 
+            ticks.m_alignment = GetZTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd); 
             ticks = m_axes[1].LabeledTicks; 
-            ticks.m_align = GetYTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd); 
+            ticks.m_alignment = GetYTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd); 
             ticks = m_axes[0].LabeledTicks; 
-            ticks.m_align = GetXTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd);
+            ticks.m_alignment = GetXTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd);
 
             #region determine axis label position & limits 
             positionZAxisLabel(m_axes[2]); 
@@ -1278,7 +1279,7 @@ namespace ILNumerics.Drawing.Controls {
         private void axisLabelVertical2D(ILAxis axis) {
             ILAxisLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
-            Size tickSize = ticks.ScreenSize, labelSize = label.Size;
+            Size tickSize = ticks.Size, labelSize = label.Size;
             switch (label.Alignment) {
                 case AxisLabelAlign.Center:
                     label.Orientation = TextOrientation.Vertical;
@@ -1316,7 +1317,7 @@ namespace ILNumerics.Drawing.Controls {
         private void positionZAxisLabel(ILAxis axis) {
             ILAxisLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
-            Size tickSize = ticks.ScreenSize, labelSize = label.Size; 
+            Size tickSize = ticks.Size, labelSize = label.Size; 
             label.Orientation = TextOrientation.Vertical;
             label.m_position.X = ticks.m_lineStart.X - tickSize.Width - labelSize.Height; 
             switch (label.Alignment) {
@@ -1343,7 +1344,7 @@ namespace ILNumerics.Drawing.Controls {
             #region Bottom Right -> Top Left
             ILAxisLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
-            Size tickSize = ticks.ScreenSize, labelSize = label.Size; 
+            Size tickSize = ticks.Size, labelSize = label.Size; 
             switch (label.Alignment) {
                 case AxisLabelAlign.Center:
                     label.m_position.X = (ticks.m_lineStart.X + ticks.m_lineEnd.X) / 2;
@@ -1414,7 +1415,7 @@ namespace ILNumerics.Drawing.Controls {
         private void axisLabel_BottomLeftTopRight(ILAxis axis) {
             ILAxisLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
-            Size tickSize = ticks.ScreenSize, labelSize = label.Size;
+            Size tickSize = ticks.Size, labelSize = label.Size;
             switch (label.Alignment) {
                 case AxisLabelAlign.Center:
                     label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
@@ -1484,7 +1485,7 @@ namespace ILNumerics.Drawing.Controls {
         private void axisLabel_TopRightBottomLeft(ILAxis axis) {
             ILAxisLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
-            Size tickSize = ticks.ScreenSize, labelSize = label.Size;
+            Size tickSize = ticks.Size, labelSize = label.Size;
             switch (label.Alignment) {
                 case AxisLabelAlign.Center:
                     label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
@@ -1556,7 +1557,7 @@ namespace ILNumerics.Drawing.Controls {
         private void axisLabel_TopLeftBottomRight(ILAxis axis) {
             ILAxisLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
-            Size tickSize = ticks.ScreenSize, labelSize = label.Size;
+            Size tickSize = ticks.Size, labelSize = label.Size;
             switch (label.Alignment) {
                 case AxisLabelAlign.Center:
                     label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
@@ -1670,7 +1671,7 @@ namespace ILNumerics.Drawing.Controls {
                     // but under mono it seems the runtime tries to load the d3d part 
                     // anyway, so we do without a compile time reference.
                     assembly = Assembly.LoadFile(Path.Combine(myPath,"ILNumerics.DrawingD3D.dll")); 
-                    panelType = assembly.GetType("ILNumerics.Drawing.Internal.ILDXPanel"); 
+                    panelType = assembly.GetType("ILNumerics.Drawing.Platform.OpenGL.ILDXPanel"); 
                     ret = (ILPanel)panelType.InvokeMember("ILDXPanel", 
                             BindingFlags.DeclaredOnly | BindingFlags.Public 
                             | BindingFlags.NonPublic | BindingFlags.Instance 
@@ -1680,7 +1681,7 @@ namespace ILNumerics.Drawing.Controls {
                 default:
                     // the default is to use OpenGL, which is included into the main assembly (this one)
                     assembly = Assembly.LoadFile(Path.Combine(myPath,"ILNumerics.Drawing.dll")); 
-                    panelType = assembly.GetType("ILNumerics.Drawing.Internal.ILOGLPanel"); 
+                    panelType = assembly.GetType("ILNumerics.Drawing.Platform.OpenGL.ILOGLPanel"); 
                     ret = (ILPanel)panelType.InvokeMember("ILOGLPanel", 
                             BindingFlags.DeclaredOnly | BindingFlags.Public 
                             | BindingFlags.NonPublic | BindingFlags.Instance 

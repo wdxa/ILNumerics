@@ -191,10 +191,11 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static /*!HC:Tret*/ complex operator /(/*!HC:TinArr1*/ complex in1, /*!HC:TinArr2*/ complex in2) {
             /*!HC:Tret*/ complex ret;
-            double tmp = in2.real * in2.real + in2.imag * in2.imag;
-            if (tmp == 0) return /*!HC:infinity*/ complex.INF ;
-            ret.real = /*!HC:FCast*/ (double) (((in1.real  * in2.real ) + (in1.imag  * in2.imag )) / tmp);
-            ret.imag = /*!HC:FCast*/ (double) (((in1.imag  * in2.real ) - (in1.real  * in2.imag )) / tmp); 
+            if (in2.real == 0 || in2.imag == 0)
+                return /*!HC:infinity*/ complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real = /*!HC:FCast*/ (double) (((in1.real  * in2.real ) + (in1.imag  * in2.imag )) / norm2);
+            ret.imag = /*!HC:FCast*/ (double) (((in1.imag  * in2.real ) - (in1.real  * in2.imag )) / norm2); 
             return ret; 
         }
         /// <summary>
@@ -304,10 +305,11 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( complex in1,  fcomplex in2) {
             complex ret;
-            double tmp = in2.real * in2.real + in2.imag * in2.imag;
-            if (tmp == 0) return  complex.INF ;
-            ret.real =  (double) (((in1.real  * in2.real ) + (in1.imag  * in2.imag )) / tmp);
-            ret.imag =  (double) (((in1.imag  * in2.real ) - (in1.real  * in2.imag )) / tmp); 
+            if (in2.real == 0 || in2.imag == 0)
+                return  complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real =  (double) (((in1.real  * in2.real ) + (in1.imag  * in2.imag )) / norm2);
+            ret.imag =  (double) (((in1.imag  * in2.real ) - (in1.real  * in2.imag )) / norm2); 
             return ret; 
         }
         /// <summary>
@@ -456,7 +458,7 @@ namespace ILNumerics {
         public static /*!HC:Tret*/ complex operator +(/*!HC:TinArr1*/ complex in1, /*!HC:TinArr2*/ double in2) {
             /*!HC:Tret*/ complex ret;
             ret.real = /*!HC:FCast*/ (double) (in1.real + in2);
-            ret.imag = /*!HC:FCast*/ (double) (in1.imag + in2);
+            ret.imag = /*!HC:FCast*/ (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -468,7 +470,7 @@ namespace ILNumerics {
         public static /*!HC:Tret*/ complex operator -(/*!HC:TinArr1*/ complex in1, /*!HC:TinArr2*/ double in2) {
             /*!HC:Tret*/ complex ret;
             ret.real = /*!HC:FCast*/ (double) (in1.real - in2);
-            ret.imag = /*!HC:FCast*/ (double) (in1.imag - in2);
+            ret.imag = /*!HC:FCast*/ (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -567,7 +569,7 @@ namespace ILNumerics {
         public static  complex operator +( complex in1,  UInt64 in2) {
             complex ret;
             ret.real =  (double) (in1.real + in2);
-            ret.imag =  (double) (in1.imag + in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -579,7 +581,7 @@ namespace ILNumerics {
         public static  complex operator -( complex in1,  UInt64 in2) {
             complex ret;
             ret.real =  (double) (in1.real - in2);
-            ret.imag =  (double) (in1.imag - in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -675,7 +677,7 @@ namespace ILNumerics {
         public static  complex operator +( complex in1,  UInt32 in2) {
             complex ret;
             ret.real =  (double) (in1.real + in2);
-            ret.imag =  (double) (in1.imag + in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -687,7 +689,7 @@ namespace ILNumerics {
         public static  complex operator -( complex in1,  UInt32 in2) {
             complex ret;
             ret.real =  (double) (in1.real - in2);
-            ret.imag =  (double) (in1.imag - in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -783,7 +785,7 @@ namespace ILNumerics {
         public static  complex operator +( complex in1,  UInt16 in2) {
             complex ret;
             ret.real =  (double) (in1.real + in2);
-            ret.imag =  (double) (in1.imag + in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -795,7 +797,7 @@ namespace ILNumerics {
         public static  complex operator -( complex in1,  UInt16 in2) {
             complex ret;
             ret.real =  (double) (in1.real - in2);
-            ret.imag =  (double) (in1.imag - in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -891,7 +893,7 @@ namespace ILNumerics {
         public static  complex operator +( complex in1,  Int64 in2) {
             complex ret;
             ret.real =  (double) (in1.real + in2);
-            ret.imag =  (double) (in1.imag + in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -903,7 +905,7 @@ namespace ILNumerics {
         public static  complex operator -( complex in1,  Int64 in2) {
             complex ret;
             ret.real =  (double) (in1.real - in2);
-            ret.imag =  (double) (in1.imag - in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -999,7 +1001,7 @@ namespace ILNumerics {
         public static  complex operator +( complex in1,  Int32 in2) {
             complex ret;
             ret.real =  (double) (in1.real + in2);
-            ret.imag =  (double) (in1.imag + in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -1011,7 +1013,7 @@ namespace ILNumerics {
         public static  complex operator -( complex in1,  Int32 in2) {
             complex ret;
             ret.real =  (double) (in1.real - in2);
-            ret.imag =  (double) (in1.imag - in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -1107,7 +1109,7 @@ namespace ILNumerics {
         public static  complex operator +( complex in1,  Int16 in2) {
             complex ret;
             ret.real =  (double) (in1.real + in2);
-            ret.imag =  (double) (in1.imag + in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -1119,7 +1121,7 @@ namespace ILNumerics {
         public static  complex operator -( complex in1,  Int16 in2) {
             complex ret;
             ret.real =  (double) (in1.real - in2);
-            ret.imag =  (double) (in1.imag - in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -1215,7 +1217,7 @@ namespace ILNumerics {
         public static  complex operator +( complex in1,  float in2) {
             complex ret;
             ret.real =  (double) (in1.real + in2);
-            ret.imag =  (double) (in1.imag + in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -1227,7 +1229,7 @@ namespace ILNumerics {
         public static  complex operator -( complex in1,  float in2) {
             complex ret;
             ret.real =  (double) (in1.real - in2);
-            ret.imag =  (double) (in1.imag - in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -1323,7 +1325,7 @@ namespace ILNumerics {
         public static  complex operator +( complex in1,  char in2) {
             complex ret;
             ret.real =  (double) (in1.real + in2);
-            ret.imag =  (double) (in1.imag + in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -1335,7 +1337,7 @@ namespace ILNumerics {
         public static  complex operator -( complex in1,  char in2) {
             complex ret;
             ret.real =  (double) (in1.real - in2);
-            ret.imag =  (double) (in1.imag - in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -1431,7 +1433,7 @@ namespace ILNumerics {
         public static  complex operator +( complex in1,  byte in2) {
             complex ret;
             ret.real =  (double) (in1.real + in2);
-            ret.imag =  (double) (in1.imag + in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -1443,7 +1445,7 @@ namespace ILNumerics {
         public static  complex operator -( complex in1,  byte in2) {
             complex ret;
             ret.real =  (double) (in1.real - in2);
-            ret.imag =  (double) (in1.imag - in2);
+            ret.imag =  (double) in1.imag; //AB080630
             return ret;
         }
         /// <summary>
@@ -1616,7 +1618,7 @@ namespace ILNumerics {
         public static /*!HC:Tret*/ complex operator +(/*!HC:TinArr1*/ double in1, /*!HC:TinArr2*/ complex in2) {
             /*!HC:Tret*/ complex ret; 
             ret.real = /*!HC:FCast*/ (double) (in1 + in2.real);
-            ret.imag = /*!HC:FCast*/ (double) (in1 + in2.imag);
+            ret.imag = /*!HC:FCast*/ (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -1628,7 +1630,7 @@ namespace ILNumerics {
         public static /*!HC:Tret*/ complex operator -(/*!HC:TinArr1*/ double in1, /*!HC:TinArr2*/ complex in2) {
             /*!HC:Tret*/ complex ret;
             ret.real = /*!HC:FCast*/ (double) (in1 - in2.real);
-            ret.imag = /*!HC:FCast*/ (double) (in1 - in2.imag);
+            ret.imag = /*!HC:FCast*/ (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -1644,21 +1646,19 @@ namespace ILNumerics {
             return ret;
         }
         /// <summary>
-        /// Operator dividing the specified inputs.
+        /// Operator dividing a real by a complex.
         /// </summary>
-        /// <param name="in1">The divident.</param>
+        /// <param name="in1">The dividend.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static /*!HC:Tret*/ complex operator /(/*!HC:TinArr1*/ double in1, /*!HC:TinArr2*/ complex in2) {
-            /*!HC:Tret*/ complex ret;
-            if (in2.real != 0.0 && in2.imag != 0.0) {
-                ret.real = /*!HC:FCast*/ (double) (in1 / in2.real);
-                ret.imag = /*!HC:FCast*/ (double) (in1 / in2.imag);
-                return ret;
-            } else {
-                return /*!HC:infinity*/ complex.INF ;                 
-            }
-            
+            /*!HC:Tret*/ complex ret; 
+            if (in2.real == 0 || in2.imag == 0)
+                return /*!HC:infinity*/ complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real = /*!HC:FCast*/ (double) ((in1 * in2.real) / norm2);
+            ret.imag = /*!HC:FCast*/ (double) ((in1 * (-in2.imag)) / norm2);
+            return ret;
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.
@@ -1731,7 +1731,7 @@ namespace ILNumerics {
         public static  complex operator +( UInt64 in1,  complex in2) {
             complex ret; 
             ret.real =  (double) (in1 + in2.real);
-            ret.imag =  (double) (in1 + in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -1743,7 +1743,7 @@ namespace ILNumerics {
         public static  complex operator -( UInt64 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) (in1 - in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -1759,21 +1759,19 @@ namespace ILNumerics {
             return ret;
         }
         /// <summary>
-        /// Operator dividing the specified inputs.
+        /// Operator dividing a real by a complex.
         /// </summary>
-        /// <param name="in1">The divident.</param>
+        /// <param name="in1">The dividend.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( UInt64 in1,  complex in2) {
-            complex ret;
-            if (in2.real != 0.0 && in2.imag != 0.0) {
-                ret.real =  (double) (in1 / in2.real);
-                ret.imag =  (double) (in1 / in2.imag);
-                return ret;
-            } else {
-                return  complex.INF ;                 
-            }
-            
+            complex ret; 
+            if (in2.real == 0 || in2.imag == 0)
+                return  complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real =  (double) ((in1 * in2.real) / norm2);
+            ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
+            return ret;
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.
@@ -1843,7 +1841,7 @@ namespace ILNumerics {
         public static  complex operator +( UInt32 in1,  complex in2) {
             complex ret; 
             ret.real =  (double) (in1 + in2.real);
-            ret.imag =  (double) (in1 + in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -1855,7 +1853,7 @@ namespace ILNumerics {
         public static  complex operator -( UInt32 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) (in1 - in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -1871,21 +1869,19 @@ namespace ILNumerics {
             return ret;
         }
         /// <summary>
-        /// Operator dividing the specified inputs.
+        /// Operator dividing a real by a complex.
         /// </summary>
-        /// <param name="in1">The divident.</param>
+        /// <param name="in1">The dividend.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( UInt32 in1,  complex in2) {
-            complex ret;
-            if (in2.real != 0.0 && in2.imag != 0.0) {
-                ret.real =  (double) (in1 / in2.real);
-                ret.imag =  (double) (in1 / in2.imag);
-                return ret;
-            } else {
-                return  complex.INF ;                 
-            }
-            
+            complex ret; 
+            if (in2.real == 0 || in2.imag == 0)
+                return  complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real =  (double) ((in1 * in2.real) / norm2);
+            ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
+            return ret;
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.
@@ -1955,7 +1951,7 @@ namespace ILNumerics {
         public static  complex operator +( UInt16 in1,  complex in2) {
             complex ret; 
             ret.real =  (double) (in1 + in2.real);
-            ret.imag =  (double) (in1 + in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -1967,7 +1963,7 @@ namespace ILNumerics {
         public static  complex operator -( UInt16 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) (in1 - in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -1983,21 +1979,19 @@ namespace ILNumerics {
             return ret;
         }
         /// <summary>
-        /// Operator dividing the specified inputs.
+        /// Operator dividing a real by a complex.
         /// </summary>
-        /// <param name="in1">The divident.</param>
+        /// <param name="in1">The dividend.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( UInt16 in1,  complex in2) {
-            complex ret;
-            if (in2.real != 0.0 && in2.imag != 0.0) {
-                ret.real =  (double) (in1 / in2.real);
-                ret.imag =  (double) (in1 / in2.imag);
-                return ret;
-            } else {
-                return  complex.INF ;                 
-            }
-            
+            complex ret; 
+            if (in2.real == 0 || in2.imag == 0)
+                return  complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real =  (double) ((in1 * in2.real) / norm2);
+            ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
+            return ret;
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.
@@ -2067,7 +2061,7 @@ namespace ILNumerics {
         public static  complex operator +( Int64 in1,  complex in2) {
             complex ret; 
             ret.real =  (double) (in1 + in2.real);
-            ret.imag =  (double) (in1 + in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2079,7 +2073,7 @@ namespace ILNumerics {
         public static  complex operator -( Int64 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) (in1 - in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2095,21 +2089,19 @@ namespace ILNumerics {
             return ret;
         }
         /// <summary>
-        /// Operator dividing the specified inputs.
+        /// Operator dividing a real by a complex.
         /// </summary>
-        /// <param name="in1">The divident.</param>
+        /// <param name="in1">The dividend.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( Int64 in1,  complex in2) {
-            complex ret;
-            if (in2.real != 0.0 && in2.imag != 0.0) {
-                ret.real =  (double) (in1 / in2.real);
-                ret.imag =  (double) (in1 / in2.imag);
-                return ret;
-            } else {
-                return  complex.INF ;                 
-            }
-            
+            complex ret; 
+            if (in2.real == 0 || in2.imag == 0)
+                return  complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real =  (double) ((in1 * in2.real) / norm2);
+            ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
+            return ret;
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.
@@ -2179,7 +2171,7 @@ namespace ILNumerics {
         public static  complex operator +( Int32 in1,  complex in2) {
             complex ret; 
             ret.real =  (double) (in1 + in2.real);
-            ret.imag =  (double) (in1 + in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2191,7 +2183,7 @@ namespace ILNumerics {
         public static  complex operator -( Int32 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) (in1 - in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2207,21 +2199,19 @@ namespace ILNumerics {
             return ret;
         }
         /// <summary>
-        /// Operator dividing the specified inputs.
+        /// Operator dividing a real by a complex.
         /// </summary>
-        /// <param name="in1">The divident.</param>
+        /// <param name="in1">The dividend.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( Int32 in1,  complex in2) {
-            complex ret;
-            if (in2.real != 0.0 && in2.imag != 0.0) {
-                ret.real =  (double) (in1 / in2.real);
-                ret.imag =  (double) (in1 / in2.imag);
-                return ret;
-            } else {
-                return  complex.INF ;                 
-            }
-            
+            complex ret; 
+            if (in2.real == 0 || in2.imag == 0)
+                return  complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real =  (double) ((in1 * in2.real) / norm2);
+            ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
+            return ret;
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.
@@ -2291,7 +2281,7 @@ namespace ILNumerics {
         public static  complex operator +( Int16 in1,  complex in2) {
             complex ret; 
             ret.real =  (double) (in1 + in2.real);
-            ret.imag =  (double) (in1 + in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2303,7 +2293,7 @@ namespace ILNumerics {
         public static  complex operator -( Int16 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) (in1 - in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2319,21 +2309,19 @@ namespace ILNumerics {
             return ret;
         }
         /// <summary>
-        /// Operator dividing the specified inputs.
+        /// Operator dividing a real by a complex.
         /// </summary>
-        /// <param name="in1">The divident.</param>
+        /// <param name="in1">The dividend.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( Int16 in1,  complex in2) {
-            complex ret;
-            if (in2.real != 0.0 && in2.imag != 0.0) {
-                ret.real =  (double) (in1 / in2.real);
-                ret.imag =  (double) (in1 / in2.imag);
-                return ret;
-            } else {
-                return  complex.INF ;                 
-            }
-            
+            complex ret; 
+            if (in2.real == 0 || in2.imag == 0)
+                return  complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real =  (double) ((in1 * in2.real) / norm2);
+            ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
+            return ret;
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.
@@ -2403,7 +2391,7 @@ namespace ILNumerics {
         public static  complex operator +( float in1,  complex in2) {
             complex ret; 
             ret.real =  (double) (in1 + in2.real);
-            ret.imag =  (double) (in1 + in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2415,7 +2403,7 @@ namespace ILNumerics {
         public static  complex operator -( float in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) (in1 - in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2431,21 +2419,19 @@ namespace ILNumerics {
             return ret;
         }
         /// <summary>
-        /// Operator dividing the specified inputs.
+        /// Operator dividing a real by a complex.
         /// </summary>
-        /// <param name="in1">The divident.</param>
+        /// <param name="in1">The dividend.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( float in1,  complex in2) {
-            complex ret;
-            if (in2.real != 0.0 && in2.imag != 0.0) {
-                ret.real =  (double) (in1 / in2.real);
-                ret.imag =  (double) (in1 / in2.imag);
-                return ret;
-            } else {
-                return  complex.INF ;                 
-            }
-            
+            complex ret; 
+            if (in2.real == 0 || in2.imag == 0)
+                return  complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real =  (double) ((in1 * in2.real) / norm2);
+            ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
+            return ret;
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.
@@ -2515,7 +2501,7 @@ namespace ILNumerics {
         public static  complex operator +( char in1,  complex in2) {
             complex ret; 
             ret.real =  (double) (in1 + in2.real);
-            ret.imag =  (double) (in1 + in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2527,7 +2513,7 @@ namespace ILNumerics {
         public static  complex operator -( char in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) (in1 - in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2543,21 +2529,19 @@ namespace ILNumerics {
             return ret;
         }
         /// <summary>
-        /// Operator dividing the specified inputs.
+        /// Operator dividing a real by a complex.
         /// </summary>
-        /// <param name="in1">The divident.</param>
+        /// <param name="in1">The dividend.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( char in1,  complex in2) {
-            complex ret;
-            if (in2.real != 0.0 && in2.imag != 0.0) {
-                ret.real =  (double) (in1 / in2.real);
-                ret.imag =  (double) (in1 / in2.imag);
-                return ret;
-            } else {
-                return  complex.INF ;                 
-            }
-            
+            complex ret; 
+            if (in2.real == 0 || in2.imag == 0)
+                return  complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real =  (double) ((in1 * in2.real) / norm2);
+            ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
+            return ret;
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.
@@ -2627,7 +2611,7 @@ namespace ILNumerics {
         public static  complex operator +( byte in1,  complex in2) {
             complex ret; 
             ret.real =  (double) (in1 + in2.real);
-            ret.imag =  (double) (in1 + in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2639,7 +2623,7 @@ namespace ILNumerics {
         public static  complex operator -( byte in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) (in1 - in2.imag);
+            ret.imag =  (double) in2.imag;   // AB080630
             return ret;
         }
         /// <summary>
@@ -2655,21 +2639,19 @@ namespace ILNumerics {
             return ret;
         }
         /// <summary>
-        /// Operator dividing the specified inputs.
+        /// Operator dividing a real by a complex.
         /// </summary>
-        /// <param name="in1">The divident.</param>
+        /// <param name="in1">The dividend.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( byte in1,  complex in2) {
-            complex ret;
-            if (in2.real != 0.0 && in2.imag != 0.0) {
-                ret.real =  (double) (in1 / in2.real);
-                ret.imag =  (double) (in1 / in2.imag);
-                return ret;
-            } else {
-                return  complex.INF ;                 
-            }
-            
+            complex ret; 
+            if (in2.real == 0 || in2.imag == 0)
+                return  complex.INF ;
+            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            ret.real =  (double) ((in1 * in2.real) / norm2);
+            ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
+            return ret;
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.

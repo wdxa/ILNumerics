@@ -38,8 +38,11 @@ using OpenTK.Platform;
 using OpenTK.Graphics.OpenGL.Enums;
 using ILNumerics.Drawing.Graphs; 
 
-namespace ILNumerics.Drawing.Internal
+namespace ILNumerics.Drawing.Platform.OpenGL
 {
+    /// <summary>
+    /// OpenGL implementation for ILPlot2DGraph
+    /// </summary>
     public class ILOGLPlot2DGraph : ILPlot2DGraph {
 
         #region attributes 
@@ -131,7 +134,7 @@ namespace ILNumerics.Drawing.Internal
                             System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Alpha, 
                             marker.Size.Width, marker.Size.Height, 0,
-                            OpenTK.Graphics.OpenGL.PixelFormat.Rgba, 
+                            OpenTK.Graphics.PixelFormat.Rgba, 
                             PixelType.UnsignedByte, (IntPtr)markerData.Scan0);
             marker.UnlockBits(markerData); 
             //unsafe {

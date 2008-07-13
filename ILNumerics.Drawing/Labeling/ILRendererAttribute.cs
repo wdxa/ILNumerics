@@ -27,20 +27,48 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ILNumerics.Drawing.TextRenderer {
-    public class ILTextRendererAttribute : Attribute {
+namespace ILNumerics.Drawing.Labeling {
+    /// <summary>
+    /// attribute used to identify IILRenderer types within assemblies 
+    /// </summary>
+    public class ILRendererAttribute : Attribute {
+        /// <summary>
+        /// the type of graphic device, the renderer is able to handle
+        /// </summary>
         public readonly GraphicDeviceType GraphicDeviceType; 
+        /// <summary>
+        /// short name describing the renderer
+        /// </summary>
         public readonly string Name; 
+        /// <summary>
+        /// long name describing the renderer
+        /// </summary>
         public readonly string NameLong; 
+        /// <summary>
+        /// determine, if this renderer should be used as default renderer for the graphic device
+        /// </summary>
         public readonly bool IsDefault; 
 
-        public ILTextRendererAttribute(GraphicDeviceType type, string Name, string NameLong) {
+        /// <summary>
+        /// Constructor for a new attribute describing non-default renderer
+        /// </summary>
+        /// <param name="type">graphic device type </param>
+        /// <param name="Name">short name</param>
+        /// <param name="NameLong">long name</param>
+        public ILRendererAttribute(GraphicDeviceType type, string Name, string NameLong) {
             this.GraphicDeviceType = type; 
             this.Name = Name; 
             this.NameLong = NameLong; 
             this.IsDefault = false; 
         }
-        public ILTextRendererAttribute(GraphicDeviceType type, string Name, string NameLong, bool Default) {
+        /// <summary>
+        /// Constructor creating a new renderer attribute
+        /// </summary>
+        /// <param name="type">graphic device type </param>
+        /// <param name="Name">short name</param>
+        /// <param name="NameLong">long name</param>
+        /// <param name="Default">'default' flag</param>
+        public ILRendererAttribute(GraphicDeviceType type, string Name, string NameLong, bool Default) {
             this.GraphicDeviceType = type; 
             this.Name = Name; 
             this.NameLong = NameLong; 

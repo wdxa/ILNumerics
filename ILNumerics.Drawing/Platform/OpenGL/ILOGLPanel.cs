@@ -35,6 +35,7 @@ using ILNumerics.Exceptions;
 using ILNumerics.Drawing.Controls;
 using ILNumerics.BuiltInFunctions; 
 using ILNumerics.Drawing.Graphs; 
+using ILNumerics.Drawing.Platform.OpenGL; 
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Graphics.OpenGL.Enums;
 using OpenTK.Graphics;
@@ -42,8 +43,10 @@ using OpenTK.Platform;
 using OpenTK; 
 using OpenTK.Math; 
  
-namespace ILNumerics.Drawing.Internal {
-
+namespace ILNumerics.Drawing.Platform.OpenGL {
+    /// <summary>
+    /// OpenGL implementation for ILPanel
+    /// </summary>
     public partial class ILOGLPanel : ILPanel {
 
         #region members / properties 
@@ -60,7 +63,7 @@ namespace ILNumerics.Drawing.Internal {
         int m_errorCount = 0; 
         private readonly int MAXERRORLOGCOUNT = 100; 
         /// <summary>
-        /// Gets an interface to the underlying GLContext used by this GLControl.
+        /// Gets an interface to the underlying GraphicsContext used by this GLControl.
         /// </summary>
         public override object GetDeviceContext() {
             return m_context; 
@@ -190,11 +193,14 @@ namespace ILNumerics.Drawing.Internal {
         /// </summary>
         /// <param name="g"></param>
         protected override void RenderScene(Graphics g) {
-            // creates layoutDate object, calls UpdateMatrices() 
+            MakeCurrent(); 
+            // update layoutData object, call UpdateMatrices() 
             base.RenderScene(g); 
             if (m_context == null || (!m_active && !m_drawHidden))
                 return;
             try {
+                System.Diagnostics.Debug.WriteLine(String.Format("ILOGLPanel{0}: RenderScene, Thread={1}"
+                        ,this.GetHashCode(), System.Threading.Thread.CurrentThread.GetHashCode())); 
                 // draw background
                 GL.ClearColor(m_backColor);
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -297,7 +303,38 @@ namespace ILNumerics.Drawing.Internal {
                     drawSelectionRect(PointToClient(MousePosition));
                 //GL.Finish();
                 // update model matrix (to be avilable for zooming etc.)
-                GL.GetDouble(GetPName.ModelviewMatrix,m_modelViewMatrix); 
+                GL.GetDouble(GetPName.ModelviewMatrix,m_modelViewMatrix);
+
+                #region DEBUG texture drawing
+#if DRAWTEXTURESHEET1
+                // prepare GL
+                float[] viewport = new float[4]; 
+                GL.GetFloat(GetPName.Viewport, viewport);
+                GL.MatrixMode(MatrixMode.Projection);
+                GL.PushMatrix();     
+                GL.LoadIdentity();
+                GL.Ortho(viewport[0], viewport[2], viewport[3], viewport[1], -1.0, 1.0);
+                GL.MatrixMode(MatrixMode.Modelview);
+                GL.PushMatrix();
+                GL.LoadIdentity();
+                GL.PushAttrib(AttribMask.TextureBit | AttribMask.EnableBit | AttribMask.ColorBufferBit);
+                GL.Enable(EnableCap.Texture2D);
+                GL.Enable(EnableCap.Blend);
+                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+                GL.Disable(EnableCap.DepthTest);
+                // draw one large quad with whole texture sheet
+                GL.Begin(BeginMode.Quads); 
+                GL.TexCoord2(0,1);   
+                GL.Vertex2(0,ClientSize.Height);      // ul
+                GL.TexCoord2(0,0); 
+                GL.Vertex2(0,0);                    // bl
+                GL.TexCoord2(1,0); 
+                GL.Vertex2(ClientSize.Width,0);                    // br
+                GL.TexCoord2(1,1); 
+                GL.Vertex2(ClientSize.Width,ClientSize.Height);      // tr
+                GL.End();
+#endif
+                #endregion
 
                 SwapBuffers();
                 m_axes.XAxis.RenderState3(g);

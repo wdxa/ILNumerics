@@ -28,20 +28,35 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing; 
 using OpenTK; 
+using OpenTK.Graphics; 
 using OpenTK.Graphics.OpenGL; 
 using OpenTK.Graphics.OpenGL.Enums; 
 using ILNumerics.Drawing.Controls; 
 using ILNumerics.Drawing.Interfaces; 
+using ILNumerics.Drawing.Labeling; 
 
-
-namespace ILNumerics.Drawing.Internal {
+namespace ILNumerics.Drawing.Platform.OpenGL {
+    /// <summary>
+    /// OpenGL implementation of ILAxis (X axis)
+    /// </summary>
     class ILOGLZAxis : ILOGLAxis {
         
+        /// <summary>
+        /// Constructor - this class should be created only from within ILNumerics assemblies! 
+        /// </summary>
+        /// <param name="clippingView">panels clipping view</param>
+        /// <param name="layout">instance with layout informations</param>
+        /// <param name="panel">the panel containing the axis</param>
         internal ILOGLZAxis (ILClippingData clippingView,
                             ILLayoutData layout,
                             ILOGLPanel panel)
             : base (AxisNames.ZAxis,clippingView,layout,panel) { }
 
+        /// <summary>
+        /// draw all lines for the axis 
+        /// </summary>
+        /// <param name="g">graphics object (ignored)</param>
+        /// <param name="background">true: draw lines in the back only, false: draw foreground lines</param>
         protected override void iDrawAxis(Graphics g, bool background) {
             // create vertex data: main axis and ticks 
             if (!m_visible) return;  
@@ -156,6 +171,9 @@ namespace ILNumerics.Drawing.Internal {
                 drawGrid();
         }
 
+        /// <summary>
+        /// draw all grid lines for axis
+        /// </summary>
         protected override void drawGrid() {
             float x1,y1,z;
             float x2,y2,x3,y3;  
@@ -208,8 +226,6 @@ namespace ILNumerics.Drawing.Internal {
             }            
             GL.End(); 
         }
-
-
 
     }
 }

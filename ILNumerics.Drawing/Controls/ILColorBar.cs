@@ -30,7 +30,9 @@ using System.Drawing.Drawing2D;
 using System.Drawing; 
 using System.Windows.Forms; 
 using System.Resources; 
+using ILNumerics.Drawing.Labeling; 
 using ILNumerics.Drawing.Internal; 
+
 
 namespace ILNumerics.Drawing.Controls {
     public class ILColorBar : ILMovingDockPanel {
@@ -148,8 +150,8 @@ namespace ILNumerics.Drawing.Controls {
             } else {
                 tickCount = (int)Math.Floor((double)(drawSpace.Width - labsize.Width) / (labsize.Width + m_tickLabelsPadding));
             }
-            List<LabeledTick> labels = 
-                Collections.ILTickCollection.NiceLabels(m_minValue,m_maxValue,tickCount,format,TickLabelRenderingHint.Auto); 
+            List<float> labels = 
+                Collections.ILTickCollection.NiceLabels(m_minValue,m_maxValue,tickCount,TickLabelRenderingHint.Auto); 
             tickCount = labels.Count; 
             // draw labels
             RectangleF dR; List<int> tickPositions = new List<int>(tickCount); 
@@ -161,12 +163,12 @@ namespace ILNumerics.Drawing.Controls {
                 // draw all values in between
                 float offsY = drawSpace.Top + drawSpace.Height;
                 float mult = (drawSpace.Height) / (m_maxValue - m_minValue);
-                foreach (LabeledTick curVal in labels) {
+                foreach (float curVal in labels) {
                     // translate into screen coords
-                    dR.Y = (int)(offsY - (curVal.Position - m_minValue) * mult); 
+                    dR.Y = (int)(offsY - (curVal - m_minValue) * mult); 
                     tickPositions.Add((int)dR.Y);
                     dR.Y -= (labsize.Height/2);
-                    e.Graphics.DrawString(curVal.Position.ToString(format),Font,br,dR,sf);
+                    e.Graphics.DrawString(curVal.ToString(format),Font,br,dR,sf);
                 }
                 // prepare remaining space for gradient scale
                 drawSpace.X += (int)(labsize.Width + 2 * m_tickLabelsPadding); 
@@ -186,14 +188,14 @@ namespace ILNumerics.Drawing.Controls {
                 sf.Alignment = StringAlignment.Center;
                 // draw all values in between
                 float mult = (drawSpace.Width) / (m_maxValue - m_minValue);
-                foreach (LabeledTick curVal in labels) { // = ls; curVal <= m_maxValue - m/2; curVal = (float) (curVal + m)) {
+                foreach (float curVal in labels) { // = ls; curVal <= m_maxValue - m/2; curVal = (float) (curVal + m)) {
                     // translate into screen coords
-                    dR.X = (int)((curVal.Position - m_minValue) * mult); 
+                    dR.X = (int)((curVal - m_minValue) * mult); 
                     if (dR.X < drawSpace.Left + labsize.Width) continue; 
                     if (dR.X > drawSpace.Left + drawSpace.Width - labsize.Width) continue; 
                     tickPositions.Add((int)dR.X); 
                     dR.X -= (labsize.Width/2);
-                    e.Graphics.DrawString(curVal.Position.ToString(format),Font,br,dR,sf);
+                    e.Graphics.DrawString(curVal.ToString(format),Font,br,dR,sf);
                 }
                 // prep. rem. space for gradient scale
                 drawSpace.Y += (int)(labsize.Height + 2 * m_tickLabelsPadding); 

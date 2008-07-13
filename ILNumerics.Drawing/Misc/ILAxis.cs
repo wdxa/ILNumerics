@@ -30,9 +30,8 @@ using System.Drawing;
 using ILNumerics.Drawing.Interfaces; 
 using ILNumerics.Exceptions; 
 using ILNumerics.Drawing.Collections; 
-using ILNumerics.Drawing.Internal; 
-
-
+using ILNumerics.Drawing.Labeling; 
+using ILNumerics.Drawing.Controls; 
 
 namespace ILNumerics.Drawing {
     /// <summary>
@@ -40,9 +39,7 @@ namespace ILNumerics.Drawing {
     /// </summary>
     public abstract class ILAxis : IDisposable {
 
-        public delegate List<LabeledTick> ILLabeledTickProvider (float min, float max, int maxCount, string format);  
-
-        #region members / properties
+        #region attributes
         
         public event EventHandler Changed; 
         protected ILTickCollection m_labeledTicks; 
@@ -58,11 +55,20 @@ namespace ILNumerics.Drawing {
         protected bool m_invalidated = true; 
         protected ILLayoutData m_layoutData; 
         private ILLabeledTickProvider m_labelProvider; 
+        #endregion 
 
+        #region properties
         /// <summary>
-        /// Used to specify the delegate used to find nice labels for axis
+        /// Used to retrieve/specify the delegate computing nice labels for axis
         /// </summary>
+        /// <remarks>One can replace the default tick provider by a user 
+        /// defined labeled tick computation function. Therefore simply set this property to
+        /// your own ILLabeledTickProvider function.
+        /// </remarks>
         public ILLabeledTickProvider LabeledTickProvider {
+            get {
+                return m_labelProvider; 
+            }
             set {
                 if (value == null) return; 
                 m_labelProvider = value; 
@@ -80,7 +86,6 @@ namespace ILNumerics.Drawing {
                 OnChange();
             }
         }
-
         /// <summary>
         /// get properties for near axis lines (opposite label side) or sets it
         /// </summary>
@@ -129,32 +134,47 @@ namespace ILNumerics.Drawing {
                 OnChange(); 
             }
         }
+        /// <summary>
+        /// Gives access to the collection of labeled ticks
+        /// </summary>
         public ILTickCollection LabeledTicks {
            get { 
                return m_labeledTicks; 
            }
         }
+        /// <summary>
+        /// access to the collection of unlabeled ticks (not used)
+        /// </summary>
         public ICollection<UnlabeledTick> UnlabeledTicks {
             get {
                 return m_unLabeledTicks; 
             }
         }
+        /// <summary>
+        /// access to a specific axis by number 
+        /// </summary>
         public int Index {
             get {
                 return (int)m_axisName;
             }
         }
+        /// <summary>
+        /// access grid lines properties 
+        /// </summary>
         public ILLineProperties Grid {
             get {
                 return m_grid;
             }
         }
+        /// <summary>
+        /// access axis limits 
+        /// </summary>
         public ILClippingData Limits {
             get {
                 return m_clipping; 
             }
         }
-        
+
         #endregion
 
         #region Event handling
@@ -196,9 +216,9 @@ namespace ILNumerics.Drawing {
         /// member ILPanel.CreateAxis(). This acts like a factory pattern. The specific axis derivate will be 
         /// created by the derived ILPanel object (ILDXPanel or ILOGLPanel).</remarks>
         public ILAxis (AxisNames name, ILClippingData clippingView,
-                       ILLayoutData layoutData) {
+                       ILLayoutData layoutData,ILPanel panel) {
             m_axisName = name; 
-            m_labeledTicks = new ILTickCollection(m_axisName);
+            m_labeledTicks = new ILTickCollection(panel,m_axisName);
             m_layoutData = layoutData; 
             m_labelProvider = null; 
             m_labeledTicks.Changed += new AxisChangedEventHandler(m_labeledTicks_Changed);
@@ -218,22 +238,11 @@ namespace ILNumerics.Drawing {
             m_farLines.Width = 1; 
             m_farLines.Antialiasing = true; 
             m_farLines.Changed +=new EventHandler(m_grid_Changed);
-            m_label = new ILAxisLabel();
+            m_label = new ILAxisLabel(panel);
             m_label.Changed += new EventHandler(m_label_Changed);
             m_clipping.Changed += new ILClippingDataChangedEvent(m_clipping_Changed);
-            // default labels: 0
-            m_labeledTicks.Add(new LabeledTick(0.0f,"0.0"));
             m_invalidated = true; 
         }
-
-        public virtual void Dispose() {
-            if (m_labeledTicks != null) 
-                m_labeledTicks.Dispose(); 
-            if (m_label != null) {
-                m_label.Dispose(); 
-            }
-        }
-
         #endregion
 
         #region abstract interface 
@@ -253,9 +262,14 @@ namespace ILNumerics.Drawing {
         /// graphics devices (like D3D) may block rendering surface exclusively.</param>
         /// <remarks>When this function is called, depends on the DrawAfterBufferSwaped setting 
         /// of the current TextRenderer.</remarks>
-        protected abstract void iDrawLabel(Graphics g); 
+        protected virtual void iDrawLabel(Graphics g) {
+            m_label.Draw(g);
+        }
 
-        protected abstract void iDrawTickLabels(Graphics g); 
+        protected virtual void iDrawTickLabels(Graphics g) {
+            if (m_visible)
+                m_labeledTicks.Draw(g,m_clipping.Min[Index],m_clipping.Max[Index]); 
+        }
         /// <summary>
         /// Do all rendering for the grid of the axis
         /// </summary>
@@ -269,9 +283,9 @@ namespace ILNumerics.Drawing {
         public virtual void RenderState1(Graphics g) {
             if (m_invalidated) 
                 Configure(g); 
-            if (!m_labeledTicks.TextRenderer.DrawAfterBufferSwapped)
+            if (!m_labeledTicks.Renderer.DrawAfterBufferSwapped)
                 iDrawTickLabels(g); 
-            if (!m_label.TextRenderer.DrawAfterBufferSwapped) 
+            if (!m_label.Renderer.DrawAfterBufferSwapped) 
                 iDrawLabel(g); 
             iDrawAxis(g,true); 
         } 
@@ -289,9 +303,9 @@ namespace ILNumerics.Drawing {
         /// </summary>
         /// <param name="g"></param>
         public virtual void RenderState3(Graphics g) {
-            if (m_labeledTicks.TextRenderer.DrawAfterBufferSwapped)
+            if (m_labeledTicks.Renderer.DrawAfterBufferSwapped)
                 iDrawTickLabels(g); 
-            if (m_label.TextRenderer.DrawAfterBufferSwapped) 
+            if (m_label.Renderer.DrawAfterBufferSwapped) 
                 iDrawLabel(g); 
         }
  
@@ -305,7 +319,7 @@ namespace ILNumerics.Drawing {
                 if (m_labelProvider != null) {
                     string format = String.Format("g{0}",m_labeledTicks.Precision); 
                     m_labeledTicks.Replace(
-                        m_labelProvider(m_clipping.Min[Index],m_clipping.Max[Index],tickCount,format));
+                        m_labelProvider(m_clipping.Min[Index],m_clipping.Max[Index],tickCount));
                 } else {
                     m_labeledTicks.CreateAuto(m_clipping.Min[Index],m_clipping.Max[Index],tickCount);
                 }
@@ -331,8 +345,7 @@ namespace ILNumerics.Drawing {
         /// <returns>optimal number of ticks for this axis</returns>
         internal int GetOptimalTickNumber(Graphics g) {
             System.Diagnostics.Debug.Assert(m_labeledTicks.Mode == TickMode.Auto); 
-            string measString = String.Format(".-e08" + new String('0',m_labeledTicks.Precision)); 
-            Size rect = m_labeledTicks.TextRenderer.MeasureText(measString,g); 
+            SizeF rect = m_labeledTicks.Size; 
             Point s = new Point(),e = new Point();
             s = m_labeledTicks.m_lineStart; 
             e = m_labeledTicks.m_lineEnd; 
@@ -356,6 +369,18 @@ namespace ILNumerics.Drawing {
         public virtual void Invalidate() {
             m_invalidated = true; 
         }
+
+        /// <summary>
+        /// dispose off this axis' elements
+        /// </summary>
+        public virtual void Dispose() {
+            if (m_labeledTicks != null) 
+                m_labeledTicks.Dispose(); 
+            if (m_label != null) {
+                m_label.Dispose(); 
+            }
+        }
+
         #endregion
 
         #region private helper 

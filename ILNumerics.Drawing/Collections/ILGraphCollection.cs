@@ -33,8 +33,6 @@ using ILNumerics.Drawing.Interfaces;
 using ILNumerics.Drawing.Graphs; 
 
 namespace ILNumerics.Drawing.Collections {
-    
-    
     /// <summary>
     /// Collection of graph objects - all graphs currently contained in a subfigure
     /// </summary>
@@ -99,6 +97,9 @@ namespace ILNumerics.Drawing.Collections {
         #endregion
 
         #region Collection manager
+        /// <summary>
+        /// clear all graphs from the collection
+        /// </summary>
         public new void Clear() {
             lock (this) {
                 foreach (ILGraph g in this) {
@@ -239,9 +240,17 @@ namespace ILNumerics.Drawing.Collections {
         /// <summary>
         /// Add new graph(s) of arbitrary type, provide both axis data
         /// </summary>
-        /// <param name="xData">data to be plotted</param>
-        /// <param name="properties">determine GraphType</param>
+        /// <param name="xData">x coordinates </param>
+        /// <param name="graphType">type of graph to be added</param>
+        /// <param name="yData">y coordinates</param>
         /// <returns>List with newly created graph(s)</returns>
+        /// <remarks>The return value will be a list of all graphs created (and added),
+        /// since more than one graph may have been specified. This depends on the 
+        /// shape of the data provided.
+        /// <para>Currently only Plot2D graphs are supported as GraphType! </para></remarks>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if the data provided are nor 
+        /// numeric or the size for one of the arrays <typeparamref name="xData"/> or <typeparamref name="yData"/> 
+        /// do not match. </exception>
         public List<ILGraph> Add (ILBaseArray xData, ILBaseArray yData, GraphType graphType) {
             if (!yData.IsNumeric || !xData.IsNumeric) 
                 throw new ILArgumentException("Add graph: data arrays must be numeric!");
@@ -284,7 +293,6 @@ namespace ILNumerics.Drawing.Collections {
             }
             return ret; 
         }
-
         /// <summary>
         /// Remove a graph from the collection and rescale data limits
         /// </summary>

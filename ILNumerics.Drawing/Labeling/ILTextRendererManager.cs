@@ -32,90 +32,90 @@ using ILNumerics.Exceptions;
 using ILNumerics.Drawing.Controls; 
 
 
-namespace ILNumerics.Drawing.TextRenderer {
+namespace ILNumerics.Drawing.Labeling {
     /// <summary>
-    /// Provides access to all (device dependent) TextRenderer available for plotting
+    /// Provides access to all (device dependent) ILRenderer available 
     /// </summary>
-    public class ILTextRendererManager {
+    public class ILRendererManager {
 
         #region members / properties 
         
-        Dictionary<string,string> m_textRendererCollection; 
+        Dictionary<string,string> m_rendererCollection; 
         GraphicDeviceType m_graphicsDevice;
         string m_defaultRenderer; 
-        object m_glContext; 
+        ILPanel m_panel; 
         #endregion 
         
         #region constructor
         /// <summary>
         /// create manager instance, device dependent
         /// </summary>
-        /// <param name="type">graphics device, only TextRenderer mathing this device will be available</param>
+        /// <param name="type">graphics device, only Renderer mathing this device will be available</param>
         /// <remarks>While creating ILTextRendereManager instances, the executing assembly will be queried for 
-        /// available classes matching the device. Corresponding types are than provided by calling the GetTextRenderer() method.</remarks>
-        public ILTextRendererManager (ILPanel panel, object gContext) 
+        /// available classes matching the device. Corresponding types are than provided by calling the GetRenderer() method.</remarks>
+        public ILRendererManager (ILPanel panel, object gContext) 
             : this(panel,gContext,new Assembly[] { Assembly.GetExecutingAssembly()} ) {
         }
         /// <summary>
         /// create manager instance, device dependent
         /// </summary>
-        /// <param name="graphicsdevice">graphics device, only TextRenderer mathing this device will be available</param>
-        /// <param name="assemblies">assemblies to query for matching TextRenderer types</param>
-        /// <remarks>While creating ILTextRendererManager instances, the given assemblies will be queried for 
+        /// <param name="graphicsdevice">graphics device, only ILRenderer mathing this device will be available</param>
+        /// <param name="assemblies">assemblies to query for matching ILRenderer types</param>
+        /// <remarks>While creating ILRendererManager instances, the given assemblies will be queried for 
         /// available classes matching the device. Corresponding types are than provided by calling the 
-        /// GetTextRenderer() method.</remarks>
-        public ILTextRendererManager (ILPanel panel, object gContext, Assembly[] assemblies) {
+        /// GetRenderer() method.</remarks>
+        public ILRendererManager (ILPanel panel, object gContext, Assembly[] assemblies) {
             m_graphicsDevice = panel.GraphicDeviceType; 
-            m_glContext = gContext; 
-            m_textRendererCollection = new Dictionary<string,string>();
+            m_panel = panel; 
+            m_rendererCollection = new Dictionary<string,string>();
             foreach (Assembly ass in assemblies) {
                 AddAssemblyTypes(ass); 
             }
-            if (m_textRendererCollection.Count == 0) 
-                throw new InvalidOperationException("No valid TextRenderer found!"); 
+            if (m_rendererCollection.Count == 0) 
+                throw new InvalidOperationException("No valid ILRenderer found!"); 
         }
         #endregion
 
         #region public interface 
 
         /// <summary>
-        /// Create a new TextRenderer instance, matching the current graphics device
+        /// Create a new ILRenderer instance, matching the current graphics device
         /// </summary>
         /// <param name="typeName">full class name of the new text renderer</param>
         /// <param name="assembly">assembly hosting the textrenderer, null for executing assembly</param>
-        /// <returns>newly created TextRenderer instance from assembly</returns>
-        public IILTextRenderer CreateInstance (string typeName, Assembly assembly) {
+        /// <returns>newly created ILRenderer instance from assembly</returns>
+        public IILRenderer CreateInstance (string typeName, Assembly assembly) {
             if (typeName == null) 
-                throw new ILArgumentException ("The type must be a valid TextRenderer!"); 
+                throw new ILArgumentException ("The type must be a valid ILRenderer!"); 
             if (assembly == null) 
                 assembly = Assembly.GetExecutingAssembly(); 
             Type type = assembly.GetType(typeName); 
-            if (type == null  || type.GetInterface("IILTextRenderer") == null)
+            if (type == null  || type.GetInterface("IILRenderer") == null)
                 throw new ILArgumentException (String.Format(
-                            "The type '{0}' was not found in assembly {1} or is not a valid TextRenderer!"
+                            "The type '{0}' was not found in assembly {1} or is not a valid ILRenderer!"
                             ,typeName,assembly)); 
-            if (!m_textRendererCollection.ContainsKey(typeName))
-                throw new ILArgumentException ("The type is not a valid TextRenderer!"); 
-            return (IILTextRenderer)type.InvokeMember(
+            if (!m_rendererCollection.ContainsKey(typeName))
+                throw new ILArgumentException ("The type is not a valid ILRenderer!"); 
+            return (IILRenderer)type.InvokeMember(
                 typeName, BindingFlags.DeclaredOnly | 
                           BindingFlags.Public | BindingFlags.NonPublic | 
                           BindingFlags.Instance | BindingFlags.CreateInstance, null, null, 
-                          new object[] {m_glContext,null});
+                          new object[] {m_panel});
         }
         /// <summary>
-        /// Create the default instance of ILTextRenderer for this graphics device
+        /// Create the default instance of IILRenderer for this graphics device
         /// </summary>
-        /// <returns>default ILTextRenderer object</returns>
-        public IILTextRenderer GetDefault() {
+        /// <returns>default ILRenderer object</returns>
+        public IILRenderer GetDefault() {
             return CreateInstance(m_defaultRenderer,null);         
         }
         /// <summary>
-        /// Get a collection of all TextRenderer types and corresponding displayNames available
+        /// Get a collection of all IILRenderer types and corresponding displayNames available
         /// </summary>
         public IDictionary<string,string> RendererNames {
             get {
                 IDictionary<string,string> ret = new Dictionary<string,string>(); 
-                foreach (KeyValuePair<string,string> v in m_textRendererCollection) {
+                foreach (KeyValuePair<string,string> v in m_rendererCollection) {
                     ret.Add(v); 
                 }
                 return ret; 
@@ -130,15 +130,15 @@ namespace ILNumerics.Drawing.TextRenderer {
                 Type[] types = assembly.GetTypes(); 
                 foreach (Type t in types) {
                     foreach (object att in t.GetCustomAttributes(false)) {
-                        if (att is ILTextRendererAttribute) {
-                            ILTextRendererAttribute trAttr = (ILTextRendererAttribute)att; 
+                        if (att is ILRendererAttribute) {
+                            ILRendererAttribute trAttr = (ILRendererAttribute)att; 
                             if (trAttr.GraphicDeviceType == m_graphicsDevice ||
                                 trAttr.GraphicDeviceType == GraphicDeviceType.GDI) {
-                                if (t.GetInterface("IILTextRenderer") == null)
+                                if (t.GetInterface("IILRenderer") == null)
                                     continue; 
-                                if (m_textRendererCollection.ContainsKey(t.FullName)) 
-                                    throw new InvalidOperationException(String.Format("multiple types for TextRenderer found! The type {0} is already loaded.",t.FullName)); 
-                                m_textRendererCollection.Add(t.FullName,trAttr.Name); 
+                                if (m_rendererCollection.ContainsKey(t.FullName)) 
+                                    throw new InvalidOperationException(String.Format("multiple types for IILRenderer found! The type {0} is already loaded.",t.FullName)); 
+                                m_rendererCollection.Add(t.FullName,trAttr.Name); 
                                 if (trAttr.IsDefault || m_defaultRenderer == null) 
                                     m_defaultRenderer = t.FullName; 
                                 break; 
@@ -147,7 +147,7 @@ namespace ILNumerics.Drawing.TextRenderer {
                     }
                 }
             } catch (Exception e) {
-                m_textRendererCollection.Add("ILNumerics.Drawing.TextRenderer.ILGDIRenderer","GDI Renderer"); 
+                m_rendererCollection.Add("ILNumerics.Drawing.Labeling.ILGDIRenderer","GDI Renderer"); 
                 m_defaultRenderer = "GDI Renderer"; 
             }
         }

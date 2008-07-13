@@ -37,7 +37,7 @@ using ILNumerics.Drawing.Collections;
 
 namespace ILNumerics.Drawing.Controls {
     /// <summary>
-    /// Main ILNumerics.Net figure control - capable of displaying subfigures.
+    /// Main ILNumerics.Net figure control - capable of displaying multiple subfigures.
     /// </summary>
     [Serializable]
     public partial class ILControl : UserControl, ISerializable {
@@ -113,7 +113,7 @@ namespace ILNumerics.Drawing.Controls {
                 m_subfigures.Add(m_subfigures.Count,new ILSubfigure()); //m_subfigures.Count+1).ToString())); 
             }
             // reduce if nesseccary
-            m_subfigures.Reduce(columns * rows); 
+            m_subfigures.Purge(columns * rows); 
             // rebuilt table layout
             m_tableLayout.Controls.Clear(); 
             Dictionary<int,ILSubfigure>.KeyCollection.Enumerator keys = m_subfigures.Keys.GetEnumerator(); 
@@ -183,7 +183,7 @@ namespace ILNumerics.Drawing.Controls {
             System.Drawing.Size isize = new System.Drawing.Size(
                                         ClientSize.Width / m_cols - Padding.Left - Padding.Right, 
                                         ClientSize.Height / m_rows - Padding.Top - Padding.Bottom); 
-            foreach (ILSubfigure fig in m_subfigures.FigureValues) {
+            foreach (ILSubfigure fig in m_subfigures.Figures) {
                 fig.Size = isize-Padding.Size; 
             }
         }

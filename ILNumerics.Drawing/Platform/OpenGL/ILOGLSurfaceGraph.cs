@@ -35,15 +35,21 @@ using ILNumerics.Drawing.Controls;
 using System.Resources; 
 using OpenTK; 
 using OpenTK.Graphics.OpenGL; 
+using OpenTK.Graphics; 
 using OpenTK.Graphics.OpenGL.Enums; 
 using ILNumerics.Drawing.Graphs; 
-using VERTEXTYPEDEF = ILNumerics.Drawing.Internal.ILOGLSurfaceGraph.VertexC4N3V3; 
-namespace ILNumerics.Drawing.Internal
+using ILNumerics.Drawing.Platform.OpenGL; 
+using ILNumerics.Drawing.Internal; 
+using VERTEXTYPEDEF = ILNumerics.Drawing.Platform.OpenGL.ILOGLSurfaceGraph.VertexC4N3V3; 
+
+namespace ILNumerics.Drawing.Platform.OpenGL
 {
+    /// <summary>
+    /// OpenGL implementation for ILSurfaceGraph
+    /// </summary>
     public class ILOGLSurfaceGraph : ILSurfaceGraph {
         
-        #region members / properties
-
+        #region attributes
         protected float[] m_vertices;
         protected ShadingStyles m_oldShading; 
         #endregion
@@ -213,22 +219,28 @@ namespace ILNumerics.Drawing.Internal
         #endregion
 
         #region abstract interface
+        /// <summary>
+        /// Dispose off this graph's vertices
+        /// </summary>
         public override void Dispose() {
             base.Dispose(); 
             if (m_vertices != null) {
                 Misc.ILMemoryPool.Pool.RegisterObject<float>(m_vertices); 
             }
         }
+        /// <summary>
+        /// Draw the graph
+        /// </summary>
         public override void Draw() {
             base.Draw(); 
-            GL.BlendFunc (OpenTK.Graphics.OpenGL.BlendingFactorSrc.SrcAlpha,
-                          OpenTK.Graphics.OpenGL.BlendingFactorDest.OneMinusSrcAlpha);            
+            GL.BlendFunc (BlendingFactorSrc.SrcAlpha,
+                          BlendingFactorDest.OneMinusSrcAlpha);            
             ILLineProperties wireprops = m_wireLines;
             ILOGLPanel.SetupLineStyle(wireprops);
             unsafe {
                 fixed (float* pVertices = m_vertices) {
                     // populate vertex array to GL
-                    GL.InterleavedArrays(OpenTK.Graphics.OpenGL.InterleavedArrayFormat.C4fN3fV3f
+                    GL.InterleavedArrays(InterleavedArrayFormat.C4fN3fV3f
                                          ,0,(IntPtr)pVertices); 
                     if (m_opacity == 1.0f && m_shading == ShadingStyles.Interpolate) {
                         #region no transpareny
@@ -239,8 +251,8 @@ namespace ILNumerics.Drawing.Internal
                             UInt32* pGridIndWalk = pGridIndices; 
                             // first surface strip
                             if (m_filled) {
-                                GL.DrawElements(OpenTK.Graphics.OpenGL.BeginMode.TriangleStrip,m_stripesLen,
-                                                OpenTK.Graphics.OpenGL.DrawElementsType.UnsignedInt,
+                                GL.DrawElements(BeginMode.TriangleStrip,m_stripesLen,
+                                                DrawElementsType.UnsignedInt,
                                                 (IntPtr)pIndices);
                             }    
                             // first grid strip
@@ -250,9 +262,9 @@ namespace ILNumerics.Drawing.Internal
                                     GL.DisableClientState(EnableCap.ColorArray);
                                     //GL.Color3(wireprops.ForeColor); // color for grid lines  
                                 }
-                                GL.DrawElements(OpenTK.Graphics.OpenGL.BeginMode.Lines,
+                                GL.DrawElements(BeginMode.Lines,
                                             m_gridStripsLen + m_gridStripsLenOnce, // 2*(m_cols-1),
-                                            OpenTK.Graphics.OpenGL.DrawElementsType.UnsignedInt,
+                                            DrawElementsType.UnsignedInt,
                                             (IntPtr)pGridIndWalk);
                                 pGridIndWalk += (m_gridStripsLen + m_gridStripsLenOnce); 
                                 if (!wireprops.Color.IsEmpty) {
@@ -262,9 +274,9 @@ namespace ILNumerics.Drawing.Internal
                             for (int i = 1; i < m_stripesCount; i++) {
                                 // subsequent surface strips
                                 if (m_filled) {
-                                    GL.DrawElements(OpenTK.Graphics.OpenGL.BeginMode.TriangleStrip,
+                                    GL.DrawElements(BeginMode.TriangleStrip,
                                                     m_stripesLen,
-                                                    OpenTK.Graphics.OpenGL.DrawElementsType.UnsignedInt,
+                                                    DrawElementsType.UnsignedInt,
                                                     (IntPtr)(pIndices+i*m_stripesLen));
                                 }
                                 // subsequent grid strips 
@@ -275,9 +287,9 @@ namespace ILNumerics.Drawing.Internal
                                         GL.DisableClientState(EnableCap.ColorArray);
                                         //GL.Color3(wireprops.ForeColor); // color for grid lines  
                                     }
-                                    GL.DrawElements(OpenTK.Graphics.OpenGL.BeginMode.Lines,
+                                    GL.DrawElements(BeginMode.Lines,
                                                 m_gridStripsLen,
-                                                OpenTK.Graphics.OpenGL.DrawElementsType.UnsignedInt,
+                                                DrawElementsType.UnsignedInt,
                                                 (IntPtr)(pGridIndWalk));
                                     pGridIndWalk += m_gridStripsLen; 
                                     if (!wireprops.Color.IsEmpty) {
@@ -306,8 +318,8 @@ namespace ILNumerics.Drawing.Internal
                             UInt32* pGridIndWalk = pGridIndices; 
                             // first surface strip
                             if (m_filled) {
-                                GL.DrawElements(OpenTK.Graphics.OpenGL.BeginMode.Triangles,m_stripesLen,
-                                                OpenTK.Graphics.OpenGL.DrawElementsType.UnsignedInt,
+                                GL.DrawElements(BeginMode.Triangles,m_stripesLen,
+                                                DrawElementsType.UnsignedInt,
                                                 (IntPtr)pIndices);
                             }    
                             // first grid strip
@@ -318,9 +330,9 @@ namespace ILNumerics.Drawing.Internal
                                     GL.DisableClientState(EnableCap.ColorArray);
                                     GL.Color3(m_wireLines.Color); 
                                 }
-                                GL.DrawElements(OpenTK.Graphics.OpenGL.BeginMode.Lines,
+                                GL.DrawElements(BeginMode.Lines,
                                             m_gridStripsLen + m_gridStripsLenOnce,
-                                            OpenTK.Graphics.OpenGL.DrawElementsType.UnsignedInt,
+                                            DrawElementsType.UnsignedInt,
                                             (IntPtr)pGridIndWalk);
                                 pGridIndWalk += m_gridStripsLen + m_gridStripsLenOnce; 
                                 if (!wireprops.Color.IsEmpty) {
@@ -332,9 +344,9 @@ namespace ILNumerics.Drawing.Internal
                             for (int i = 1; i < m_stripesCount; i++) {
                                 // subsequent surface strips
                                 if (m_filled) {
-                                    GL.DrawElements(OpenTK.Graphics.OpenGL.BeginMode.Triangles,
+                                    GL.DrawElements(BeginMode.Triangles,
                                                     m_stripesLen,
-                                                    OpenTK.Graphics.OpenGL.DrawElementsType.UnsignedInt,
+                                                    DrawElementsType.UnsignedInt,
                                                     (IntPtr)(pIndices+i*m_stripesLen));
                                 }
                                 // subsequent grid strips 
@@ -345,9 +357,9 @@ namespace ILNumerics.Drawing.Internal
                                         GL.DisableClientState(EnableCap.ColorArray);
                                         GL.Color3(m_wireLines.Color); 
                                     }
-                                    GL.DrawElements(OpenTK.Graphics.OpenGL.BeginMode.Lines,
+                                    GL.DrawElements(BeginMode.Lines,
                                                 m_gridStripsLen,
-                                                OpenTK.Graphics.OpenGL.DrawElementsType.UnsignedInt,
+                                                DrawElementsType.UnsignedInt,
                                                 (IntPtr)(pGridIndWalk));
                                     if (!wireprops.Color.IsEmpty) {
                                         GL.EnableClientState(EnableCap.ColorArray); 
@@ -365,14 +377,9 @@ namespace ILNumerics.Drawing.Internal
             GL.Disable(EnableCap.Lighting); 
             //GL.PopMatrix(); 
         }
-
-        protected override void m_globalClipping_Changed(object sender, ClippingChangedEventArgs e) {
-            base.m_globalClipping_Changed(sender, e);
-            m_vertexReady = false; 
-            m_indexReady = false; 
-            Configure(); 
-        }
-        
+        /// <summary>
+        /// Ensures the recreation of the graph if neccessary
+        /// </summary>
         public override void Invalidate() {
             if (m_panel == null) return; 
             if (Math.Floor(m_panel.Camera.Phi / (Math.PI / 4.0)) != m_oldSubQuadrant) {    
@@ -385,6 +392,17 @@ namespace ILNumerics.Drawing.Internal
                 m_isReady = false; 
             }
         }
+        #endregion
+
+        #region helper function 
+
+        protected override void m_globalClipping_Changed(object sender, ClippingChangedEventArgs e) {
+            base.m_globalClipping_Changed(sender, e);
+            m_vertexReady = false; 
+            m_indexReady = false; 
+            Configure(); 
+        }
+        
         #endregion
     }
 }

@@ -26,52 +26,78 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
 using ILNumerics.Drawing; 
 using ILNumerics.Drawing.Interfaces; 
 using ILNumerics.Exceptions; 
-using System.Drawing; 
+using ILNumerics.Drawing.Labeling;  
+using ILNumerics.Drawing.Controls; 
 
 namespace ILNumerics.Drawing.Collections {
     /// <summary>
     /// List of labeled ticks for an axis
     /// </summary>
-    public class ILTickCollection : List<LabeledTick>,IDisposable {
+    public class ILTickCollection : ILLabelingElement, 
+                                    IDisposable, 
+                                    IEnumerable<LabeledTick> {
 
         #region events 
         /// <summary>
         /// Fires, when the collection of ticks has changed 
         /// </summary>
         public event AxisChangedEventHandler Changed;
+        /// <summary>
+        /// fires, if a new labeled tick is about to be added to the collection
+        /// </summary>
+        public event LabeledTickAddingHandler LabeledTickAdding; 
         #endregion
 
         #region event handler 
-        private void OnChange() {
+        /// <summary>
+        /// fires the change event
+        /// </summary>
+        protected void OnChange() {
             if (Changed != null)
                 Changed(this,new ILAxisChangedEventArgs(m_axisName));
         }
+        /// <summary>
+        /// fires LabeledTickAdding event
+        /// </summary>
+        /// <param name="value">existing value</param>
+        /// <param name="label">existing label</param>
+        /// <param name="index">index of new tick in collection</param>
+        /// <returns>true: a registrar requested to cancel the adding, false otherwise</returns>
+        protected bool OnLabeledTickAdding(ref float value, ref string label, int index) {
+            if (LabeledTickAdding != null) {
+                ILLabeledTickAddingArgs args = new ILLabeledTickAddingArgs(value,label,index); 
+                LabeledTickAdding(this,args); 
+                label = args.Expression; 
+                value = args.Value; 
+                return args.Cancel; 
+            }
+            return false; 
+        }
         #endregion
 
-        #region members / attributes
+        #region attributes
+        private List<LabeledTick> m_ticks; 
         private TickDisplay m_tickDisplay; 
         private AxisNames m_axisName;
         private TickDirection m_tickDirection;
         private byte m_precision; 
-        private Size m_tickLabelScreenSize; 
         private int m_padding; 
-        private Color m_tickLabelColor; 
         private Color m_tickColorNear; 
         private Color m_tickColorFar; 
         private TickMode m_tickMode; 
         private float m_tickFraction; 
-        private IILTextRenderer m_textRenderer; 
-        private Font m_font; 
         //internal properties 
         internal Point m_lineStart; 
         internal Point m_lineEnd;
-        internal TickLabelAlign m_align; 
-        private Size m_screenSize; 
         private TickLabelRenderingHint m_renderingHint; 
+        private ILPanel m_panel; 
+        #endregion
 
+        #region properties
         /// <summary>
         /// Get the prefered placement for tick labels or sets it
         /// </summary>
@@ -87,32 +113,9 @@ namespace ILNumerics.Drawing.Collections {
                 OnChange();
             }
         }
-
-        /// <summary>
-        /// get the alignment for tick labels, determined automatically, readonly
-        /// </summary>
-        public TickLabelAlign Alignment {
-            get {
-                return m_align; 
-            }
-        }
         
         /// <summary>
-        /// Gets the font used for drawing the tick labels or sets it
-        /// </summary>
-        public Font Font {
-            get{
-                return m_font; 
-            }
-            set {
-                m_font = value; 
-                m_textRenderer.Font = value;
-                OnChange(); 
-            }
-        }
-
-        /// <summary>
-        /// Positioning mode for ticks
+        /// Positioning mode for ticks ([Auto],Manual)
         /// </summary>
         public TickMode Mode {
             get {
@@ -151,14 +154,15 @@ namespace ILNumerics.Drawing.Collections {
         }
 
         /// <summary>
-        ///  Get/ set the color for tick labels 
+        ///  Get/ set the default color for tick labels 
         /// </summary>
+        /// <remarks>The color may be overwritten for individual labels</remarks>
         public Color LabelColor {
             get {
-                return m_tickLabelColor; 
+                return m_color; 
             }
             set {
-                m_tickLabelColor = value; 
+                m_color = value; 
                 OnChange(); 
             }
         }
@@ -188,7 +192,8 @@ namespace ILNumerics.Drawing.Collections {
                     m_precision = value;
                 else 
                     throw new ILNumerics.Exceptions.ILArgumentException("precision must be in range 1..15!"); 
-                m_tickLabelScreenSize = Size.Empty; 
+                // caching: since tick labels will be redrawn every
+                // render frame, we do not invalidate the label's queues here
                 OnChange(); 
             }
         }
@@ -233,21 +238,20 @@ namespace ILNumerics.Drawing.Collections {
         }
         
         /// <summary>
-        /// Renderer type used to transform / render labels to panel
+        /// Number of ticks currently stored into the collection
         /// </summary>
-        public IILTextRenderer TextRenderer {
+        public int Count {
             get {
-                return m_textRenderer; 
+                return m_ticks.Count; 
             }
-            set {
-                if (value == null) 
-                    throw new ILArgumentException("TextRenderer must not be null!"); 
-                if (m_textRenderer != null) 
-                    m_textRenderer.Free(); 
-                m_textRenderer = value; 
-                m_textRenderer.Font = Font;
-                OnChange(); 
-            }
+        }
+
+        /// <summary>
+        /// The axis this tick collection is assigned to
+        /// </summary>
+        public ILAxis Axis {
+            get {
+                return m_panel.Axes[m_axisName]; }
         }
         #endregion
 
@@ -256,50 +260,89 @@ namespace ILNumerics.Drawing.Collections {
         /// creates new ILTickCollection
         /// </summary>
         /// <param name="axisName"></param>
-        public ILTickCollection (AxisNames axisName) : base() {
+        public ILTickCollection (ILPanel panel, AxisNames axisName) 
+            : base(panel,new Font(FontFamily.GenericMonospace, 10.0f),Color.Black) {
+            m_panel = panel; 
+            m_ticks = new List<LabeledTick>(); 
             m_axisName = axisName; 
-            m_precision = 6;
+            m_precision = 5;
             m_padding = 4; 
-            m_tickLabelColor = Color.Black; 
             m_tickColorFar = Color.Black; 
             m_tickColorNear = Color.Black; 
             m_tickDisplay = TickDisplay.LabelSide; 
             m_tickMode = TickMode.Auto; 
             m_tickFraction = 0.02f; 
-            m_font = new Font(FontFamily.GenericMonospace, 10.0f);
             m_renderingHint = TickLabelRenderingHint.Auto; 
         }
         #endregion
 
         #region public methods
         /// <summary>
+        /// Clear the collection of labeled ticks
+        /// </summary>
+        public void Clear() {
+            m_ticks.Clear(); 
+            m_size = Size.Empty; 
+        }
+
+        /// <summary>
         /// replace current collection of labeled ticks with a new one
         /// </summary>
         /// <param name="ticks"></param>
-        public void Replace (List<LabeledTick> ticks) {
-            this.Clear(); 
-            foreach (LabeledTick tick in ticks) 
-                Add(tick);
+        /// <remarks>This will fire a Change event.</remarks>
+        public void Replace (List<float> ticks) {
+            m_ticks.Clear(); 
+            Size tmpSize = Size.Empty; 
+            foreach (float tick in ticks) {
+                Add(tick); 
+            }
             OnChange(); 
         }
         /// <summary>
-        /// Add a value to the tick collection.
+        /// Add a labeled tick to the ticks collection.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="label"></param>
+        /// <param name="value">current position</param>
+        /// <param name="label">current value</param>
+        /// <remarks>This function will fire the LabeledTickAdding event. This 
+        /// gives users the chance to modify the tick and/or the label before 
+        /// it gets added. She can also cancel the adding for the tick at all. <br/>
+        /// No Change event for the axis will be fired from this method.</remarks>
         public void Add(float value, string label) {
-            base.Add(new LabeledTick(value,label)); 
+            if (OnLabeledTickAdding(ref value, ref label, m_ticks.Count)) {
+                return; 
+            }
+            ILRenderQueue queue = m_interpreter.Transform(label,
+                                  m_font,m_color,m_renderer); 
+            m_ticks.Add(new LabeledTick(value,queue)); 
+            if (m_size.Height < queue.Size.Height)
+                m_size.Height = queue.Size.Height; 
+            if (m_size.Width < queue.Size.Width) 
+                m_size.Width = queue.Size.Width;   
+        }
+        /// <summary>
+        /// Add a labeled tick to the ticks collection
+        /// </summary>
+        /// <param name="value">position for tick</param>
+        /// <remarks>No Change event will be fired</remarks>
+        public void Add(float value) {
+            this.Add(value,value.ToString("g"+m_precision)); 
         }
         /// <summary>
         /// Get maximum size of 
         /// all tick labels in pixels on screen
         /// </summary>
-        /// <remarks>This property returns a cached value only! -> Before querying 
-        /// this property, MeasureMaxScreenSize() must have been called, or wrong values 
-        /// may be returned!</remarks>
-        public Size ScreenSize {
+        /// <remarks>This property does not take the orientation into account. The size 
+        /// of the content will be returned as if the orientation was straight horizontally.</remarks>
+        public override Size Size {
             get {
-                return m_screenSize; 
+                if (m_tickMode == TickMode.Auto && m_ticks.Count == 0) {
+                    // first time: no labels have been added? -> assume maximum 
+                    // size determined by precision
+                    Graphics g = Graphics.FromImage(new Bitmap(1,1));
+                    string measString = String.Format(".-e08" + new String('0',m_precision)); 
+                    return g.MeasureString(measString,m_font).ToSize(); 
+               } else
+                    return m_size; 
             }
         }
         /// <summary>
@@ -308,21 +351,28 @@ namespace ILNumerics.Drawing.Collections {
         /// <param name="gr">graphics object, _may_ be used to measure texts (on some platforms)</param>
         /// <returns>maximum size</returns>
         /// <remarks>This function recomputes the true size for all labels and updates the internal cache. The cached value can 
-        /// than queried by the property 'ScreenSize'.</remarks>
-        public Size MeasureMaxScreenSize(Graphics gr) {
-            m_screenSize = m_textRenderer.MeasureText(
-                    "-e.08" + new String('0', m_precision),gr);
-            //m_screenSize = new Size(); 
-            //Size tmp; 
-            //foreach (LabeledTick tick in this) {
-            //    tmp = m_textRenderer.MeasureText(tick.Label,gr);
-            //    if (tmp.Height > m_screenSize.Height) 
-            //        m_screenSize.Height = tmp.Height; 
-            //    if (tmp.Width > m_screenSize.Width) 
-            //        m_screenSize.Width = tmp.Width; 
-            //}
-            return m_screenSize;
-        }
+        /// than queried by the property 'ScreenSize'.
+        /// <para>Note: if no tick labels have been stored into the collection yet, the 
+        /// maximum size possible for a label is returned. Therefore, the Precision member is 
+        /// taken into account.</para></remarks>
+        //public Size MeasureMaxScreenSize(Graphics gr) {
+        //    if (m_ticks.Count == 0) {
+        //        SizeF sf = gr.MeasureString (
+        //            "-e.08" + new String('0', m_precision),m_font);
+        //        m_screenSize = new Size((int)sf.Width,(int)sf.Height); 
+        //    } else {
+        //        m_screenSize = new Size(); 
+        //        Size tmp; 
+        //        foreach (LabeledTick tick in this) {
+        //            tmp = tick.Queue.Size; 
+        //            if (tmp.Height > m_screenSize.Height) 
+        //                m_screenSize.Height = tmp.Height; 
+        //            if (tmp.Width > m_screenSize.Width) 
+        //                m_screenSize.Width = tmp.Width; 
+        //        }
+        //    }
+        //    return m_screenSize;
+        //}
         /// <summary>
         /// fill (replace) labels with nice labels for range  
         /// </summary>
@@ -337,13 +387,13 @@ namespace ILNumerics.Drawing.Collections {
             double ex; 
             // how many ticks will (really) fit on the label line? 
             if (tickCount > 3) {
-                Replace(NiceLabels(min,max,tickCount,format,m_renderingHint)); 
+                Replace(NiceLabels(min,max,tickCount,m_renderingHint)); 
                 if (Count > 0) 
                     return; 
-                // else: no ticks could be found -> rescue plan: show only middle
+                // else: no ticks could be found at all -> fallback: show only center
                 tickCount = 1; 
             } 
-            Clear();
+            m_ticks.Clear();
             float relevExp = (float)Math.Round(Math.Log10((max - min)));
             if (!float.IsNaN(relevExp) && !float.IsInfinity(relevExp)) { 
                 float multRound; 
@@ -356,24 +406,23 @@ namespace ILNumerics.Drawing.Collections {
                     // If tickCount is 1, only the middle of Axis will be drawn.
                     float ls = (float)(Math.Ceiling((max + min) / 2 / multRound) * multRound);
                     if (ls != 0) 
-                        Add(new LabeledTick(ls,ls.ToString(format)));
+                        Add(ls,ls.ToString(format));
                     else 
-                        Add(new LabeledTick(min,min.ToString(format)));
+                        Add(min,min.ToString(format));
                 } else if (tickCount == 3) {
                     // draw max, min and the approx. center of range
-                    Add(new LabeledTick(min,min.ToString(format)));
-                    Add(new LabeledTick(max,max.ToString(format)));
+                    Add(min,min.ToString(format));
+                    Add(max,max.ToString(format));
                     float ls = (float)(Math.Round((max + min) / 2 / multRound) * multRound);  
-                    Add(new LabeledTick(ls,ls.ToString(format))); 
+                    Add(ls,ls.ToString(format)); 
                 } else { //if (tickCount == 2) {
                     // If tickCount is less than 3 - only the max and the min will be drawn. 
-                    Add(new LabeledTick(min,min.ToString(format)));
-                    Add(new LabeledTick(max,max.ToString(format)));
+                    Add(min,min.ToString(format));
+                    Add(max,max.ToString(format));
                 }
             } else {
-                Add(new LabeledTick(max,max.ToString(format)));
+                Add(max,max.ToString(format));
             }
-
         }
 
         /// <summary>
@@ -385,35 +434,58 @@ namespace ILNumerics.Drawing.Collections {
         /// <param name="format">format string used to convert numbers to strings</param>
         /// <param name="hint">rendering hint, specifies preferred method</param>
         /// <returns>list of tick labels</returns>
-        public static List<LabeledTick> NiceLabels(float min, float max, int numMaxLabels, string format, TickLabelRenderingHint hint) {
-            List<LabeledTick> ret; 
+        public static List<float> NiceLabels(float min, float max, int numMaxLabels, TickLabelRenderingHint hint) {
+            List<float> ret; 
             switch (hint) {
                 case TickLabelRenderingHint.Filled:
-                    ret = NiceLabelsFill(min,max,numMaxLabels,format); 
+                    ret = NiceLabelsFill(min,max,numMaxLabels); 
                     break;
                 case TickLabelRenderingHint.Multiple1:
-                    ret = NiceLabelsEven(min,max,numMaxLabels,format,1.0f);
+                    ret = NiceLabelsEven(min,max,numMaxLabels,1.0f);
                     break;
                 case TickLabelRenderingHint.Multiple2:
-                    ret = NiceLabelsEven(min,max,numMaxLabels,format,2.0f);
+                    ret = NiceLabelsEven(min,max,numMaxLabels,2.0f);
                     break;
                 case TickLabelRenderingHint.Multiple5:
-                    ret = NiceLabelsEven(min,max,numMaxLabels,format,5.0f);
+                    ret = NiceLabelsEven(min,max,numMaxLabels,5.0f);
                     break;
                 default:
                     //ret = NiceLabelsAuto(min,max,numMaxLabels,format);
-                    ret = loose_label(min,max,numMaxLabels,format);
+                    ret = loose_label(min,max,numMaxLabels);
                     break; 
             }
             return ret; 
         }
 
+        public void  Draw(Graphics g, float min, float max) {
+            m_renderer.Begin(g); 
+            float clipRange = max - min; 
+            ILPoint3Df mult = new ILPoint3Df(
+                        ((float)(m_lineEnd.X - m_lineStart.X) / clipRange),
+                        ((float)(m_lineEnd.Y - m_lineStart.Y) / clipRange),
+                        0);
+            float tmp;
+            Point point = new Point(0,0); 
+            foreach (LabeledTick lt in m_ticks) {
+                if (lt.Queue.Count > 0
+                    && lt.Position >= min 
+                    && lt.Position <= max) {
+                    tmp = lt.Position-min; 
+                    point.X = (int)(m_lineStart.X + mult.X * tmp);
+                    point.Y = (int)(m_lineStart.Y + mult.Y * tmp);
+                    offsetAlignment(lt.Queue.Size, ref point); 
+                    m_renderer.Draw(lt.Queue,point,m_orientation,m_color); 
+                }
+            } 
+            m_renderer.End(); 
+        }
         #endregion
 
         #region IDisposable Member
         public void Dispose() {
-            if (m_textRenderer != null) 
-                m_textRenderer.Free(); 
+            if (m_renderer != null) { 
+                // ???
+            }
         }
         #endregion
 
@@ -427,12 +499,12 @@ namespace ILNumerics.Drawing.Collections {
         /// <param name="numMaxLabels">max labels count</param>
         /// <param name="format">format string used to convert numbers to strings</param>
         /// <returns>nice label list</returns>
-        private static List<LabeledTick> NiceLabelsAuto(float min, float max, int numMaxLabels, string format) {
+        private static List<float> NiceLabelsAuto(float min, float max, int numMaxLabels, string format) {
             float[] divisors = new float[3] {5.0f, 2.0f, 1.0f}; 
-            List<LabeledTick>[] ticks = new List<LabeledTick>[divisors.Length]; 
+            List<float>[] ticks = new List<float>[divisors.Length]; 
             int count = 0, bestMatch = int.MaxValue, tmp = 0, bestMatchIdx = -1; 
             foreach (float div in divisors) {
-                ticks[count] = NiceLabelsEven(min,max,numMaxLabels,format,div);  
+                ticks[count] = NiceLabelsEven(min,max,numMaxLabels,div);  
                 if (ticks[count].Count == numMaxLabels) {
                     return ticks[count]; 
                 } 
@@ -455,14 +527,14 @@ namespace ILNumerics.Drawing.Collections {
         /// <param name="numberTicks">maximum number of ticks</param>
         /// <param name="format">format string for string conversion</param>
         /// <returns>list of tick labels</returns>
-        private static List<LabeledTick> NiceLabelsFill(float min, float max, int numberTicks, string format) {
+        private static List<float> NiceLabelsFill(float min, float max, int numberTicks) {
             // spacing may happen by divisors of 5,2,1. We test every case and choose the 
             // one producing the best match on the number of ticks requested than. 
             float[] divisors = new float[3] {5.0f, 2.0f, 1.0f}; 
-            List<LabeledTick>[] ticks = new List<LabeledTick>[divisors.Length]; 
+            List<float>[] ticks = new List<float>[divisors.Length]; 
             int count = 0, bestMatch = int.MaxValue, tmp = 0, bestMatchIdx = -1; 
             foreach (float div in divisors) {
-                ticks[count] = NiceLabelsEven(min,max,numberTicks,format,div);  
+                ticks[count] = NiceLabelsEven(min,max,numberTicks,div);  
                 tmp = (int)Math.Abs(Math.Min(numberTicks,10) - ticks[count].Count); 
                 if (ticks[count].Count == numberTicks) {
                     return ticks[count]; 
@@ -478,20 +550,20 @@ namespace ILNumerics.Drawing.Collections {
             else 
                 return ticks[0];  // rescue plan
         }
-        private static List<LabeledTick> NiceLabelsEven(float min, float max, int numberTicks, string format, float divisor) {
+        private static List<float> NiceLabelsEven(float min, float max, int numberTicks, float divisor) {
             //minimal distance required for ticks
             float minDist = (max - min) / (numberTicks + 1); 
             // determine prominent range for optimal spacing
-            if (Math.Abs(minDist) < 1e-10) return new List<LabeledTick>(); 
+            if (Math.Abs(minDist) < 1e-10) return new List<float>(); 
             float relevExp = (float)Math.Log10((max - min));
             if (float.IsNaN(relevExp)) {
-                return new List<LabeledTick>();    
+                return new List<float>();    
             }
             float multRound; 
             if (relevExp >= 1) {
-                return NiceLabelsEvenGE10(min,max,numberTicks,format,divisor); 
+                return NiceLabelsEvenGE10(min,max,numberTicks,divisor); 
             }
-            List<LabeledTick> ticks = new List<LabeledTick>(); 
+            List<float> ticks = new List<float>(); 
             relevExp = (float)Math.Round(relevExp);
             multRound = (float) (1 / Math.Pow(10,relevExp-1)); 
             //float step = divisor / multRound, cur = min, origStep = step;
@@ -503,12 +575,12 @@ namespace ILNumerics.Drawing.Collections {
             }
             // find the first auto tick value, matching the divisor
             cur = (float)(Math.Round((min + minDist) * multRound / divisor) / multRound * divisor); 
-            ticks.Add(new LabeledTick(cur,cur.ToString(format))); 
+            ticks.Add(cur); 
             cur += step; 
             // add all ticks in _between_, keep margin to axis limits!
             while (cur < max) {
                 cur = (float)(Math.Round(cur * multRound) / multRound); 
-                ticks.Add(new LabeledTick(cur,cur.ToString(format)));
+                ticks.Add(cur);
                 cur += step;
                 if (ticks.Count > numberTicks) {
                     // emergency break - float cannot handle this distance!
@@ -518,11 +590,11 @@ namespace ILNumerics.Drawing.Collections {
             }
             return ticks; 
         }
-        private static List<LabeledTick> NiceLabelsEvenGE10(float min, float max, int numberTicks, string format, float divisor) {
+        private static List<float> NiceLabelsEvenGE10(float min, float max, int numberTicks, float divisor) {
             //minimal distance required for ticks
             float minDist = (max - min) / (numberTicks + 1); 
             // determine prominent range for optimal spacing
-            List<LabeledTick> ticks = new List<LabeledTick>(); 
+            List<float> ticks = new List<float>(); 
             // has been checked, if comming from NiceLabelsEven: 
             //if (Math.Abs(minDist) < 1e-10) return ticks; 
             float relevExp = (float)Math.Log10((max - min));
@@ -544,11 +616,11 @@ namespace ILNumerics.Drawing.Collections {
             }
             // find the first auto tick value, matching the divisor
             cur = (float)niceNumber(min,false); 
-            ticks.Add(new LabeledTick(cur,cur.ToString(format))); 
+            ticks.Add(cur); 
             // add all ticks in _between_, keep margin to axis limits!
             while (cur < max) {
                 cur = (float)niceNumber(cur + step,false); 
-                ticks.Add(new LabeledTick(cur,cur.ToString(format)));
+                ticks.Add(cur);
                 if (ticks.Count > numberTicks) {
                     // emergency break - float cannot handle this distance!
                     ticks.Clear(); 
@@ -584,7 +656,7 @@ namespace ILNumerics.Drawing.Collections {
             }
             return (nf* Math.Pow(10, expv));
         }
-        private static List<LabeledTick> loose_label(float min,float max, int numberTicks, string format) {
+        private static List<float> loose_label(float min,float max, int numberTicks) {
             int nfrac;
             double d;                                /* tick mark spacing */
             double graphmin, graphmax;                /* graph range min and max */
@@ -596,22 +668,20 @@ namespace ILNumerics.Drawing.Collections {
             graphmin = Math.Floor(min/d)*d;
             graphmax = Math.Ceiling(max/d)*d;
             nfrac = (int)Math.Max(-Math.Floor(Math.Log10(d)), 0);
-            List<LabeledTick> ticks = new List<LabeledTick>(); 
-            ticks.Add(new LabeledTick(nfrac,nfrac.ToString(format)));
+            List<float> ticks = new List<float>(); 
+            ticks.Add(nfrac);
             for (x=graphmin; x<graphmax+.5*d; x+=d) {
-                ticks.Add(new LabeledTick((float)x,((float)x).ToString(format)));
+                ticks.Add((float)x);
             }
             return ticks;
         }
 
-
-
         #region Oli's labels implementaion (incomplete)
-        private static List<LabeledTick> niceLabels (float start, float end, int maxNumbers,string format) {
+        private static List<float> niceLabels (float start, float end, int maxNumbers,string format) {
             float[] labelPositions = berechneLabel(start,end,maxNumbers);
-            List<LabeledTick> ret = new List<LabeledTick>(); 
+            List<float> ret = new List<float>(); 
             foreach (float pos in labelPositions) {
-                ret.Add(new LabeledTick(pos,pos.ToString(format)));     
+                ret.Add(pos);     
             }
             return ret; 
         }
@@ -680,6 +750,30 @@ namespace ILNumerics.Drawing.Collections {
             return streckeIntValue;
         }
         #endregion
+
+        #endregion
+
+        #region IEnumerable<LabeledTick> Member
+        /// <summary>
+        /// Get Enumerator, enumerating over all labeled ticks
+        /// </summary>
+        /// <returns>Enumerator</returns>
+        public IEnumerator<LabeledTick> GetEnumerator() {
+            return m_ticks.GetEnumerator(); 
+        }
+
+        #endregion
+
+        #region IEnumerable Member
+
+        /// <summary>
+        /// Get enumerator enumerating over labeled ticks
+        /// </summary>
+        /// <returns>enumerator</returns>
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+            foreach (LabeledTick lt in m_ticks)
+                yield return lt; 
+        }
 
         #endregion
 

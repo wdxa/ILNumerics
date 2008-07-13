@@ -29,11 +29,18 @@ using System.Text;
 using ILNumerics.BuiltInFunctions; 
 
 namespace ILNumerics.Drawing.Graphs {
+    /// <summary>
+    /// 2D line &amp; point graph
+    /// </summary>
     public abstract class ILPlot2DGraph : ILGraph {
+
+        #region attributes
         protected ILLineProperties m_properties; 
         protected ILMarker m_marker; 
-        protected ILArray<float> m_xData; 
+        protected ILArray<float> m_xData;
+        #endregion
 
+        #region properties
         /// <summary>
         /// Get properties of lines
         /// </summary>
@@ -50,7 +57,14 @@ namespace ILNumerics.Drawing.Graphs {
                 return m_marker; 
             }
         }
+        #endregion
 
+        #region constructor
+        /// <summary>
+        /// [internal] constructor - do not use this! Use ILPanel.Graphs.Add...() instead!
+        /// </summary>
+        /// <param name="sourceArray">data array</param>
+        /// <param name="clippingContainer">hosting panels clipping data</param>
         public ILPlot2DGraph (ILBaseArray sourceArray,
                               ILClippingData clippingContainer) 
             : base (sourceArray,clippingContainer) {
@@ -62,6 +76,12 @@ namespace ILNumerics.Drawing.Graphs {
             m_graphType = GraphType.Plot2D; 
             updateClipping(); 
         }
+        /// <summary>
+        /// [internal] constructor - do not use this! Use ILPanel.Graphs.Add...() instead!
+        /// </summary>
+        /// <param name="XData">x data array</param>
+        /// <param name="YData">y data array</param>
+        /// <param name="clippingContainer">hosting panels clipping data</param>
         public ILPlot2DGraph (ILBaseArray XData, ILBaseArray YData,
                               ILClippingData clippingContainer) 
             : base (YData,clippingContainer) {
@@ -71,16 +91,19 @@ namespace ILNumerics.Drawing.Graphs {
             m_marker = new ILMarker(); 
             m_marker.Changed += new EventHandler(m_properties_Changed);
             m_graphType = GraphType.Plot2D;
-            updateClipping(); 
+            updateClipping();
         }
+        #endregion
 
+        #region private helper 
         private void updateClipping() {
             m_localClipping.Update (
                 new ILPoint3Df(m_xData.MinValue,m_sourceArray.MinValue,0.0f),
                 new ILPoint3Df(m_xData.MaxValue,m_sourceArray.MaxValue,0.0f)); 
         }
         protected virtual void m_properties_Changed(object sender, EventArgs e) {
-            m_isReady = false; 
+            m_isReady = false;
         }
+        #endregion
     }
 }

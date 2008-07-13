@@ -28,32 +28,24 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing; 
 using ILNumerics.Drawing.Interfaces; 
-using ILNumerics.Drawing.Controls;  
+using ILNumerics.Drawing.Controls; 
+using ILNumerics.Drawing.Labeling;  
 
 namespace ILNumerics.Drawing {
     /// <summary>
-    /// axis label for subfigures
+    /// axis label for ILAxis
     /// </summary>
-    public class ILAxisLabel {
-        /// <summary>
-        /// fires when a label's property has changed
-        /// </summary>
-        public event EventHandler Changed;
+    public class ILAxisLabel : ILLabelingElement {
 
-        #region attributes / properties
-        private string m_text; 
-        private Font m_font; 
-        private Color m_color; 
-        private IILTextRenderer m_textRenderer; 
+        #region attributes
         private int m_padding; 
-        private TextOrientation m_orientation; 
         private AxisLabelAlign m_align; 
-        private Size m_size; 
+        internal Point m_position = new Point();
+        #endregion
 
-        internal Point m_position = new Point(); 
-
+        #region properties 
         /// <summary>
-        /// Alignment of the label. Possible values: lower, center, upper
+        /// Alignment along the axis value range. Possible values: lower, center, upper
         /// </summary>
         public AxisLabelAlign Alignment {
             get {
@@ -61,20 +53,6 @@ namespace ILNumerics.Drawing {
             }
             set {
                 m_align = value; 
-                OnChanged(); 
-            }
-        }
-
-        /// <summary>
-        /// Get the orientation for the axis label or sets it
-        /// </summary>
-        public TextOrientation Orientation {
-            get {
-                return m_orientation; 
-            }
-            internal set {
-                m_orientation = value;
-                m_textRenderer.Orientation = value; 
                 OnChanged(); 
             }
         }
@@ -91,103 +69,37 @@ namespace ILNumerics.Drawing {
                 OnChanged(); 
             }
         }
-
-        /// <summary>
-        /// font used to display the text for the label
-        /// </summary>
-        public Font Font {
-            get {
-                return m_font; 
-            }
-            set {
-                m_font = value; 
-                if (m_textRenderer != null) 
-                    m_textRenderer.Font = value; 
-                OnChanged(); 
-            }
-        }
-        /// <summary>
-        /// text to display on axis
-        /// </summary>
-        public string Text {
-            get {
-                return m_text; 
-            }
-            set {
-                m_text = value; 
-                OnChanged(); 
-            }
-        }
-        /// <summary>
-        /// color used to display text
-        /// </summary>
-        public Color Color {
-            get {
-                return m_color; 
-            }
-            set {
-                m_color = value; 
-                OnChanged(); 
-            }
-        }
-        /// <summary>
-        /// TextRenderer used to transform / render text for this label onto panel
-        /// </summary>
-        public IILTextRenderer TextRenderer {
-            get {
-                return m_textRenderer; 
-            }
-            set {
-                m_textRenderer = value;
-                m_textRenderer.Orientation = Orientation; 
-                m_textRenderer.Font = m_font; 
-            }
-        }
-
-        /// <summary>
-        /// Size of the label, includes orientation
-        /// </summary>
-        public Size Size {
-            get {
-                //System.Diagnostics.Debug.Assert(m_size != Size.Empty); 
-                return m_size; 
-            }
-        }
         #endregion
 
         #region constructor
         /// <summary>
         /// create an axis label for rendering
         /// </summary>
-        public ILAxisLabel () {
-            m_font = new Font(FontFamily.GenericSansSerif,10.0f); 
-            m_color = Color.Black;
-            m_text = ""; 
-            m_textRenderer = null; 
+        public ILAxisLabel (ILPanel panel) 
+            : base(panel,new Font(FontFamily.GenericSansSerif,10.0f),Color.DarkBlue) {
             m_align = AxisLabelAlign.Center; 
             m_padding = 3; 
         }
         #endregion
 
-        #region event handler
-        private void OnChanged() {
-            if (Changed != null) 
-                Changed(this,null); 
+        #region abstract overrides
+
+        /// <summary>
+        /// draws the whole rendering queue
+        /// </summary>
+        public override void Draw(Graphics g) {
+            if (m_expression != m_cachedExpression) 
+                interprete(m_expression); 
+            m_renderer.Begin(g);
+            offsetAlignment(m_size,ref m_position);
+            m_renderer.Draw(m_renderQueue,m_position,m_orientation,m_color); 
+            m_renderer.End(); 
         }
+
         #endregion
 
-        internal void Dispose() {
-            if (m_textRenderer != null) 
-                m_textRenderer.Free();
-        }
-
-        public Size GetSize(Graphics gr) {
-            m_size = m_textRenderer.MeasureText(m_text,gr);
-            return m_size; 
-        }
-
         #region private helper
- 
+
 
         #endregion
     }

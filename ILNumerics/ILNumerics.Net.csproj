@@ -135,6 +135,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Functions\builtin\det.cs" />
+    <Compile Include="Functions\builtin\diff.cs" />
     <Compile Include="Functions\builtin\dimensionWrapper.cs" />
     <Compile Include="Functions\builtin\DivideElem.cs" />
     <Compile Include="Enums.cs" />
@@ -189,6 +190,9 @@
     </Compile>
     <Compile Include="Functions\builtin\matrixTest.cs" />
     <Compile Include="Functions\builtin\maxall.cs" />
+    <Compile Include="Functions\builtin\mean.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Functions\builtin\Norm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -255,7 +259,6 @@
     <Compile Include="Functions\builtin\Max.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Functions\builtin\mean.cs" />
     <Compile Include="Functions\builtin\Min.cs" />
     <Compile Include="Functions\builtin\pinv.cs" />
     <Compile Include="Functions\builtin\prod.cs" />

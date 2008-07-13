@@ -32,22 +32,60 @@ namespace ILNumerics.Drawing {
     /// <summary>
     /// This class represents the camera's positioning and aiming direction.
     /// </summary>
-    [DebuggerDisplay("Dist={m_distance},Rot={m_phiDebugDisp}°,Pitch={m_rhoDebugDisp}°")]
+    [DebuggerDisplay("dist={m_distance},rot={m_phiDebugDisp}°,pitch={m_rhoDebugDisp}°")]
     public class ILCamera {
+
+        #region event handling 
         /// <summary>
         /// fires, if the position of the camera has changed
         /// </summary>
-        public event EventHandler Changed; 
-        
+        public event EventHandler Changed;
         /// <summary>
         /// Fires a Changed event
         /// </summary>
-        public void OnChange() {
+        public virtual void OnChange() {
             if (Changed != null && !m_suspended)
                 Changed(this,new EventArgs()); 
         }
-        private bool m_suspended = false; 
+        #endregion
 
+        #region attributes 
+        private bool m_suspended = false;
+        private float m_distance = 1.0f; 
+        private float m_phi = (float)(Math.PI / 2.0); 
+        private float m_rho = 0.0f; 
+        /// <summary>
+        /// Offset angle for 2nd cached triangular phi value (needed for surface plots)
+        /// </summary>
+        internal float Offset = (float)(Math.PI / 4); 
+        /// <summary>
+        /// cachced triangular phi value with offset (needed for surface plots)
+        /// </summary>
+        internal float CosPhiShift; 
+        /// <summary>
+        /// cachced triangular phi value with offset (needed for surface plots)
+        /// </summary>
+        internal float SinPhiShift; 
+        /// <summary>
+        /// cached value for cosine of phi - this is readonly and for performance only.
+        /// </summary>
+        internal float CosPhi; 
+        /// <summary>
+        /// cached value for sine of phi - this is readonly and for performance only.
+        /// </summary>
+        internal float SinPhi; 
+        /// <summary>
+        /// cached value for cosine of rho - this is readonly and for performance only.
+        /// </summary>
+        internal float CosRho; 
+        /// <summary>
+        /// cached value for sine of rho - this is readonly and for performance only.
+        /// </summary>
+        internal float SinRho; 
+        private CameraQuadrant m_quadrant;
+        #endregion
+
+        #region properties 
         /// <summary>
         /// distance from the scene
         /// </summary>
@@ -76,7 +114,6 @@ namespace ILNumerics.Drawing {
                 return (int)Math.Round(m_rho * 180 / Math.PI); 
             }
         }
-        private float m_distance = 1.0f; 
         /// <summary>
         /// rotation of the scene (seen from above) [radians]
         /// </summary>
@@ -94,7 +131,6 @@ namespace ILNumerics.Drawing {
                 OnChange(); 
             }
         }
-        private float m_phi = (float)(Math.PI / 2.0); 
         /// <summary>
         /// pitch of the scene [radians]
         /// </summary>
@@ -115,38 +151,49 @@ namespace ILNumerics.Drawing {
                 OnChange(); 
             }
         }
+        /// <summary>
+        /// Quadrant the camera is currently watching the scene from
+        /// </summary>
+        public CameraQuadrant Quadrant {
+            get{
+                return m_quadrant; 
+            }
+        }
+        /// <summary>
+        /// Determine, if camera is placed in an upper quadrant of the scene
+        /// </summary>
+        public bool LooksFromTop {
+            get {
+                return m_rho < Math.PI/2; 
+            }
+        }
+        /// <summary>
+        /// Determine, if camera is located in an left quadrant of the scene
+        /// </summary>
+        public bool LooksFromLeft {
+            get {
+                return Math.Sin(m_phi) < 0; 
+            }
+        }
+        /// <summary>
+        /// Determine, if camera is located in an front quadrant of the scene
+        /// </summary>
+        public bool LooksFromFront {
+            get {
+                return Math.Cos(m_phi) >= 0; 
+            }
+        }
+        /// <summary>
+        /// true, when looking from top on the un-rotated scene (common for 2D plots)
+        /// </summary>
+        public bool Is2DView {
+            get {
+                return Math.Abs(SinPhi) < 1e-5 && Math.Abs(SinRho) < 1e-5; 
+            }
+        }
+        #endregion 
 
-        private float m_rho = 0.0f; 
-        /// <summary>
-        /// cached value for cosine of phi - this is readonly and for performance only.
-        /// </summary>
-        internal float CosPhi; 
-        /// <summary>
-        /// cached value for sine of phi - this is readonly and for performance only.
-        /// </summary>
-        internal float SinPhi; 
-        /// <summary>
-        /// cached value for cosine of rho - this is readonly and for performance only.
-        /// </summary>
-        internal float CosRho; 
-        /// <summary>
-        /// cached value for sine of rho - this is readonly and for performance only.
-        /// </summary>
-        internal float SinRho; 
-
-        /// <summary>
-        /// Offset angle for 2nd cachced triangular phi value (needed for surface plots)
-        /// </summary>
-        internal float Offset = (float)(Math.PI / 4); 
-        /// <summary>
-        /// cachced triangular phi value with offset (needed for surface plots)
-        /// </summary>
-        internal float CosPhiShift; 
-        /// <summary>
-        /// cachced triangular phi value with offset (needed for surface plots)
-        /// </summary>
-        internal float SinPhiShift; 
-
+        #region constructors
         public ILCamera (ILCamera vport) {
             m_rho = vport.m_rho; 
             m_phi = vport.m_phi; 
@@ -163,8 +210,11 @@ namespace ILNumerics.Drawing {
             m_rho = Rho; 
             m_phi = Phi; 
             m_distance = Distance; 
-            computeQuadrant(); 
+            computeQuadrant();
         }
+        #endregion
+
+        #region public interface 
         /// <summary>
         /// suspend the firing of events until EventingResume() was called
         /// </summary>
@@ -177,17 +227,44 @@ namespace ILNumerics.Drawing {
         public void EventingResume() {
             m_suspended = false; 
         }
-
-        private CameraQuadrant m_quadrant;
         /// <summary>
-        /// Quadrant the camera is currently watching the scene from
+        /// Set both angles and distances at once  
         /// </summary>
-        public CameraQuadrant Quadrant {
-            get{
-                return m_quadrant; 
-            }
+        /// <param name="phi">Rotation, radians</param>
+        /// <param name="rho">Pitch, radians</param>
+        /// <param name="distance">Distance from scene</param>
+        public void Set(float phi, float rho, float distance) {
+            if (distance < 0) 
+                throw new Exceptions.ILArgumentException("Camera distance must be positive!"); 
+            m_phi = (float)(phi % (Math.PI * 2)); 
+            m_rho = (float)(rho % (Math.PI)); 
+            m_distance = distance; 
+            computeQuadrant();
+            CosRho = (float)Math.Cos(m_rho); 
+            SinRho = (float)Math.Sin(m_rho); 
+            OnChange(); 
         }
+        /// <summary>
+        /// Set complete camera position (angles and distance) at once
+        /// </summary>
+        /// <param name="phi">Rotation (degrees)</param>
+        /// <param name="rho">Pitch (degrees)</param>
+        /// <param name="distance">Distance from scene</param>
+        public void SetDeg(float phi,float rho, float distance) { 
+            Set ((float)(phi/180.0 * Math.PI),(float)(rho / 180.0f * Math.PI),distance); 
+            OnChange(); 
+        }
+        /// <summary>
+        /// Convert camera position to string
+        /// </summary>
+        /// <returns>string display with distance,roatation and pitch</returns>
+        public override string ToString() {
+            return String.Format("Dist={0},Rot={1}°,Pitch={2}°",
+                m_distance,m_phiDebugDisp,m_rhoDebugDisp);
+        }
+        #endregion
 
+        #region private helper 
         private void computeQuadrant() {
             //if (m_phi == 0.0 && m_rho == 0.0) {
             //    m_quadrant = CameraQuadrant.TopLeftFront; 
@@ -237,73 +314,6 @@ namespace ILNumerics.Drawing {
                 }
             }
         }
-        /// <summary>
-        /// Determine, if camera is placed in an upper quadrant of the scene
-        /// </summary>
-        public bool LooksFromTop {
-            get {
-                return m_rho < Math.PI/2; 
-            }
-        }
-        /// <summary>
-        /// Determine, if camera is located in an left quadrant of the scene
-        /// </summary>
-        public bool LooksFromLeft {
-            get {
-                return Math.Sin(m_phi) < 0; 
-            }
-        }
-        /// <summary>
-        /// Determine, if camera is located in an front quadrant of the scene
-        /// </summary>
-        public bool LooksFromFront {
-            get {
-                return Math.Cos(m_phi) >= 0; 
-            }
-        }
-        /// <summary>
-        /// Set both angles and distances at once  
-        /// </summary>
-        /// <param name="phi">Rotation, radians</param>
-        /// <param name="rho">Pitch, radians</param>
-        /// <param name="distance">Distance from scene</param>
-        public void Set(float phi, float rho, float distance) {
-            if (distance < 0) 
-                throw new Exceptions.ILArgumentException("Camera distance must be positive!"); 
-            m_phi = (float)(phi % (Math.PI * 2)); 
-            m_rho = (float)(rho % (Math.PI)); 
-            m_distance = distance; 
-            computeQuadrant();
-            CosRho = (float)Math.Cos(m_rho); 
-            SinRho = (float)Math.Sin(m_rho); 
-            OnChange(); 
-        }
-        /// <summary>
-        /// Set complete camera position (angles and distance) at once
-        /// </summary>
-        /// <param name="phi">Rotation (degrees)</param>
-        /// <param name="rho">Pitch (degrees)</param>
-        /// <param name="distance">Distance from scene</param>
-        public void SetDeg(float phi,float rho, float distance) { 
-            Set ((float)(phi/180.0 * Math.PI),(float)(rho / 180.0f * Math.PI),distance); 
-            OnChange(); 
-        }
-        /// <summary>
-        /// true, when looking from top on the un-rotated scene (common for 2D plots)
-        /// </summary>
-        public bool Is2DView {
-            get {
-                return Math.Abs(SinPhi) < 1e-5 && Math.Abs(SinRho) < 1e-5; 
-            }
-        }
-
-        /// <summary>
-        /// Convert camera position to string
-        /// </summary>
-        /// <returns>string display with distance,roatation and pitch</returns>
-        public override string ToString() {
-            return String.Format("Dist={0},Rot={1}°,Pitch={2}°",
-                m_distance,m_phiDebugDisp,m_rhoDebugDisp); 
-        }
+        #endregion
     }
 }
