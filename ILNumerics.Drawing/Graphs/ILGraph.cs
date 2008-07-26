@@ -81,15 +81,24 @@ namespace ILNumerics.Drawing.Graphs {
                 return m_graphType; 
             }
         }
+        /// <summary>
+        /// The containing panel
+        /// </summary>
+        public ILPanel Panel {
+            get {
+                return m_panel; 
+            }
+        }
         #endregion
 
         #region constructors
         
-        internal ILGraph(ILBaseArray sourceArray, ILClippingData clippingContainer) {
+        internal ILGraph(ILPanel panel, ILBaseArray sourceArray, ILClippingData clippingContainer) {
             if (object.Equals(sourceArray,null))
                 throw new ILArgumentException("CreateGraph: source array must not be null!");
             if (!sourceArray.IsNumeric) 
                 throw new ILArgumentException("CreateGraph: source array must be numeric!");
+            m_panel = panel; 
             m_localClipping = new ILClippingData();  
             m_globalClipping = clippingContainer;
             m_globalClipping.Changed += new ILClippingDataChangedEvent(m_globalClipping_Changed);

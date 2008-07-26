@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ILNumerics.Drawing.Controls; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
@@ -61,9 +62,9 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region constructor
-        public ILImageSCGraph ( ILBaseArray sourceArray,
+        public ILImageSCGraph (ILPanel panel, ILBaseArray sourceArray,
                                 ILClippingData clippingContainer)
-            : base (sourceArray,clippingContainer) {
+            : base (panel, sourceArray,clippingContainer) {
             m_cols = sourceArray.Dimensions[1]+1; 
             m_rows = sourceArray.Dimensions[0]+1; 
             m_Vertcount = m_rows * m_cols;

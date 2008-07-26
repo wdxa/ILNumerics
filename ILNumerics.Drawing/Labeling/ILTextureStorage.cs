@@ -149,17 +149,17 @@ namespace ILNumerics.Drawing.Labeling {
                 item.Width = data.Width; 
                 // todo: remove item from packer & from texture sheet (somehow...[?])
             } else {
-                item = new ILTextureData(data.Height,data.Width); 
+                item = new ILTextureData(rect.Height,rect.Width); 
                 m_items.Add(key, item);
             }
             Node node = m_root.Insert(item); 
             if (node == null) 
                 return false; 
-            item.TextureRectangle = new RectangleF((float) node.Rect.Left / m_width,
-                                                   (float) node.Rect.Top / m_height,
-                                                   (float) node.Rect.Width / m_width,
-                                                   (float) node.Rect.Height / m_height);
-            Store(data,rect.Location, node.Rect); 
+            item.TextureRectangle = RectangleF.FromLTRB( (0.5f + node.Rect.Left) / m_width,
+                                                    (0.5f + node.Rect.Top) / m_height,
+                                                    (node.Rect.Right - 0.5f) / m_width,
+                                                    (node.Rect.Bottom - 0.5f) /m_height);
+            Store(data,rect, node.Rect); 
             return true; 
         }
         /// <summary>
@@ -167,14 +167,14 @@ namespace ILNumerics.Drawing.Labeling {
         /// </summary>
         /// <param name="key">unique key for item</param>
         /// <param name="data">item bitmap data</param>
-        /// <param name="size">rectangle of item in data bitmap</param>
-        public virtual bool Store (string key, Bitmap data, RectangleF size) {
-            if (size.Height > m_height || size.Width > m_width) 
+        /// <param name="bmpRect">used rectangle in data bitmap</param>
+        public virtual bool Store (string key, Bitmap data, RectangleF bmpRect) {
+            if (bmpRect.Height > m_height || bmpRect.Width > m_width) 
                 throw new ArgumentException("texture size is too large for this packer!");
             // add to packer  
             ILTextureData item; Node node;
-            int h = (int)size.Height; 
-            int w = (int)size.Width; 
+            int h = (int)bmpRect.Height; 
+            int w = (int)bmpRect.Width; 
             if (m_items.TryGetValue(key,out item)) {
                 item.Height = h; 
                 item.Width = w; 
@@ -191,9 +191,9 @@ namespace ILNumerics.Drawing.Labeling {
             }
             item.TextureRectangle = new RectangleF((float) node.Rect.Left / m_width,
                                                    (float) node.Rect.Top / m_height,
-                                                   (float) (node.Rect.Width) / m_width,
-                                                   (float) (node.Rect.Height) / m_height);
-            Store(data,size.Location, node.Rect); 
+                                                   (float) node.Rect.Width / m_width,
+                                                   (float) node.Rect.Height / m_height);
+            Store(data,bmpRect,node.Rect); 
             return true; 
         }
         /// <summary>
@@ -206,7 +206,7 @@ namespace ILNumerics.Drawing.Labeling {
         /// <param name="data">new item bitmap data</param>
         /// <param name="rect">rectangle specifying area to store the data into, 
         /// texture coords: range from 0...1.0</param>
-        protected abstract void Store(Bitmap data, PointF location, RectangleF rect);
+        protected abstract void Store(Bitmap data, RectangleF location, RectangleF rect);
         /// <summary>
         /// select the texture storage as current in the GL
         /// </summary>

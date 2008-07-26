@@ -110,8 +110,60 @@ namespace ILNumerics.Drawing {
         /// </summary>
         public ILMarker () {
             m_markerStyle = MarkerStyle.None; 
-            m_markerSize = 3;
+            m_markerSize = 10;
         }
         #endregion
+
+        internal static string Hash(MarkerStyle markerStyle, Bitmap userBmp) {
+            string key = Enum.GetName(typeof(MarkerStyle),markerStyle); 
+            key = key.Substring(0,3); 
+            if (markerStyle == MarkerStyle.Bitmap) {
+                // create hash based on the width, height & middle scanline of bitmap
+                StringBuilder sb = new StringBuilder(
+                            String.Format("M:{0}W{1}H{2}:",key,userBmp.Width,userBmp.Height)); 
+                int h = userBmp.Height / 2; 
+                for (int x = 0; x < Math.Min(userBmp.Width,30);x++) {
+                    sb.Append(userBmp.GetPixel(x,h).ToString());
+                }
+                return sb.ToString(); 
+            } else {
+                return String.Format("M:{0}",key); 
+            }   
+        }
+
+        /// <summary>
+        /// convert marker style into bitmap
+        /// </summary>
+        /// <param name="marker">marker with style property</param>
+        /// <returns>bitmap according to style</returns>
+        /// <remarks>the bitmap will be loaded from ILNumerics.Drawing ressources. For marker style 'bitmap'
+        /// the bitmap referenced in the marker will be returned.</remarks>
+        public static Bitmap BitmapFromStyle(ILMarker marker) {
+            switch (marker.Style) {
+                case MarkerStyle.Circle:
+                    return Resources.Markers.Circle25x25;
+                    break;
+                case MarkerStyle.Diamond:
+                    return Resources.Markers.Diamond25x25;
+                    break;
+                case MarkerStyle.Triangle:
+                    return Resources.Markers.TriangleUp25x25;
+                    break;
+                case MarkerStyle.Plus:
+                    return Resources.Markers.Plus25x25;
+                    break;
+                case MarkerStyle.Cross:
+                    return Resources.Markers.Cross25x25;
+                    break;
+                case MarkerStyle.Bitmap:
+                    return marker.Bitmap;
+                    break;
+                default:
+                    throw new NotImplementedException("ILMarker: marker style not supported!");
+                    break;
+            }
+            return null;
+        }
+
     }
 }

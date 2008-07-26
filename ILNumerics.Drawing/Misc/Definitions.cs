@@ -240,7 +240,7 @@ namespace ILNumerics.Drawing {
         /// </summary>
         Square,
         /// <summary>
-        /// draw markers as triangles
+        /// draw markers as up pointing triangles
         /// </summary>
         Triangle,
         /// <summary>

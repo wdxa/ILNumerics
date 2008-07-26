@@ -63,7 +63,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         #region constructors 
         public ILOGLImageSCGraph (ILOGLPanel panel, ILBaseArray sourceArray,
                                  ILClippingData clippingContainer) 
-             : base(sourceArray, clippingContainer) { 
+             : base(panel, sourceArray, clippingContainer) { 
             m_panel = panel; 
         }
         #endregion 

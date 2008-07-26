@@ -66,12 +66,5 @@ namespace ILNumerics.Drawing.Resources {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
-        internal static System.Drawing.Bitmap test {
-            get {
-                object obj = ResourceManager.GetObject("test", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

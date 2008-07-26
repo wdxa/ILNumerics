@@ -27,6 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ILNumerics.BuiltInFunctions; 
+using ILNumerics.Drawing.Controls; 
+using ILNumerics.Exceptions; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
@@ -65,9 +67,11 @@ namespace ILNumerics.Drawing.Graphs {
         /// </summary>
         /// <param name="sourceArray">data array</param>
         /// <param name="clippingContainer">hosting panels clipping data</param>
-        public ILPlot2DGraph (ILBaseArray sourceArray,
+        public ILPlot2DGraph (ILPanel panel, ILBaseArray sourceArray,
                               ILClippingData clippingContainer) 
-            : base (sourceArray,clippingContainer) {
+            : base (panel,sourceArray,clippingContainer) {
+            if (!sourceArray.IsVector)
+                throw new ILArgumentException ("Plot2D: supplied data must be a real vector!"); 
             m_xData = ILMath.tosingle(ILMath.counter(sourceArray.Length,1));
             m_properties = new ILLineProperties(); 
             m_properties.Changed += new EventHandler(m_properties_Changed);
@@ -82,25 +86,49 @@ namespace ILNumerics.Drawing.Graphs {
         /// <param name="XData">x data array</param>
         /// <param name="YData">y data array</param>
         /// <param name="clippingContainer">hosting panels clipping data</param>
-        public ILPlot2DGraph (ILBaseArray XData, ILBaseArray YData,
+        public ILPlot2DGraph (ILPanel panel, ILBaseArray XData, ILBaseArray YData,
                               ILClippingData clippingContainer) 
-            : base (YData,clippingContainer) {
+            : base (panel,YData,clippingContainer) {
+            if (!XData.IsVector)
+                throw new ILArgumentException ("Plot2D: supplied data must be a real vector!"); 
+            if (!YData.IsVector)
+                throw new ILArgumentException ("Plot2D: XData and YData must be real vectors!"); 
+            if (YData.Length != XData.Length) 
+                throw new ILArgumentException ("Plot2D: XData and YData must have the same length!"); 
             m_xData = ILMath.tosingle(XData);
             m_properties = new ILLineProperties(); 
             m_properties.Changed += new EventHandler(m_properties_Changed);
-            m_marker = new ILMarker(); 
-            m_marker.Changed += new EventHandler(m_properties_Changed);
+            m_marker = new ILMarker();
+            m_marker.Changed += new EventHandler(m_marker_Changed);
             m_graphType = GraphType.Plot2D;
             updateClipping();
         }
+
         #endregion
 
         #region private helper 
+        /// <summary>
+        /// called, if a property for markers have changed
+        /// </summary>
+        /// <param name="sender">this graph instance</param>
+        /// <param name="e">(no args)</param>
+        /// <remarks>derived classes should override this function in order to 
+        /// (re-)configure vertex ressources etc.</remarks>
+        protected virtual void m_marker_Changed(object sender, EventArgs e) {
+            m_isReady = false; 
+        }
         private void updateClipping() {
             m_localClipping.Update (
                 new ILPoint3Df(m_xData.MinValue,m_sourceArray.MinValue,0.0f),
                 new ILPoint3Df(m_xData.MaxValue,m_sourceArray.MaxValue,0.0f)); 
         }
+        /// <summary>
+        /// called, if a property for lines have changed
+        /// </summary>
+        /// <param name="sender">this graph instance</param>
+        /// <param name="e">(no args)</param>
+        /// <remarks>derived classes should override this function in order to 
+        /// (re-)configure vertex ressources etc.</remarks>
         protected virtual void m_properties_Changed(object sender, EventArgs e) {
             m_isReady = false;
         }

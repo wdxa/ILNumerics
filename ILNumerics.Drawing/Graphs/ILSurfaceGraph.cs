@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ILNumerics.Drawing.Controls; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
@@ -62,9 +63,9 @@ namespace ILNumerics.Drawing.Graphs {
         /// </summary>
         /// <param name="sourceArray"></param>
         /// <param name="clippingContainer"></param>
-        public ILSurfaceGraph ( ILBaseArray sourceArray,
+        public ILSurfaceGraph (ILPanel panel, ILBaseArray sourceArray,
                                 ILClippingData clippingContainer)
-            : base (sourceArray,clippingContainer) {
+            : base (panel, sourceArray,clippingContainer) {
             m_graphType = GraphType.Surf; 
             m_wireLines.Width = 1;
             m_wireLines.Antialiasing = false; 

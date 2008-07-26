@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ILNumerics.Exceptions; 
+using ILNumerics.Drawing.Controls; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
@@ -95,9 +96,9 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region constructor
-        public ILFilledGraph (ILBaseArray sourceArray, 
+        public ILFilledGraph (ILPanel panel, ILBaseArray sourceArray, 
                             ILClippingData clippingContainer) 
-                : base (sourceArray,clippingContainer) {
+                : base (panel, sourceArray,clippingContainer) {
             if (sourceArray.Dimensions.NonSingletonDimensions != 2) 
                 throw new ILArgumentException ("ILFilledGraph: source arrray must be matrix!"); 
             if (!sourceArray.IsNumeric) 

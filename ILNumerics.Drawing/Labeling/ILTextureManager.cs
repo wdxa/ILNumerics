@@ -170,6 +170,22 @@ namespace ILNumerics.Drawing.Labeling {
             }
             throw new ArgumentException("The key was not found in any texture sheet");
         }
+        /// <summary>
+        /// Store item into texture cache, use full bitmap
+        /// </summary>
+        /// <param name="key">key used to identify the texture in cache</param>
+        /// <param name="item">bitmap holding the texture content</param>
+        /// <returns>true if the texture was successfully stored, false otherwise</returns>
+        public bool StoreTextureItem(string key, Bitmap item) { 
+            return StoreTextureItem(key,item, new Rectangle(new Point(), item.Size)); 
+        }
+        /// <summary>
+        /// Store item into texture cache, use full bitmap
+        /// </summary>
+        /// <param name="key">key used to identify the texture in cache</param>
+        /// <param name="item">bitmap holding the texture content</param>
+        /// <param name="rect">rectangle defining the area in item used for content</param>
+        /// <returns>true if the texture was successfully stored, false otherwise</returns>
         public bool StoreTextureItem(string key, Bitmap item, Rectangle rect) {
             lock (m_lock) {
                 foreach (ILTextureStorage storage in m_textureSheets) {

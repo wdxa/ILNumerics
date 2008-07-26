@@ -69,6 +69,22 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             return m_context; 
         }
 
+        internal double[] ProjectionMatrix {
+            get {
+                return m_projMatrix; 
+            }
+        }
+        internal double[] ModelviewMatrix {
+            get {
+                return m_modelViewMatrix; 
+            }
+        }
+        internal int[] ViewMatrix {
+            get {
+                return m_viewMatrix; 
+            }
+        }
+
         #endregion private members
 
         #region constructors 
@@ -223,7 +239,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 ab = m_clippingView.ScaleToUnitCube();
                 GL.Scale(ab.X, ab.Y, ab.Z); //Identity; //RotationZ(m_cameraPhi); 
                 // update model matrix (to be avilable for zooming etc.)
-                GL.GetDouble(GetPName.ModelviewMatrix,m_modelViewMatrix);
+                //GL.GetDouble(GetPName.ModelviewMatrix,m_modelViewMatrix);
                 #region lighting  - not implemented yet
                 //GL.Enable(EnableCap.Lighting);
                 //GL.Enable(EnableCap.Light0);
@@ -306,7 +322,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 GL.GetDouble(GetPName.ModelviewMatrix,m_modelViewMatrix);
 
                 #region DEBUG texture drawing
-#if DRAWTEXTURESHEET1
+#if DRAWTEXTURESHEET
                 // prepare GL
                 float[] viewport = new float[4]; 
                 GL.GetFloat(GetPName.Viewport, viewport);
@@ -446,10 +462,10 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 case GraphType.Plot2D:
                     if (parameter != null && parameter.Length == 1 
                         && parameter[0] != null && parameter[0] is ILBaseArray)
-                        return new ILOGLPlot2DGraph(this.m_context,parameter[0] as ILBaseArray,
+                        return new ILOGLPlot2DGraph(this,parameter[0] as ILBaseArray,
                                                     data,m_graphs.Clipping); 
                     else 
-                        return new ILOGLPlot2DGraph(this.m_context, data,m_graphs.Clipping);
+                        return new ILOGLPlot2DGraph(this, data,m_graphs.Clipping);
                 case GraphType.Surf:
                     return new ILOGLSurfaceGraph(this,data,m_graphs.Clipping);
                 case GraphType.Imagesc:
@@ -562,7 +578,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// <param name="x">screen X</param>
         /// <param name="y">screen Y</param>
         /// <returns>world coord</returns>
-        protected override ILPoint3Df Screen2World2D(int x, int y, float z) {
+        public override ILPoint3Df Screen2World2D(int x, int y, float z) {
             Vector3 ret; 
             // TODO: check the Z coord values. 0.68 here was result of trial only! 
             Glu.UnProject(new Vector3(x,y,z),m_modelViewMatrix,m_projMatrix,m_viewMatrix, out ret); 

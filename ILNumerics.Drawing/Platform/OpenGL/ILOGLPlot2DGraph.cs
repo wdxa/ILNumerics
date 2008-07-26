@@ -37,6 +37,9 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Platform;
 using OpenTK.Graphics.OpenGL.Enums;
 using ILNumerics.Drawing.Graphs; 
+using ILNumerics.Drawing.Controls; 
+using ILNumerics.Drawing.Labeling; 
+using System.Resources; 
 
 namespace ILNumerics.Drawing.Platform.OpenGL
 {
@@ -50,27 +53,21 @@ namespace ILNumerics.Drawing.Platform.OpenGL
         protected float[] m_vertexArray;
         protected int m_vertCount;
         protected int m_primCount; 
-        protected IGraphicsContext m_context;  
         protected int m_textureName = 0; 
+        protected float[] m_markerQuads; 
 
         #endregion
 
         #region constructors 
 
-        internal ILOGLPlot2DGraph  ( IGraphicsContext context, ILBaseArray sourceArray,
+        internal ILOGLPlot2DGraph  ( ILPanel panel, ILBaseArray sourceArray,
                                   ILClippingData clippingContainer) 
-                                : base(sourceArray,clippingContainer) {
-            m_context = context; 
-            if (sourceArray.Dimensions.NonSingletonDimensions != 1)
-                throw new ILArgumentException ("Plot2D: supplied data must be a real vector!"); 
+                                : base(panel, sourceArray,clippingContainer) {
             create();
         }
-        internal ILOGLPlot2DGraph  ( IGraphicsContext context, ILBaseArray xData, ILBaseArray yData,
+        internal ILOGLPlot2DGraph  ( ILPanel panel, ILBaseArray xData, ILBaseArray yData,
                                   ILClippingData clippingContainer) 
-                                : base(xData, yData, clippingContainer) {
-            m_context = context; 
-            if (yData.Dimensions.NonSingletonDimensions != 1)
-                throw new ILArgumentException ("Plot2D: supplied data must be a real vector!"); 
+                                : base(panel, xData, yData, clippingContainer) {
             create();
         }
 
@@ -89,6 +86,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL
                 m_vertCount = m_sourceArray.Length;
                 m_primCount = m_sourceArray.Length - 1;
             }
+            // marker's ressources will get configured once a marker was set (via properties)
             Configure();
         }
 
@@ -123,39 +121,6 @@ namespace ILNumerics.Drawing.Platform.OpenGL
            m_isReady = true; 
         }
 
-        private void uploadTextures() {
-            // assumes the GL context to be current
-            Bitmap marker = Resources.Markers.Triangle; 
-            GL.GenTextures(1, out m_textureName);
-            GL.BindTexture(TextureTarget.Texture2D, m_textureName);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);
-            BitmapData markerData = marker.LockBits(new Rectangle(0,0,marker.Size.Width,marker.Height),System.Drawing.Imaging.ImageLockMode.ReadOnly,
-                            System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Alpha, 
-                            marker.Size.Width, marker.Size.Height, 0,
-                            OpenTK.Graphics.PixelFormat.Rgba, 
-                            PixelType.UnsignedByte, (IntPtr)markerData.Scan0);
-            marker.UnlockBits(markerData); 
-            //unsafe {
-            //int[] textureData = new int[marker.Size * marker.Height]; 
-                //fixed (int* pMarkerData = (int*)markerData.Scan0)
-                //fixed (int* pTextureData = (int*)textureData) {
-                //    int pos = 0; 
-                //    for (int r = 0; r < marker.Size.Height; r++) {
-                //        for (int c = 0; c < marker.Size.Width; c++) {
-                //            pos = r * marker.Size.Width + c; 
-                //            *(pTextureData + pos) = *(pMarkerData + pos); 
-                //        }
-                //    }
-                //GL.TexSubImage2D(TextureTarget.Texture2D, 0, rect.Left, rect.Top, rect.Width, rect.Height,
-                //                 PixelFormat.Rgba, PixelType.UnsignedByte, (IntPtr)markerData.Scan0);
-
-                //}
-            //}
-
-        }
-
         #endregion 
 
         #region public (& abstract) interface 
@@ -185,23 +150,74 @@ namespace ILNumerics.Drawing.Platform.OpenGL
                 }
             }
             #endregion
-            #region draw points
+            #region draw markers
             if (m_marker.Style != MarkerStyle.None) {
-                ILOGLPanel.SetupMarkerStyle(m_marker); 
-                //if (m_textureName == 0) {
-                //    uploadTextures(); 
-                //}
-                //if (m_marker.Style == MarkerStyle.Triangle) {
-                //    GL.BindTexture(TextureTarget.Texture2D,m_textureName); 
-                //    //GL.PointParameter(PointParameterName.PointSpriteCoordOrigin,4);
-                //    //GL.Enable(EnableCap.Texture2D); 
-                //}
-                unsafe { 
-                    fixed(float* pVertArr = m_vertexArray) {
-                        GL.TexCoord2(0.5,0.5); 
-                        GL.InterleavedArrays(InterleavedArrayFormat.V2f,0,(IntPtr)(float*)pVertArr); 
-                        GL.DrawArrays(BeginMode.Points,0,m_vertCount); 
+                if (m_marker.Style == MarkerStyle.Dot || m_marker.Style == MarkerStyle.Square) {
+                    ILOGLPanel.SetupMarkerStyle(m_marker);
+                    unsafe { 
+                        fixed(float* pVertArr = m_vertexArray) {
+                            //GL.TexCoord2(0.5,0.5); 
+                            GL.InterleavedArrays(InterleavedArrayFormat.V2f,0,(IntPtr)(float*)pVertArr); 
+                            GL.DrawArrays(BeginMode.Points,0,m_vertCount); 
+                        }
                     }
+                } else {
+                    #region draw textured points (slow version: textured quads)
+                    string markerTexKey = ILMarker.Hash(m_marker.Style,m_marker.Bitmap); 
+                    ILTextureData texData; 
+                    if (!m_panel.TextureManager.Exists(markerTexKey)) {
+                        CacheMarkerBitmap();
+                    }
+                    texData = m_panel.TextureManager.GetTextureItem(markerTexKey,true); 
+System.Diagnostics.Debug.Assert(texData != null,"The texture for marker was expected to exist in texture storage, but it was not found!"); 
+                    // prepare for plotting
+                    GL.Enable(EnableCap.Texture2D); 
+                    GL.Color3(m_marker.Color); 
+                    GL.PushAttrib(AttribMask.TextureBit | AttribMask.EnableBit | AttribMask.ColorBufferBit);
+
+                    GL.Enable(EnableCap.Texture2D);
+                    GL.Enable(EnableCap.Blend);
+                    GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+                    GL.Disable(EnableCap.DepthTest);
+                    RectangleF rectF = texData.TextureRectangle; 
+                    float w,h;
+                    #region determine size for markers in world coords (graph limits)
+                    // this does not work out, needs to take rotation and modelview into account
+                    //ILOGLPanel opan = m_panel as ILOGLPanel; 
+                    //OpenTK.Math.Vector3 tmp1 = new OpenTK.Math.Vector3(m_panel.ClientSize.Width/2-m_marker.Size,m_panel.ClientSize.Height/2-m_marker.Size,0.5f); 
+                    //OpenTK.Math.Vector3 tmp2 = new OpenTK.Math.Vector3(m_panel.ClientSize.Width/2+m_marker.Size,m_panel.ClientSize.Height/2+m_marker.Size,0.5f); 
+                    //ILPoint3Df tmp1 = m_panel.Screen2World2D(m_panel.Width/2,m_panel.Height/2,0.5f); 
+                    //ILPoint3Df tmp2 = m_panel.Screen2World2D(m_panel.Width/2+m_marker.Size,m_panel.Height/2+m_marker.Size,0.5f); 
+                    //Glu.UnProject(tmp1,opan.ModelviewMatrix,opan.ProjectionMatrix,opan.ViewMatrix,out tmp1); 
+                    //Glu.UnProject(tmp2,opan.ModelviewMatrix,opan.ProjectionMatrix,opan.ViewMatrix,out tmp2); 
+                    ILClippingData clip = m_panel.Limits; 
+                    float s05x = Math.Abs(m_marker.Size * clip.WidthF / (m_panel.ClientSize.Width - m_panel.m_cubeMargin * 2)); 
+                    float s05y = Math.Abs(m_marker.Size * clip.HeightF / (m_panel.ClientSize.Height - m_panel.m_cubeMargin * 2)); 
+
+                    #endregion
+                    // draw all markers using quads. 
+                    // this is slow! Todo: replace by point sprites! 
+                    GL.Begin(BeginMode.Quads); 
+                    for (int i = 0; i < m_vertCount; i++) {
+                        w = m_vertexArray[i*2]; 
+                        h = m_vertexArray[i*2+1];           
+                        if (m_panel.ClipViewData && (w < clip.m_xMin || w > clip.m_xMax || h < clip.m_yMin || h > clip.m_yMax)) 
+                            continue; 
+                        w -= s05x;             
+                        h -= s05y; 
+                        GL.TexCoord2(rectF.Left,rectF.Bottom);              
+                        GL.Vertex2(w,h);                                     // ul
+                        GL.TexCoord2(rectF.Left,rectF.Top);                 
+                        GL.Vertex2(w,h + 2 * s05y);                             // bl
+                        w += 2 * s05x;                                
+                        GL.TexCoord2(rectF.Right,rectF.Top);                
+                        GL.Vertex2(w,h + 2 * s05y);                             // br
+                        GL.TexCoord2(rectF.Right,rectF.Bottom);             
+                        GL.Vertex2(w,h);                                     // tr
+                    }
+                    GL.End(); 
+                    GL.PopAttrib();
+                    #endregion
                 }
             }
             #endregion
@@ -219,8 +235,9 @@ namespace ILNumerics.Drawing.Platform.OpenGL
             // create data array 
             //System.Diagnostics.Debug.WriteLine("ILOGLGraphPlot2D_configure"); 
             Dispose(); 
-            if (m_context == null || !m_context.IsCurrent)
-                return; 
+            //IGraphicsContext context = (m_panel as ILOGLPanel).Context; 
+            //if ( context == null || !context.IsCurrent)
+            //    return; 
             try {
                 // construct data suitable for GL.InterleavedArrays (V2F) -> 
                 // each vertex has only 2 coords: x,y
@@ -229,6 +246,20 @@ namespace ILNumerics.Drawing.Platform.OpenGL
                 Transform2D(); 
             } catch (Exception) {}
         }
+
+        protected override void m_marker_Changed(object sender, EventArgs e) {
+            base.m_marker_Changed(sender, e);
+        }
+
+        private void CacheMarkerBitmap() {
+            ILTextureManager mana = m_panel.TextureManager;
+            string key = ILMarker.Hash(m_marker.Style,m_marker.Bitmap);
+            Bitmap markerbmp = ILMarker.BitmapFromStyle(m_marker);
+            // we need it in format Argb!
+            mana.StoreTextureItem(key, markerbmp);
+        }
+
+
         #endregion
     }
 }

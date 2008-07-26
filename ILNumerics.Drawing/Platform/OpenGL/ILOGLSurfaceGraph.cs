@@ -210,8 +210,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL
         #region constructor
         public ILOGLSurfaceGraph (  ILOGLPanel panel, ILBaseArray sourceArray,
                                  ILClippingData clippingContainer) 
-                              : base(sourceArray,clippingContainer) {
-            m_panel = panel;
+                              : base(panel,sourceArray,clippingContainer) {
             m_indexReady = false; 
             m_vertexReady = false; 
         }

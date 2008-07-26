@@ -64,6 +64,7 @@
     <Compile Include="Labeling\ILHashCreator.cs" />
     <Compile Include="Labeling\ILLabelingElement.cs" />
     <Compile Include="Labeling\ILRenderQueue.cs" />
+    <Compile Include="Labeling\ILSimpleInterpreter.cs" />
     <Compile Include="Labeling\ILSimpleTexInterpreter.cs" />
     <Compile Include="Misc\Definitions.cs" />
     <Compile Include="Misc\Events.cs" />
@@ -171,16 +172,21 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Resources\close.bmp" />
-    <None Include="Resources\Triangle.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\test.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Misc\opentk\trunk\Source\OpenTK\OpenTK.csproj">
       <Project>{9AD3A0D9-5DE6-4745-8099-5CCF9B780226}</Project>
       <Name>OpenTK</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Diamond25x25.png" />
+    <None Include="Resources\TriangleUp25x25.png" />
+    <None Include="Resources\Circle25x25.png" />
+    <None Include="Resources\Plus25x25.png" />
+    <None Include="Resources\Cross25x25.png" />
+    <Content Include="Resources\TriangleUp25x25A.bmp" />
+    <EmbeddedResource Include="Resources\TriangleUp25x25A.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="obsolete\" />

@@ -77,6 +77,7 @@ namespace ILNumerics.Drawing.Controls {
         protected ILLayoutData m_layoutData = new ILLayoutData(); 
         internal float m_cubeWidth;  // used to propagate view size to matrices in derived classes
         internal float m_cubeHeight; 
+        internal int m_cubeMargin; 
         #endregion
 
         #region properties
@@ -522,7 +523,7 @@ namespace ILNumerics.Drawing.Controls {
             base.OnMouseUp(e);
             //System.Diagnostic.Debug.WriteLine("MouseUp");
             if (m_selectingMode == InteractiveModes.ZoomRectangle && m_isMoving) {
-                Zoom(Screen2World2D(m_mouseStart.X,m_mouseStart.Y,0),Screen2World2D(e.X,e.Y,0));
+                Zoom(Screen2World2D(m_mouseStart.X,m_mouseStart.Y,0.5f),Screen2World2D(e.X,e.Y,0.5f));
 
             }
             m_isMoving = false; 
@@ -1104,7 +1105,7 @@ namespace ILNumerics.Drawing.Controls {
         /// <param name="y">screen y</param>
         /// <param name="z">z directly transferred to output</param>
         /// <returns>world coordinate point</returns>
-        protected virtual ILPoint3Df Screen2World2D(int x, int y, float z) {
+        public virtual ILPoint3Df Screen2World2D(int x, int y, float z) {
             ILPoint3Df center = new ILPoint3Df();
             Size labelsSize = m_axes.MaxTicLabelSize;
             // map to world coords
@@ -1200,18 +1201,18 @@ namespace ILNumerics.Drawing.Controls {
             int padX = m_axes[0].LabeledTicks.Padding + m_axes[0].Label.Padding * 2; 
             int padY = m_axes[1].LabeledTicks.Padding + m_axes[1].Label.Padding * 2; 
             int padZ = m_axes[2].LabeledTicks.Padding + m_axes[2].Label.Padding * 2; 
-            int xHeight = xLabelSize.Height + padX; 
+            m_cubeMargin = xLabelSize.Height + padX; 
             int yHeight = yLabelSize.Height + padY; 
             int zHeight =  m_axes.ZAxis.Label.Size.Height + padZ; 
-            if (xHeight < yHeight) 
-                xHeight = yHeight; 
-            ticksSize.Width += xHeight; 
-            ticksSize.Height += xHeight; 
+            if (m_cubeMargin < yHeight) 
+                m_cubeMargin = yHeight; 
+            ticksSize.Width += m_cubeMargin; 
+            ticksSize.Height += m_cubeMargin; 
             // include Z-Axis, if showing
             if (m_axes[2].Visible && m_camera.SinRho > 1e-5) {
-                if (xHeight < zHeight) {
-                    ticksSize.Width += (zHeight - xHeight);
-                    ticksSize.Height += (zHeight - xHeight);
+                if (m_cubeMargin < zHeight) {
+                    ticksSize.Width += (zHeight - m_cubeMargin);
+                    ticksSize.Height += (zHeight - m_cubeMargin);
                 }
             }
             //m_cubeWidth = 1.0f / (xSize * ((ClientSize.Width-2) - 2 * ticksSize.Width) / (ClientSize.Width-2));
