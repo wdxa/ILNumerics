@@ -188,6 +188,7 @@ namespace ILNumerics.Drawing.Collections {
             }
         }
         internal Size MeasureMaxTickLabelSize(Graphics gr) {
+            m_maximumSize = Size.Empty; 
             for (int i = 0; i < m_axes.Length; i++) {
                 Size tmp = m_axes[i].LabeledTicks.Size; 
                 if (tmp.Height > m_maximumSize.Height) {

@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing; 
 using System.Windows.Forms; 
 using ILNumerics.Exceptions;
 using ILNumerics.Drawing.Internal;
@@ -113,6 +114,14 @@ namespace ILNumerics.Drawing.Controls {
                 return m_figControl[key]; 
             }
         }
+        //public Bitmap DrawToBitmap() {
+        //    Bitmap ret = new Bitmap(this.Width,this.Height); 
+        //    Graphics gr = Graphics.FromImage(ret); 
+        //    this.Activate(); 
+        //    gr.CopyFromScreen(this.Location,new Point(),this.Size); 
+        //    gr.Dispose(); 
+        //    return ret; 
+        //}
         #endregion
         
         #region private helper

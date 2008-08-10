@@ -29,6 +29,7 @@ using System.Text;
 using ILNumerics.Drawing.Internal; 
 using ILNumerics.Drawing.Controls; 
 using ILNumerics.Exceptions; 
+using ILNumerics.Drawing.Misc; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
@@ -39,10 +40,10 @@ namespace ILNumerics.Drawing.Graphs {
 
         #region events 
         
-        public event EventHandler Changed; 
-        protected void OnChanged() {
+        public event ILGraphChangedEvent Changed; 
+        protected virtual void OnChanged(string source) {
             if (Changed != null) 
-                Changed(this,new EventArgs());
+                Changed(this, new ILGraphChangedEventArgs(source));
         }
 
         #endregion

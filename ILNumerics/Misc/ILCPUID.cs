@@ -236,5 +236,13 @@ namespace ILNumerics.Native {
                 // no error handling -> properties will stay on "(unkonwn)" ... 
             }
         }
+        /// <summary>
+        /// write most important information gathered for this CPU
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString() {
+            return String.Format("vendor:{0} familiy:{1} brand:{2} model:{3} cpu count:{4}"
+                    ,m_vendor,m_family,m_brand,m_model,m_cpuCount); 
+        }
     }
 }

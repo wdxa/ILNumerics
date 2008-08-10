@@ -265,13 +265,13 @@ namespace ILNumerics.Drawing.Collections {
             m_panel = panel; 
             m_ticks = new List<LabeledTick>(); 
             m_axisName = axisName; 
-            m_precision = 5;
-            m_padding = 4; 
+            m_precision = 4;
+            m_padding = 8; 
             m_tickColorFar = Color.Black; 
             m_tickColorNear = Color.Black; 
             m_tickDisplay = TickDisplay.LabelSide; 
             m_tickMode = TickMode.Auto; 
-            m_tickFraction = 0.02f; 
+            m_tickFraction = 0.015f; 
             m_renderingHint = TickLabelRenderingHint.Auto; 
         }
         #endregion
@@ -386,7 +386,7 @@ namespace ILNumerics.Drawing.Collections {
             // ( 'ex' is the power of 10, which should be varied )
             double ex; 
             // how many ticks will (really) fit on the label line? 
-            if (tickCount > 3) {
+            if (tickCount > 1) {
                 Replace(NiceLabels(min,max,tickCount,m_renderingHint)); 
                 if (Count > 0) 
                     return; 
@@ -669,9 +669,11 @@ namespace ILNumerics.Drawing.Collections {
             graphmax = Math.Ceiling(max/d)*d;
             nfrac = (int)Math.Max(-Math.Floor(Math.Log10(d)), 0);
             List<float> ticks = new List<float>(); 
-            ticks.Add(nfrac);
-            for (x=graphmin; x<graphmax+.5*d; x+=d) {
+            //ticks.Add(nfrac);
+            for (x=graphmin; x<graphmax+.5*d; x=(float)(Math.Round((x+d)/d)*d)) {
+                //x = (float)(Math.Round(x/d)*d); 
                 ticks.Add((float)x);
+                if (ticks.Count > 20) break; //emergency exit if range is in floating point range
             }
             return ticks;
         }

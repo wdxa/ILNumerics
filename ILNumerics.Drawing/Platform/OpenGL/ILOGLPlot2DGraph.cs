@@ -130,95 +130,35 @@ namespace ILNumerics.Drawing.Platform.OpenGL
             //System.Diagnostics.Debug.WriteLine("ILOGLGraphPlot2D_Draw"); 
             #region draw line
             // draw linestrip - simple case - fast vertex rendering 
-            GL.Color3(m_properties.Color); 
-            int stipFactr = 1;  
-            LineStyle style = m_properties.Style;
-            short stipple; 
-            if (m_properties.Style != LineStyle.UserPattern) 
-                stipple = ILNumerics.Drawing.Controls.ILPanel.StippleFromLineStyle(style, ref stipFactr);
-            else 
-                stipple = m_properties.Pattern; 
-            GL.Enable(EnableCap.LineStipple);
-            GL.Enable(EnableCap.LineSmooth);
-            GL.Enable(EnableCap.Blend); 
-            GL.LineStipple((int)m_properties.PatternScale,stipple);
-            GL.LineWidth(m_properties.Width); 
-            unsafe { 
-                fixed(float* pVertArr = m_vertexArray) {  
-                    GL.InterleavedArrays(InterleavedArrayFormat.V2f,0,(IntPtr)(float*)pVertArr); 
-                    GL.DrawArrays(BeginMode.LineStrip,0,m_vertCount); 
+            if (m_properties.Visible) {
+                GL.Color3(m_properties.Color); 
+                int stipFactr = 1;  
+                LineStyle style = m_properties.Style;
+                short stipple; 
+                if (m_properties.Style != LineStyle.UserPattern) 
+                    stipple = ILNumerics.Drawing.Controls.ILPanel.StippleFromLineStyle(style, ref stipFactr);
+                else 
+                    stipple = m_properties.Pattern; 
+                GL.Enable(EnableCap.LineStipple);
+                GL.LineStipple((int)m_properties.PatternScale,stipple);
+                GL.LineWidth(m_properties.Width); 
+                if (m_properties.Antialiasing)
+                    GL.Enable(EnableCap.LineSmooth);
+                else 
+                    GL.Disable(EnableCap.LineSmooth); 
+                GL.Disable(EnableCap.Blend); 
+                GL.Disable(EnableCap.Texture2D);
+                unsafe { 
+                    fixed(float* pVertArr = m_vertexArray) {  
+                        GL.InterleavedArrays(InterleavedArrayFormat.V2f,0,(IntPtr)(float*)pVertArr); 
+                        GL.DrawArrays(BeginMode.LineStrip,0,m_vertCount); 
+                    }
                 }
             }
             #endregion
             #region draw markers
-            if (m_marker.Style != MarkerStyle.None) {
-                if (m_marker.Style == MarkerStyle.Dot || m_marker.Style == MarkerStyle.Square) {
-                    ILOGLPanel.SetupMarkerStyle(m_marker);
-                    unsafe { 
-                        fixed(float* pVertArr = m_vertexArray) {
-                            //GL.TexCoord2(0.5,0.5); 
-                            GL.InterleavedArrays(InterleavedArrayFormat.V2f,0,(IntPtr)(float*)pVertArr); 
-                            GL.DrawArrays(BeginMode.Points,0,m_vertCount); 
-                        }
-                    }
-                } else {
-                    #region draw textured points (slow version: textured quads)
-                    string markerTexKey = ILMarker.Hash(m_marker.Style,m_marker.Bitmap); 
-                    ILTextureData texData; 
-                    if (!m_panel.TextureManager.Exists(markerTexKey)) {
-                        CacheMarkerBitmap();
-                    }
-                    texData = m_panel.TextureManager.GetTextureItem(markerTexKey,true); 
-System.Diagnostics.Debug.Assert(texData != null,"The texture for marker was expected to exist in texture storage, but it was not found!"); 
-                    // prepare for plotting
-                    GL.Enable(EnableCap.Texture2D); 
-                    GL.Color3(m_marker.Color); 
-                    GL.PushAttrib(AttribMask.TextureBit | AttribMask.EnableBit | AttribMask.ColorBufferBit);
-
-                    GL.Enable(EnableCap.Texture2D);
-                    GL.Enable(EnableCap.Blend);
-                    GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-                    GL.Disable(EnableCap.DepthTest);
-                    RectangleF rectF = texData.TextureRectangle; 
-                    float w,h;
-                    #region determine size for markers in world coords (graph limits)
-                    // this does not work out, needs to take rotation and modelview into account
-                    //ILOGLPanel opan = m_panel as ILOGLPanel; 
-                    //OpenTK.Math.Vector3 tmp1 = new OpenTK.Math.Vector3(m_panel.ClientSize.Width/2-m_marker.Size,m_panel.ClientSize.Height/2-m_marker.Size,0.5f); 
-                    //OpenTK.Math.Vector3 tmp2 = new OpenTK.Math.Vector3(m_panel.ClientSize.Width/2+m_marker.Size,m_panel.ClientSize.Height/2+m_marker.Size,0.5f); 
-                    //ILPoint3Df tmp1 = m_panel.Screen2World2D(m_panel.Width/2,m_panel.Height/2,0.5f); 
-                    //ILPoint3Df tmp2 = m_panel.Screen2World2D(m_panel.Width/2+m_marker.Size,m_panel.Height/2+m_marker.Size,0.5f); 
-                    //Glu.UnProject(tmp1,opan.ModelviewMatrix,opan.ProjectionMatrix,opan.ViewMatrix,out tmp1); 
-                    //Glu.UnProject(tmp2,opan.ModelviewMatrix,opan.ProjectionMatrix,opan.ViewMatrix,out tmp2); 
-                    ILClippingData clip = m_panel.Limits; 
-                    float s05x = Math.Abs(m_marker.Size * clip.WidthF / (m_panel.ClientSize.Width - m_panel.m_cubeMargin * 2)); 
-                    float s05y = Math.Abs(m_marker.Size * clip.HeightF / (m_panel.ClientSize.Height - m_panel.m_cubeMargin * 2)); 
-
-                    #endregion
-                    // draw all markers using quads. 
-                    // this is slow! Todo: replace by point sprites! 
-                    GL.Begin(BeginMode.Quads); 
-                    for (int i = 0; i < m_vertCount; i++) {
-                        w = m_vertexArray[i*2]; 
-                        h = m_vertexArray[i*2+1];           
-                        if (m_panel.ClipViewData && (w < clip.m_xMin || w > clip.m_xMax || h < clip.m_yMin || h > clip.m_yMax)) 
-                            continue; 
-                        w -= s05x;             
-                        h -= s05y; 
-                        GL.TexCoord2(rectF.Left,rectF.Bottom);              
-                        GL.Vertex2(w,h);                                     // ul
-                        GL.TexCoord2(rectF.Left,rectF.Top);                 
-                        GL.Vertex2(w,h + 2 * s05y);                             // bl
-                        w += 2 * s05x;                                
-                        GL.TexCoord2(rectF.Right,rectF.Top);                
-                        GL.Vertex2(w,h + 2 * s05y);                             // br
-                        GL.TexCoord2(rectF.Right,rectF.Bottom);             
-                        GL.Vertex2(w,h);                                     // tr
-                    }
-                    GL.End(); 
-                    GL.PopAttrib();
-                    #endregion
-                }
+            if (m_marker.Visible) { 
+                m_marker.Shape.Draw(m_marker, m_vertexArray, m_vertCount);
             }
             #endregion
         }
@@ -249,14 +189,6 @@ System.Diagnostics.Debug.Assert(texData != null,"The texture for marker was expe
 
         protected override void m_marker_Changed(object sender, EventArgs e) {
             base.m_marker_Changed(sender, e);
-        }
-
-        private void CacheMarkerBitmap() {
-            ILTextureManager mana = m_panel.TextureManager;
-            string key = ILMarker.Hash(m_marker.Style,m_marker.Bitmap);
-            Bitmap markerbmp = ILMarker.BitmapFromStyle(m_marker);
-            // we need it in format Argb!
-            mana.StoreTextureItem(key, markerbmp);
         }
 
 

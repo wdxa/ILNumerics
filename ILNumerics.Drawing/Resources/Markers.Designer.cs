@@ -88,6 +88,27 @@ namespace ILNumerics.Drawing.Resources {
             }
         }
         
+        internal static System.Drawing.Bitmap TriangleDown25x25 {
+            get {
+                object obj = ResourceManager.GetObject("TriangleDown25x25", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap TriangleLeft25x25 {
+            get {
+                object obj = ResourceManager.GetObject("TriangleLeft25x25", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap TriangleRight25x25 {
+            get {
+                object obj = ResourceManager.GetObject("TriangleRight25x25", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap TriangleUp25x25 {
             get {
                 object obj = ResourceManager.GetObject("TriangleUp25x25", resourceCulture);

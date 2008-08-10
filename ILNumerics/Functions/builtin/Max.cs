@@ -5217,6 +5217,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -5331,6 +5332,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -5370,7 +5372,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( UInt64 * pInArr = A.m_data) {
                                         UInt64 * tmpOut = pOutArr;
                                         UInt64 * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         UInt64 * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;
@@ -5535,6 +5537,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -5649,6 +5652,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -5688,7 +5692,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( UInt32 * pInArr = A.m_data) {
                                         UInt32 * tmpOut = pOutArr;
                                         UInt32 * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         UInt32 * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;
@@ -5853,6 +5857,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -5967,6 +5972,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -6006,7 +6012,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( UInt16 * pInArr = A.m_data) {
                                         UInt16 * tmpOut = pOutArr;
                                         UInt16 * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         UInt16 * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;
@@ -6171,6 +6177,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -6285,6 +6292,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -6324,7 +6332,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( Int64 * pInArr = A.m_data) {
                                         Int64 * tmpOut = pOutArr;
                                         Int64 * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         Int64 * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;
@@ -6489,6 +6497,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -6603,6 +6612,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -6642,7 +6652,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( Int32 * pInArr = A.m_data) {
                                         Int32 * tmpOut = pOutArr;
                                         Int32 * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         Int32 * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;
@@ -6807,6 +6817,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -6921,6 +6932,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -6960,7 +6972,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( Int16 * pInArr = A.m_data) {
                                         Int16 * tmpOut = pOutArr;
                                         Int16 * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         Int16 * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;
@@ -7125,6 +7137,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -7239,6 +7252,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -7278,7 +7292,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( float * pInArr = A.m_data) {
                                         float * tmpOut = pOutArr;
                                         float * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         float * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;
@@ -7443,6 +7457,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -7557,6 +7572,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -7596,7 +7612,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( fcomplex * pInArr = A.m_data) {
                                         fcomplex * tmpOut = pOutArr;
                                         fcomplex * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         fcomplex * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;
@@ -7761,6 +7777,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -7875,6 +7892,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -7914,7 +7932,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( complex * pInArr = A.m_data) {
                                         complex * tmpOut = pOutArr;
                                         complex * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         complex * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;
@@ -8079,6 +8097,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -8193,6 +8212,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -8232,7 +8252,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( char * pInArr = A.m_data) {
                                         char * tmpOut = pOutArr;
                                         char * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         char * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;
@@ -8397,6 +8417,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -8511,6 +8532,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -8550,7 +8572,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( byte * pInArr = A.m_data) {
                                         byte * tmpOut = pOutArr;
                                         byte * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         byte * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;
@@ -8715,6 +8737,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (B.IsMatrix) {
@@ -8829,6 +8852,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             if (leadDimLen < inDim [i]) {
                                 leadDimLen = inDim [i];
                                 leadDim = i;
+                                incOut = inDim.SequentialIndexDistance ( leadDim );
                             }
                         }
                         if (A.IsMatrix) {
@@ -8868,7 +8892,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                     fixed ( double * pInArr = A.m_data) {
                                         double * tmpOut = pOutArr;
                                         double * tmpOutEnd = tmpOut + retArr.Length;
-                                        // init lesezeiger: add alle Dimensionen mit 0 (auer leadDim)
+                                        // init readpointer: add all Dimensions with 0 (except leadDim)
                                         double * tmpIn = pInArr + A.getBaseIndex (0,0);
                                         tmpIn -= idxOffset [leadDim, 0];
                                         int* leadDimIdx = leadDimStart;

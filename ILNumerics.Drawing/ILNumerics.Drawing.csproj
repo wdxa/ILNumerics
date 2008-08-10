@@ -46,7 +46,8 @@
     <DocumentationFile>..\bin\ILNumerics.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ILNumerics.Net, Version=1.3.12.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="ILNumerics.Net, Version=1.3.13.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="OpenTK, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -60,12 +61,17 @@
     <Compile Include="Controls\ILSubfigure.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Graphs\ILPolygon.cs" />
     <Compile Include="Interfaces\IILTextInterpreter.cs" />
     <Compile Include="Labeling\ILHashCreator.cs" />
     <Compile Include="Labeling\ILLabelingElement.cs" />
     <Compile Include="Labeling\ILRenderQueue.cs" />
     <Compile Include="Labeling\ILSimpleInterpreter.cs" />
     <Compile Include="Labeling\ILSimpleTexInterpreter.cs" />
+    <Compile Include="Marker\ILBitmapMarkerShape.cs" />
+    <Compile Include="Marker\ILMarkerShapeProxy.cs" />
+    <Compile Include="Marker\ILStyledMarkerShape.cs" />
+    <Compile Include="Marker\ILTexMarkerShape.cs" />
     <Compile Include="Misc\Definitions.cs" />
     <Compile Include="Misc\Events.cs" />
     <Compile Include="Graphs\ILImageSCGraph.cs" />
@@ -74,12 +80,20 @@
     <Compile Include="Graphs\ILPlot2DGraph.cs" />
     <Compile Include="Graphs\ILFilledGraph.cs" />
     <Compile Include="Misc\ILCamera.cs" />
+    <Compile Include="Misc\ILColormap.cs" />
     <Compile Include="Misc\ILLineProperties.cs" />
-    <Compile Include="Misc\ILMarker.cs" />
+    <Compile Include="Marker\ILMarker.cs" />
+    <Compile Include="Marker\ILMarkerShape.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLBitmapMarkerShape.cs" />
     <Compile Include="Platform\OpenGL\ILOGLImageSCGraph.cs" />
-    <Compile Include="Platform\OpenGL\ILOGLRenderer.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLRenderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Platform\OpenGL\ILOGLStyledMarkerShape.cs" />
     <Compile Include="Platform\OpenGL\ILOGLSurfaceGraph.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLTexMarkerShape.cs" />
     <Compile Include="Platform\OpenGL\ILOGLTextureStorage.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLWorldRenderer.cs" />
     <Compile Include="Platform\OpenGL\ILOGLXAxis.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -174,17 +188,14 @@
     <None Include="Resources\close.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Misc\opentk\trunk\Source\OpenTK\OpenTK.csproj">
-      <Project>{9AD3A0D9-5DE6-4745-8099-5CCF9B780226}</Project>
-      <Name>OpenTK</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Diamond25x25.png" />
     <None Include="Resources\TriangleUp25x25.png" />
     <None Include="Resources\Circle25x25.png" />
     <None Include="Resources\Plus25x25.png" />
     <None Include="Resources\Cross25x25.png" />
+    <None Include="Resources\TriangleRight25x25.png" />
+    <None Include="Resources\TriangleLeft25x25.png" />
+    <None Include="Resources\TriangleDown25x25.png" />
     <Content Include="Resources\TriangleUp25x25A.bmp" />
     <EmbeddedResource Include="Resources\TriangleUp25x25A.png" />
   </ItemGroup>

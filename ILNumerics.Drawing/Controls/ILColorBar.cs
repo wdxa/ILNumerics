@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using System.Resources; 
 using ILNumerics.Drawing.Labeling; 
 using ILNumerics.Drawing.Internal; 
+using ILNumerics.Drawing.Misc; 
 
 
 namespace ILNumerics.Drawing.Controls {
@@ -40,10 +41,19 @@ namespace ILNumerics.Drawing.Controls {
         private float m_maxValue;
         private int m_precision = 5;
         private int m_tickLabelsPadding = 2;
+        private ILColormap m_colormap; 
+
         /// <summary>
-        /// Color provider, mappping values to colors (not implemented) 
+        /// Colormap used to translate colors indices
         /// </summary>
-        private ILColorProvider m_colorProvider; 
+        public ILColormap Colormap {
+            get {
+                return m_colormap;
+            }
+            internal set { 
+                m_colormap = value; 
+            }
+        }
 
         /// <summary>
         /// padding (in pixels) between the tick labels 
@@ -101,15 +111,15 @@ namespace ILNumerics.Drawing.Controls {
             m_maxValue = e.ClippingData.ZMax;
         }
         /// <summary>
-        /// update range for color bar, supply color provider (to be implemented)
+        /// update range for color bar, supply color provider
         /// </summary>
         /// <param name="minValue">min value</param>
         /// <param name="maxValue">max value</param>
         /// <param name="colorProvider">color provider (not implemented)</param>
-        public void Update(float minValue, float maxValue, ILColorProvider colorProvider) {
+        public void Update(float minValue, float maxValue, ILColormap colormap) {
             m_minValue = minValue; 
             m_maxValue = maxValue; 
-            m_colorProvider = colorProvider; 
+            m_colormap = colormap; 
         }
         /// <summary>
         /// update data range for the color bar
@@ -122,13 +132,14 @@ namespace ILNumerics.Drawing.Controls {
         }
 
 
-        public ILColorBar() : base() {
+        public ILColorBar(ILColormap colormap) : base() {
             base.BorderStyle = BorderStyle.FixedSingle; 
             Padding = new Padding(4); 
             StandardOrientation = TextOrientation.Vertical;
             m_orientation = TextOrientation.Vertical;
             Visible = true; 
             BackColor = SystemColors.Info; 
+            m_colormap = colormap; 
         }
 
         protected override void OnPaint(PaintEventArgs e) {
@@ -210,7 +221,7 @@ namespace ILNumerics.Drawing.Controls {
             Internal.ILColorProvider hls = new Internal.ILColorProvider(0.0f,0.5f,1.0f); 
             if (m_orientation == TextOrientation.Vertical) {
                 for (int i = drawSpace.Height; i -->0;) {
-                    pen.Color = Color.FromArgb(hls.H2RGB(i / (float)drawSpace.Height * Internal.ILColorProvider.MAXHUEVALUE));
+                    pen.Color = m_colormap.Map((drawSpace.Height - i) / (double)drawSpace.Height * m_colormap.Length);
                     e.Graphics.DrawLine(pen,drawSpace.Left, drawSpace.Top+i, drawSpace.Left + drawSpace.Width,drawSpace.Top + i);
                 }
                 // draw tick bars 
@@ -222,7 +233,7 @@ namespace ILNumerics.Drawing.Controls {
                 }
             } else {
                 for (int i = drawSpace.Width; i -->0;) {
-                    pen.Color = Color.FromArgb(hls.H2RGB((drawSpace.Width - i) / (float)drawSpace.Width * Internal.ILColorProvider.MAXHUEVALUE));
+                    pen.Color = m_colormap.Map(i / (double)drawSpace.Width * m_colormap.Length);
                     e.Graphics.DrawLine(pen,drawSpace.Left+i, drawSpace.Top, drawSpace.Left + i,drawSpace.Top + drawSpace.Height);
                 }
                 // draw tick bars 

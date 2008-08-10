@@ -28,6 +28,9 @@ using System.Collections.Generic;
 using System.Text;
 using ILNumerics.Exceptions; 
 using ILNumerics.Drawing.Controls; 
+using ILNumerics.BuiltInFunctions;
+using ILNumerics.Drawing.Misc; 
+using ILNumerics.Misc;  
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
@@ -36,6 +39,9 @@ namespace ILNumerics.Drawing.Graphs {
     public abstract class ILFilledGraph : ILGraph {
     
         #region attributes / properties 
+        protected float[] m_xCoords; 
+        protected float[] m_yCoords; 
+        protected ILArray<float> m_colors; 
         protected int m_Vertcount;
         protected int m_rows, m_cols;  
         protected bool m_vertexReady, m_indexReady;
@@ -76,7 +82,7 @@ namespace ILNumerics.Drawing.Graphs {
             set {
                 m_opacity = value; 
                 Invalidate(); 
-                OnChanged(); 
+                OnChanged("Opacity"); 
             }
         }
         /// <summary>
@@ -89,22 +95,75 @@ namespace ILNumerics.Drawing.Graphs {
             }
             set {
                 m_filled = value;
-                OnChanged(); 
+                OnChanged("Filled"); 
             }
         }
 
         #endregion
 
         #region constructor
-        public ILFilledGraph (ILPanel panel, ILBaseArray sourceArray, 
-                            ILClippingData clippingContainer) 
-                : base (panel, sourceArray,clippingContainer) {
-            if (sourceArray.Dimensions.NonSingletonDimensions != 2) 
-                throw new ILArgumentException ("ILFilledGraph: source arrray must be matrix!"); 
-            if (!sourceArray.IsNumeric) 
-                throw new ILArgumentException ("ILFilledGraph: source arrray must be numeric!"); 
+        /// <summary>
+        /// construct new filled graph
+        /// </summary>
+        /// <param name="panel">panel hosting the graph</param>
+        /// <param name="X">X coords, if null, range 0..[cols of Z] will be created</param>
+        /// <param name="Y">Y coords, if null, range 0..[rows of Z] will be created</param>
+        /// <param name="Z">Z coords (heights)</param>
+        /// <param name="C">Colors for Z</param>
+        /// <param name="clippingContainer">gloabal limits of panel</param>
+        public ILFilledGraph (ILPanel panel, ILBaseArray X, ILBaseArray Y,
+                              ILBaseArray Z, ILBaseArray C, ILClippingData clippingContainer) 
+                : base (panel, Z, clippingContainer) {
+            #region argument checking
+            if (Z == null || !Z.IsMatrix) 
+                throw new ILArgumentException ("ILFilledGraph: Z must be matrix!"); 
+            if (!Z.IsNumeric) 
+                throw new ILArgumentException ("ILFilledGraph: Z must be numeric!"); 
             m_rows = m_sourceArray.Dimensions[0]; 
             m_cols = m_sourceArray.Dimensions[1]; 
+            ILArray<float> tmp; 
+            if (!object.Equals (X,null) && !X.IsEmpty) {
+                if (!X.IsMatrix || !X.IsNumeric) {
+                    throw new ILArgumentException ("ILFilledGraph: X must be numeric matrix!"); 
+                }
+                if (X.Dimensions.IsSameSize(Z.Dimensions)) {
+                    tmp = ILMath.tosingle(X); 
+                    tmp.ExportValues(ref m_xCoords); 
+                    m_localClipping.m_xMax = tmp.MaxValue; 
+                    m_localClipping.m_xMin = tmp.MinValue; 
+                } else {
+                    throw new ILArgumentException ("ILFilledGraph: X must be of same size than Z!"); 
+                }
+            } else {
+                ILMath.tosingle(ILMath.repmat(ILMath.counter(0.0,1.0,1,m_cols),m_rows,1)).ExportValues(ref m_xCoords); 
+                m_localClipping.m_xMin = 0; 
+                m_localClipping.m_xMax = m_cols-1; 
+            }
+            if (!object.Equals(Y,null) && !Y.IsEmpty) {
+                if (!Y.IsMatrix || !Y.IsNumeric) {
+                    throw new ILArgumentException ("ILFilledGraph: Y must be numeric matrix!"); 
+                }
+                if (Y.Dimensions.IsSameSize(Z.Dimensions)) {
+                    tmp = ILMath.tosingle(Y); 
+                    tmp.ExportValues(ref m_yCoords); 
+                    m_localClipping.m_yMax = tmp.MaxValue; 
+                    m_localClipping.m_yMin = tmp.MinValue; 
+                } else {
+                    throw new ILArgumentException ("ILFilledGraph: Y must be same size than Z!"); 
+                }
+            } else {
+                ILMath.tosingle(ILMath.repmat(ILMath.counter(0.0,1.0,m_rows,1),1,m_cols)).ExportValues(ref m_yCoords); 
+                m_localClipping.m_yMax = m_rows-1; 
+                m_localClipping.m_yMin = 0; 
+            }
+            if (object.Equals(C,null) || C.IsEmpty) {
+                m_colors = null; 
+            } else {
+                m_colors = ILMath.tosingle(C);
+            }  
+            m_localClipping.m_zMax = m_sourceArray.MaxValue; 
+            m_localClipping.m_zMin = m_sourceArray.MinValue; 
+            #endregion
             m_Vertcount = m_rows * m_cols; 
             m_vertexReady = false;
             m_indexReady = false; 
@@ -113,21 +172,11 @@ namespace ILNumerics.Drawing.Graphs {
             m_wireLines = new ILLineProperties();
             m_wireLines.Changed += new EventHandler(m_wireLines_Changed);
             m_filled = true; 
-            updateClipping();
         }
         #endregion
 
         #region protected/private helper
-        
-        protected virtual void updateClipping() {
-            m_localClipping.m_zMax = m_sourceArray.MaxValue; 
-            m_localClipping.m_zMin = m_sourceArray.MinValue; 
-            m_localClipping.m_xMax = (float)m_sourceArray.Dimensions[1];
-            m_localClipping.m_xMin = 0; 
-            m_localClipping.m_yMax = (float)m_sourceArray.Dimensions[0]; 
-            m_localClipping.m_yMin = 0; 
-        }
-        
+                
         protected virtual void CreateVertices() {}
         
         /// <summary>
@@ -491,10 +540,10 @@ namespace ILNumerics.Drawing.Graphs {
         protected void checkVertexIndicesLength(int vertStrLen, int vertStrCount) {
             m_indicesCount = vertStrCount * vertStrLen;
             if (m_indices != null && m_indices.Length < m_indicesCount) {
-                Misc.ILMemoryPool.Pool.RegisterObject(m_indices);
+                ILMemoryPool.Pool.RegisterObject(m_indices);
             }
             if (m_indices == null || m_indices.Length < m_indicesCount) {
-                m_indices = Misc.ILMemoryPool.Pool.New<uint>(m_indicesCount);
+                m_indices = ILMemoryPool.Pool.New<uint>(m_indicesCount);
             }
             m_stripesCount = vertStrCount; 
             m_stripesLen = vertStrLen; 
@@ -508,10 +557,10 @@ namespace ILNumerics.Drawing.Graphs {
             m_gridStripsLenOnce = (gridStrLen -2) / 2 + 2; 
             m_gridIndicesCount = gridStrLen * gridStrCount + m_gridStripsLenOnce; 
             if (m_gridIndices != null && m_gridIndices.Length < m_gridIndicesCount) {
-                Misc.ILMemoryPool.Pool.RegisterObject(m_gridIndices);
+                ILMemoryPool.Pool.RegisterObject(m_gridIndices);
             }
             if (m_gridIndices == null || m_gridIndices.Length < m_gridIndicesCount) {
-                m_gridIndices = Misc.ILMemoryPool.Pool.New<uint>(m_gridIndicesCount);
+                m_gridIndices = ILMemoryPool.Pool.New<uint>(m_gridIndicesCount);
             }
             m_gridStripsCount = gridStrCount; 
             m_gridStripsLen = gridStrLen; 
@@ -521,10 +570,10 @@ namespace ILNumerics.Drawing.Graphs {
         /// </summary>
         public override void Dispose() {
             if (m_indices != null) {
-                Misc.ILMemoryPool.Pool.RegisterObject<uint>(m_indices); 
+                ILMemoryPool.Pool.RegisterObject<uint>(m_indices); 
             }
             if (m_gridIndices != null) {
-                Misc.ILMemoryPool.Pool.RegisterObject<uint>(m_gridIndices); 
+                ILMemoryPool.Pool.RegisterObject<uint>(m_gridIndices); 
             }
             base.Dispose();
         }
@@ -540,14 +589,19 @@ namespace ILNumerics.Drawing.Graphs {
             if (!m_indexReady) CreateIndices(); 
             m_isReady = true; 
         }
-        
+
+        protected override void OnChanged(string source) {
+            base.OnChanged(source);
+            if (source == "Shading")    
+                m_vertexReady = false; 
+        }
+
         protected void m_wireLines_Changed(object sender, EventArgs args) {
             OnWireLinesChanged(); 
         }
         protected virtual void OnWireLinesChanged () {
             m_indexReady = false; 
-            Invalidate();
-            OnChanged(); 
+            OnChanged("Wirelines"); 
         }
         #endregion
 

@@ -77,12 +77,12 @@ namespace ILNumerics.Drawing.Collections {
 
         #region event handling
         /// <summary>
-        /// signaled if one of the ILGraphs have changed
+        /// signaled if one/some of the ILGraphs have changed
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Graph_Changed(object sender, EventArgs e) {
-            OnChange((ILGraph)sender,GraphCollectionChangeReason.Changed); 
+        void Graph_Changed(object sender, ILGraphChangedEventArgs e) {
+            OnChange((ILGraph)sender,GraphCollectionChangeReason.Changed, e); 
         }
 
         /// <summary>
@@ -90,9 +90,9 @@ namespace ILNumerics.Drawing.Collections {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="reason"></param>
-        void OnChange (ILGraph sender, GraphCollectionChangeReason reason) {
+        void OnChange (ILGraph sender, GraphCollectionChangeReason reason, ILGraphChangedEventArgs graphArgs ) {
             if (CollectionChanged != null) 
-                CollectionChanged(this, new ILGraphCollectionChangedEventArgs((ILGraph)sender,reason));
+                CollectionChanged(this, new ILGraphCollectionChangedEventArgs((ILGraph)sender,reason,graphArgs));
         }
         #endregion
 
@@ -109,13 +109,32 @@ namespace ILNumerics.Drawing.Collections {
             }
             m_clippingData.Reset();  
             Invalidate(); 
-            OnChange(null,GraphCollectionChangeReason.Deleted); 
+            OnChange(null,GraphCollectionChangeReason.Deleted,null); 
+        }
+        /// <summary>
+        /// Add a new surface graph, provide all coordinate data
+        /// </summary>
+        /// <param name="Z">matrix holding Z coordinates (heights)</param>
+        /// <returns>reference to newly created surface graph</returns>
+        public ILSurfaceGraph AddSurfGraph(ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray C) {
+            ILSurfaceGraph ret; 
+            ret = (ILSurfaceGraph)m_graphFact.CreateGraph(Z,GraphType.Surf,X,Y,C);
+            m_clippingData.EventingSuspend(); 
+            m_clippingData.Update(ret.Limits);
+            m_clippingData.ZMax += ret.Limits.DepthF * 0.05f; 
+            m_clippingData.ZMin -= ret.Limits.DepthF * 0.05f; 
+            m_clippingData.EventingResume(); 
+            Add(ret);
+            ret.Changed += new ILGraphChangedEvent(Graph_Changed);
+            // trigger change event
+            OnChange(ret,GraphCollectionChangeReason.Added,null); 
+            return ret; 
         }
         /// <summary>
         /// Add a new surface graph to collection
         /// </summary>
         /// <param name="data">matrix holding data to be plotted</param>
-        /// <returns>List of keys used to identify the new graphs</returns>
+        /// <returns>reference to newly created surface graph</returns>
         public ILSurfaceGraph AddSurfGraph(ILBaseArray data) {
             return (ILSurfaceGraph)Add(data,GraphType.Surf)[0]; 
         }
@@ -141,9 +160,10 @@ namespace ILNumerics.Drawing.Collections {
             return ret.ToArray(); 
         }
         /// <summary>
-        /// Add new X/Y 2D line graph(s) to collection
+        /// Add new X/Y 2D line graph(s), provide X and Y coordinates
         /// </summary>
-        /// <param name="data">vector/array with date to be plotted. For arrays, the columns will be used.</param>
+        /// <param name="X">X coordinates. If this is a matrix, every column will produce an individual graph.</param>
+        /// <param name="Y">Y coordinates. Same size than 'X'.</param>
         /// <returns>Array of newly created graph(s)</returns>
         public ILPlot2DGraph[] AddPlot2DGraph(ILBaseArray XData, ILBaseArray YData) {
             List<ILGraph> graphs = Add(XData,YData,GraphType.Plot2D);    
@@ -172,7 +192,7 @@ namespace ILNumerics.Drawing.Collections {
                         if (data.IsVector || data.IsScalar) {
                             newGraph = m_graphFact.CreateGraph(data,graphType); 
                             Add(newGraph); 
-                            newGraph.Changed += new EventHandler(Graph_Changed);
+                            newGraph.Changed += new ILGraphChangedEvent(Graph_Changed);
                             m_clippingData.Update(newGraph.Limits); 
                             ret.Add(newGraph);
                         } else if (data.IsMatrix) {
@@ -182,14 +202,14 @@ namespace ILNumerics.Drawing.Collections {
                             for (int c = 0; c < tmpData.Dimensions[1]; c++) {
                                 newGraph = m_graphFact.CreateGraph(tmpData[null,c],graphType);  
                                 Add(newGraph);
-                                newGraph.Changed += new EventHandler(Graph_Changed);
+                                newGraph.Changed += new ILGraphChangedEvent(Graph_Changed);
                                 ret.Add(newGraph); 
                                 m_clippingData.Update(newGraph.Limits); 
                             } 
                             m_clippingData.EventingResume(); 
                         }
                         // trigger change event
-                        OnChange(ret[0],GraphCollectionChangeReason.Added); 
+                        OnChange(ret[0],GraphCollectionChangeReason.Added,null); 
                         break; 
                     case GraphType.Plot3D: 
                         break; 
@@ -197,7 +217,7 @@ namespace ILNumerics.Drawing.Collections {
 
                         break; 
                     case GraphType.Surf: 
-                        if (data.Dimensions.NonSingletonDimensions != 2) 
+                        if (!data.IsMatrix) 
                             throw new ILArgumentException("Surf: source data must be a matrix!"); 
                         tmpData = ILMath.tosingle(data); 
                         m_clippingData.EventingSuspend(); 
@@ -209,10 +229,10 @@ namespace ILNumerics.Drawing.Collections {
                         m_clippingData.EventingResume(); 
                         newGraph = m_graphFact.CreateGraph(tmpData,graphType);
                         Add(newGraph);
-                        newGraph.Changed += new EventHandler(Graph_Changed);
+                        newGraph.Changed += new ILGraphChangedEvent(Graph_Changed);
                         // trigger change event
                         ret.Add(newGraph);
-                        OnChange(newGraph,GraphCollectionChangeReason.Added); 
+                        OnChange(newGraph,GraphCollectionChangeReason.Added,null); 
                         break;
                     case GraphType.Imagesc:
                         if (!data.IsMatrix) 
@@ -225,9 +245,9 @@ namespace ILNumerics.Drawing.Collections {
                         m_clippingData.EventingResume(); 
                         newGraph = m_graphFact.CreateGraph(tmpData,graphType);
                         Add(newGraph);
-                        newGraph.Changed += new EventHandler(Graph_Changed);
+                        newGraph.Changed += new ILGraphChangedEvent(Graph_Changed);
                         // trigger change event
-                        OnChange(newGraph,GraphCollectionChangeReason.Added); 
+                        OnChange(newGraph,GraphCollectionChangeReason.Added,null); 
                         ret.Add(newGraph);
                         break;
                     default: 
@@ -266,7 +286,7 @@ namespace ILNumerics.Drawing.Collections {
                         if (yData.IsVector || yData.IsScalar) {
                             newGraph = m_graphFact.CreateGraph(yData,graphType,xData); 
                             Add(newGraph); 
-                            newGraph.Changed += new EventHandler(Graph_Changed);
+                            newGraph.Changed += new ILGraphChangedEvent(Graph_Changed);
                             m_clippingData.Update(newGraph.Limits); 
                             ret.Add(newGraph);
                         } else if (yData.IsMatrix) {
@@ -277,14 +297,14 @@ namespace ILNumerics.Drawing.Collections {
                             for (int c = 0; c < tmpDataY.Dimensions[1]; c++) {
                                 newGraph = m_graphFact.CreateGraph(tmpDataY[null,c],graphType,tmpDataX[null,c]);  
                                 Add(newGraph);
-                                newGraph.Changed += new EventHandler(Graph_Changed);
+                                newGraph.Changed += new ILGraphChangedEvent(Graph_Changed);
                                 ret.Add(newGraph); 
                                 m_clippingData.Update(newGraph.Limits); 
                             } 
                             m_clippingData.EventingResume(); 
                         }
                         // trigger change event
-                        OnChange(ret[0],GraphCollectionChangeReason.Added); 
+                        OnChange(ret[0],GraphCollectionChangeReason.Added,null); 
                         break; 
                     default: 
                         throw new ILDrawingException ("graph type is not supported in that mode yet!");
@@ -310,7 +330,7 @@ namespace ILNumerics.Drawing.Collections {
                     m_clippingData.Update (gr.Limits); 
                 }
                 m_clippingData.EventingResume(); 
-                OnChange(graph,GraphCollectionChangeReason.Deleted); 
+                OnChange(graph,GraphCollectionChangeReason.Deleted,null); 
                 Invalidate();
                 return true;
             }

@@ -1,3 +1,16 @@
+Changes in version 1.3.13
+===========================
+* C: bugfix:binary operator (some ref.matrices op. on scalar)
+* C: bugfix:complex division handling inf's
+* C: bugfix:ILDimension (semi)immutable
+* C: added ILSpecialData.sphere(int), moebius()
+* D: 0.9.29: plot controls
+* D: Y-Line graphs starting at '0' now
+* D: all markers (and more), -> <a href="http://ilnumerics.net/main.php?site=5136312">docu</a>
+* D: implemented colormaps for ILPanel
+* D: surface graphs receive X,Y,C arguments
+* D: colorbar renders current colormap
+
 Changes in version 1.3.12
 ===========================
 * C: new function 'diff'

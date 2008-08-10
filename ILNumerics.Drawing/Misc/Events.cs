@@ -86,14 +86,38 @@ namespace ILNumerics.Drawing {
     /// <param name="eventArgs"></param>
     public delegate void ILGraphicsDeviceCreatedEvent(object sender, EventArgs eventArgs); 
     /// <summary>
-    /// arguements for ILGraphCollectionChanged events
+    /// arguments to communicate changes on graphs 
+    /// </summary>
+    public class ILGraphChangedEventArgs : EventArgs {
+        /// <summary>
+        /// string description of the changed parameter
+        /// </summary>
+        public readonly string Source; 
+        public ILGraphChangedEventArgs (string source) {
+            this.Source = source; 
+        }
+    }
+    /// <summary>
+    /// fires, if properties of a graph were /have changed
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    public delegate void ILGraphChangedEvent (object sender, ILGraphChangedEventArgs args); 
+    
+    /// <summary>
+    /// arguments for ILGraphCollectionChanged events
     /// </summary>
     public class ILGraphCollectionChangedEventArgs: EventArgs {
         public readonly GraphCollectionChangeReason Reason; 
         public readonly ILGraph Graph; 
-        public ILGraphCollectionChangedEventArgs (ILGraph graph, GraphCollectionChangeReason reason) {
+        /// <summary>
+        /// description of element changed (in some cases)
+        /// </summary>
+        public readonly ILGraphChangedEventArgs GraphArguments; 
+        public ILGraphCollectionChangedEventArgs (ILGraph graph, GraphCollectionChangeReason reason, ILGraphChangedEventArgs GraphArguments) {
             this.Graph = graph; 
             this.Reason = reason; 
+            this.GraphArguments = GraphArguments; 
         }
     }
     /// <summary>

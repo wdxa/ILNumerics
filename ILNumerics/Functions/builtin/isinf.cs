@@ -125,7 +125,7 @@ namespace ILNumerics.BuiltInFunctions {
         #endregion HYCALPER LOOPEND UNARY_OPERATOR_TEMPLATE@Functions\builtin\sin.cs
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
-        /// <summary>Finds infinite value elements</summary>
+        /// <summary>Locate infinite value elements</summary>
         /// <param name="A">input array</param>
         /// <returns>Logical array with 1 if the corresponding elements of input array is infinite, 0 else.</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>
@@ -250,7 +250,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new  ILLogicalArray ( retDblArr, inDim.ToIntArray () );
         }
-        /// <summary>Finds infinite value elements</summary>
+        /// <summary>Locate infinite value elements</summary>
         /// <param name="A">input array</param>
         /// <returns>Logical array with 1 if the corresponding elements of input array is infinite, 0 else.</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>
@@ -375,7 +375,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new  ILLogicalArray ( retDblArr, inDim.ToIntArray () );
         }
-        /// <summary>Finds infinite value elements</summary>
+        /// <summary>Locate infinite value elements</summary>
         /// <param name="A">input array</param>
         /// <returns>Logical array with 1 if the corresponding elements of input array is infinite, 0 else.</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>
@@ -500,7 +500,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new  ILLogicalArray ( retDblArr, inDim.ToIntArray () );
         }
-        /// <summary>Finds infinite value elements</summary>
+        /// <summary>Locate infinite value elements</summary>
         /// <param name="A">input array</param>
         /// <returns>Logical array with 1 if the corresponding elements of input array is infinite, 0 else.</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>

@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics; 
 using System.Drawing;
+using System.Drawing.Imaging; 
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
@@ -204,6 +205,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             GL.GetDouble(GetPName.ModelviewMatrix,m_modelViewMatrix); 
             #endregion
         }
+        
         /// <summary>
         /// Render the OpenGL scene
         /// </summary>
@@ -228,6 +230,9 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 GL.Enable(EnableCap.Blend);
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.PushMatrix();
+                GL.PolygonOffset(1.0f,10.0f);
+                //GL.Enable(EnableCap.PolygonOffsetFill); 
+
                 m_axes.XAxis.RenderState1(g);
                 m_axes.YAxis.RenderState1(g);
                 if (m_camera.SinRho > 1e-5)
@@ -341,13 +346,13 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 // draw one large quad with whole texture sheet
                 GL.Begin(BeginMode.Quads); 
                 GL.TexCoord2(0,1);   
-                GL.Vertex2(0,ClientSize.Height);      // ul
+                GL.Vertex2(0,ClientSize.Height/2);      // ul
                 GL.TexCoord2(0,0); 
                 GL.Vertex2(0,0);                    // bl
                 GL.TexCoord2(1,0); 
                 GL.Vertex2(ClientSize.Width,0);                    // br
                 GL.TexCoord2(1,1); 
-                GL.Vertex2(ClientSize.Width,ClientSize.Height);      // tr
+                GL.Vertex2(ClientSize.Width,ClientSize.Height/2);      // tr
                 GL.End();
 #endif
                 #endregion
@@ -453,6 +458,20 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 m_context.MakeCurrent(m_implementation.WindowInfo);
         }
 
+        public override void DrawToBitmap(Bitmap bitmap, Rectangle bounds) {
+            RenderScene(null);
+            BitmapData bmpData = bitmap.LockBits(bounds,ImageLockMode.ReadWrite,
+                                 System.Drawing.Imaging.PixelFormat.Format24bppRgb); 
+            // reset any changes to pixel store
+            GL.PixelStore(PixelStoreParameter.UnpackAlignment,4.0f); 
+            GL.PixelStore(PixelStoreParameter.UnpackRowLength,bmpData.Width); 
+            GL.PixelStore(PixelStoreParameter.UnpackSkipRows,bounds.Y); 
+            GL.PixelStore(PixelStoreParameter.UnpackSkipPixels,bounds.X); 
+            GL.ReadPixels(0,0,bounds.Width,bounds.Height,OpenTK.Graphics.PixelFormat.Bgr,
+                          PixelType.UnsignedByte,(IntPtr)bmpData.Scan0); 
+            bitmap.UnlockBits(bmpData); 
+            bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY); 
+        }
         #endregion
 
         #region IILGraphFactory member
@@ -461,15 +480,28 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             switch (graphType) {
                 case GraphType.Plot2D:
                     if (parameter != null && parameter.Length == 1 
-                        && parameter[0] != null && parameter[0] is ILBaseArray)
+                        && parameter[0] != null && parameter[0] is ILBaseArray) {
                         return new ILOGLPlot2DGraph(this,parameter[0] as ILBaseArray,
                                                     data,m_graphs.Clipping); 
-                    else 
+                    } else {
                         return new ILOGLPlot2DGraph(this, data,m_graphs.Clipping);
+                    }
                 case GraphType.Surf:
-                    return new ILOGLSurfaceGraph(this,data,m_graphs.Clipping);
+                    if (parameter == null || parameter.Length == 0) 
+                        return new ILOGLSurfaceGraph(this,null,null,data,null,m_graphs.Clipping); 
+                    if (parameter.Length == 2) {
+                        return new ILOGLSurfaceGraph(this,data,parameter[0] as ILBaseArray,
+                                                     parameter[1] as ILBaseArray ,null,m_graphs.Clipping); 
+                    } else if (parameter.Length == 1) {
+                        return new ILOGLSurfaceGraph(this,null,null,data, 
+                                                     parameter[0] as ILBaseArray,m_graphs.Clipping);
+                    } else if (parameter.Length == 3) {
+                        return new ILOGLSurfaceGraph(this,parameter[0] as ILBaseArray, parameter[1] as ILBaseArray, 
+                                                     data,parameter[2] as ILBaseArray, m_graphs.Clipping); 
+                    } else 
+                        throw new ILArgumentException ("graph creation: invalid number of arguments! (surface)"); 
                 case GraphType.Imagesc:
-                    return new ILOGLImageSCGraph(this,data,m_graphs.Clipping);
+                    return new ILOGLImageSCGraph(this,null,null,data,null,m_graphs.Clipping);
                 default:
                     throw new ILInvalidOperationException("Graph type not supported: " + graphType.ToString());
             }
@@ -528,33 +560,6 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             GL.Color3(wireprops.Color);
         }
 
-        public static void SetupMarkerStyle(ILMarker marker) {
-            GL.PointSize(marker.Size); 
-            GL.Color3(marker.Color);
-            switch (marker.Style) {
-                case MarkerStyle.Dot:
-                    GL.Enable(EnableCap.PointSmooth); 
-                    break;
-                case MarkerStyle.Square:
-                    GL.Disable(EnableCap.PointSmooth); 
-                    break;
-                case MarkerStyle.None:
-                    GL.PointSize(0.0f); 
-                    break;
-                case MarkerStyle.Triangle:
-                    GL.PointSize(10.0f); 
-                    break;
-                default:
-                    throw new NotImplementedException(); 
-            }
-            //Bitmap bmp = Resources.Markers.Triangle; 
-            //System.Drawing.Imaging.BitmapData bmpData; 
-            //bmpData = bmp.LockBits(new Rectangle(new Point(0,0),bmp.Size),
-            //             System.Drawing.Imaging.ImageLockMode.ReadOnly,
-            //             System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            //GL.DrawPixels(100,100,PixelFormat.Alpha,PixelType.Bitmap,bmpData.Scan0); 
-            //bmp.UnlockBits(bmpData); 
-        }
         /// <summary>
         /// Transform 2 world coordinates into screen coords under current matrices
         /// </summary>

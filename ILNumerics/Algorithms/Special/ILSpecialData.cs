@@ -32,10 +32,10 @@ namespace ILNumerics.Algorithms {
         /// <param name="periods">influences the number of periods to be drawn in both directions. 1 will result in 4 zero crossings, higher values result in more, lower values in less zero crossings.</param>
         /// <returns>matrix with sinc data in 2 dimensions</returns>
         public static ILArray<double> sinc (int rows, int cols, float periods) {
-            using (ILArray<double> X = repmat(vector(-cols,2,cols-1),1,rows) / (cols/(pi*4)/periods)) 
-            using (ILArray<double> Y = repmat(vector(-rows,2,rows-1).T,cols,1) / (rows/(pi*4)/periods)) {
+            using (ILArray<double> X = repmat(vector(-cols,2,cols-1).T,rows,1) / cols*pi*2*periods) 
+            using (ILArray<double> Y = repmat(vector(-rows,2,rows-1),1,cols) / rows*pi*2*periods) {
                 ILArray<double> ret=sqrt(X * X + Y * Y);
-                ret[ret == 0.0] = MachineParameterFloat.eps; 
+                ret[ret == 0.0] = MachineParameterDouble.eps; 
                 ret = sin(ret)/ret; 
                 return ret; 
             }
@@ -76,6 +76,40 @@ namespace ILNumerics.Algorithms {
             }
             return a; 
         }
+
+        /// <summary>
+        /// Create surface data of a sphere
+        /// </summary>
+        /// <param name="n">number of facettes per angle</param>
+        /// <param name="X">[output] X coords</param>
+        /// <param name="Y">[output] Y coords</param>
+        /// <param name="Z">[output] Z coords</param>
+        public static void sphere(int n, out ILArray<double> X,out ILArray<double> Y,out ILArray<double> Z) {
+            ILArray<double> phi = repmat(linspace(-pi,pi,n).T,1,n);
+            ILArray<double> rho = repmat(linspace(0,pi,n),n,1); 
+            Y = sin(phi) * sin(rho); 
+            X = cos(phi) * sin(rho);
+            Z = cos(rho); 
+        }
+        /// <summary>
+        /// Create surface data for a Möbius strip 
+        /// </summary>
+        /// <param name="n">granularity (number of facettes)</param>
+        /// <param name="w">width</param>
+        /// <param name="R">radius</param>
+        /// <param name="X">[output] X coords</param>
+        /// <param name="Y">[output] Y coords</param>
+        /// <param name="Z">[output] Z coords</param>
+        /// <remarks>Möbius strip is a surfcae, crated by cutting a regular strip, twisting one end by 180 deg and glueing 
+        /// both ends together again.</remarks>
+        public static void moebius(int n, double w, double R, out ILArray<double> X,out ILArray<double> Y,out ILArray<double> Z) {
+            ILArray<double> s = repmat(linspace(-w,w,n),n,1); 
+            ILArray<double> t = repmat(linspace(0,2*pi,n).T,1,n); 
+            X = (R + s* cos(0.5*t)) * cos(t); 
+            Y = (R + s* cos(0.5*t)) * sin(t); 
+            Z = s * sin(0.5*t); 
+        }
+
 
     }
 }

@@ -29,6 +29,7 @@ using System.Text;
 using ILNumerics.BuiltInFunctions; 
 using ILNumerics.Drawing.Controls; 
 using ILNumerics.Exceptions; 
+using ILNumerics.Drawing.Marker; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
@@ -72,10 +73,10 @@ namespace ILNumerics.Drawing.Graphs {
             : base (panel,sourceArray,clippingContainer) {
             if (!sourceArray.IsVector)
                 throw new ILArgumentException ("Plot2D: supplied data must be a real vector!"); 
-            m_xData = ILMath.tosingle(ILMath.counter(sourceArray.Length,1));
+            m_xData = ILMath.tosingle(ILMath.counter(0.0,1.0,sourceArray.Length,1));
             m_properties = new ILLineProperties(); 
             m_properties.Changed += new EventHandler(m_properties_Changed);
-            m_marker = new ILMarker(); 
+            m_marker = new ILMarker(panel); 
             m_marker.Changed += new EventHandler(m_properties_Changed);
             m_graphType = GraphType.Plot2D; 
             updateClipping(); 
@@ -98,7 +99,7 @@ namespace ILNumerics.Drawing.Graphs {
             m_xData = ILMath.tosingle(XData);
             m_properties = new ILLineProperties(); 
             m_properties.Changed += new EventHandler(m_properties_Changed);
-            m_marker = new ILMarker();
+            m_marker = new ILMarker(panel);
             m_marker.Changed += new EventHandler(m_marker_Changed);
             m_graphType = GraphType.Plot2D;
             updateClipping();

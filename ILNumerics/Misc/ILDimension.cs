@@ -25,9 +25,11 @@ using ILNumerics.Exceptions;
 namespace ILNumerics.Misc
 {
 	/// <summary>
-	/// ILDimension - specify dimensions for ILMatrixStorage objects.
+	/// ILDimension - specify dimensions for ILArray objects.
 	/// </summary>
-	/// <description>This class stores an array of dimensions and makes it accessible via [].</description>
+	/// <remarks>The class internally manages the dimensions of ILArray. 
+    /// The class is immutable. Therefore, once created, it informs the user 
+    /// about all dimension related properties, but cannot be altered.</description>
 	[Serializable]
     [System.Diagnostics.DebuggerDisplay("{ToString(),nq}")]
     public class ILDimension
@@ -149,7 +151,7 @@ namespace ILNumerics.Misc
 			return ret; 
 		}
         /// <summary>
-        /// distances between adjecent element for all dimension
+        /// distances between adjacent elements for all dimension
         /// </summary>
         /// <remarks>This is provided for performance reasons and should be used internaly only.
         /// It enables developer for index access routines to cache the element distances directly inside 
@@ -173,9 +175,7 @@ namespace ILNumerics.Misc
 		/// </summary>
 		/// <returns>integer array containing a copy of dimensions length</returns>
 		public int[] ToIntArray(){
-			int[] ret = new int[m_nrDims];
-			Array.Copy(m_dims,0,ret,0,m_nrDims); 
-			return ret; 
+			return (int[])m_dims.Clone(); 
 		}
 		/// <summary>
 		/// transfer my dimensions to integer array 
@@ -207,7 +207,7 @@ namespace ILNumerics.Misc
 				for (; d<idx.Length-1; d++) {
                     tmp = idx[d]; 
                     if (tmp > m_dims[d] || tmp < 0)
-                        throw new Exception("check value at dimension 0!"); 
+                        throw new Exception("check value at dimension "+d+"!"); 
 
 					ret += tmp * faktor; 
 					faktor *= m_dims[d]; 
@@ -336,7 +336,7 @@ namespace ILNumerics.Misc
 		/// Clone ILDimension object. 
 		/// </summary>
 		/// <return>
-		/// New ILDImension object as exact copy of this object.
+		/// New ILDimension object as exact copy of this object.
 		/// </return>
 		public ILDimension Clone() {
 			ILDimension ret = new ILDimension(this); 
@@ -407,7 +407,8 @@ namespace ILNumerics.Misc
 					// get specified dimension
 				return m_dims[idx];
 			}
-			set{
+			internal set{
+                // todo: there was a bugreport on this part. Check it, if it's still needed!
 				if (idx < 0)
 					throw new ArgumentOutOfRangeException("index","Index must be positive!");
 				else if (idx >= m_nrDims){
@@ -415,18 +416,23 @@ namespace ILNumerics.Misc
 					int [] tmp = new int[idx+1];
 					Array.Copy(m_dims,tmp,m_nrDims);
 					// fill with ones between
-					for (int t = m_nrDims; t < idx; t++)
+					for (int t = m_nrDims; t < idx; t++) {
 						tmp[t] = 1;
+                    }
 					// set new Dimension
 					tmp[idx] = value;
 					m_dims = tmp;
+                    m_numberOfElements *= value; 
+                    m_nrDims = m_dims.Length; 
 				} else if (idx < m_nrDims) {
-					m_dims[idx] = value; 
+					m_numberOfElements /= m_dims[idx]; 
+                    m_dims[idx] = value; 
+                    m_numberOfElements *= value; 
 				}
-				m_numberOfElements = 1; 
-                if (m_length < value) m_length = value; 
-				foreach (int tmp in m_dims)
-					m_numberOfElements *= tmp;
+                //m_numberOfElements = 1; 
+                //if (m_length < value) m_length = value; 
+                //foreach (int tmp in m_dims)
+                //    m_numberOfElements *= tmp;
 			}
 		}
 		/// <summary>
@@ -463,7 +469,9 @@ namespace ILNumerics.Misc
 		/// Remove singleton dimensions from this ILDimension object.
 		/// </summary>
 		/// <returns>This object after singleton dimensions have been removed.</returns>
-		/// <remarks> this object will be altered AND returned!</remarks>
+		/// <remarks> this object will be altered AND returned! 
+        /// TODO: Check, if this is valid, since 
+        /// ILDimension should be immutable! </remarks>
 		public ILDimension Squeeze() {
 			int p1 = 0; 
 			int p2 = 0; 
@@ -521,10 +529,11 @@ namespace ILNumerics.Misc
         /// </summary>
         /// <returns>index of first non singleton dimension or -1, if this is a scalar.</returns>
         public int FirstNonSingleton() {
+            if (m_numberOfElements <= 1) return -1; 
             for (int i = 0; i < m_nrDims; i++) {
                 if (m_dims[i] > 1) return i; 
             }
-            return -1; 
+            return -1; // this should not happen! Test on scalar above 
         }
 		/// toString: prints out dimensions 
 		public override String ToString (){
@@ -537,10 +546,5 @@ namespace ILNumerics.Misc
 			s = s + "]"; 
 			return s;
         }
-        #region implicit cast operator
-        //public static implicit operator int[] (ILDimension dim) {
-        //    return dim.ToIntArray();     
-        //}
-        #endregion implicit cast operator 
     }
 }

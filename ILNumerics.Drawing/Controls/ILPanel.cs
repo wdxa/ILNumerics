@@ -35,6 +35,7 @@ using ILNumerics.Drawing.Interfaces;
 using ILNumerics.Drawing.Collections; 
 using ILNumerics.Drawing.Graphs; 
 using ILNumerics.Drawing.Labeling; 
+using ILNumerics.Drawing.Misc; 
 using System.Diagnostics; 
 
 namespace ILNumerics.Drawing.Controls {
@@ -65,6 +66,7 @@ namespace ILNumerics.Drawing.Controls {
         protected Projection m_projection = Projection.Orthographic; 
         protected Color m_backColor = Color.FromKnownColor(KnownColor.Control);
         protected Color m_cubeBGColor = Color.Snow; 
+        protected ILColormap m_colormap; 
         protected GraphicDeviceType m_graphicsDevice; 
         protected ILLineProperties m_selectionRectangle; 
         protected bool m_clipOutsideUnitCube = false; 
@@ -87,6 +89,18 @@ namespace ILNumerics.Drawing.Controls {
         internal ILTextureManager TextureManager {
             get {
                 return m_textureManager; 
+            }
+        }
+        /// <summary>
+        /// Colormap used to translate color indices into true colors
+        /// </summary>
+        public ILColormap Colormap {
+            get {
+                return m_colormap; 
+            }
+            set {
+                m_colormap = value;
+                OnColormapChanged(); 
             }
         }
         /// <summary>
@@ -324,9 +338,12 @@ namespace ILNumerics.Drawing.Controls {
             m_layoutData = new ILLayoutData(m_camera);
             m_camera.Changed += new EventHandler(m_camera_Change);
             m_clippingView.Changed += new ILClippingDataChangedEvent(m_clippingView_Changed);
+            m_colormap = new ILColormap();
+            m_colormap.Changed += new EventHandler(m_colormap_Changed);
             m_active = false;
             m_ready = false; 
         }
+
 
         #endregion
 
@@ -377,8 +394,10 @@ namespace ILNumerics.Drawing.Controls {
         /// fired, if the clipping rectangle for viewing graphs changed
         /// </summary>
         public event ILClippingDataChangedEvent ViewLimitsChanged; 
-
-        
+        /// <summary>
+        /// fires, if the current colormap has changed
+        /// </summary>
+        public event EventHandler ColormapChanged; 
         /// <summary>
         /// fired, if the internal graphics device reset (Direct3D devices only)
         /// </summary>
@@ -387,7 +406,6 @@ namespace ILNumerics.Drawing.Controls {
         /// fired, if the internal graphics device has been (re)created
         /// </summary>
         public event ILGraphicsDeviceCreatedEvent GraphicsDeviceCreated;
-
         #endregion
 
         #region event handlers
@@ -458,6 +476,11 @@ namespace ILNumerics.Drawing.Controls {
             Trace.Unindent(); 
             Trace.TraceInformation("{0},{1} ILPanel.OnGraphicsDeviceCreated() end",DateTime.Now, Environment.TickCount); 
 #endif
+        }
+        protected virtual void OnColormapChanged() {
+            if (ColormapChanged != null) 
+                ColormapChanged(this,null); 
+            m_graphs.Invalidate(); 
         }
 
         protected override void OnLostFocus(EventArgs e) {
@@ -715,6 +738,9 @@ namespace ILNumerics.Drawing.Controls {
         protected void m_clippingData_Changed(object sender, ClippingChangedEventArgs e) {
             ResetView(false);
             OnDataLimitsChanged(e);  
+        }
+        protected void m_colormap_Changed(object sender, EventArgs e) {
+            OnColormapChanged(); 
         }
         void m_selectionRectangle_Changed(object sender, EventArgs e) {
             // nothing to do here
@@ -1128,6 +1154,13 @@ namespace ILNumerics.Drawing.Controls {
         /// <remarks>the actual transform is carried out in the derived specialized class,
         /// where the current transformation matrices are known</remarks>
         public abstract Point Transform(ILPoint3Df worldPoint); 
+
+        /// <summary>
+        /// Draws content of this subfigure into proedefined bitmap
+        /// </summary>
+        /// <param name="bitmap">predefined bitmap to draw content into. The size must have been initialized according to 'bounds'.</param>
+        /// <param name="bounds">Rectangle specifying the region to be copied.</param>
+        public abstract void DrawToBitmap(Bitmap bitmap, Rectangle bounds); 
         #endregion
 
         #region helper functions 

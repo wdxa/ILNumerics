@@ -3863,7 +3863,7 @@ namespace ILNumerics {
         /// <item> reference array, if the number of resulting dimensions is &lt;= 
         /// MinimumRefDimensions, or a 
         /// </item>
-        /// <item>solid array else. 
+        /// <item>dense array else. 
         /// </item></list>
         /// </remarks>
         public ILArray<BaseT> Repmat(params int[] dims) {
@@ -4601,7 +4601,7 @@ namespace ILNumerics {
         /// corresponding elements with index &le; i will be overwritten. Here i is the number of elements
         /// contained in the ILArray. If 'result' is null or has less than i elements, it will be recreated from the ILMemeoryPool.</remarks>
         public void ExportValues(ref BaseT[] result) {
-            if (result.Length < m_dimensions.NumberOfElements)
+            if (result == null || result.Length < m_dimensions.NumberOfElements)
                 result = ILMemoryPool.Pool.New<BaseT>(m_dimensions.NumberOfElements);
             if (m_indexOffset==null) {
                 System.Array.Copy(m_data,result,m_dimensions.NumberOfElements);

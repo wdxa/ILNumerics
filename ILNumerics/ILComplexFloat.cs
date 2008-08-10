@@ -201,13 +201,13 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  complex in2) {
+            if ( complex .IsInfinity(in2)) return ( fcomplex )0; 
             fcomplex ret;
-            if (in2.real == 0 || in2.imag == 0)
-                return  fcomplex.INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            if (norm2 == 0) return  fcomplex .INF;    // this may be removed, since division by 0 results in inf anyway ? 
             ret.real =  (float) (((in1.real  * in2.real ) + (in1.imag  * in2.imag )) / norm2);
             ret.imag =  (float) (((in1.imag  * in2.real ) - (in1.real  * in2.imag )) / norm2); 
-            return ret; 
+            return ret;                                            
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.
@@ -312,13 +312,13 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  fcomplex in2) {
+            if ( fcomplex .IsInfinity(in2)) return ( fcomplex )0; 
             fcomplex ret;
-            if (in2.real == 0 || in2.imag == 0)
-                return  fcomplex.INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            if (norm2 == 0) return  fcomplex .INF;    // this may be removed, since division by 0 results in inf anyway ? 
             ret.real =  (float) (((in1.real  * in2.real ) + (in1.imag  * in2.imag )) / norm2);
             ret.imag =  (float) (((in1.imag  * in2.real ) - (in1.real  * in2.imag )) / norm2); 
-            return ret; 
+            return ret;                                            
         }
         /// <summary>
         /// Equality comparison for 2 complex numbers.
@@ -460,6 +460,21 @@ namespace ILNumerics {
     <destination>fcomplex.INF</destination>
     <destination>fcomplex.INF</destination>
 </type>
+<type>
+    <source locate="nextline">
+        test4inf
+    </source>
+    <destination>if (double.IsInfinity(in2)) return (fcomplex)0;</destination>
+    <destination></destination>
+    <destination></destination>
+    <destination>if (float.IsInfinity(in2)) return (fcomplex)0;</destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+</type>
 </hycalper>
  */
         #endregion HYCALPER LOOPEND OPERATOR_complex+noncomplex@ILComplex.cs
@@ -475,7 +490,7 @@ namespace ILNumerics {
         public static  fcomplex operator +( fcomplex in1,  UInt64 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real + in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -487,7 +502,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( fcomplex in1,  UInt64 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real - in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -509,6 +524,7 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  UInt64 in2) {
+            
             fcomplex ret;
             if (in2 == 0.0) return  fcomplex.INF ;
             ret.real =  (float) (in1.real / in2);
@@ -583,7 +599,7 @@ namespace ILNumerics {
         public static  fcomplex operator +( fcomplex in1,  UInt32 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real + in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -595,7 +611,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( fcomplex in1,  UInt32 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real - in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -617,6 +633,7 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  UInt32 in2) {
+            
             fcomplex ret;
             if (in2 == 0.0) return  fcomplex.INF ;
             ret.real =  (float) (in1.real / in2);
@@ -691,7 +708,7 @@ namespace ILNumerics {
         public static  fcomplex operator +( fcomplex in1,  UInt16 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real + in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -703,7 +720,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( fcomplex in1,  UInt16 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real - in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -725,6 +742,7 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  UInt16 in2) {
+            
             fcomplex ret;
             if (in2 == 0.0) return  fcomplex.INF ;
             ret.real =  (float) (in1.real / in2);
@@ -799,7 +817,7 @@ namespace ILNumerics {
         public static  fcomplex operator +( fcomplex in1,  Int64 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real + in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -811,7 +829,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( fcomplex in1,  Int64 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real - in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -833,6 +851,7 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  Int64 in2) {
+            
             fcomplex ret;
             if (in2 == 0.0) return  fcomplex.INF ;
             ret.real =  (float) (in1.real / in2);
@@ -907,7 +926,7 @@ namespace ILNumerics {
         public static  fcomplex operator +( fcomplex in1,  Int32 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real + in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -919,7 +938,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( fcomplex in1,  Int32 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real - in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -941,6 +960,7 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  Int32 in2) {
+            
             fcomplex ret;
             if (in2 == 0.0) return  fcomplex.INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1015,7 +1035,7 @@ namespace ILNumerics {
         public static  fcomplex operator +( fcomplex in1,  Int16 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real + in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -1027,7 +1047,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( fcomplex in1,  Int16 in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real - in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -1049,6 +1069,7 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  Int16 in2) {
+            
             fcomplex ret;
             if (in2 == 0.0) return  fcomplex.INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1123,7 +1144,7 @@ namespace ILNumerics {
         public static  fcomplex operator +( fcomplex in1,  float in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real + in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -1135,7 +1156,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( fcomplex in1,  float in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real - in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -1157,6 +1178,7 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  float in2) {
+            if (float.IsInfinity(in2)) return (fcomplex)0;
             fcomplex ret;
             if (in2 == 0.0) return  fcomplex.INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1231,7 +1253,7 @@ namespace ILNumerics {
         public static  fcomplex operator +( fcomplex in1,  char in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real + in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -1243,7 +1265,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( fcomplex in1,  char in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real - in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -1265,6 +1287,7 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  char in2) {
+            
             fcomplex ret;
             if (in2 == 0.0) return  fcomplex.INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1339,7 +1362,7 @@ namespace ILNumerics {
         public static  fcomplex operator +( fcomplex in1,  byte in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real + in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -1351,7 +1374,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( fcomplex in1,  byte in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real - in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -1373,6 +1396,7 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  byte in2) {
+            
             fcomplex ret;
             if (in2 == 0.0) return  fcomplex.INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1447,7 +1471,7 @@ namespace ILNumerics {
         public static  fcomplex operator +( fcomplex in1,  double in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real + in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -1459,7 +1483,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( fcomplex in1,  double in2) {
             fcomplex ret;
             ret.real =  (float) (in1.real - in2);
-            ret.imag =  (float) in1.imag; //AB080630
+            ret.imag =  (float) in1.imag;
             return ret;
         }
         /// <summary>
@@ -1481,6 +1505,7 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  double in2) {
+            if (double.IsInfinity(in2)) return (fcomplex)0;
             fcomplex ret;
             if (in2 == 0.0) return  fcomplex.INF ;
             ret.real =  (float) (in1.real / in2);

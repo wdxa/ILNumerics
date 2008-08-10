@@ -31,7 +31,9 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Graphics.OpenGL.Enums; 
 using ILNumerics.Drawing.Graphs;
-using ILNumerics.Drawing.Internal;  
+using ILNumerics.Drawing.Internal;
+using ILNumerics.Drawing.Misc;
+using ILNumerics.Misc;   
 using VERTEXTYPEDEF = ILNumerics.Drawing.Platform.OpenGL.ILOGLImageSCGraph.VertexC4V2; 
 
 namespace ILNumerics.Drawing.Platform.OpenGL {
@@ -61,25 +63,31 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         #endregion
 
         #region constructors 
-        public ILOGLImageSCGraph (ILOGLPanel panel, ILBaseArray sourceArray,
+        public ILOGLImageSCGraph (ILOGLPanel panel, ILBaseArray X,
+                                  ILBaseArray Y,ILBaseArray Z,ILBaseArray C,  
                                  ILClippingData clippingContainer) 
-             : base(panel, sourceArray, clippingContainer) { 
+             : base(panel,X,Y,Z,C, clippingContainer) { 
             m_panel = panel; 
+            m_localClipping.m_zMax = 0; 
+            m_localClipping.m_zMin = 0; 
+            m_localClipping.m_xMax = (float)m_cols+0.5f;
+            m_localClipping.m_xMin = -0.5f; 
+            m_localClipping.m_yMax = (float)m_rows+0.5f; 
+            m_localClipping.m_yMin = -0.5f; 
         }
         #endregion 
 
         #region helper functions
         protected override void CreateVertices() {
+            ILColormap colormap = m_panel.Colormap;  
             if (m_vertices == null) {
-                m_vertices = Misc.ILMemoryPool.Pool.New<VERTEXTYPEDEF>(m_Vertcount); 
+                m_vertices = ILMemoryPool.Pool.New<VERTEXTYPEDEF>(m_Vertcount); 
             }
             float val = 0.0f; 
             float minZ = m_sourceArray.MinValue; 
             float maxZ = m_sourceArray.MaxValue; 
-            float a = MAXHUEVALUE / (maxZ - minZ);
-            float b = -minZ * a; 
+            float a = colormap.Length / (maxZ - minZ);
             byte ca = (byte)(m_opacity * 255); 
-            ILColorProvider colHelp = new ILColorProvider(0.0f,0.5f,1.0f);
             VERTEXTYPEDEF curVertex; int i = 0; 
             // first row is special (no color, just for grid)
             for (int c = 0; c < m_cols-1; c++) {
@@ -88,7 +96,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 curVertex.Vy = -0.5f; 
                 curVertex.CA = ca; 
                 val = m_sourceArray.GetValue(0,c); 
-                colHelp.H2RGB(MAXHUEVALUE - val * a - b,
+                colormap.Map((val - minZ) * a,
                     out curVertex.CR, out curVertex.CG,out curVertex.CB); 
                 m_vertices[i++] = curVertex;  
             }
@@ -97,7 +105,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             curVertex.Vx = m_cols-1.5f; 
             curVertex.Vy = -0.5f; 
             curVertex.CA = ca; 
-            colHelp.H2RGB(MAXHUEVALUE - val * a - b,
+            colormap.Map((val - minZ) * a,
                 out curVertex.CR, out curVertex.CG,out curVertex.CB); 
             m_vertices[i++] = curVertex;  
             for (int r = 0; r < m_rows-1; r++) {
@@ -106,14 +114,14 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 curVertex.Vx = -0.5f; 
                 curVertex.Vy = r+0.5f; 
                 curVertex.CA = ca; 
-                colHelp.H2RGB(MAXHUEVALUE - m_sourceArray.GetValue(r,0) * a - b,
+                colormap.Map((m_sourceArray.GetValue(r,0) - minZ) * a,
                     out curVertex.CR, out curVertex.CG,out curVertex.CB); 
                 m_vertices[i++] = curVertex;  
                 for (int c = 0; c < m_cols-1; c++) {
                     curVertex = new VERTEXTYPEDEF(); 
                     val = m_sourceArray.GetValue(r,c);
                     // set color values 
-                    colHelp.H2RGB(MAXHUEVALUE - val * a - b,
+                    colormap.Map((val- minZ) * a,
                         out curVertex.CR, out curVertex.CG,out curVertex.CB); 
                     curVertex.CA = ca; 
                     curVertex.Vx = c+0.5f; 
@@ -122,14 +130,6 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 }
             }
             m_vertexReady = true;
-        }
-        protected override void updateClipping() {
-            m_localClipping.m_zMax = 0; 
-            m_localClipping.m_zMin = 0; 
-            m_localClipping.m_xMax = (float)m_cols+0.5f;
-            m_localClipping.m_xMin = -0.5f; 
-            m_localClipping.m_yMax = (float)m_rows+0.5f; 
-            m_localClipping.m_yMin = -0.5f; 
         }
         protected override void m_globalClipping_Changed(object sender, ClippingChangedEventArgs e) {
             base.m_globalClipping_Changed(sender, e);
@@ -216,7 +216,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         public override void Dispose() {
             base.Dispose(); 
             if (m_vertices != null) {
-                Misc.ILMemoryPool.Pool.RegisterObject<VERTEXTYPEDEF>(m_vertices); 
+                ILMemoryPool.Pool.RegisterObject<VERTEXTYPEDEF>(m_vertices); 
             }
         }
         /// <summary>

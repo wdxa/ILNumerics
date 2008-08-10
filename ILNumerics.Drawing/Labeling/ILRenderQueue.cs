@@ -60,7 +60,7 @@ namespace ILNumerics.Drawing.Labeling {
 
         #region properties 
         /// <summary>
-        /// size of content defined by this render queue
+        /// overall size of content of this render queue
         /// </summary>
         public Size Size {
             get {

@@ -189,10 +189,14 @@ namespace ILNumerics.Drawing.Labeling {
                     return false; 
                 m_items.Add(key, item);
             }
-            item.TextureRectangle = new RectangleF((float) node.Rect.Left / m_width,
-                                                   (float) node.Rect.Top / m_height,
-                                                   (float) node.Rect.Width / m_width,
-                                                   (float) node.Rect.Height / m_height);
+            item.TextureRectangle = RectangleF.FromLTRB( (0.5f + node.Rect.Left) / m_width,
+                                                    (0.5f + node.Rect.Top) / m_height,
+                                                    (node.Rect.Right - 0.5f) / m_width,
+                                                    (node.Rect.Bottom - 0.5f) /m_height);
+            //item.TextureRectangle = RectangleF.FromLTRB( (0f + node.Rect.Left) / m_width,
+            //                                        (0f + node.Rect.Top) / m_height,
+            //                                        (node.Rect.Right - 0f) / m_width,
+            //                                        (node.Rect.Bottom - 0f) /m_height);            
             Store(data,bmpRect,node.Rect); 
             return true; 
         }

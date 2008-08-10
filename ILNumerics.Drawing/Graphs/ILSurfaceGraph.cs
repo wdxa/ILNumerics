@@ -52,20 +52,24 @@ namespace ILNumerics.Drawing.Graphs {
             }
             set {
                 m_shading = value; 
-                OnChanged(); 
+                OnChanged("Shading"); 
             }
         }
         #endregion
 
         #region constructor
         /// <summary>
-        /// constructs new surface graph
+        /// construct new surface graph, provide all 3 coordinates
         /// </summary>
-        /// <param name="sourceArray"></param>
+        /// <param name="panel">panel this graph is to be hosted in</param>
+        /// <param name="X">X coordinates</param>
+        /// <param name="Y">Y coordinates</param>
+        /// <param name="Z">Z coordinates</param>
+        /// <param name="C">Color values</param>
         /// <param name="clippingContainer"></param>
-        public ILSurfaceGraph (ILPanel panel, ILBaseArray sourceArray,
-                                ILClippingData clippingContainer)
-            : base (panel, sourceArray,clippingContainer) {
+        public ILSurfaceGraph (ILPanel panel, ILBaseArray X, ILBaseArray Y, 
+                               ILBaseArray Z, ILBaseArray C, ILClippingData clippingContainer)
+            : base (panel, X,Y,Z,C, clippingContainer) {
             m_graphType = GraphType.Surf; 
             m_wireLines.Width = 1;
             m_wireLines.Antialiasing = false; 

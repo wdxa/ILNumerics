@@ -88,54 +88,57 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             Rectangle bmpRect = Rectangle.Ceiling(bmpRectF); 
             if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb) {
                 bmp = bmp.Clone(bmpRect,System.Drawing.Imaging.PixelFormat.Format32bppArgb); 
-                bmpRectF.X = 0; bmpRectF.Y = 0; 
+                bmpRect.X = 0; bmpRect.Y = 0; 
             }
             GL.BindTexture(TextureTarget.Texture2D, m_textureId);
-            BitmapData bmp_data = bmp.LockBits(bmpRect, ImageLockMode.ReadOnly,System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            if (false && bmpRect.Size == bmp.Size) { // todo!
-                GL.TexSubImage2D(TextureTarget.Texture2D, 0, bmpRect.Left,bmpRect.Top, bmpRect.Width, bmpRect.Height,
+            BitmapData bmp_data = bmp.LockBits(new Rectangle(0,0,bmp.Width,bmp.Height), ImageLockMode.ReadOnly,System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            // setup OpenGL pixel store
+            GL.PixelStore(PixelStoreParameter.UnpackAlignment,1.0f); 
+            GL.PixelStore(PixelStoreParameter.UnpackRowLength,bmp.Width); 
+            GL.PixelStore(PixelStoreParameter.UnpackSkipRows,bmpRect.Y); 
+            GL.PixelStore(PixelStoreParameter.UnpackSkipPixels,bmpRect.X); 
+            GL.TexSubImage2D(TextureTarget.Texture2D, 0, (int)rect.Left, (int)rect.Top, bmpRect.Width, bmpRect.Height,
                      OpenTK.Graphics.PixelFormat.Rgba, PixelType.UnsignedByte, bmp_data.Scan0);
-            } else {
-                // must copy to new data array
-                if (m_tmpData.Length < bmpRect.Height * bmpRect.Width) {
-                    if (m_tmpData != null) 
-                        ILMemoryPool.Pool.RegisterObject(m_tmpData); 
-                    m_tmpData = ILMemoryPool.Pool.New<int>(bmpRect.Height * bmpRect.Width);    
-                }
-                unsafe {
-                fixed (int* tmpDataP = m_tmpData) {
-                    int* pOut = tmpDataP; 
-                    int* pIn; 
-                    int* pInEnd;
-                    for (int r = 0; r < bmpRect.Height; r++) {
-                        //pIn = (int*)bitmap_data.Scan0 + (r+(int)location.Y) * data.Width + (int)location.X; 
-                        pIn = ((int*)bmp_data.Scan0) + r * (bmp_data.Stride / 4); 
-                        pInEnd = pIn + bmpRect.Width; 
-                        while (pIn < pInEnd) {
-                            *(pOut++) = *(pIn++);     
-                        }
-                    }
-                    GL.TexSubImage2D(TextureTarget.Texture2D, 0, (int)rect.Left, (int)rect.Top, bmpRect.Width, bmpRect.Height,
-                         OpenTK.Graphics.PixelFormat.Rgba, PixelType.UnsignedByte, (IntPtr)tmpDataP);
+#region DEBUGGING only
 #if EXPORTBMP
-                    Bitmap outB = new Bitmap(bmpRect.Width, bmpRect.Height);
-                    for (int i = 0; i < bmpRect.Width * bmpRect.Height; i++)
-                        outB.SetPixel(i%bmpRect.Width,(int)(i/bmpRect.Width),Color.FromArgb(m_tmpData[i]));
-                    outB.Save("EXPORTBMP_textureCached.bmp",ImageFormat.Bmp); 
-                    outB.Dispose(); 
-                    string dbTrOut = String.Format("usedArea:{0}:{1}:{2}:{3} data:{4} bmp_data: {5}:{6} stride:{7} Loc:{8}"
-                                    ,bmpRect.Left, bmpRect.Top, bmpRect.Width, bmpRect.Height
-                                    ,bmp.Size.ToString()
-                                    ,bmp_data.Width,bmp_data.Height
-                                    ,bmp_data.Stride
-                                    ,bmpRectF.Location); 
-
-                    Console.Out.WriteLine(dbTrOut); 
-                    System.Diagnostics.Debug.WriteLine(dbTrOut); 
-#endif
-                }
-                }
+            // must copy to new data array
+            if (m_tmpData.Length < bmpRect.Height * bmpRect.Width) {
+                if (m_tmpData != null) 
+                    ILMemoryPool.Pool.RegisterObject(m_tmpData); 
+                m_tmpData = ILMemoryPool.Pool.New<int>(bmpRect.Height * bmpRect.Width);    
             }
+            unsafe {
+            fixed (int* tmpDataP = m_tmpData) {
+                int* pOut = tmpDataP; 
+                int* pIn; 
+                int* pInEnd;
+                for (int r = 0; r < bmpRect.Height; r++) {
+                    //pIn = (int*)bitmap_data.Scan0 + (r+(int)location.Y) * data.Width + (int)location.X; 
+                    pIn = ((int*)bmp_data.Scan0) + r * (bmp_data.Stride / 4) + bmpRect.X; 
+                    pInEnd = pIn + bmpRect.Width; 
+                    while (pIn < pInEnd) {
+                        *(pOut++) = *(pIn++);     
+                    }
+                }
+                //GL.TexSubImage2D(TextureTarget.Texture2D, 0, (int)rect.Left, (int)rect.Top, bmpRect.Width, bmpRect.Height,
+                //     OpenTK.Graphics.PixelFormat.Rgba, PixelType.UnsignedByte, (IntPtr)tmpDataP);
+                Bitmap outB = new Bitmap(bmpRect.Width, bmpRect.Height);
+                for (int i = 0; i < bmpRect.Width * bmpRect.Height; i++)
+                    outB.SetPixel(i%bmpRect.Width,(int)(i/bmpRect.Width),Color.FromArgb(m_tmpData[i]));
+                outB.Save("EXPORTBMP_textureCached.bmp",ImageFormat.Bmp); 
+                outB.Dispose(); 
+                string dbTrOut = String.Format("usedArea:{0}:{1}:{2}:{3} data:{4} bmp_data: {5}:{6} stride:{7} Loc:{8}"
+                                ,bmpRect.Left, bmpRect.Top, bmpRect.Width, bmpRect.Height
+                                ,bmp.Size.ToString()
+                                ,bmp_data.Width,bmp_data.Height
+                                ,bmp_data.Stride
+                                ,bmpRectF.Location); 
+
+                Console.Out.WriteLine(dbTrOut); 
+                System.Diagnostics.Debug.WriteLine(dbTrOut); 
+            }}
+#endif
+#endregion
             bmp.UnlockBits(bmp_data);
         }
         /// <summary>

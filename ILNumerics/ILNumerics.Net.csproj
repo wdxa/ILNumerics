@@ -189,10 +189,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Functions\builtin\matrixTest.cs" />
-    <Compile Include="Functions\builtin\maxall.cs" />
+    <Compile Include="Functions\builtin\maxall.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Functions\builtin\mean.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Functions\builtin\meshgrid.cs" />
+    <Compile Include="Functions\builtin\minall.cs" />
     <Compile Include="Functions\builtin\Norm.cs">
       <SubType>Code</SubType>
     </Compile>

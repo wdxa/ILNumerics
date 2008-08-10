@@ -1,4 +1,4 @@
-// $Id: Program.cs 542 2008-01-04 00:22:02Z ho $
+// $Id: Program.cs 632 2008-07-17 15:00:22Z ho $
 using System;
 using System.Globalization; 
 using System.Collections.Generic;
@@ -21,26 +21,26 @@ namespace ILNumerics.Test {
         	Console.Out.Write(Info());
             //new TESTILBinTreeNode().Run();
             IILLapack oldLapack = Lapack; 
-            Lapack = new ILLapackGeneric(); 
-            new TESTILLapack().Run();
             Lapack = new ILLapackMKL10_0(); 
+            new TESTILLapack().Run();
+
+            Lapack = new ILLapackGeneric(); 
             new TESTILLapack().Run();
             Lapack = new ILACML3_6(); 
             new TESTILLapack().Run();
-            Lapack = oldLapack; 
+            Lapack = oldLapack;
             
-            new TESTILMatFile().Run(); 
-            new TESTILArray().Run();
-            new TESTILCell().Run(); 
-            new TESTBucketSort().Run(); 
-            new TESTQuickSort().Run(); 
             new TESTILMath().Run();
+            new TESTILMatFile().Run();
+            new TESTILArray().Run();
+            new TESTILCell().Run();
+            new TESTBucketSort().Run();
+            new TESTQuickSort().Run(); 
             new TESTILMemoryPool().Run(); 
             new TESTILAlgorithm().Run();
             new TESTILNumericArray().Run();
             new TESTLogical().Run(); 
             new TESTILStorage().Run();
-            //new TESTILWorkbench().Run();
             Console.Out.WriteLine("Done.");
 			Console.In.ReadLine();
 		}
@@ -50,10 +50,13 @@ namespace ILNumerics.Test {
         	StringBuilder s = new StringBuilder(); 
         	s.Append("This is the general test routine for ILNumerics.Net" + Environment.NewLine); 
         	s.Append("" + Environment.OSVersion + ", "); 
-        	s.Append("Number of proc: " + Environment.ProcessorCount + ", "); 
+        	s.Append("Number of proc: " + Environment.ProcessorCount + ", "+ Environment.NewLine); 
         	s.Append("CLR: " + Environment.Version + ", "); 
-        	s.Append("Proc.memory: " + Environment.WorkingSet + "");
-        	return s.ToString(); 
+        	s.Append("Proc.memory: " + Environment.WorkingSet + ""+ Environment.NewLine);
+            ILMath.rand(1); 
+            ILCPUID cpuid = new ILCPUID(); 
+            s.Append(String.Format("CPUID:{0}",cpuid.ToString())); 
+        	return s.ToString();  
         }
 
         /// <summary>

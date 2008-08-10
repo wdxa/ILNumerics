@@ -100,12 +100,19 @@ namespace ILNumerics.Drawing.Controls {
             m_panel.DrawInactive = true; 
             if (Trace.IndentLevel > 0) 
                 Trace.TraceInformation("{0} - ILSubfigure.ctor() - panel created {1}",DateTime.Now,m_panel.GraphicDeviceType);
-            m_colorbar = new ILColorBar(); 
-            m_colorbar.RegisterRangeSource(m_panel.Limits); 
+            m_colorbar = new ILColorBar(m_panel.Colormap); 
+            m_colorbar.RegisterRangeSource(m_panel.Graphs.Clipping);
+            m_panel.ColormapChanged += new EventHandler(m_panel_ColormapChanged);
             m_title = new ILBorderFitLabel();
             m_panel.Graphs.CollectionChanged += new ILGraphCollectionChangedEvent(Graphs_CollectionChanged);
             SetDefaults(); 
             m_panel.Invalidate();
+            m_isInitializing = false; 
+        }
+
+        void m_panel_ColormapChanged(object sender, EventArgs e) {
+            m_colorbar.Colormap = m_panel.Colormap; 
+            m_colorbar.Invalidate(); 
         }
 
         void Graphs_CollectionChanged(object sender, ILGraphCollectionChangedEventArgs args) {
@@ -185,6 +192,20 @@ namespace ILNumerics.Drawing.Controls {
             m_title.BackColor = Color.CornflowerBlue; 
             m_title.ForeColor = Color.Cornsilk; 
             m_colorbar.Dock = DockStyle.Left; 
+        }
+        /// <summary>
+        /// Draws content of this subfigure into proedefined bitmap
+        /// </summary>
+        /// <param name="bitmap">predefined bitmap to draw content into. The size must have been initialized according to 'bounds'.</param>
+        /// <param name="bounds">Rectangle specifying the region to be copied.</param>
+        public virtual void DrawToBitmap(Bitmap bitmap, Rectangle bounds) {
+            base.DrawToBitmap(bitmap,bounds);
+            Bitmap tmpbmp = new Bitmap(m_panel.Size.Width,m_panel.Size.Height); 
+            m_panel.DrawToBitmap(tmpbmp,new Rectangle(0,0,tmpbmp.Width,tmpbmp.Height)); 
+            // merge both bitmaps 
+            using (Graphics gr = Graphics.FromImage( bitmap )) {
+                gr.DrawImage(tmpbmp,m_panel.Location); 
+            }
         }
         #endregion
 

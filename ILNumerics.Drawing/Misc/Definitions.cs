@@ -32,6 +32,30 @@ using ILNumerics.Drawing.Graphs;
 
 
 namespace ILNumerics.Drawing {
+
+    /// <summary>
+    /// predefined colormaps
+    /// </summary>
+    public enum Colormaps {
+        Autumn,
+        Bone,
+        Colorcube,
+        Cool,
+        Copper,
+        Flag,
+        Gray,
+        Hot,
+        Hsv,
+        ILNumerics,
+        Jet,
+        Lines, 
+        Pink,
+        Prism,
+        Spring,
+        Summer,
+        White,
+        Winter
+    }
     /// <summary>
     /// Orientation for labels and other purposes
     /// </summary>
@@ -242,7 +266,19 @@ namespace ILNumerics.Drawing {
         /// <summary>
         /// draw markers as up pointing triangles
         /// </summary>
-        Triangle,
+        TriangleUp,
+        /// <summary>
+        /// draw markers as up pointing triangles
+        /// </summary>
+        TriangleDown,
+        /// <summary>
+        /// draw markers as up pointing triangles
+        /// </summary>
+        TriangleLeft,
+        /// <summary>
+        /// draw markers as up pointing triangles
+        /// </summary>
+        TriangleRight,
         /// <summary>
         /// draw markers as plus
         /// </summary>
@@ -255,10 +291,6 @@ namespace ILNumerics.Drawing {
         /// do not draw markers
         /// </summary>
         None,
-        /// <summary>
-        /// draw markers as user defined bitmap
-        /// </summary>
-        Bitmap
     }
     /// <summary>
     /// Possible positions of the camera

@@ -40,6 +40,8 @@ using OpenTK.Graphics.OpenGL.Enums;
 using ILNumerics.Drawing.Graphs; 
 using ILNumerics.Drawing.Platform.OpenGL; 
 using ILNumerics.Drawing.Internal; 
+using ILNumerics.Drawing.Misc; 
+using ILNumerics.Misc; 
 using VERTEXTYPEDEF = ILNumerics.Drawing.Platform.OpenGL.ILOGLSurfaceGraph.VertexC4N3V3; 
 
 namespace ILNumerics.Drawing.Platform.OpenGL
@@ -52,6 +54,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL
         #region attributes
         protected float[] m_vertices;
         protected ShadingStyles m_oldShading; 
+        protected ILColormap m_oldColormap; 
         #endregion
 
         #region vertex definition
@@ -75,28 +78,35 @@ namespace ILNumerics.Drawing.Platform.OpenGL
         }
 
         protected override void CreateVertices() {
+            ILColormap colormap = m_panel.Colormap; 
             if (m_vertices == null) {
-                m_vertices = Misc.ILMemoryPool.Pool.New<float>(m_Vertcount*40); 
+                m_vertices = ILMemoryPool.Pool.New<float>(m_Vertcount*40); 
             }
             float val = 0.0f; 
-            float minZ = m_globalClipping.ZMin; 
+            float minZ = m_globalClipping.ZMin, minC = (m_colors == null)? 0.0f : m_colors.MinValue; 
             float maxZ = m_globalClipping.ZMax; 
-            float a = MAXHUEVALUE / (maxZ - minZ);
-            float b = -minZ * a; 
-            ILColorProvider colHelp = new ILColorProvider(0.0f,0.5f,1.0f);
-            int curVertPos = 0; 
+            bool useColorArray = !object.Equals(m_colors,null); 
+            float a; 
+            if (useColorArray) 
+                a = colormap.Length / (m_colors.MaxValue - minC);
+            else 
+                a = colormap.Length / (maxZ - minZ);
+            int curVertPos = 0, curVecPos = 0; 
             if (m_shading == ShadingStyles.Interpolate) {
                 #region shading interpolate
                 for (int r = 0; r < m_rows; r++) {
                     for (int c = 0; c < m_cols; c++) {
+                        curVecPos = r + c * m_rows; 
                         val = m_sourceArray.GetValue(r,c);
                         // set color values 
-                        colHelp.H2RGB(MAXHUEVALUE - val * a - b,
-                            m_vertices,ref curVertPos); 
+                        if (useColorArray)
+                            colormap.Map((m_colors.GetValue(curVecPos) - minC) * a, m_vertices,ref curVertPos); 
+                        else 
+                            colormap.Map((val - minZ) * a, m_vertices,ref curVertPos);
                         m_vertices[curVertPos++] = m_opacity;
                         curVertPos += 3; 
-                        m_vertices[curVertPos++] = c; 
-                        m_vertices[curVertPos++] = r; 
+                        m_vertices[curVertPos++] = m_xCoords[curVecPos]; 
+                        m_vertices[curVertPos++] = m_yCoords[curVecPos]; 
                         m_vertices[curVertPos++] = val;
                     }
                 }
@@ -128,40 +138,48 @@ namespace ILNumerics.Drawing.Platform.OpenGL
                 // first row: no color average
                 for (int c = 0; c < m_cols; c++) {
                     val = m_sourceArray.GetValue(0,c);
-                    colHelp.H2RGB(MAXHUEVALUE - val * a - b,
-                        m_vertices,ref curVertPos); 
+                    if (useColorArray)
+                        colormap.Map((m_colors.GetValue(0,c) - minC) * a, m_vertices,ref curVertPos); 
+                    else 
+                        colormap.Map((val - minZ) * a, m_vertices,ref curVertPos); 
                     m_vertices[curVertPos++] = m_opacity;
                     curVertPos += 3; 
-                    m_vertices[curVertPos++] = c; 
-                    m_vertices[curVertPos++] = 0; 
+                    m_vertices[curVertPos++] = m_xCoords[m_rows*c]; 
+                    m_vertices[curVertPos++] = m_yCoords[m_rows*c]; 
                     m_vertices[curVertPos++] = val;
                 }
                 for (int r = 1; r < m_rows; r++) {
                     val = m_sourceArray.GetValue(r,0);
-                    colHelp.H2RGB(MAXHUEVALUE - val * a - b,
-                        m_vertices,ref curVertPos); 
+                    if (useColorArray)
+                        colormap.Map((m_colors.GetValue(r) - minC) * a, m_vertices,ref curVertPos); 
+                    else 
+                        colormap.Map((val - minZ) * a, m_vertices,ref curVertPos); 
                     m_vertices[curVertPos++] = m_opacity;
                     curVertPos += 3; 
-                    m_vertices[curVertPos++] = 0; 
-                    m_vertices[curVertPos++] = r; 
+                    m_vertices[curVertPos++] = m_xCoords[r]; 
+                    m_vertices[curVertPos++] = m_yCoords[r]; 
                     m_vertices[curVertPos++] = val;
                     // next columns: average color over precomputed corners
                     for (int c = 1; c < m_cols; c++) {
+                        curVecPos = r + c * m_rows; 
                         val = m_sourceArray.GetValue(r,c);
                         val += m_sourceArray.GetValue(r-1,c); 
                         val += m_sourceArray.GetValue(r,c-1); 
                         val += m_sourceArray.GetValue(r-1,c-1); 
                         val /= 4;
-                        colHelp.H2RGB(MAXHUEVALUE - val * a - b,
-                            m_vertices,ref curVertPos); 
+                        if (useColorArray)
+                            colormap.Map((m_colors.GetValue(curVecPos) - minC) * a, m_vertices,ref curVertPos); 
+                        else 
+                            colormap.Map((val - minZ) * a, m_vertices,ref curVertPos); 
                         m_vertices[curVertPos++] = m_opacity; 
                         curVertPos += 3; 
-                        m_vertices[curVertPos++] = c; 
-                        m_vertices[curVertPos++] = r; 
+                        m_vertices[curVertPos++] = m_xCoords[curVecPos]; 
+                        m_vertices[curVertPos++] = m_yCoords[curVecPos]; 
                         m_vertices[curVertPos++] = m_sourceArray.GetValue(r,c); 
                     }
                 }
                 #endregion
+                m_oldColormap = colormap; 
             }
             #region create normals 
             // todo: depends on lighting enabled or not...! 
@@ -205,12 +223,14 @@ namespace ILNumerics.Drawing.Platform.OpenGL
             m_vertexReady = true;
         }
 
+
         #endregion
 
         #region constructor
-        public ILOGLSurfaceGraph (  ILOGLPanel panel, ILBaseArray sourceArray,
-                                 ILClippingData clippingContainer) 
-                              : base(panel,sourceArray,clippingContainer) {
+        public ILOGLSurfaceGraph (  ILOGLPanel panel, ILBaseArray X,
+                                    ILBaseArray Y, ILBaseArray Z, ILBaseArray C,
+                                    ILClippingData clippingContainer) 
+                              : base(panel,X,Y,Z,C,clippingContainer) {
             m_indexReady = false; 
             m_vertexReady = false; 
         }
@@ -224,7 +244,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL
         public override void Dispose() {
             base.Dispose(); 
             if (m_vertices != null) {
-                Misc.ILMemoryPool.Pool.RegisterObject<float>(m_vertices); 
+                ILMemoryPool.Pool.RegisterObject<float>(m_vertices); 
             }
         }
         /// <summary>
@@ -236,6 +256,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL
                           BlendingFactorDest.OneMinusSrcAlpha);            
             ILLineProperties wireprops = m_wireLines;
             ILOGLPanel.SetupLineStyle(wireprops);
+            GL.PolygonOffset(1.0f,1.0f);
+            GL.Enable(EnableCap.PolygonOffsetFill); 
             unsafe {
                 fixed (float* pVertices = m_vertices) {
                     // populate vertex array to GL
@@ -373,7 +395,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL
                     }
                 }
             }
-            GL.Disable(EnableCap.Lighting); 
+            GL.Disable(EnableCap.Lighting);
             //GL.PopMatrix(); 
         }
         /// <summary>
@@ -385,8 +407,13 @@ namespace ILNumerics.Drawing.Platform.OpenGL
                 //must only recalculate indices, and only if the camera subquadrant has changed
                 m_indexReady = false; 
                 m_isReady = false; 
-            } else if (m_oldShading != m_shading) {
+            } 
+            if (m_oldShading != m_shading) {
                 m_indexReady = false; 
+                m_vertexReady = false; 
+                m_isReady = false; 
+            }
+            if (m_oldColormap != m_panel.Colormap) {
                 m_vertexReady = false; 
                 m_isReady = false; 
             }

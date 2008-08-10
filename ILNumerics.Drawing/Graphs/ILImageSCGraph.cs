@@ -56,17 +56,18 @@ namespace ILNumerics.Drawing.Graphs {
             }
             set {
                 m_zPosition = value; 
-                OnChanged(); 
+                OnChanged("ZPosition"); 
             }
         }
         #endregion
 
         #region constructor
-        public ILImageSCGraph (ILPanel panel, ILBaseArray sourceArray,
+        public ILImageSCGraph (ILPanel panel, ILBaseArray X, ILBaseArray Y,
+                                ILBaseArray Z,ILBaseArray C,
                                 ILClippingData clippingContainer)
-            : base (panel, sourceArray,clippingContainer) {
-            m_cols = sourceArray.Dimensions[1]+1; 
-            m_rows = sourceArray.Dimensions[0]+1; 
+            : base (panel, X,Y,Z,C, clippingContainer) {
+            m_cols = m_sourceArray.Dimensions[1]+1; 
+            m_rows = m_sourceArray.Dimensions[0]+1; 
             m_Vertcount = m_rows * m_cols;
             // defaults
             m_zPosition = float.NegativeInfinity;
