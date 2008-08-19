@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Drawing; 
 using ILNumerics.Exceptions; 
 using ILNumerics.Drawing.Controls;
 using OpenTK; 
@@ -229,6 +230,36 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 m_isReady = false; 
             }
         }
+        public override void DrawToLegend(Graphics graphics, Rectangle sampleRect, Rectangle labelRect) {
+            if (m_filled) {
+                // draw inner filled area
+                GL.ShadeModel(ShadingModel.Smooth); 
+                GL.Begin(BeginMode.TriangleStrip); 
+                    GL.Color3(m_panel.Colormap[m_panel.Colormap.Length-1]); 
+                    GL.Vertex2(sampleRect.X,sampleRect.Y + sampleRect.Height); 
+                    GL.Color3(m_panel.Colormap[(int)(m_panel.Colormap.Length/2)]); 
+                    GL.Vertex2(sampleRect.X,sampleRect.Y); 
+                    GL.Vertex2(sampleRect.X+sampleRect.Width,sampleRect.Y + sampleRect.Height); 
+                    GL.Color3(m_panel.Colormap[0]); 
+                    GL.Vertex2(sampleRect.X+sampleRect.Width,sampleRect.Y); 
+                GL.End(); 
+            } 
+            if (m_wireLines.Visible) {
+                ILNumerics.Drawing.Platform.OpenGL.ILOGLPanel.SetupLineStyle(m_wireLines); 
+                GL.Begin(BeginMode.LineStrip); 
+                    GL.Vertex2(sampleRect.X,sampleRect.Y); 
+                    GL.Vertex2(sampleRect.X+sampleRect.Width,sampleRect.Y); 
+                    GL.Vertex2(sampleRect.X+sampleRect.Width,sampleRect.Y + sampleRect.Height); 
+                    GL.Vertex2(sampleRect.X,sampleRect.Y + sampleRect.Height); 
+                    GL.Vertex2(sampleRect.X,sampleRect.Y); 
+                GL.End(); 
+            }
+            m_label.m_position.X = labelRect.X + labelRect.Width / 2;
+            m_label.m_position.Y = labelRect.Y + labelRect.Height / 2; 
+            m_label.m_alignment = TickLabelAlign.center | TickLabelAlign.vertCenter; 
+            m_label.Draw(null); 
+        }
+
         #endregion 
 
     }

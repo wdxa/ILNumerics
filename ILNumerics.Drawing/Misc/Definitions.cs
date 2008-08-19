@@ -181,19 +181,19 @@ namespace ILNumerics.Drawing {
         Manual
     }
     /// <summary>
-    /// Alignments for axis labels 
+    /// Alignments for labels 
     /// </summary>
-    public enum AxisLabelAlign {
+    public enum LabelAlign {
         /// <summary>
-        /// align the axis label near the lower axis range limit
+        /// align the label near the lower range limit
         /// </summary>
         Lower, 
         /// <summary>
-        /// align the axis label in the center of axis
+        /// align the label in the center 
         /// </summary>
         Center,
         /// <summary>
-        /// align the axis label near the upper axis range limit
+        /// align the label near the upper range limit
         /// </summary>
         Upper
     }

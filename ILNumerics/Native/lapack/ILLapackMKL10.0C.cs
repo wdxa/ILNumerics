@@ -203,6 +203,8 @@ namespace ILNumerics.Native  {
 
         [DllImport("mkl_custom", EntryPoint = "DSYEVR",CallingConvention =CallingConvention.Cdecl),SuppressUnmanagedCodeSecurity]
         private static extern void mkl_dsyevr (ref char jobz, ref char range, ref char uplo, ref int n,          double  [] A, ref int lda, ref double vl, ref double vu, ref int il, ref int iu, ref double abstol, ref int m, double[] w,          double  [] z, ref int ldz, int[] isuppz, double[] work, ref int lwork, int[] iwork, ref int liwork, ref int info); 
+        //[DllImport("mkl_custom", EntryPoint = "DSYEVR",CallingConvention =CallingConvention.Cdecl)]
+        //private static extern void mkl_dsyevr (ref char jobz, ref char range, ref char uplo, ref int n,          double  [] A, ref int lda, ref double vl, ref double vu, ref int il, ref int iu, ref double abstol, ref int m, double[] w,          double  [] z, ref int ldz, int[] isuppz, double[] work, ref int lwork, int[] iwork, ref int liwork, ref int info); 
         [DllImport("mkl_custom", EntryPoint = "SSYEVR",CallingConvention =CallingConvention.Cdecl),SuppressUnmanagedCodeSecurity]
         private static extern void mkl_ssyevr (ref char jobz, ref char range, ref char uplo, ref int n,          float   [] A, ref int lda, ref float  vl, ref float  vu, ref int il, ref int iu, ref float  abstol, ref int m, float [] w,          float   [] z, ref int ldz, int[] isuppz, float [] work, ref int lwork, int[] iwork, ref int liwork, ref int info); 
         [DllImport("mkl_custom", EntryPoint = "CHEEVR",CallingConvention =CallingConvention.Cdecl),SuppressUnmanagedCodeSecurity]
@@ -1524,14 +1526,16 @@ namespace ILNumerics.Native  {
             double [] work = new double[1]; 
             int lwork = -1, liwork = -1; 
             int [] iwork = new int[1]; 
+            //byte jz = (byte)jobz,rn = (byte) range,ul = (byte)uplo; 
             mkl_dsyevr(ref jobz,ref range,ref uplo,ref n, A,ref lda, ref vl, ref vu, ref il, ref iu, ref abstol,ref m, w,z,ref ldz,isuppz, work,ref lwork,iwork,ref liwork,ref info);
             if (info != 0) {
                 throw new ILArgumentException("?syevr: error returned from lapack: " + info);
             }
             lwork = (int)work[0]; 
-            work = ILMemoryPool.Pool.New<double>(lwork);
+            bool dummy; 
+            work = ILMemoryPool.Pool.New<double>(lwork,true, out dummy);
             liwork = (int) iwork[0]; 
-            iwork = ILMemoryPool.Pool.New<int>(liwork); 
+            iwork = ILMemoryPool.Pool.New<int>(liwork,true, out dummy);
             mkl_dsyevr(ref jobz,ref range,ref uplo,ref n, A,ref lda, ref vl, ref vu, ref il, ref iu, ref abstol,ref m, w,z,ref ldz,isuppz, work,ref lwork,iwork,ref liwork,ref info);
             ILMemoryPool.Pool.RegisterObject(iwork); 
             ILMemoryPool.Pool.RegisterObject(work); 

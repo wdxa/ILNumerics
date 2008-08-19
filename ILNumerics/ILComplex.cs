@@ -93,6 +93,15 @@ namespace ILNumerics {
         }
 
         /// <summary>
+        /// complex quantity, marked as beeing "not a number"
+        /// </summary>
+        public static complex NaN {
+            get {
+                return new complex(double.NaN,double.NaN); 
+            }
+        }
+
+        /// <summary>
         /// are obj's real and imaginary part identical to the real and imaginary parts of this fcomplex
         /// </summary>
         /// <param name="obj">fcomplex object to determine the equality for</param>
@@ -145,6 +154,12 @@ namespace ILNumerics {
     </source>
     <destination>complex.INF</destination>
 </type>
+<type>
+    <source locate="after">
+        TRret
+    </source>
+    <destination>double</destination>
+</type>
 </hycalper>
  */
         /// <summary>
@@ -189,13 +204,43 @@ namespace ILNumerics {
         /// <param name="in1">The divident.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
+        /// <remarks><para>Unless the operator must handle special inputs (Inf or 0 values), 
+        /// the algorithm described in [1] is used for division. This is considered to be 
+        /// more robust against floating point overflow than the naive approach of simple 
+        /// cartesian division.</para>
+        /// <para>References: [1]: Smith, R.L., Algorithm 116: Complex division. Commun.ACM 5,8 (1962),435 <br />
+        /// [2]: Stewart, G.W., A note on complex division, ACM trans.on math software, Vol.11, N.3 (1985)</para></remarks>
         public static /*!HC:Tret*/ complex operator /(/*!HC:TinArr1*/ complex in1, /*!HC:TinArr2*/ complex in2) {
-            if (/*!HC:TinArr2*/ complex .IsInfinity(in2)) return (/*!HC:Tret*/ complex )0; 
+            if (in1.real == 0 && in1.imag == 0) {
+                if (/*!HC:TinArr2*/ complex .IsInfinity(in2)) return NaN;
+                else return (/*!HC:Tret*/ complex )0;
+            } else {
+                if (/*!HC:TinArr2*/ complex .IsInfinity(in2)) return (/*!HC:Tret*/ complex )0; 
+            }
+            if (in2.real == 0 && in2.imag == 0) {
+                return INF; 
+            }
             /*!HC:Tret*/ complex ret;
-            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
-            if (norm2 == 0) return /*!HC:Tret*/ complex .INF;    // this may be removed, since division by 0 results in inf anyway ? 
-            ret.real = /*!HC:FCast*/ (double) (((in1.real  * in2.real ) + (in1.imag  * in2.imag )) / norm2);
-            ret.imag = /*!HC:FCast*/ (double) (((in1.imag  * in2.real ) - (in1.real  * in2.imag )) / norm2); 
+            // this would be the naive approach. But it come with to little robustness against overflow
+            //double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            //if (norm2 == 0) return INF;    // this may be removed, since division by 0 results in inf anyway ? 
+            //ret.real = /*!HC:FCast*/ (double) (((in1.real  * in2.real ) + (in1.imag  * in2.imag )) / norm2);
+            //ret.imag = /*!HC:FCast*/ (double) (((in1.imag  * in2.real ) - (in1.real  * in2.imag )) / norm2); 
+            
+            // this algorithm is taken from [1]. The one described in [2] was not taken. Tests 
+            // did not show any advantage when using double precision floating point arithmetic.
+            /*!HC:TRret*/ double tmp; 
+            if (Math.Abs(in2.real) >= Math.Abs(in2.imag)) {
+                tmp = /*!HC:FCast*/ (double) (in2.imag * (1/in2.real)); 
+                ret.imag = /*!HC:FCast*/ (double) (in2.real + in2.imag*tmp); 
+                ret.real = /*!HC:FCast*/ (double) (in1.real + in1.imag*tmp)/ret.imag; 
+                ret.imag = /*!HC:FCast*/ (double) (in1.imag - in1.real*tmp)/ret.imag; 
+            } else {
+                tmp = /*!HC:FCast*/ (double) (in2.real * (1/in2.imag));
+                ret.imag = /*!HC:FCast*/ (double) (in2.imag + in2.real*tmp); 
+                ret.real = /*!HC:FCast*/ (double) (in1.imag + in1.real*tmp)/ret.imag; 
+                ret.imag = - /*!HC:FCast*/ (double) (in1.real - in1.imag*tmp)/ret.imag; 
+            }
             return ret;                                            
         }
         /// <summary>
@@ -303,13 +348,43 @@ namespace ILNumerics {
         /// <param name="in1">The divident.</param>
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
+        /// <remarks><para>Unless the operator must handle special inputs (Inf or 0 values), 
+        /// the algorithm described in [1] is used for division. This is considered to be 
+        /// more robust against floating point overflow than the naive approach of simple 
+        /// cartesian division.</para>
+        /// <para>References: [1]: Smith, R.L., Algorithm 116: Complex division. Commun.ACM 5,8 (1962),435 <br />
+        /// [2]: Stewart, G.W., A note on complex division, ACM trans.on math software, Vol.11, N.3 (1985)</para></remarks>
         public static  complex operator /( complex in1,  fcomplex in2) {
-            if ( fcomplex .IsInfinity(in2)) return ( complex )0; 
+            if (in1.real == 0 && in1.imag == 0) {
+                if ( fcomplex .IsInfinity(in2)) return NaN;
+                else return ( complex )0;
+            } else {
+                if ( fcomplex .IsInfinity(in2)) return ( complex )0; 
+            }
+            if (in2.real == 0 && in2.imag == 0) {
+                return INF; 
+            }
             complex ret;
-            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
-            if (norm2 == 0) return  complex .INF;    // this may be removed, since division by 0 results in inf anyway ? 
-            ret.real =  (double) (((in1.real  * in2.real ) + (in1.imag  * in2.imag )) / norm2);
-            ret.imag =  (double) (((in1.imag  * in2.real ) - (in1.real  * in2.imag )) / norm2); 
+            // this would be the naive approach. But it come with to little robustness against overflow
+            //double norm2 = in2.real * in2.real + in2.imag * in2.imag;
+            //if (norm2 == 0) return INF;    // this may be removed, since division by 0 results in inf anyway ? 
+            //ret.real =  (double) (((in1.real  * in2.real ) + (in1.imag  * in2.imag )) / norm2);
+            //ret.imag =  (double) (((in1.imag  * in2.real ) - (in1.real  * in2.imag )) / norm2); 
+            
+            // this algorithm is taken from [1]. The one described in [2] was not taken. Tests 
+            // did not show any advantage when using double precision floating point arithmetic.
+            double tmp; 
+            if (Math.Abs(in2.real) >= Math.Abs(in2.imag)) {
+                tmp =  (double) (in2.imag * (1/in2.real)); 
+                ret.imag =  (double) (in2.real + in2.imag*tmp); 
+                ret.real =  (double) (in1.real + in1.imag*tmp)/ret.imag; 
+                ret.imag =  (double) (in1.imag - in1.real*tmp)/ret.imag; 
+            } else {
+                tmp =  (double) (in2.real * (1/in2.imag));
+                ret.imag =  (double) (in2.imag + in2.real*tmp); 
+                ret.real =  (double) (in1.imag + in1.real*tmp)/ret.imag; 
+                ret.imag = -  (double) (in1.real - in1.imag*tmp)/ret.imag; 
+            }
             return ret;                                            
         }
         /// <summary>
@@ -509,7 +584,7 @@ namespace ILNumerics {
             /*!HC:test4inf*/ 
             if (double.IsInfinity(in2)) return (complex)0;
             /*!HC:Tret*/ complex ret;
-            if (in2 == 0.0) return /*!HC:infinity*/ complex.INF ;
+            if (in2 == 0.0) return INF ;
             ret.real = /*!HC:FCast*/ (double) (in1.real / in2);
             ret.imag = /*!HC:FCast*/ (double) (in1.imag / in2);
             return ret;
@@ -621,7 +696,7 @@ namespace ILNumerics {
         public static  complex operator /( complex in1,  UInt64 in2) {
             
             complex ret;
-            if (in2 == 0.0) return  complex.INF ;
+            if (in2 == 0.0) return INF ;
             ret.real =  (double) (in1.real / in2);
             ret.imag =  (double) (in1.imag / in2);
             return ret;
@@ -730,7 +805,7 @@ namespace ILNumerics {
         public static  complex operator /( complex in1,  UInt32 in2) {
             
             complex ret;
-            if (in2 == 0.0) return  complex.INF ;
+            if (in2 == 0.0) return INF ;
             ret.real =  (double) (in1.real / in2);
             ret.imag =  (double) (in1.imag / in2);
             return ret;
@@ -839,7 +914,7 @@ namespace ILNumerics {
         public static  complex operator /( complex in1,  UInt16 in2) {
             
             complex ret;
-            if (in2 == 0.0) return  complex.INF ;
+            if (in2 == 0.0) return INF ;
             ret.real =  (double) (in1.real / in2);
             ret.imag =  (double) (in1.imag / in2);
             return ret;
@@ -948,7 +1023,7 @@ namespace ILNumerics {
         public static  complex operator /( complex in1,  Int64 in2) {
             
             complex ret;
-            if (in2 == 0.0) return  complex.INF ;
+            if (in2 == 0.0) return INF ;
             ret.real =  (double) (in1.real / in2);
             ret.imag =  (double) (in1.imag / in2);
             return ret;
@@ -1057,7 +1132,7 @@ namespace ILNumerics {
         public static  complex operator /( complex in1,  Int32 in2) {
             
             complex ret;
-            if (in2 == 0.0) return  complex.INF ;
+            if (in2 == 0.0) return INF ;
             ret.real =  (double) (in1.real / in2);
             ret.imag =  (double) (in1.imag / in2);
             return ret;
@@ -1166,7 +1241,7 @@ namespace ILNumerics {
         public static  complex operator /( complex in1,  Int16 in2) {
             
             complex ret;
-            if (in2 == 0.0) return  complex.INF ;
+            if (in2 == 0.0) return INF ;
             ret.real =  (double) (in1.real / in2);
             ret.imag =  (double) (in1.imag / in2);
             return ret;
@@ -1275,7 +1350,7 @@ namespace ILNumerics {
         public static  complex operator /( complex in1,  float in2) {
             if (float.IsInfinity(in2)) return (complex)0;
             complex ret;
-            if (in2 == 0.0) return  complex.INF ;
+            if (in2 == 0.0) return INF ;
             ret.real =  (double) (in1.real / in2);
             ret.imag =  (double) (in1.imag / in2);
             return ret;
@@ -1384,7 +1459,7 @@ namespace ILNumerics {
         public static  complex operator /( complex in1,  char in2) {
             
             complex ret;
-            if (in2 == 0.0) return  complex.INF ;
+            if (in2 == 0.0) return INF ;
             ret.real =  (double) (in1.real / in2);
             ret.imag =  (double) (in1.imag / in2);
             return ret;
@@ -1493,7 +1568,7 @@ namespace ILNumerics {
         public static  complex operator /( complex in1,  byte in2) {
             
             complex ret;
-            if (in2 == 0.0) return  complex.INF ;
+            if (in2 == 0.0) return INF ;
             ret.real =  (double) (in1.real / in2);
             ret.imag =  (double) (in1.imag / in2);
             return ret;
@@ -1678,8 +1753,8 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static /*!HC:Tret*/ complex operator /(/*!HC:TinArr1*/ double in1, /*!HC:TinArr2*/ complex in2) {
             /*!HC:Tret*/ complex ret; 
-            if (in2.real == 0 || in2.imag == 0)
-                return /*!HC:infinity*/ complex.INF ;
+            if (in2.real == 0 || in2.imag == 0)                      
+                return INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
             ret.real = /*!HC:FCast*/ (double) ((in1 * in2.real) / norm2);
             ret.imag = /*!HC:FCast*/ (double) ((in1 * (-in2.imag)) / norm2);
@@ -1791,8 +1866,8 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( UInt64 in1,  complex in2) {
             complex ret; 
-            if (in2.real == 0 || in2.imag == 0)
-                return  complex.INF ;
+            if (in2.real == 0 || in2.imag == 0)                      
+                return INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
             ret.real =  (double) ((in1 * in2.real) / norm2);
             ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
@@ -1901,8 +1976,8 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( UInt32 in1,  complex in2) {
             complex ret; 
-            if (in2.real == 0 || in2.imag == 0)
-                return  complex.INF ;
+            if (in2.real == 0 || in2.imag == 0)                      
+                return INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
             ret.real =  (double) ((in1 * in2.real) / norm2);
             ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
@@ -2011,8 +2086,8 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( UInt16 in1,  complex in2) {
             complex ret; 
-            if (in2.real == 0 || in2.imag == 0)
-                return  complex.INF ;
+            if (in2.real == 0 || in2.imag == 0)                      
+                return INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
             ret.real =  (double) ((in1 * in2.real) / norm2);
             ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
@@ -2121,8 +2196,8 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( Int64 in1,  complex in2) {
             complex ret; 
-            if (in2.real == 0 || in2.imag == 0)
-                return  complex.INF ;
+            if (in2.real == 0 || in2.imag == 0)                      
+                return INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
             ret.real =  (double) ((in1 * in2.real) / norm2);
             ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
@@ -2231,8 +2306,8 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( Int32 in1,  complex in2) {
             complex ret; 
-            if (in2.real == 0 || in2.imag == 0)
-                return  complex.INF ;
+            if (in2.real == 0 || in2.imag == 0)                      
+                return INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
             ret.real =  (double) ((in1 * in2.real) / norm2);
             ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
@@ -2341,8 +2416,8 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( Int16 in1,  complex in2) {
             complex ret; 
-            if (in2.real == 0 || in2.imag == 0)
-                return  complex.INF ;
+            if (in2.real == 0 || in2.imag == 0)                      
+                return INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
             ret.real =  (double) ((in1 * in2.real) / norm2);
             ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
@@ -2451,8 +2526,8 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( float in1,  complex in2) {
             complex ret; 
-            if (in2.real == 0 || in2.imag == 0)
-                return  complex.INF ;
+            if (in2.real == 0 || in2.imag == 0)                      
+                return INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
             ret.real =  (double) ((in1 * in2.real) / norm2);
             ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
@@ -2561,8 +2636,8 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( char in1,  complex in2) {
             complex ret; 
-            if (in2.real == 0 || in2.imag == 0)
-                return  complex.INF ;
+            if (in2.real == 0 || in2.imag == 0)                      
+                return INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
             ret.real =  (double) ((in1 * in2.real) / norm2);
             ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);
@@ -2671,8 +2746,8 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  complex operator /( byte in1,  complex in2) {
             complex ret; 
-            if (in2.real == 0 || in2.imag == 0)
-                return  complex.INF ;
+            if (in2.real == 0 || in2.imag == 0)                      
+                return INF ;
             double norm2 = in2.real * in2.real + in2.imag * in2.imag;
             ret.real =  (double) ((in1 * in2.real) / norm2);
             ret.imag =  (double) ((in1 * (-in2.imag)) / norm2);

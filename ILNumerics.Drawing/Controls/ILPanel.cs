@@ -67,6 +67,7 @@ namespace ILNumerics.Drawing.Controls {
         protected Color m_backColor = Color.FromKnownColor(KnownColor.Control);
         protected Color m_cubeBGColor = Color.Snow; 
         protected ILColormap m_colormap; 
+        protected ILLegend m_legend; 
         protected GraphicDeviceType m_graphicsDevice; 
         protected ILLineProperties m_selectionRectangle; 
         protected bool m_clipOutsideUnitCube = false; 
@@ -77,12 +78,22 @@ namespace ILNumerics.Drawing.Controls {
         protected const float pi4 = (float) Math.PI / 4; 
         protected const float pi8 = (float) Math.PI / 8; 
         protected ILLayoutData m_layoutData = new ILLayoutData(); 
+
         internal float m_cubeWidth;  // used to propagate view size to matrices in derived classes
         internal float m_cubeHeight; 
         internal int m_cubeMargin; 
         #endregion
 
         #region properties
+        
+        /// <summary>
+        /// Legend for panel's graphs
+        /// </summary>
+        public ILLegend Legend {
+            get {
+                return m_legend; 
+            }
+        }
         /// <summary>
         /// Get texture manager instance, storing all textures used in the scene
         /// </summary>
@@ -340,10 +351,12 @@ namespace ILNumerics.Drawing.Controls {
             m_clippingView.Changed += new ILClippingDataChangedEvent(m_clippingView_Changed);
             m_colormap = new ILColormap();
             m_colormap.Changed += new EventHandler(m_colormap_Changed);
+            Padding = new Padding(5); 
+            m_legend = ILLegend.Create(this);
+            m_legend.Changed += new EventHandler(m_legend_Changed);
             m_active = false;
             m_ready = false; 
         }
-
 
         #endregion
 
@@ -651,6 +664,10 @@ namespace ILNumerics.Drawing.Controls {
         protected void m_camera_Change(object sender, EventArgs e) {
             Invalidate(); 
         }
+        void m_legend_Changed(object sender, EventArgs e) {
+            Invalidate(); 
+        }
+
         protected void m_graphs_OnCollectionChanged(object sender, ILGraphCollectionChangedEventArgs args) {
             switch (args.Reason) {
                 case GraphCollectionChangeReason.Added:
@@ -1156,11 +1173,11 @@ namespace ILNumerics.Drawing.Controls {
         public abstract Point Transform(ILPoint3Df worldPoint); 
 
         /// <summary>
-        /// Draws content of this subfigure into proedefined bitmap
+        /// Draws content of this subfigure into predefined bitmap
         /// </summary>
         /// <param name="bitmap">predefined bitmap to draw content into. The size must have been initialized according to 'bounds'.</param>
         /// <param name="bounds">Rectangle specifying the region to be copied.</param>
-        public abstract void DrawToBitmap(Bitmap bitmap, Rectangle bounds); 
+        public new abstract void DrawToBitmap(Bitmap bitmap, Rectangle bounds); 
         #endregion
 
         #region helper functions 
@@ -1311,11 +1328,11 @@ namespace ILNumerics.Drawing.Controls {
         }
 
         private void axisLabelVertical2D(ILAxis axis) {
-            ILAxisLabel label = axis.Label; 
+            ILLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
             Size tickSize = ticks.Size, labelSize = label.Size;
             switch (label.Alignment) {
-                case AxisLabelAlign.Center:
+                case LabelAlign.Center:
                     label.Orientation = TextOrientation.Vertical;
                     label.m_position.X = ticks.m_lineEnd.X + tickSize.Width;
                     label.m_position.Y = (ticks.m_lineEnd.Y + ticks.m_lineStart.Y) / 2;
@@ -1327,7 +1344,7 @@ namespace ILNumerics.Drawing.Controls {
                         label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
                     }
                     break;
-                case AxisLabelAlign.Upper:
+                case LabelAlign.Upper:
                     label.Orientation = TextOrientation.Vertical;
                     label.m_position.X = ticks.m_lineEnd.X + tickSize.Width;
                     label.m_position.Y = ticks.m_lineEnd.Y;
@@ -1349,16 +1366,16 @@ namespace ILNumerics.Drawing.Controls {
             }
         }
         private void positionZAxisLabel(ILAxis axis) {
-            ILAxisLabel label = axis.Label; 
+            ILLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
             Size tickSize = ticks.Size, labelSize = label.Size; 
             label.Orientation = TextOrientation.Vertical;
             label.m_position.X = ticks.m_lineStart.X - tickSize.Width - labelSize.Height; 
             switch (label.Alignment) {
-                case AxisLabelAlign.Center:
+                case LabelAlign.Center:
                     label.m_position.Y = (ticks.m_lineStart.Y + ticks.m_lineEnd.X ) / 2;
                     break; 
-                case AxisLabelAlign.Upper:
+                case LabelAlign.Upper:
                     label.m_position.Y = ticks.m_lineEnd.Y - tickSize.Width;
                     break;
                 default:        // lower 
@@ -1376,11 +1393,11 @@ namespace ILNumerics.Drawing.Controls {
         }
         private void axisLabel_BottomRightTopLeft(ILAxis axis) {
             #region Bottom Right -> Top Left
-            ILAxisLabel label = axis.Label; 
+            ILLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
             Size tickSize = ticks.Size, labelSize = label.Size; 
             switch (label.Alignment) {
-                case AxisLabelAlign.Center:
+                case LabelAlign.Center:
                     label.m_position.X = (ticks.m_lineStart.X + ticks.m_lineEnd.X) / 2;
                     label.m_position.Y = ticks.m_lineStart.Y + tickSize.Height;
                     if (axis.Index == 0) { // X Axis
@@ -1406,7 +1423,7 @@ namespace ILNumerics.Drawing.Controls {
                         label.Orientation = TextOrientation.Horizontal;
                     }
                     break;
-                case AxisLabelAlign.Upper:
+                case LabelAlign.Upper:
                     label.m_position.X = ticks.m_lineEnd.X;
                     label.m_position.Y = ticks.m_lineStart.Y
                                             + tickSize.Height + label.Padding;
@@ -1447,11 +1464,11 @@ namespace ILNumerics.Drawing.Controls {
             #endregion
         }
         private void axisLabel_BottomLeftTopRight(ILAxis axis) {
-            ILAxisLabel label = axis.Label; 
+            ILLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
             Size tickSize = ticks.Size, labelSize = label.Size;
             switch (label.Alignment) {
-                case AxisLabelAlign.Center:
+                case LabelAlign.Center:
                     label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
                     label.m_position.Y = ticks.m_lineStart.Y + tickSize.Height;
                     if (axis.Index == 0) { // X Axis
@@ -1477,7 +1494,7 @@ namespace ILNumerics.Drawing.Controls {
                         label.Orientation = TextOrientation.Horizontal;
                     }
                     break;
-                case AxisLabelAlign.Upper:
+                case LabelAlign.Upper:
                     label.m_position.X = ticks.m_lineEnd.X - labelSize.Width;
                     label.m_position.Y = ticks.m_lineStart.Y
                                             + tickSize.Height + label.Padding;
@@ -1517,11 +1534,11 @@ namespace ILNumerics.Drawing.Controls {
             }
         }
         private void axisLabel_TopRightBottomLeft(ILAxis axis) {
-            ILAxisLabel label = axis.Label; 
+            ILLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
             Size tickSize = ticks.Size, labelSize = label.Size;
             switch (label.Alignment) {
-                case AxisLabelAlign.Center:
+                case LabelAlign.Center:
                     label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
                     label.m_position.Y = ticks.m_lineEnd.Y + tickSize.Height;
                     //System.Diagnostics.Debug.WriteLine(m_camera.Quadrant + " - " + m_camera.SinPhi); 
@@ -1548,7 +1565,7 @@ namespace ILNumerics.Drawing.Controls {
                         axis.Label.Orientation = TextOrientation.Horizontal;
                     }
                     break;
-                case AxisLabelAlign.Upper:
+                case LabelAlign.Upper:
                     label.m_position.X = ticks.m_lineEnd.X;
                     label.m_position.Y = ticks.m_lineEnd.Y
                                             + tickSize.Height + label.Padding;
@@ -1589,11 +1606,11 @@ namespace ILNumerics.Drawing.Controls {
             }
         }
         private void axisLabel_TopLeftBottomRight(ILAxis axis) {
-            ILAxisLabel label = axis.Label; 
+            ILLabel label = axis.Label; 
             ILTickCollection ticks = axis.LabeledTicks; 
             Size tickSize = ticks.Size, labelSize = label.Size;
             switch (label.Alignment) {
-                case AxisLabelAlign.Center:
+                case LabelAlign.Center:
                     label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
                     label.m_position.Y = ticks.m_lineEnd.Y + tickSize.Height;
                     //System.Diagnostics.Debug.WriteLine(Math.Sin(m_camera.Phi %Math.PI));
@@ -1620,7 +1637,7 @@ namespace ILNumerics.Drawing.Controls {
                         axis.Label.Orientation = TextOrientation.Horizontal;
                     }
                     break;
-                case AxisLabelAlign.Upper:
+                case LabelAlign.Upper:
                     label.m_position.X = ticks.m_lineEnd.X - labelSize.Width;
                     label.m_position.Y = ticks.m_lineEnd.Y
                                             + tickSize.Height + label.Padding;

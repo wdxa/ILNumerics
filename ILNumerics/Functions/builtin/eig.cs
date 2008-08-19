@@ -230,7 +230,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (n != A.Dimensions[1]) 
                 throw new ILArgumentException("eig: matrix A must be square!");
             propsA |= MatrixProperties.Square; 
-            if ((propsA & MatrixProperties.Hermitian) != 0 || ILMath.ishermitian(A)) {
+            if (((propsA & MatrixProperties.Hermitian) != 0 || ILMath.ishermitian(A))) {
                 propsA |= MatrixProperties.Hermitian; 
                 /*!HC:HCCls1*/ ILArray<double> Vd = null; 
                 if (createVR) 
@@ -361,7 +361,9 @@ namespace ILNumerics.BuiltInFunctions {
                 ldz = n; 
             } 
             int [] isuppz = new int[2 * n];
-            /*!HC:lapack_???evr*/ Lapack.dsyevr (jobz,'A','U',n,tmpA.m_data,n,0,0,0,0,0,ref m,w.m_data,z,ldz,isuppz,ref info);
+            /*!HC:lapack_???evr*/ Lapack.dsyevr (jobz,'A','U',n,tmpA.m_data,n,1,n,0,0,0,ref m,w.m_data,z,ldz,isuppz,ref info);
+            if (info != 0) 
+                throw new ILException("eigSymm: error returned from lapack: " + info); 
             if (jobz == 'V') {
                 V =  new  /*!HC:HCCls1*/ ILArray<double> (z,n,n);
                 V = V[null,ILMath.vector(0,m-1)]; 
@@ -522,7 +524,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (n != A.Dimensions[1]) 
                 throw new ILArgumentException("eig: matrix A must be square!");
             propsA |= MatrixProperties.Square; 
-            if ((propsA & MatrixProperties.Hermitian) != 0 || ILMath.ishermitian(A)) {
+            if (((propsA & MatrixProperties.Hermitian) != 0 || ILMath.ishermitian(A))) {
                 propsA |= MatrixProperties.Hermitian; 
                 ILArray<float> Vd = null; 
                 if (createVR) 
@@ -648,7 +650,9 @@ namespace ILNumerics.BuiltInFunctions {
                 ldz = n; 
             } 
             int [] isuppz = new int[2 * n];
-            Lapack.ssyevr (jobz,'A','U',n,tmpA.m_data,n,0,0,0,0,0,ref m,w.m_data,z,ldz,isuppz,ref info);
+            Lapack.ssyevr (jobz,'A','U',n,tmpA.m_data,n,1,n,0,0,0,ref m,w.m_data,z,ldz,isuppz,ref info);
+            if (info != 0) 
+                throw new ILException("eigSymm: error returned from lapack: " + info); 
             if (jobz == 'V') {
                 V =  new  ILArray<float> (z,n,n);
                 V = V[null,ILMath.vector(0,m-1)]; 
@@ -806,7 +810,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (n != A.Dimensions[1]) 
                 throw new ILArgumentException("eig: matrix A must be square!");
             propsA |= MatrixProperties.Square; 
-            if ((propsA & MatrixProperties.Hermitian) != 0 || ILMath.ishermitian(A)) {
+            if (((propsA & MatrixProperties.Hermitian) != 0 || ILMath.ishermitian(A))) {
                 propsA |= MatrixProperties.Hermitian; 
                 ILArray<fcomplex> Vd = null; 
                 if (createVR) 
@@ -912,7 +916,9 @@ namespace ILNumerics.BuiltInFunctions {
                 ldz = n; 
             } 
             int [] isuppz = new int[2 * n];
-            Lapack.cheevr (jobz,'A','U',n,tmpA.m_data,n,0,0,0,0,0,ref m,w.m_data,z,ldz,isuppz,ref info);
+            Lapack.cheevr (jobz,'A','U',n,tmpA.m_data,n,1,n,0,0,0,ref m,w.m_data,z,ldz,isuppz,ref info);
+            if (info != 0) 
+                throw new ILException("eigSymm: error returned from lapack: " + info); 
             if (jobz == 'V') {
                 V =  new  ILArray<fcomplex> (z,n,n);
                 V = V[null,ILMath.vector(0,m-1)]; 
@@ -1070,7 +1076,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (n != A.Dimensions[1]) 
                 throw new ILArgumentException("eig: matrix A must be square!");
             propsA |= MatrixProperties.Square; 
-            if ((propsA & MatrixProperties.Hermitian) != 0 || ILMath.ishermitian(A)) {
+            if (((propsA & MatrixProperties.Hermitian) != 0 || ILMath.ishermitian(A))) {
                 propsA |= MatrixProperties.Hermitian; 
                 ILArray<complex> Vd = null; 
                 if (createVR) 
@@ -1176,7 +1182,9 @@ namespace ILNumerics.BuiltInFunctions {
                 ldz = n; 
             } 
             int [] isuppz = new int[2 * n];
-            Lapack.zheevr (jobz,'A','U',n,tmpA.m_data,n,0,0,0,0,0,ref m,w.m_data,z,ldz,isuppz,ref info);
+            Lapack.zheevr (jobz,'A','U',n,tmpA.m_data,n,1,n,0,0,0,ref m,w.m_data,z,ldz,isuppz,ref info);
+            if (info != 0) 
+                throw new ILException("eigSymm: error returned from lapack: " + info); 
             if (jobz == 'V') {
                 V =  new  ILArray<complex> (z,n,n);
                 V = V[null,ILMath.vector(0,m-1)]; 

@@ -1,4 +1,4 @@
-// $Id: Program.cs 632 2008-07-17 15:00:22Z ho $
+// $Id: Program.cs 647 2008-08-17 15:53:43Z ho $
 using System;
 using System.Globalization; 
 using System.Collections.Generic;
@@ -20,6 +20,7 @@ namespace ILNumerics.Test {
         static void Main(string[] args) {
         	Console.Out.Write(Info());
             //new TESTILBinTreeNode().Run();
+            new TESTILComplex().Run(); 
             IILLapack oldLapack = Lapack; 
             Lapack = new ILLapackMKL10_0(); 
             new TESTILLapack().Run();

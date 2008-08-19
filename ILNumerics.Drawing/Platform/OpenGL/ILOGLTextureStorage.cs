@@ -41,7 +41,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
     public class ILOGLTextureStorage : ILTextureStorage {
 
         #region attributes
-        int [] m_tmpData = new int[20*20];
+        new int [] m_tmpData = new int[20*20];
         #endregion
 
         #region constructor

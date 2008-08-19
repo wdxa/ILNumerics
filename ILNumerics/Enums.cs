@@ -145,9 +145,13 @@ namespace ILNumerics {
         /// </summary>
         RankDeficient = 4096,
         /// <summary>
-        /// nu specific properties (default)
+        /// the matrix has no special properties
         /// </summary>
-        None = 0
+        None = 8192,
+        /// <summary>
+        /// no specific properties known (default)
+        /// </summary>
+        Unknown = 0
     }
     /// <summary>
     /// Possible states for <see cref="ILNumerics.Algorithms.ILAsyncAlgorithm"/>

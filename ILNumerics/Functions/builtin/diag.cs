@@ -45,13 +45,13 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">matrix or vector. If X is matrix, diag returns the 
         /// elements on the 'diagPosition's diagonal as column vector. If X is vector, a square matrix of size 
-        /// [length(X) + diagPosition, length(X) + diagPosition] will be created, having 
+        /// [length(X) + abs(diagPosition), length(X) + abs(diagPosition)] will be created, having 
         /// the elements of X on the 'diagPosition's diagonal.</param>
         /// <param name="diagPosition">index of diagonal to extract/ create. Here 0 means the 
         /// main diagonal, diagPosition > 0 is above the main diagonal, diagPosition smaller 0 means 
         /// below the main diagonal.</param>
         /// <returns>depending on 'X' a matrix or a vector with the elements of/on a diagonal.</returns>
-        /// <remarks>The type of return Array will be the same as the type of X.</remarks>
+        /// <remarks>The type of the ILArray returned will be the same as the type of X.</remarks>
         public static ILArray<T> diag<T>(ILArray<T> X, int diagPosition) {
             if (Object.Equals(X, null) || X.Dimensions.NumberOfDimensions > 2) {
                 throw new ILArgumentException("diag: input array must be matrix, vector or scalar."); 
@@ -65,13 +65,13 @@ namespace ILNumerics.BuiltInFunctions  {
                 int retLen = X.Length + Math.Abs(diagPosition);
                 ret = ILArray<T> .zeros(retLen, retLen);
                 T [] dIn = X.m_data;
-                if (Math.Abs(diagPosition) > 0) {
+                if (diagPosition > 0) {
                     for (int i = 0; i < dIn.Length; i++) {
                         ret[i, i + diagPosition] = dIn[i];
                     }
                 } else {
-                    for (int i = 0; i < retLen; i++) {
-                        ret[i + diagPosition, i] = dIn[i];
+                    for (int i = 0; i < dIn.Length; i++) {
+                        ret[i - diagPosition, i] = dIn[i];
                     }
                 }
             } else  { // X is matrix

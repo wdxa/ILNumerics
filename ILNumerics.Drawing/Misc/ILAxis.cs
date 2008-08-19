@@ -48,7 +48,7 @@ namespace ILNumerics.Drawing {
         protected ILLineProperties m_nearLines; 
         protected ILLineProperties m_farLines; 
         protected ILClippingData m_clipping; 
-        protected ILAxisLabel m_label; 
+        protected ILLabel m_label; 
         protected AxisType m_axisType;
         protected AxisNames m_axisName; 
         protected bool m_visible = true; 
@@ -101,7 +101,7 @@ namespace ILNumerics.Drawing {
         /// <summary>
         /// label to be displayed next to this axis
         /// </summary>
-        public ILAxisLabel Label {
+        public ILLabel Label {
             get {
                 return m_label; 
             }
@@ -235,10 +235,10 @@ namespace ILNumerics.Drawing {
             m_nearLines.Changed +=new EventHandler(m_grid_Changed);
             m_farLines = new ILLineProperties(); 
             m_farLines.Color = Color.Gray; 
-            m_farLines.Width = 1; 
+            m_farLines.Width = 2; 
             m_farLines.Antialiasing = true; 
             m_farLines.Changed +=new EventHandler(m_grid_Changed);
-            m_label = new ILAxisLabel(panel);
+            m_label = new ILLabel(panel);
             m_label.Changed += new EventHandler(m_label_Changed);
             m_clipping.Changed += new ILClippingDataChangedEvent(m_clipping_Changed);
             m_invalidated = true; 

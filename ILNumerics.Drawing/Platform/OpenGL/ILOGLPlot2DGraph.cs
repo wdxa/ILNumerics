@@ -39,7 +39,7 @@ using OpenTK.Graphics.OpenGL.Enums;
 using ILNumerics.Drawing.Graphs; 
 using ILNumerics.Drawing.Controls; 
 using ILNumerics.Drawing.Labeling; 
-using System.Resources; 
+using ILNumerics.Drawing.Interfaces; 
 
 namespace ILNumerics.Drawing.Platform.OpenGL
 {
@@ -191,7 +191,35 @@ namespace ILNumerics.Drawing.Platform.OpenGL
             base.m_marker_Changed(sender, e);
         }
 
+        public override void DrawToLegend(Graphics g, Rectangle sampleArea, Rectangle labelArea) {
+            if (g != null) {
+                // bitmap output is handled by base class
+                base.DrawToLegend(g, sampleArea, labelArea);
+                return; 
+            }
+            int sampY = (int)(sampleArea.Top + sampleArea.Height / 2.0f);
+            #region draw line
+            if (m_properties.Visible) {
+                ILNumerics.Drawing.Platform.OpenGL.ILOGLPanel.SetupLineStyle(m_properties); 
+                GL.Begin(BeginMode.Lines); 
+                GL.Vertex2(sampleArea.Left,sampY); 
+                GL.Vertex2(sampleArea.Right,sampY); 
+                GL.End();
+            }
+            #endregion
 
+            #region draw marker 
+            if (m_marker.Visible) {
+                m_marker.Shape.Draw(m_marker,new float[]{sampleArea.Left + sampleArea.Width / 2.0f,sampY},-1);
+            }
+            #endregion
+            //GL.Vertex2(sampleArea.Right,sampleArea.Bottom); 
+            //GL.Vertex2(sampleArea.Left,sampleArea.Bottom); 
+            m_label.m_position.X = labelArea.X + labelArea.Width / 2;
+            m_label.m_position.Y = labelArea.Y + labelArea.Height / 2; 
+            m_label.m_alignment = TickLabelAlign.center | TickLabelAlign.vertCenter; 
+            m_label.Draw(null); 
+        }
         #endregion
     }
 }

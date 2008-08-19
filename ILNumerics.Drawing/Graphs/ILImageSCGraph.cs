@@ -26,14 +26,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing; 
 using ILNumerics.Drawing.Controls; 
+using ILNumerics.Drawing.Interfaces; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
     /// class rendering plain color-coded area graphs
     /// </summary>
     /// <remarks>This class derives from ILFilledGraph and adds a ZPosition property.</remarks>
-    public class ILImageSCGraph : ILFilledGraph {
+    public abstract class ILImageSCGraph : ILFilledGraph, IILLegendRenderer {
 
         #region attributes 
         protected float m_zPosition;
@@ -72,6 +74,7 @@ namespace ILNumerics.Drawing.Graphs {
             // defaults
             m_zPosition = float.NegativeInfinity;
         }
+        public abstract void DrawToLegend(Graphics graphics, Rectangle sampleRect, Rectangle labelRect);         
         #endregion
     }
 }

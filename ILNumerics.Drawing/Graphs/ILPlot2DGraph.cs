@@ -26,16 +26,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing; 
 using ILNumerics.BuiltInFunctions; 
 using ILNumerics.Drawing.Controls; 
 using ILNumerics.Exceptions; 
-using ILNumerics.Drawing.Marker; 
+using ILNumerics.Drawing.Marker;
+using ILNumerics.Drawing.Interfaces; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
     /// 2D line &amp; point graph
     /// </summary>
-    public abstract class ILPlot2DGraph : ILGraph {
+    public abstract class ILPlot2DGraph : ILGraph, IILLegendRenderer {
 
         #region attributes
         protected ILLineProperties m_properties; 
@@ -104,7 +106,17 @@ namespace ILNumerics.Drawing.Graphs {
             m_graphType = GraphType.Plot2D;
             updateClipping();
         }
-
+        /// <summary>
+        /// draws a small example of the visual output 
+        /// </summary>
+        /// <param name="g">graphics object, if this is null, drawing into current GL context</param>
+        /// <param name="sampleArea">area to draw the line + marker into</param>
+        /// <param name="labelArea">area to draw corresponding label into</param>
+        /// <remarks>derived classes implement this for current device contexts</remarks>
+        public virtual void DrawToLegend(System.Drawing.Graphics g, Rectangle sampleArea, Rectangle labelArea) {
+            //if (g == null) throw new ILArgumentException ("ILGraph: DrawIntoLegend: invalid graphics object (null)"); 
+            //throw new NotImplementedException ("ILGraph cannot draw to bitmap yet!"); 
+        }
         #endregion
 
         #region private helper 
@@ -134,5 +146,6 @@ namespace ILNumerics.Drawing.Graphs {
             m_isReady = false;
         }
         #endregion
+
     }
 }

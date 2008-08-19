@@ -26,13 +26,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing; 
 using ILNumerics.Drawing.Controls; 
+using ILNumerics.Drawing.Interfaces; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
     /// Surface graph
     /// </summary>
-    public abstract class ILSurfaceGraph : ILFilledGraph {
+    public abstract class ILSurfaceGraph : ILFilledGraph, IILLegendRenderer {
 
         #region attributes
         protected ShadingStyles m_shading;
@@ -129,6 +131,10 @@ namespace ILNumerics.Drawing.Graphs {
                 base.CreateIndices();
             }
         }
+        #endregion
+
+        #region IILLegendRenderer
+        public abstract void DrawToLegend(Graphics graphics, Rectangle sampleRect, Rectangle labelRect); 
         #endregion
     }
 }

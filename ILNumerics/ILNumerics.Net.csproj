@@ -9,8 +9,7 @@
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>ILNumerics.Net</AssemblyName>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>ilnumerics.net.key.snk</AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -22,7 +21,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\bin\</OutputPath>
@@ -31,7 +30,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG;WIN32</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <DocumentationFile>ILNumerics.Net.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
@@ -53,7 +52,7 @@
     </ConfigurationOverrideFile>
     <DefineConstants>TRACE;WIN32 RELEASE</DefineConstants>
     <DocumentationFile>..\bin\ILNumerics.Net.xml</DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
     <NoWarn>219,168,1587,414</NoWarn>
@@ -64,6 +63,7 @@
     <WarningLevel>4</WarningLevel>
     <FxCopRules>
     </FxCopRules>
+    <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ILLibrary Release only|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -333,6 +333,7 @@
     <Compile Include="Tests\TESTILCell.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\TESTILComplex.cs" />
     <Compile Include="Tests\TESTILLapack.cs" />
     <Compile Include="Tests\TESTILMath.cs">
       <SubType>Code</SubType>
@@ -350,6 +351,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ilnumerics.net.key.snk" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="NamespaceSummaries.xml" />

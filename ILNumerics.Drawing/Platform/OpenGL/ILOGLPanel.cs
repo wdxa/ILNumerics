@@ -63,6 +63,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         float[] m_selectionVertices = new float[32];  // V2F format, interleaved
         int m_errorCount = 0; 
         private readonly int MAXERRORLOGCOUNT = 100; 
+        protected bool m_polyOffsetEnable = true; 
         /// <summary>
         /// Gets an interface to the underlying GraphicsContext used by this GLControl.
         /// </summary>
@@ -85,6 +86,19 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 return m_viewMatrix; 
             }
         }
+
+        /// <summary>
+        /// Control polygon offset ([on]/off)
+        /// </summary>
+        public bool PolyOffsetEnable {
+            get {
+                return m_polyOffsetEnable;
+            }
+            set {
+                m_polyOffsetEnable = value; 
+            }
+        }
+
 
         #endregion private members
 
@@ -230,8 +244,12 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 GL.Enable(EnableCap.Blend);
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.PushMatrix();
-                GL.PolygonOffset(1.0f,10.0f);
-                //GL.Enable(EnableCap.PolygonOffsetFill); 
+                if (m_polyOffsetEnable) {
+                    GL.Enable(EnableCap.PolygonOffsetFill); 
+                } else {
+                    GL.Disable(EnableCap.PolygonOffsetFill); 
+                }
+                GL.PolygonOffset(1.0f,1.0f);
 
                 m_axes.XAxis.RenderState1(g);
                 m_axes.YAxis.RenderState1(g);
@@ -319,6 +337,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 m_axes.YAxis.RenderState2(g);
                 if (m_camera.SinRho > 1e-5)
                     m_axes.ZAxis.RenderState2(g);
+                m_legend.Draw(null, Rectangle.Empty); 
                 GL.MatrixMode(MatrixMode.Modelview);
                 if (m_selectingMode == InteractiveModes.ZoomRectangle && m_isMoving) 
                     drawSelectionRect(PointToClient(MousePosition));
@@ -552,7 +571,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 GL.Enable(EnableCap.LineStipple);
                 GL.LineStipple(stipFactr, stipple);
             }
-            if (wireprops.Antialiasing)
+            if (wireprops.Antialiasing && wireprops.Width > 1)
                 GL.Enable(EnableCap.LineSmooth);
             else
                 GL.Disable(EnableCap.LineSmooth);

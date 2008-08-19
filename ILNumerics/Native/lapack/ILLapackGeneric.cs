@@ -1552,12 +1552,17 @@ namespace ILNumerics.Native  {
                 throw new ILArgumentException("?syevr: error returned from lapack: " + info);
             }
             lwork = (int)work[0]; 
-            work = ILMemoryPool.Pool.New<double>(lwork);
             liwork = (int) iwork[0]; 
-            iwork = ILMemoryPool.Pool.New<int>(liwork); 
+            //work = ILMemoryPool.Pool.New<double>(lwork);
+            //iwork = ILMemoryPool.Pool.New<int>(liwork); 
+            work = new double[lwork];
+            iwork = new int[liwork]; 
             lapack_dsyevr(ref jobz,ref range,ref uplo,ref n, A,ref lda, ref vl, ref vu, ref il, ref iu, ref abstol,ref m, w,z,ref ldz,isuppz, work,ref lwork,iwork,ref liwork,ref info);
-            ILMemoryPool.Pool.RegisterObject(work);
-            ILMemoryPool.Pool.RegisterObject(iwork);
+            //ILMemoryPool.Pool.RegisterObject(work);
+            //ILMemoryPool.Pool.RegisterObject(iwork);
+            if (info != 0) {
+                throw new ILArgumentException("?syevr: error returned from lapack: " + info);
+            }
         }
         public void ssyevr(char jobz, char range, char uplo, int n, float[] A, int lda, float vl, float vu, int il, int iu, float abstol, ref int m, float[] w, float[] z, int ldz, int[] isuppz, ref int info) {
             float [] work = new float[1]; 
@@ -1574,6 +1579,9 @@ namespace ILNumerics.Native  {
             lapack_ssyevr(ref jobz,ref range,ref uplo,ref n, A,ref lda, ref vl, ref vu, ref il, ref iu, ref abstol,ref m, w,z,ref ldz,isuppz, work,ref lwork,iwork,ref liwork,ref info);
             ILMemoryPool.Pool.RegisterObject(work);
             ILMemoryPool.Pool.RegisterObject(iwork);
+            if (info != 0) {
+                throw new ILArgumentException("?syevr: error returned from lapack: " + info);
+            }
         }
         public void cheevr(char jobz, char range, char uplo, int n, fcomplex[] A, int lda, float vl, float vu, int il, int iu, float abstol, ref int m, float[] w, fcomplex[] z, int ldz, int[] isuppz, ref int info) {
             fcomplex[] work = new fcomplex[1]; 
@@ -1594,6 +1602,9 @@ namespace ILNumerics.Native  {
             ILMemoryPool.Pool.RegisterObject(rwork);
             ILMemoryPool.Pool.RegisterObject(work);
             ILMemoryPool.Pool.RegisterObject(iwork);
+            if (info != 0) {
+                throw new ILArgumentException("?syevr: error returned from lapack: " + info);
+            }
         }
         public void zheevr(char jobz, char range, char uplo, int n, complex[] A, int lda, double vl, double vu, int il, int iu, double abstol, ref int m, double[] w, complex[] z, int ldz, int[] isuppz, ref int info) {
             complex[] work = new complex[1]; 
@@ -1614,6 +1625,9 @@ namespace ILNumerics.Native  {
             ILMemoryPool.Pool.RegisterObject(rwork);
             ILMemoryPool.Pool.RegisterObject(work);
             ILMemoryPool.Pool.RegisterObject(iwork);
+            if (info != 0) {
+                throw new ILArgumentException("?syevr: error returned from lapack: " + info);
+            }
         }
         #endregion
 

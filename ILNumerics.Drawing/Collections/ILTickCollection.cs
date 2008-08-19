@@ -45,7 +45,7 @@ namespace ILNumerics.Drawing.Collections {
         /// <summary>
         /// Fires, when the collection of ticks has changed 
         /// </summary>
-        public event AxisChangedEventHandler Changed;
+        public new event AxisChangedEventHandler Changed;
         /// <summary>
         /// fires, if a new labeled tick is about to be added to the collection
         /// </summary>
@@ -482,7 +482,7 @@ namespace ILNumerics.Drawing.Collections {
         #endregion
 
         #region IDisposable Member
-        public void Dispose() {
+        public new void Dispose() {
             if (m_renderer != null) { 
                 // ???
             }

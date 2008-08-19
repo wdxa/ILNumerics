@@ -26,10 +26,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing; 
 using ILNumerics.Drawing.Internal; 
 using ILNumerics.Drawing.Controls; 
 using ILNumerics.Exceptions; 
 using ILNumerics.Drawing.Misc; 
+using ILNumerics.Drawing.Labeling; 
+using ILNumerics.Drawing.Interfaces; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
@@ -55,7 +58,16 @@ namespace ILNumerics.Drawing.Graphs {
         protected ILClippingData m_globalClipping; 
         protected GraphType m_graphType; 
         protected ILPanel m_panel; 
+        protected ILLabel m_label; 
 
+        /// <summary>
+        ///  retrieve reference of the label for the graph
+        /// </summary>
+        public ILLabel Label {
+            get { 
+                return m_label; 
+            }
+        }        
         /// <summary>
         ///  get a reference to the internal data array
         /// </summary>
@@ -106,6 +118,9 @@ namespace ILNumerics.Drawing.Graphs {
             // store incoming data arrays as ILArray<float>
             //m_sourceArray = sourceArray.CreateReference();
             m_sourceArray = BuiltInFunctions.ILMath.tosingle(sourceArray); 
+            m_label = new ILLabel(m_panel);
+            m_label.Color = Color.White; 
+            m_label.Changed += new EventHandler(m_label_Changed);
             m_isReady = false;
         }
 
@@ -116,6 +131,10 @@ namespace ILNumerics.Drawing.Graphs {
         protected virtual void m_globalClipping_Changed(object sender, ClippingChangedEventArgs e) {
             // override this event in derived class, if neccessary
         }
+        protected virtual void m_label_Changed(object sender, EventArgs e) {
+            // override this event in derived class, if neccessary
+        }
+
         #endregion
 
         #region abstract / interface member

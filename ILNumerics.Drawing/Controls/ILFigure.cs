@@ -79,6 +79,14 @@ namespace ILNumerics.Drawing.Controls {
                 return m_figControl.Subfigures; 
             }
         }
+        /// <summary>
+        /// get reference to panel of current active subfigure
+        /// </summary>
+        public ILPanel Panel {
+            get {
+                return ActiveSubfigure.Panel; 
+            }
+        }
         #endregion
        
         #region public methods
