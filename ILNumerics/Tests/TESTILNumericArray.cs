@@ -393,7 +393,7 @@ namespace ILNumerics.Test {
 
 		public void Test_DivideDouble() {
 			int errorCode = 0;
-			// success? 
+			// success?  
 			try {
 				ILPerformer p = new ILPerformer();
 				double[] data1 = new double[10] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };

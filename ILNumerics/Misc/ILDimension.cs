@@ -29,7 +29,7 @@ namespace ILNumerics.Misc
 	/// </summary>
 	/// <remarks>The class internally manages the dimensions of ILArray. 
     /// The class is immutable. Therefore, once created, it informs the user 
-    /// about all dimension related properties, but cannot be altered.</description>
+    /// about all dimension related properties, but cannot be altered.</remarks>
 	[Serializable]
     [System.Diagnostics.DebuggerDisplay("{ToString(),nq}")]
     public class ILDimension

@@ -25,6 +25,7 @@
 */
 #endregion
 
+#pragma warning disable 162 
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -533,16 +534,16 @@ namespace ILNumerics {
     <source locate="nextline">
         test4inf
     </source>
-    <destination>if (double.IsInfinity(in2)) return (fcomplex)0;</destination>
-    <destination></destination>
-    <destination></destination>
-    <destination>if (float.IsInfinity(in2)) return (fcomplex)0;</destination>
-    <destination></destination>
-    <destination></destination>
-    <destination></destination>
-    <destination></destination>
-    <destination></destination>
-    <destination></destination>
+    <destination>if (double.IsInfinity(in2))</destination>
+    <destination>if (false)</destination>
+    <destination>if (false)</destination>
+    <destination>if (float.IsInfinity(in2))</destination>
+    <destination>if (false)</destination>
+    <destination>if (false)</destination>
+    <destination>if (false)</destination>
+    <destination>if (false)</destination>
+    <destination>if (false)</destination>
+    <destination>if (false)</destination>
 </type>
 </hycalper>
  */
@@ -593,7 +594,15 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  UInt64 in2) {
-            
+            if (in1.real == 0 && in1.imag == 0) {
+                if (false)
+                    return NaN; 
+                else return ( fcomplex )0;
+            } else {
+                if (false)
+                    return ( fcomplex )0;
+            }
+            if (in2 == 0) return INF; 
             fcomplex ret;
             if (in2 == 0.0) return INF ;
             ret.real =  (float) (in1.real / in2);
@@ -702,7 +711,15 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  UInt32 in2) {
-            
+            if (in1.real == 0 && in1.imag == 0) {
+                if (false)
+                    return NaN; 
+                else return ( fcomplex )0;
+            } else {
+                if (false)
+                    return ( fcomplex )0;
+            }
+            if (in2 == 0) return INF; 
             fcomplex ret;
             if (in2 == 0.0) return INF ;
             ret.real =  (float) (in1.real / in2);
@@ -811,7 +828,15 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  UInt16 in2) {
-            
+            if (in1.real == 0 && in1.imag == 0) {
+                if (false)
+                    return NaN; 
+                else return ( fcomplex )0;
+            } else {
+                if (false)
+                    return ( fcomplex )0;
+            }
+            if (in2 == 0) return INF; 
             fcomplex ret;
             if (in2 == 0.0) return INF ;
             ret.real =  (float) (in1.real / in2);
@@ -920,7 +945,15 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  Int64 in2) {
-            
+            if (in1.real == 0 && in1.imag == 0) {
+                if (false)
+                    return NaN; 
+                else return ( fcomplex )0;
+            } else {
+                if (false)
+                    return ( fcomplex )0;
+            }
+            if (in2 == 0) return INF; 
             fcomplex ret;
             if (in2 == 0.0) return INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1029,7 +1062,15 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  Int32 in2) {
-            
+            if (in1.real == 0 && in1.imag == 0) {
+                if (false)
+                    return NaN; 
+                else return ( fcomplex )0;
+            } else {
+                if (false)
+                    return ( fcomplex )0;
+            }
+            if (in2 == 0) return INF; 
             fcomplex ret;
             if (in2 == 0.0) return INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1138,7 +1179,15 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  Int16 in2) {
-            
+            if (in1.real == 0 && in1.imag == 0) {
+                if (false)
+                    return NaN; 
+                else return ( fcomplex )0;
+            } else {
+                if (false)
+                    return ( fcomplex )0;
+            }
+            if (in2 == 0) return INF; 
             fcomplex ret;
             if (in2 == 0.0) return INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1247,7 +1296,15 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  float in2) {
-            if (float.IsInfinity(in2)) return (fcomplex)0;
+            if (in1.real == 0 && in1.imag == 0) {
+                if (float.IsInfinity(in2))
+                    return NaN; 
+                else return ( fcomplex )0;
+            } else {
+                if (float.IsInfinity(in2))
+                    return ( fcomplex )0;
+            }
+            if (in2 == 0) return INF; 
             fcomplex ret;
             if (in2 == 0.0) return INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1356,7 +1413,15 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  char in2) {
-            
+            if (in1.real == 0 && in1.imag == 0) {
+                if (false)
+                    return NaN; 
+                else return ( fcomplex )0;
+            } else {
+                if (false)
+                    return ( fcomplex )0;
+            }
+            if (in2 == 0) return INF; 
             fcomplex ret;
             if (in2 == 0.0) return INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1465,7 +1530,15 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  byte in2) {
-            
+            if (in1.real == 0 && in1.imag == 0) {
+                if (false)
+                    return NaN; 
+                else return ( fcomplex )0;
+            } else {
+                if (false)
+                    return ( fcomplex )0;
+            }
+            if (in2 == 0) return INF; 
             fcomplex ret;
             if (in2 == 0.0) return INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1574,7 +1647,15 @@ namespace ILNumerics {
         /// <param name="in2">The divisor.</param>
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( fcomplex in1,  double in2) {
-            if (double.IsInfinity(in2)) return (fcomplex)0;
+            if (in1.real == 0 && in1.imag == 0) {
+                if (double.IsInfinity(in2))
+                    return NaN; 
+                else return ( fcomplex )0;
+            } else {
+                if (double.IsInfinity(in2))
+                    return ( fcomplex )0;
+            }
+            if (in2 == 0) return INF; 
             fcomplex ret;
             if (in2 == 0.0) return INF ;
             ret.real =  (float) (in1.real / in2);
@@ -1765,11 +1846,28 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( UInt64 in1,  fcomplex in2) {
             fcomplex ret; 
-            if (in2.real == 0 || in2.imag == 0)                      
-                return INF ;
-            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
-            ret.real =  (float) ((in1 * in2.real) / norm2);
-            ret.imag =  (float) ((in1 * (-in2.imag)) / norm2);
+            if (in1 == 0) {
+                if (IsInfinity(in2)) return NaN; 
+            } else {
+                if (IsInfinity(in2)) return ( fcomplex )0; 
+            }
+            if (in2.real == 0 && in2.imag == 0) {
+                return INF;
+            }
+            // this algorithm is taken from [1]. The one described in [2] was not taken. Tests 
+            // did not show any advantage when using double precision floating point arithmetic.
+            double tmp; 
+            if (Math.Abs(in2.real) >= Math.Abs(in2.imag)) {
+                tmp =  (float) (in2.imag * (1/in2.real)); 
+                ret.imag =  (float) (in2.real + in2.imag*tmp); 
+                ret.real =  (float) in1/ret.imag; 
+                ret.imag =  (float) (in1*tmp)/ret.imag; 
+            } else {
+                tmp =  (float) (in2.real * (1/in2.imag));
+                ret.imag =  (float) (in2.imag + in2.real*tmp); 
+                ret.real =  (float) (in1*tmp)/ret.imag; 
+                ret.imag =  (float) in1/ret.imag; 
+            }
             return ret;
         }
         /// <summary>
@@ -1875,11 +1973,28 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( UInt32 in1,  fcomplex in2) {
             fcomplex ret; 
-            if (in2.real == 0 || in2.imag == 0)                      
-                return INF ;
-            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
-            ret.real =  (float) ((in1 * in2.real) / norm2);
-            ret.imag =  (float) ((in1 * (-in2.imag)) / norm2);
+            if (in1 == 0) {
+                if (IsInfinity(in2)) return NaN; 
+            } else {
+                if (IsInfinity(in2)) return ( fcomplex )0; 
+            }
+            if (in2.real == 0 && in2.imag == 0) {
+                return INF;
+            }
+            // this algorithm is taken from [1]. The one described in [2] was not taken. Tests 
+            // did not show any advantage when using double precision floating point arithmetic.
+            double tmp; 
+            if (Math.Abs(in2.real) >= Math.Abs(in2.imag)) {
+                tmp =  (float) (in2.imag * (1/in2.real)); 
+                ret.imag =  (float) (in2.real + in2.imag*tmp); 
+                ret.real =  (float) in1/ret.imag; 
+                ret.imag =  (float) (in1*tmp)/ret.imag; 
+            } else {
+                tmp =  (float) (in2.real * (1/in2.imag));
+                ret.imag =  (float) (in2.imag + in2.real*tmp); 
+                ret.real =  (float) (in1*tmp)/ret.imag; 
+                ret.imag =  (float) in1/ret.imag; 
+            }
             return ret;
         }
         /// <summary>
@@ -1985,11 +2100,28 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( UInt16 in1,  fcomplex in2) {
             fcomplex ret; 
-            if (in2.real == 0 || in2.imag == 0)                      
-                return INF ;
-            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
-            ret.real =  (float) ((in1 * in2.real) / norm2);
-            ret.imag =  (float) ((in1 * (-in2.imag)) / norm2);
+            if (in1 == 0) {
+                if (IsInfinity(in2)) return NaN; 
+            } else {
+                if (IsInfinity(in2)) return ( fcomplex )0; 
+            }
+            if (in2.real == 0 && in2.imag == 0) {
+                return INF;
+            }
+            // this algorithm is taken from [1]. The one described in [2] was not taken. Tests 
+            // did not show any advantage when using double precision floating point arithmetic.
+            double tmp; 
+            if (Math.Abs(in2.real) >= Math.Abs(in2.imag)) {
+                tmp =  (float) (in2.imag * (1/in2.real)); 
+                ret.imag =  (float) (in2.real + in2.imag*tmp); 
+                ret.real =  (float) in1/ret.imag; 
+                ret.imag =  (float) (in1*tmp)/ret.imag; 
+            } else {
+                tmp =  (float) (in2.real * (1/in2.imag));
+                ret.imag =  (float) (in2.imag + in2.real*tmp); 
+                ret.real =  (float) (in1*tmp)/ret.imag; 
+                ret.imag =  (float) in1/ret.imag; 
+            }
             return ret;
         }
         /// <summary>
@@ -2095,11 +2227,28 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( Int64 in1,  fcomplex in2) {
             fcomplex ret; 
-            if (in2.real == 0 || in2.imag == 0)                      
-                return INF ;
-            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
-            ret.real =  (float) ((in1 * in2.real) / norm2);
-            ret.imag =  (float) ((in1 * (-in2.imag)) / norm2);
+            if (in1 == 0) {
+                if (IsInfinity(in2)) return NaN; 
+            } else {
+                if (IsInfinity(in2)) return ( fcomplex )0; 
+            }
+            if (in2.real == 0 && in2.imag == 0) {
+                return INF;
+            }
+            // this algorithm is taken from [1]. The one described in [2] was not taken. Tests 
+            // did not show any advantage when using double precision floating point arithmetic.
+            double tmp; 
+            if (Math.Abs(in2.real) >= Math.Abs(in2.imag)) {
+                tmp =  (float) (in2.imag * (1/in2.real)); 
+                ret.imag =  (float) (in2.real + in2.imag*tmp); 
+                ret.real =  (float) in1/ret.imag; 
+                ret.imag =  (float) (in1*tmp)/ret.imag; 
+            } else {
+                tmp =  (float) (in2.real * (1/in2.imag));
+                ret.imag =  (float) (in2.imag + in2.real*tmp); 
+                ret.real =  (float) (in1*tmp)/ret.imag; 
+                ret.imag =  (float) in1/ret.imag; 
+            }
             return ret;
         }
         /// <summary>
@@ -2205,11 +2354,28 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( Int32 in1,  fcomplex in2) {
             fcomplex ret; 
-            if (in2.real == 0 || in2.imag == 0)                      
-                return INF ;
-            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
-            ret.real =  (float) ((in1 * in2.real) / norm2);
-            ret.imag =  (float) ((in1 * (-in2.imag)) / norm2);
+            if (in1 == 0) {
+                if (IsInfinity(in2)) return NaN; 
+            } else {
+                if (IsInfinity(in2)) return ( fcomplex )0; 
+            }
+            if (in2.real == 0 && in2.imag == 0) {
+                return INF;
+            }
+            // this algorithm is taken from [1]. The one described in [2] was not taken. Tests 
+            // did not show any advantage when using double precision floating point arithmetic.
+            double tmp; 
+            if (Math.Abs(in2.real) >= Math.Abs(in2.imag)) {
+                tmp =  (float) (in2.imag * (1/in2.real)); 
+                ret.imag =  (float) (in2.real + in2.imag*tmp); 
+                ret.real =  (float) in1/ret.imag; 
+                ret.imag =  (float) (in1*tmp)/ret.imag; 
+            } else {
+                tmp =  (float) (in2.real * (1/in2.imag));
+                ret.imag =  (float) (in2.imag + in2.real*tmp); 
+                ret.real =  (float) (in1*tmp)/ret.imag; 
+                ret.imag =  (float) in1/ret.imag; 
+            }
             return ret;
         }
         /// <summary>
@@ -2315,11 +2481,28 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( Int16 in1,  fcomplex in2) {
             fcomplex ret; 
-            if (in2.real == 0 || in2.imag == 0)                      
-                return INF ;
-            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
-            ret.real =  (float) ((in1 * in2.real) / norm2);
-            ret.imag =  (float) ((in1 * (-in2.imag)) / norm2);
+            if (in1 == 0) {
+                if (IsInfinity(in2)) return NaN; 
+            } else {
+                if (IsInfinity(in2)) return ( fcomplex )0; 
+            }
+            if (in2.real == 0 && in2.imag == 0) {
+                return INF;
+            }
+            // this algorithm is taken from [1]. The one described in [2] was not taken. Tests 
+            // did not show any advantage when using double precision floating point arithmetic.
+            double tmp; 
+            if (Math.Abs(in2.real) >= Math.Abs(in2.imag)) {
+                tmp =  (float) (in2.imag * (1/in2.real)); 
+                ret.imag =  (float) (in2.real + in2.imag*tmp); 
+                ret.real =  (float) in1/ret.imag; 
+                ret.imag =  (float) (in1*tmp)/ret.imag; 
+            } else {
+                tmp =  (float) (in2.real * (1/in2.imag));
+                ret.imag =  (float) (in2.imag + in2.real*tmp); 
+                ret.real =  (float) (in1*tmp)/ret.imag; 
+                ret.imag =  (float) in1/ret.imag; 
+            }
             return ret;
         }
         /// <summary>
@@ -2425,11 +2608,28 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( float in1,  fcomplex in2) {
             fcomplex ret; 
-            if (in2.real == 0 || in2.imag == 0)                      
-                return INF ;
-            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
-            ret.real =  (float) ((in1 * in2.real) / norm2);
-            ret.imag =  (float) ((in1 * (-in2.imag)) / norm2);
+            if (in1 == 0) {
+                if (IsInfinity(in2)) return NaN; 
+            } else {
+                if (IsInfinity(in2)) return ( fcomplex )0; 
+            }
+            if (in2.real == 0 && in2.imag == 0) {
+                return INF;
+            }
+            // this algorithm is taken from [1]. The one described in [2] was not taken. Tests 
+            // did not show any advantage when using double precision floating point arithmetic.
+            double tmp; 
+            if (Math.Abs(in2.real) >= Math.Abs(in2.imag)) {
+                tmp =  (float) (in2.imag * (1/in2.real)); 
+                ret.imag =  (float) (in2.real + in2.imag*tmp); 
+                ret.real =  (float) in1/ret.imag; 
+                ret.imag =  (float) (in1*tmp)/ret.imag; 
+            } else {
+                tmp =  (float) (in2.real * (1/in2.imag));
+                ret.imag =  (float) (in2.imag + in2.real*tmp); 
+                ret.real =  (float) (in1*tmp)/ret.imag; 
+                ret.imag =  (float) in1/ret.imag; 
+            }
             return ret;
         }
         /// <summary>
@@ -2535,11 +2735,28 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( char in1,  fcomplex in2) {
             fcomplex ret; 
-            if (in2.real == 0 || in2.imag == 0)                      
-                return INF ;
-            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
-            ret.real =  (float) ((in1 * in2.real) / norm2);
-            ret.imag =  (float) ((in1 * (-in2.imag)) / norm2);
+            if (in1 == 0) {
+                if (IsInfinity(in2)) return NaN; 
+            } else {
+                if (IsInfinity(in2)) return ( fcomplex )0; 
+            }
+            if (in2.real == 0 && in2.imag == 0) {
+                return INF;
+            }
+            // this algorithm is taken from [1]. The one described in [2] was not taken. Tests 
+            // did not show any advantage when using double precision floating point arithmetic.
+            double tmp; 
+            if (Math.Abs(in2.real) >= Math.Abs(in2.imag)) {
+                tmp =  (float) (in2.imag * (1/in2.real)); 
+                ret.imag =  (float) (in2.real + in2.imag*tmp); 
+                ret.real =  (float) in1/ret.imag; 
+                ret.imag =  (float) (in1*tmp)/ret.imag; 
+            } else {
+                tmp =  (float) (in2.real * (1/in2.imag));
+                ret.imag =  (float) (in2.imag + in2.real*tmp); 
+                ret.real =  (float) (in1*tmp)/ret.imag; 
+                ret.imag =  (float) in1/ret.imag; 
+            }
             return ret;
         }
         /// <summary>
@@ -2645,11 +2862,28 @@ namespace ILNumerics {
         /// <returns>Result of operation in1 / in2</returns>
         public static  fcomplex operator /( byte in1,  fcomplex in2) {
             fcomplex ret; 
-            if (in2.real == 0 || in2.imag == 0)                      
-                return INF ;
-            double norm2 = in2.real * in2.real + in2.imag * in2.imag;
-            ret.real =  (float) ((in1 * in2.real) / norm2);
-            ret.imag =  (float) ((in1 * (-in2.imag)) / norm2);
+            if (in1 == 0) {
+                if (IsInfinity(in2)) return NaN; 
+            } else {
+                if (IsInfinity(in2)) return ( fcomplex )0; 
+            }
+            if (in2.real == 0 && in2.imag == 0) {
+                return INF;
+            }
+            // this algorithm is taken from [1]. The one described in [2] was not taken. Tests 
+            // did not show any advantage when using double precision floating point arithmetic.
+            double tmp; 
+            if (Math.Abs(in2.real) >= Math.Abs(in2.imag)) {
+                tmp =  (float) (in2.imag * (1/in2.real)); 
+                ret.imag =  (float) (in2.real + in2.imag*tmp); 
+                ret.real =  (float) in1/ret.imag; 
+                ret.imag =  (float) (in1*tmp)/ret.imag; 
+            } else {
+                tmp =  (float) (in2.real * (1/in2.imag));
+                ret.imag =  (float) (in2.imag + in2.real*tmp); 
+                ret.real =  (float) (in1*tmp)/ret.imag; 
+                ret.imag =  (float) in1/ret.imag; 
+            }
             return ret;
         }
         /// <summary>

@@ -32,6 +32,7 @@ namespace ILNumerics.Test {
         public override void Run() {
             base.Run();
             Header();
+            Test_Temp();
             Test_slashUpperTriag(); 
             Test_slashQRRankDeficient();
             Test_det(); 
@@ -81,6 +82,51 @@ namespace ILNumerics.Test {
             Test_CholPosDef(); 
             Footer();
         }
+
+        private void Test_Temp() {
+            int errorCode = 0; 
+            try {
+                ILArray<complex> A = new ILArray<complex>(3, 3);
+
+                A[0, 0] = new complex(0.1, 0);
+                A[0, 1] = new complex();
+                A[0, 2] = new complex();
+
+                A[1, 0] = new complex(0, 0);
+                A[1, 1] = new complex(0.1, 0);
+                A[1, 2] = new complex(-0.1, 0);
+
+                A[2, 0] = new complex(0, 0);
+                A[2, 1] = new complex(-0.1, 0);
+                A[2, 2] = new complex(0.1, 0);
+
+                Console.WriteLine("{0}", A);
+
+                ILArray<complex> b = new complex[]{ new complex(0.1, 0), new complex(-0.1, 0), new complex(0.1, 0) };
+                b[0] = new complex(0.1, 0);
+                b[1] = new complex(-0.1, 0);
+                b[2] = new complex(0.1, 0);
+
+                Console.WriteLine(b);
+
+                ILArray<complex> x;
+                x = ILMath.linsolve(A, b.T);
+                Console.WriteLine("LinSolve Diretto:\n",x.ToString()); //<---------- ERROR!!!
+
+                //Can you help me?
+                //Is this the best way to solve this kind of system? If I don't use Linsolve but I try:
+
+                ILArray<complex> Q;
+                ILArray<complex> R = new ILArray<complex>(3, 3);
+                Q = ILMath.qr(A, ref R, true);
+                x=ILMath.linsolve(R, ILMath.multiply(Q.T, b.T));
+
+                Success();
+            } catch (Exception e) {
+                Error(errorCode,e.Message); 
+            }
+        }
+
 
         private void Test_slashUpperTriag() {
             int errorCode = 0; 

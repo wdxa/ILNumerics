@@ -4598,7 +4598,7 @@ namespace ILNumerics {
         /// </summary>
         /// <param name="result">System.Array returned, holding all element values of this ILArray</param>
         /// <remarks>The System.Array may be predefined. If its length is sufficient, it will be used and 
-        /// corresponding elements with index &le; i will be overwritten. Here i is the number of elements
+        /// corresponding elements with index lower or equal to i will be overwritten. Here i is the number of elements
         /// contained in the ILArray. If 'result' is null or has less than i elements, it will be recreated from the ILMemeoryPool.</remarks>
         public void ExportValues(ref BaseT[] result) {
             if (result == null || result.Length < m_dimensions.NumberOfElements)
