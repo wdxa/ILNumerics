@@ -31,9 +31,9 @@ namespace ILNumerics.Test {
             new TESTILLapack().Run();
             Lapack = oldLapack;
             
+            new TESTILArray().Run();
             new TESTILMath().Run();
             new TESTILMatFile().Run();
-            new TESTILArray().Run();
             new TESTILCell().Run();
             new TESTBucketSort().Run();
             new TESTQuickSort().Run(); 

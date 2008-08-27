@@ -233,6 +233,22 @@ namespace ILNumerics {
     <destination>complex</destination>
     <destination>fcomplex</destination>
 </type>
+<type>
+    <source locate="nextline">
+        nanreturn
+    </source>
+    <destination>if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  float.NaN;</destination>
+    <destination>return m_data[curMaxInd];</destination>
+    <destination>return m_data[curMaxInd];</destination>
+    <destination>return m_data[curMaxInd];</destination>
+    <destination>return m_data[curMaxInd];</destination>
+    <destination>return m_data[curMaxInd];</destination>
+    <destination>return m_data[curMaxInd];</destination>
+    <destination>return m_data[curMaxInd];</destination>
+    <destination>return m_data[curMaxInd];</destination>
+    <destination>if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  complex.NaN;</destination>
+    <destination>if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  fcomplex.NaN;</destination>
+</type>
 </hycalper>
  */                 
                 } else if (this is /*!HC:inCls1*/ ILArray<double> ) {    
@@ -258,7 +274,8 @@ namespace ILNumerics {
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    /*!HC:nanreturn*/
+                    if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object) double.NaN;
 #endregion HYCALPER LOOPEND
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
@@ -286,7 +303,7 @@ namespace ILNumerics {
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  fcomplex.NaN;
                  
                 } else if (this is  ILArray<complex> ) {    
                     complex [] data = ( complex [])(object) m_data; 
@@ -311,7 +328,7 @@ namespace ILNumerics {
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  complex.NaN;
                  
                 } else if (this is  ILArray<byte> ) {    
                     byte [] data = ( byte [])(object) m_data; 
@@ -536,7 +553,7 @@ namespace ILNumerics {
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  float.NaN;
 
 #endregion HYCALPER AUTO GENERATED CODE
                 } else 
@@ -617,6 +634,22 @@ namespace ILNumerics {
     <destination>complex</destination>
     <destination>fcomplex</destination>
 </type>
+<type>
+    <source locate="nextline">
+        nanreturn
+    </source>
+    <destination>if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  float.NaN;</destination>
+    <destination>return m_data[curMinInd];</destination>
+    <destination>return m_data[curMinInd];</destination>
+    <destination>return m_data[curMinInd];</destination>
+    <destination>return m_data[curMinInd];</destination>
+    <destination>return m_data[curMinInd];</destination>
+    <destination>return m_data[curMinInd];</destination>
+    <destination>return m_data[curMinInd];</destination>
+    <destination>return m_data[curMinInd];</destination>
+    <destination>if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  complex.NaN;</destination>
+    <destination>if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  fcomplex.NaN;</destination>
+</type>
 </hycalper>
  */                 
                 } else if (this is /*!HC:inCls1*/ ILArray<double> ) {    
@@ -642,7 +675,8 @@ namespace ILNumerics {
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    /*!HC:nanreturn*/
+                    if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object) double.NaN;
 #endregion HYCALPER LOOPEND
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
@@ -670,7 +704,7 @@ namespace ILNumerics {
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  fcomplex.NaN;
                  
                 } else if (this is  ILArray<complex> ) {    
                     complex [] data = ( complex [])(object) m_data; 
@@ -695,7 +729,7 @@ namespace ILNumerics {
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  complex.NaN;
                  
                 } else if (this is  ILArray<byte> ) {    
                     byte [] data = ( byte [])(object) m_data; 
@@ -920,7 +954,7 @@ namespace ILNumerics {
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  float.NaN;
 
 #endregion HYCALPER AUTO GENERATED CODE
                 } else 

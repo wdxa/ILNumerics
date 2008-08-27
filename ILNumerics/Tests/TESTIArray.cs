@@ -41,6 +41,8 @@ namespace ILNumerics.Test {
 			Header();
             //Test_ReferenceBugTest();
             //Test_SingleIndexResizingWrite();
+            Test_MinValue();
+            Test_MaxValue(); 
             Test_Test2(); 
             Test_Expand(); 
             Test_Cast(); 
@@ -120,6 +122,61 @@ namespace ILNumerics.Test {
                 ILArray<int> B = new int[]{3,4,5,6,7,8,9}; 
                 if (!B.IsRowVector) 
                     throw new Exception("row vector expected: cast[]"); 
+                Success(); 
+            } catch (Exception e) {
+                Error(errorCode,e.Message); 
+            }
+        }
+        
+        public void Test_MaxValue() {
+            int errorCode = 1; 
+            try  {
+                ILArray<double> A = new double[]{double.NaN,double.NaN,double.NaN};
+                double max = A.MaxValue;
+                if (!double.IsNaN(max)) 
+                    throw new Exception("max value should be NaN for row vector of double.NaN's!");
+                ILArray<float> Af = new float[] {float.NaN,float.NaN,float.NaN};
+                float maxf = Af.MaxValue; 
+                if (!float.IsNaN(maxf)) {
+                    throw new Exception("max value should be NaN for row vector of float.NaN's!");
+                }
+                ILArray<fcomplex> Afc = new fcomplex[] {fcomplex.NaN,fcomplex.NaN,fcomplex.NaN};
+                fcomplex maxfc = Afc.MaxValue; 
+                if (!fcomplex.IsNaN(maxfc)) {
+                    throw new Exception("max value should be NaN for row vector of fcomplex.NaN's!");
+                }
+                ILArray<complex> Ac = new complex[] {complex.NaN,complex.NaN,complex.NaN};
+                complex maxc = Ac.MaxValue; 
+                if (!complex.IsNaN(maxc)) {
+                    throw new Exception("max value should be NaN for row vector of complex.NaN's!");
+                }
+                Success(); 
+            } catch (Exception e) {
+                Error(errorCode,e.Message); 
+            }
+        }
+        public void Test_MinValue() {
+            int errorCode = 1; 
+            try  {
+                ILArray<double> A = new double[]{double.NaN,double.NaN,double.NaN};
+                double max = A.MinValue;
+                if (!double.IsNaN(max)) 
+                    throw new Exception("max value should be NaN for row vector of double.NaN's!");
+                ILArray<float> Af = new float[] {float.NaN,float.NaN,float.NaN};
+                float maxf = Af.MinValue; 
+                if (!float.IsNaN(maxf)) {
+                    throw new Exception("MinValue  should be NaN for row vector of float.NaN's!");
+                }
+                ILArray<fcomplex> Afc = new fcomplex[] {fcomplex.NaN,fcomplex.NaN,fcomplex.NaN};
+                fcomplex maxfc = Afc.MinValue; 
+                if (!fcomplex.IsNaN(maxfc)) {
+                    throw new Exception("MinValue  should be NaN for row vector of fcomplex.NaN's!");
+                }
+                ILArray<complex> Ac = new complex[] {complex.NaN,complex.NaN,complex.NaN};
+                complex maxc = Ac.MinValue; 
+                if (!complex.IsNaN(maxc)) {
+                    throw new Exception("MinValue should be NaN for row vector of complex.NaN's!");
+                }
                 Success(); 
             } catch (Exception e) {
                 Error(errorCode,e.Message); 
