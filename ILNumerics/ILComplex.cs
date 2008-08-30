@@ -1812,7 +1812,7 @@ namespace ILNumerics {
         public static /*!HC:Tret*/ complex operator -(/*!HC:TinArr1*/ double in1, /*!HC:TinArr2*/ complex in2) {
             /*!HC:Tret*/ complex ret;
             ret.real = /*!HC:FCast*/ (double) (in1 - in2.real);
-            ret.imag = /*!HC:FCast*/ (double) in2.imag;   // AB080630
+            ret.imag = -/*!HC:FCast*/ (double) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -1942,7 +1942,7 @@ namespace ILNumerics {
         public static  complex operator -( UInt64 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) in2.imag;   // AB080630
+            ret.imag = - (double) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2069,7 +2069,7 @@ namespace ILNumerics {
         public static  complex operator -( UInt32 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) in2.imag;   // AB080630
+            ret.imag = - (double) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2196,7 +2196,7 @@ namespace ILNumerics {
         public static  complex operator -( UInt16 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) in2.imag;   // AB080630
+            ret.imag = - (double) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2323,7 +2323,7 @@ namespace ILNumerics {
         public static  complex operator -( Int64 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) in2.imag;   // AB080630
+            ret.imag = - (double) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2450,7 +2450,7 @@ namespace ILNumerics {
         public static  complex operator -( Int32 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) in2.imag;   // AB080630
+            ret.imag = - (double) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2577,7 +2577,7 @@ namespace ILNumerics {
         public static  complex operator -( Int16 in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) in2.imag;   // AB080630
+            ret.imag = - (double) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2704,7 +2704,7 @@ namespace ILNumerics {
         public static  complex operator -( float in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) in2.imag;   // AB080630
+            ret.imag = - (double) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2831,7 +2831,7 @@ namespace ILNumerics {
         public static  complex operator -( char in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) in2.imag;   // AB080630
+            ret.imag = - (double) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2958,7 +2958,7 @@ namespace ILNumerics {
         public static  complex operator -( byte in1,  complex in2) {
             complex ret;
             ret.real =  (double) (in1 - in2.real);
-            ret.imag =  (double) in2.imag;   // AB080630
+            ret.imag = - (double) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -3065,6 +3065,20 @@ namespace ILNumerics {
         }
 
 #endregion HYCALPER AUTO GENERATED CODE
+
+        #region unary minus
+        /// <summary>
+        /// unary minus operator
+        /// </summary>
+        /// <param name="in1">complex input</param>
+        /// <returns>complex number similar to in1, having real and imag part negated</returns>
+        public static complex operator -( complex in1) {
+            complex ret = new complex(); 
+            ret.imag = -in1.imag; 
+            ret.real = -in1.real; 
+            return ret;
+        }
+        #endregion
 
         #region CAST_OPERATORS
         /// <summary>

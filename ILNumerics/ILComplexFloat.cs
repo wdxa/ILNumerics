@@ -1823,7 +1823,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( UInt64 in1,  fcomplex in2) {
             fcomplex ret;
             ret.real =  (float) (in1 - in2.real);
-            ret.imag =  (float) in2.imag;   // AB080630
+            ret.imag = - (float) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -1950,7 +1950,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( UInt32 in1,  fcomplex in2) {
             fcomplex ret;
             ret.real =  (float) (in1 - in2.real);
-            ret.imag =  (float) in2.imag;   // AB080630
+            ret.imag = - (float) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2077,7 +2077,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( UInt16 in1,  fcomplex in2) {
             fcomplex ret;
             ret.real =  (float) (in1 - in2.real);
-            ret.imag =  (float) in2.imag;   // AB080630
+            ret.imag = - (float) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2204,7 +2204,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( Int64 in1,  fcomplex in2) {
             fcomplex ret;
             ret.real =  (float) (in1 - in2.real);
-            ret.imag =  (float) in2.imag;   // AB080630
+            ret.imag = - (float) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2331,7 +2331,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( Int32 in1,  fcomplex in2) {
             fcomplex ret;
             ret.real =  (float) (in1 - in2.real);
-            ret.imag =  (float) in2.imag;   // AB080630
+            ret.imag = - (float) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2458,7 +2458,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( Int16 in1,  fcomplex in2) {
             fcomplex ret;
             ret.real =  (float) (in1 - in2.real);
-            ret.imag =  (float) in2.imag;   // AB080630
+            ret.imag = - (float) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2585,7 +2585,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( float in1,  fcomplex in2) {
             fcomplex ret;
             ret.real =  (float) (in1 - in2.real);
-            ret.imag =  (float) in2.imag;   // AB080630
+            ret.imag = - (float) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2712,7 +2712,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( char in1,  fcomplex in2) {
             fcomplex ret;
             ret.real =  (float) (in1 - in2.real);
-            ret.imag =  (float) in2.imag;   // AB080630
+            ret.imag = - (float) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2839,7 +2839,7 @@ namespace ILNumerics {
         public static  fcomplex operator -( byte in1,  fcomplex in2) {
             fcomplex ret;
             ret.real =  (float) (in1 - in2.real);
-            ret.imag =  (float) in2.imag;   // AB080630
+            ret.imag = - (float) in2.imag; 
             return ret;
         }
         /// <summary>
@@ -2946,6 +2946,20 @@ namespace ILNumerics {
         }
 
 #endregion HYCALPER AUTO GENERATED CODE
+
+        #region unary minus
+        /// <summary>
+        /// unary minus operator
+        /// </summary>
+        /// <param name="in1">fcomplex input</param>
+        /// <returns>fcomplex number similar to in1, having real and imag part negated</returns>
+        public static fcomplex operator -( fcomplex in1) {
+            fcomplex ret = new fcomplex(); 
+            ret.imag = -in1.imag; 
+            ret.real = -in1.real; 
+            return ret;
+        }
+        #endregion
 
         /// <summary>
         /// Magnitude value of float complex number
