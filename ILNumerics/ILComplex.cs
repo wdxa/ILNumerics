@@ -1850,12 +1850,12 @@ namespace ILNumerics {
                 tmp = /*!HC:FCast*/ (double) (in2.imag * (1/in2.real)); 
                 ret.imag = /*!HC:FCast*/ (double) (in2.real + in2.imag*tmp); 
                 ret.real = /*!HC:FCast*/ (double) in1/ret.imag; 
-                ret.imag = /*!HC:FCast*/ (double) (in1*tmp)/ret.imag; 
+                ret.imag = - /*!HC:FCast*/ (double) (in1*tmp)/ret.imag; 
             } else {
                 tmp = /*!HC:FCast*/ (double) (in2.real * (1/in2.imag));
                 ret.imag = /*!HC:FCast*/ (double) (in2.imag + in2.real*tmp); 
                 ret.real = /*!HC:FCast*/ (double) (in1*tmp)/ret.imag; 
-                ret.imag = /*!HC:FCast*/ (double) in1/ret.imag; 
+                ret.imag = - /*!HC:FCast*/ (double) in1/ret.imag; 
             }
             return ret;
         }
@@ -1980,12 +1980,12 @@ namespace ILNumerics {
                 tmp =  (double) (in2.imag * (1/in2.real)); 
                 ret.imag =  (double) (in2.real + in2.imag*tmp); 
                 ret.real =  (double) in1/ret.imag; 
-                ret.imag =  (double) (in1*tmp)/ret.imag; 
+                ret.imag = -  (double) (in1*tmp)/ret.imag; 
             } else {
                 tmp =  (double) (in2.real * (1/in2.imag));
                 ret.imag =  (double) (in2.imag + in2.real*tmp); 
                 ret.real =  (double) (in1*tmp)/ret.imag; 
-                ret.imag =  (double) in1/ret.imag; 
+                ret.imag = -  (double) in1/ret.imag; 
             }
             return ret;
         }
@@ -2107,12 +2107,12 @@ namespace ILNumerics {
                 tmp =  (double) (in2.imag * (1/in2.real)); 
                 ret.imag =  (double) (in2.real + in2.imag*tmp); 
                 ret.real =  (double) in1/ret.imag; 
-                ret.imag =  (double) (in1*tmp)/ret.imag; 
+                ret.imag = -  (double) (in1*tmp)/ret.imag; 
             } else {
                 tmp =  (double) (in2.real * (1/in2.imag));
                 ret.imag =  (double) (in2.imag + in2.real*tmp); 
                 ret.real =  (double) (in1*tmp)/ret.imag; 
-                ret.imag =  (double) in1/ret.imag; 
+                ret.imag = -  (double) in1/ret.imag; 
             }
             return ret;
         }
@@ -2234,12 +2234,12 @@ namespace ILNumerics {
                 tmp =  (double) (in2.imag * (1/in2.real)); 
                 ret.imag =  (double) (in2.real + in2.imag*tmp); 
                 ret.real =  (double) in1/ret.imag; 
-                ret.imag =  (double) (in1*tmp)/ret.imag; 
+                ret.imag = -  (double) (in1*tmp)/ret.imag; 
             } else {
                 tmp =  (double) (in2.real * (1/in2.imag));
                 ret.imag =  (double) (in2.imag + in2.real*tmp); 
                 ret.real =  (double) (in1*tmp)/ret.imag; 
-                ret.imag =  (double) in1/ret.imag; 
+                ret.imag = -  (double) in1/ret.imag; 
             }
             return ret;
         }
@@ -2361,12 +2361,12 @@ namespace ILNumerics {
                 tmp =  (double) (in2.imag * (1/in2.real)); 
                 ret.imag =  (double) (in2.real + in2.imag*tmp); 
                 ret.real =  (double) in1/ret.imag; 
-                ret.imag =  (double) (in1*tmp)/ret.imag; 
+                ret.imag = -  (double) (in1*tmp)/ret.imag; 
             } else {
                 tmp =  (double) (in2.real * (1/in2.imag));
                 ret.imag =  (double) (in2.imag + in2.real*tmp); 
                 ret.real =  (double) (in1*tmp)/ret.imag; 
-                ret.imag =  (double) in1/ret.imag; 
+                ret.imag = -  (double) in1/ret.imag; 
             }
             return ret;
         }
@@ -2488,12 +2488,12 @@ namespace ILNumerics {
                 tmp =  (double) (in2.imag * (1/in2.real)); 
                 ret.imag =  (double) (in2.real + in2.imag*tmp); 
                 ret.real =  (double) in1/ret.imag; 
-                ret.imag =  (double) (in1*tmp)/ret.imag; 
+                ret.imag = -  (double) (in1*tmp)/ret.imag; 
             } else {
                 tmp =  (double) (in2.real * (1/in2.imag));
                 ret.imag =  (double) (in2.imag + in2.real*tmp); 
                 ret.real =  (double) (in1*tmp)/ret.imag; 
-                ret.imag =  (double) in1/ret.imag; 
+                ret.imag = -  (double) in1/ret.imag; 
             }
             return ret;
         }
@@ -2615,12 +2615,12 @@ namespace ILNumerics {
                 tmp =  (double) (in2.imag * (1/in2.real)); 
                 ret.imag =  (double) (in2.real + in2.imag*tmp); 
                 ret.real =  (double) in1/ret.imag; 
-                ret.imag =  (double) (in1*tmp)/ret.imag; 
+                ret.imag = -  (double) (in1*tmp)/ret.imag; 
             } else {
                 tmp =  (double) (in2.real * (1/in2.imag));
                 ret.imag =  (double) (in2.imag + in2.real*tmp); 
                 ret.real =  (double) (in1*tmp)/ret.imag; 
-                ret.imag =  (double) in1/ret.imag; 
+                ret.imag = -  (double) in1/ret.imag; 
             }
             return ret;
         }
@@ -2742,12 +2742,12 @@ namespace ILNumerics {
                 tmp =  (double) (in2.imag * (1/in2.real)); 
                 ret.imag =  (double) (in2.real + in2.imag*tmp); 
                 ret.real =  (double) in1/ret.imag; 
-                ret.imag =  (double) (in1*tmp)/ret.imag; 
+                ret.imag = -  (double) (in1*tmp)/ret.imag; 
             } else {
                 tmp =  (double) (in2.real * (1/in2.imag));
                 ret.imag =  (double) (in2.imag + in2.real*tmp); 
                 ret.real =  (double) (in1*tmp)/ret.imag; 
-                ret.imag =  (double) in1/ret.imag; 
+                ret.imag = -  (double) in1/ret.imag; 
             }
             return ret;
         }
@@ -2869,12 +2869,12 @@ namespace ILNumerics {
                 tmp =  (double) (in2.imag * (1/in2.real)); 
                 ret.imag =  (double) (in2.real + in2.imag*tmp); 
                 ret.real =  (double) in1/ret.imag; 
-                ret.imag =  (double) (in1*tmp)/ret.imag; 
+                ret.imag = -  (double) (in1*tmp)/ret.imag; 
             } else {
                 tmp =  (double) (in2.real * (1/in2.imag));
                 ret.imag =  (double) (in2.imag + in2.real*tmp); 
                 ret.real =  (double) (in1*tmp)/ret.imag; 
-                ret.imag =  (double) in1/ret.imag; 
+                ret.imag = -  (double) in1/ret.imag; 
             }
             return ret;
         }
@@ -2996,12 +2996,12 @@ namespace ILNumerics {
                 tmp =  (double) (in2.imag * (1/in2.real)); 
                 ret.imag =  (double) (in2.real + in2.imag*tmp); 
                 ret.real =  (double) in1/ret.imag; 
-                ret.imag =  (double) (in1*tmp)/ret.imag; 
+                ret.imag = -  (double) (in1*tmp)/ret.imag; 
             } else {
                 tmp =  (double) (in2.real * (1/in2.imag));
                 ret.imag =  (double) (in2.imag + in2.real*tmp); 
                 ret.real =  (double) (in1*tmp)/ret.imag; 
-                ret.imag =  (double) in1/ret.imag; 
+                ret.imag = -  (double) in1/ret.imag; 
             }
             return ret;
         }

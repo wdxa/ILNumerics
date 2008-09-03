@@ -29,6 +29,7 @@ namespace ILNumerics.Test {
         public override void Run() {
             base.Run();
 			Header();
+            Test_ComplexDiv();
             Test_AccuracyUnderflow(); 
 			Footer();
         }
@@ -49,6 +50,14 @@ namespace ILNumerics.Test {
             fcomplex t4 = c * t1; 
             fcomplex t5 = d - t4; // 10^-56 ? 
             fcomplex b = t5 / t3; 
+            Success(); 
+        }
+        private void Test_ComplexDiv() {
+            complex a = new complex(1,1); 
+            complex b = new complex(1,0); 
+            complex y = 1 / a; 
+            if (y != ILMath.ccomplex(0.5,-0.5)) 
+                throw new Exception("complex: 1 / 1+i -> wrong result!"); 
             Success(); 
         }
     
