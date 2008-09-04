@@ -21,6 +21,7 @@ namespace ILNumerics.Test {
         	Console.Out.Write(Info());
             //new TESTILBinTreeNode().Run();
             new TESTILComplex().Run(); 
+            new TESTILMath().Run();
             IILLapack oldLapack = Lapack; 
             Lapack = new ILLapackMKL10_0(); 
             new TESTILLapack().Run();
@@ -32,7 +33,6 @@ namespace ILNumerics.Test {
             Lapack = oldLapack;
             
             new TESTILArray().Run();
-            new TESTILMath().Run();
             new TESTILMatFile().Run();
             new TESTILCell().Run();
             new TESTBucketSort().Run();

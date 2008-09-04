@@ -128,6 +128,7 @@
     <Compile Include="Functions\builtin\ceil.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Functions\builtin\conj.cs" />
     <Compile Include="Functions\builtin\cos.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -217,7 +218,9 @@
     </Compile>
     <Compile Include="Functions\builtin\set.cs" />
     <Compile Include="Functions\builtin\sign.cs" />
-    <Compile Include="Functions\builtin\sin.cs" />
+    <Compile Include="Functions\builtin\sin.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Functions\builtin\single.cs" />
     <Compile Include="Algorithms\ILAlgorithm.cs">
       <SubType>Code</SubType>

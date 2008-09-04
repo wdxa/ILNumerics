@@ -344,7 +344,7 @@ namespace ILNumerics {
                 return false;
             if (A.IsScalar)
                 return A.GetValue(0, 0) == 1; 
-            throw new ILNumerics.Exceptions.ILArgumentException("cast to bool: array given must be scalar!");
+            throw new ILNumerics.Exceptions.ILArgumentException(String.Format("cast to bool: array given must be scalar. Was: {0}",A.Dimensions.ToString()));
         }
         /// <summary>
 		/// Implicitly convert integer scalar to ILLogicalArray of size 1x1 (scalar).

@@ -129,7 +129,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array</param>
         /// <returns>Logical array with 1 if the corresponding elements of input array is invalid ("Not-a-Number"), 0 else.</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>
-        /// <para>The array returned will be a solid array.</para></remarks>
+        /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILLogicalArray  isnan ( ILArray<double> A) {
             if (A.IsEmpty)
                 return  ILLogicalArray .empty(); 
@@ -192,15 +192,15 @@ namespace ILNumerics.BuiltInFunctions {
                             fixed ( byte * pOutArr = retDblArr)
                             fixed ( double * pInArr = A.m_data) {
                                 byte * tmpOut = pOutArr;
-                                byte * tmpOutEnd = tmpOut + retDblArr.Length;
+                                byte * tmpOutEnd = tmpOut + retDblArr.Length - 1;
                                 double * tmpIn = pInArr + A.getBaseIndex ( 0, 0 );
-                                tmpIn -= idxOffset [leadDim, 0];
+                                tmpIn -= idxOffset [leadDim, 0];     // if the first index of leaddim is not 0, it will be added later anyway. so we subtract it here
                                 int* leadDimIdx = leadDimStart;
                                 int* leadDimEnd = leadDimStart + leadDimLen;
                                 int dimLen = curPosition.Length;
-                                int d, curD;
+                                int d, curD, count = retDblArr.Length / leadDimLen;
                                 // start at first element
-                                while (tmpOut < tmpOutEnd) {
+                                while (count --> 0) {
                                     leadDimIdx = leadDimStart;
                                     while (leadDimIdx < leadDimEnd) {  //HC01
                                        
@@ -208,7 +208,7 @@ namespace ILNumerics.BuiltInFunctions {
                                         tmpOut += incOut;
                                     }
                                     if (tmpOut > tmpOutEnd)
-                                        tmpOut = pOutArr + ( tmpOutEnd - tmpOut );
+                                        tmpOut -= retDblArr.Length - 1;
 
                                     // increment higher dimensions 
                                     d = 1;
@@ -254,7 +254,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array</param>
         /// <returns>Logical array with 1 if the corresponding elements of input array is invalid ("Not-a-Number"), 0 else.</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>
-        /// <para>The array returned will be a solid array.</para></remarks>
+        /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILLogicalArray  isnan ( ILArray<float> A) {
             if (A.IsEmpty)
                 return  ILLogicalArray .empty(); 
@@ -317,15 +317,15 @@ namespace ILNumerics.BuiltInFunctions {
                             fixed ( byte * pOutArr = retDblArr)
                             fixed ( float * pInArr = A.m_data) {
                                 byte * tmpOut = pOutArr;
-                                byte * tmpOutEnd = tmpOut + retDblArr.Length;
+                                byte * tmpOutEnd = tmpOut + retDblArr.Length - 1;
                                 float * tmpIn = pInArr + A.getBaseIndex ( 0, 0 );
-                                tmpIn -= idxOffset [leadDim, 0];
+                                tmpIn -= idxOffset [leadDim, 0];     // if the first index of leaddim is not 0, it will be added later anyway. so we subtract it here
                                 int* leadDimIdx = leadDimStart;
                                 int* leadDimEnd = leadDimStart + leadDimLen;
                                 int dimLen = curPosition.Length;
-                                int d, curD;
+                                int d, curD, count = retDblArr.Length / leadDimLen;
                                 // start at first element
-                                while (tmpOut < tmpOutEnd) {
+                                while (count --> 0) {
                                     leadDimIdx = leadDimStart;
                                     while (leadDimIdx < leadDimEnd) {  //HC01
                                        
@@ -333,7 +333,7 @@ namespace ILNumerics.BuiltInFunctions {
                                         tmpOut += incOut;
                                     }
                                     if (tmpOut > tmpOutEnd)
-                                        tmpOut = pOutArr + ( tmpOutEnd - tmpOut );
+                                        tmpOut -= retDblArr.Length - 1;
 
                                     // increment higher dimensions 
                                     d = 1;
@@ -379,7 +379,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array</param>
         /// <returns>Logical array with 1 if the corresponding elements of input array is invalid ("Not-a-Number"), 0 else.</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>
-        /// <para>The array returned will be a solid array.</para></remarks>
+        /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILLogicalArray  isnan ( ILArray<fcomplex> A) {
             if (A.IsEmpty)
                 return  ILLogicalArray .empty(); 
@@ -442,15 +442,15 @@ namespace ILNumerics.BuiltInFunctions {
                             fixed ( byte * pOutArr = retDblArr)
                             fixed ( fcomplex * pInArr = A.m_data) {
                                 byte * tmpOut = pOutArr;
-                                byte * tmpOutEnd = tmpOut + retDblArr.Length;
+                                byte * tmpOutEnd = tmpOut + retDblArr.Length - 1;
                                 fcomplex * tmpIn = pInArr + A.getBaseIndex ( 0, 0 );
-                                tmpIn -= idxOffset [leadDim, 0];
+                                tmpIn -= idxOffset [leadDim, 0];     // if the first index of leaddim is not 0, it will be added later anyway. so we subtract it here
                                 int* leadDimIdx = leadDimStart;
                                 int* leadDimEnd = leadDimStart + leadDimLen;
                                 int dimLen = curPosition.Length;
-                                int d, curD;
+                                int d, curD, count = retDblArr.Length / leadDimLen;
                                 // start at first element
-                                while (tmpOut < tmpOutEnd) {
+                                while (count --> 0) {
                                     leadDimIdx = leadDimStart;
                                     while (leadDimIdx < leadDimEnd) {  //HC01
                                        
@@ -458,7 +458,7 @@ namespace ILNumerics.BuiltInFunctions {
                                         tmpOut += incOut;
                                     }
                                     if (tmpOut > tmpOutEnd)
-                                        tmpOut = pOutArr + ( tmpOutEnd - tmpOut );
+                                        tmpOut -= retDblArr.Length - 1;
 
                                     // increment higher dimensions 
                                     d = 1;
@@ -504,7 +504,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array</param>
         /// <returns>Logical array with 1 if the corresponding elements of input array is invalid ("Not-a-Number"), 0 else.</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>
-        /// <para>The array returned will be a solid array.</para></remarks>
+        /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILLogicalArray  isnan ( ILArray<complex> A) {
             if (A.IsEmpty)
                 return  ILLogicalArray .empty(); 
@@ -567,15 +567,15 @@ namespace ILNumerics.BuiltInFunctions {
                             fixed ( byte * pOutArr = retDblArr)
                             fixed ( complex * pInArr = A.m_data) {
                                 byte * tmpOut = pOutArr;
-                                byte * tmpOutEnd = tmpOut + retDblArr.Length;
+                                byte * tmpOutEnd = tmpOut + retDblArr.Length - 1;
                                 complex * tmpIn = pInArr + A.getBaseIndex ( 0, 0 );
-                                tmpIn -= idxOffset [leadDim, 0];
+                                tmpIn -= idxOffset [leadDim, 0];     // if the first index of leaddim is not 0, it will be added later anyway. so we subtract it here
                                 int* leadDimIdx = leadDimStart;
                                 int* leadDimEnd = leadDimStart + leadDimLen;
                                 int dimLen = curPosition.Length;
-                                int d, curD;
+                                int d, curD, count = retDblArr.Length / leadDimLen;
                                 // start at first element
-                                while (tmpOut < tmpOutEnd) {
+                                while (count --> 0) {
                                     leadDimIdx = leadDimStart;
                                     while (leadDimIdx < leadDimEnd) {  //HC01
                                        
@@ -583,7 +583,7 @@ namespace ILNumerics.BuiltInFunctions {
                                         tmpOut += incOut;
                                     }
                                     if (tmpOut > tmpOutEnd)
-                                        tmpOut = pOutArr + ( tmpOutEnd - tmpOut );
+                                        tmpOut -= retDblArr.Length - 1;
 
                                     // increment higher dimensions 
                                     d = 1;

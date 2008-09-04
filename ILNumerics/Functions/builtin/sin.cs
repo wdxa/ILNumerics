@@ -86,7 +86,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array</param>
         /// <returns>Sinus of elements from input array</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>
-        /// <para>The array returned will be a solid array.</para></remarks>
+        /// <para>The array returned will be a dense array.</para></remarks>
         public static /*!HC:outCls*/ ILArray<double> /*!HC:HCfuncname*/ sin (/*!HC:inCls1*/ ILArray<double> A) {
             if (A.IsEmpty)
                 return /*!HC:outCls*/ ILArray<double> .empty(); 
@@ -149,15 +149,15 @@ namespace ILNumerics.BuiltInFunctions {
                             fixed (/*!HC:outArr*/ double * pOutArr = retDblArr)
                             fixed (/*!HC:inArr1*/ double * pInArr = A.m_data) {
                                 /*!HC:outArr*/ double * tmpOut = pOutArr;
-                                /*!HC:outArr*/ double * tmpOutEnd = tmpOut + retDblArr.Length;
+                                /*!HC:outArr*/ double * tmpOutEnd = tmpOut + retDblArr.Length - 1;
                                 /*!HC:inArr1*/ double * tmpIn = pInArr + A.getBaseIndex ( 0, 0 );
-                                tmpIn -= idxOffset [leadDim, 0];
+                                tmpIn -= idxOffset [leadDim, 0];     // if the first index of leaddim is not 0, it will be added later anyway. so we subtract it here
                                 int* leadDimIdx = leadDimStart;
                                 int* leadDimEnd = leadDimStart + leadDimLen;
                                 int dimLen = curPosition.Length;
-                                int d, curD;
+                                int d, curD, count = retDblArr.Length / leadDimLen;
                                 // start at first element
-                                while (tmpOut < tmpOutEnd) {
+                                while (count --> 0) {
                                     leadDimIdx = leadDimStart;
                                     while (leadDimIdx < leadDimEnd) {  //HC01
                                         /*!HC:HCCompute01*/
@@ -165,7 +165,7 @@ namespace ILNumerics.BuiltInFunctions {
                                         tmpOut += incOut;
                                     }
                                     if (tmpOut > tmpOutEnd)
-                                        tmpOut = pOutArr + ( tmpOutEnd - tmpOut );
+                                        tmpOut -= retDblArr.Length - 1;
 
                                     // increment higher dimensions 
                                     d = 1;
@@ -216,7 +216,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array</param>
         /// <returns>Sinus of elements from input array</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>
-        /// <para>The array returned will be a solid array.</para></remarks>
+        /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<complex>  sin ( ILArray<complex> A) {
             if (A.IsEmpty)
                 return  ILArray<complex> .empty(); 
@@ -279,15 +279,15 @@ namespace ILNumerics.BuiltInFunctions {
                             fixed ( complex * pOutArr = retDblArr)
                             fixed ( complex * pInArr = A.m_data) {
                                 complex * tmpOut = pOutArr;
-                                complex * tmpOutEnd = tmpOut + retDblArr.Length;
+                                complex * tmpOutEnd = tmpOut + retDblArr.Length - 1;
                                 complex * tmpIn = pInArr + A.getBaseIndex ( 0, 0 );
-                                tmpIn -= idxOffset [leadDim, 0];
+                                tmpIn -= idxOffset [leadDim, 0];     // if the first index of leaddim is not 0, it will be added later anyway. so we subtract it here
                                 int* leadDimIdx = leadDimStart;
                                 int* leadDimEnd = leadDimStart + leadDimLen;
                                 int dimLen = curPosition.Length;
-                                int d, curD;
+                                int d, curD, count = retDblArr.Length / leadDimLen;
                                 // start at first element
-                                while (tmpOut < tmpOutEnd) {
+                                while (count --> 0) {
                                     leadDimIdx = leadDimStart;
                                     while (leadDimIdx < leadDimEnd) {  //HC01
                                        
@@ -295,7 +295,7 @@ namespace ILNumerics.BuiltInFunctions {
                                         tmpOut += incOut;
                                     }
                                     if (tmpOut > tmpOutEnd)
-                                        tmpOut = pOutArr + ( tmpOutEnd - tmpOut );
+                                        tmpOut -= retDblArr.Length - 1;
 
                                     // increment higher dimensions 
                                     d = 1;
@@ -343,7 +343,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array</param>
         /// <returns>Sinus of elements from input array</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>
-        /// <para>The array returned will be a solid array.</para></remarks>
+        /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<fcomplex>  sin ( ILArray<fcomplex> A) {
             if (A.IsEmpty)
                 return  ILArray<fcomplex> .empty(); 
@@ -406,15 +406,15 @@ namespace ILNumerics.BuiltInFunctions {
                             fixed ( fcomplex * pOutArr = retDblArr)
                             fixed ( fcomplex * pInArr = A.m_data) {
                                 fcomplex * tmpOut = pOutArr;
-                                fcomplex * tmpOutEnd = tmpOut + retDblArr.Length;
+                                fcomplex * tmpOutEnd = tmpOut + retDblArr.Length - 1;
                                 fcomplex * tmpIn = pInArr + A.getBaseIndex ( 0, 0 );
-                                tmpIn -= idxOffset [leadDim, 0];
+                                tmpIn -= idxOffset [leadDim, 0];     // if the first index of leaddim is not 0, it will be added later anyway. so we subtract it here
                                 int* leadDimIdx = leadDimStart;
                                 int* leadDimEnd = leadDimStart + leadDimLen;
                                 int dimLen = curPosition.Length;
-                                int d, curD;
+                                int d, curD, count = retDblArr.Length / leadDimLen;
                                 // start at first element
-                                while (tmpOut < tmpOutEnd) {
+                                while (count --> 0) {
                                     leadDimIdx = leadDimStart;
                                     while (leadDimIdx < leadDimEnd) {  //HC01
                                        
@@ -422,7 +422,7 @@ namespace ILNumerics.BuiltInFunctions {
                                         tmpOut += incOut;
                                     }
                                     if (tmpOut > tmpOutEnd)
-                                        tmpOut = pOutArr + ( tmpOutEnd - tmpOut );
+                                        tmpOut -= retDblArr.Length - 1;
 
                                     // increment higher dimensions 
                                     d = 1;
@@ -470,7 +470,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array</param>
         /// <returns>Sinus of elements from input array</returns>
         /// <remarks><para>If the input array is empty, an empty array will be returned.</para>
-        /// <para>The array returned will be a solid array.</para></remarks>
+        /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<float>  sin ( ILArray<float> A) {
             if (A.IsEmpty)
                 return  ILArray<float> .empty(); 
@@ -533,15 +533,15 @@ namespace ILNumerics.BuiltInFunctions {
                             fixed ( float * pOutArr = retDblArr)
                             fixed ( float * pInArr = A.m_data) {
                                 float * tmpOut = pOutArr;
-                                float * tmpOutEnd = tmpOut + retDblArr.Length;
+                                float * tmpOutEnd = tmpOut + retDblArr.Length - 1;
                                 float * tmpIn = pInArr + A.getBaseIndex ( 0, 0 );
-                                tmpIn -= idxOffset [leadDim, 0];
+                                tmpIn -= idxOffset [leadDim, 0];     // if the first index of leaddim is not 0, it will be added later anyway. so we subtract it here
                                 int* leadDimIdx = leadDimStart;
                                 int* leadDimEnd = leadDimStart + leadDimLen;
                                 int dimLen = curPosition.Length;
-                                int d, curD;
+                                int d, curD, count = retDblArr.Length / leadDimLen;
                                 // start at first element
-                                while (tmpOut < tmpOutEnd) {
+                                while (count --> 0) {
                                     leadDimIdx = leadDimStart;
                                     while (leadDimIdx < leadDimEnd) {  //HC01
                                        
@@ -549,7 +549,7 @@ namespace ILNumerics.BuiltInFunctions {
                                         tmpOut += incOut;
                                     }
                                     if (tmpOut > tmpOutEnd)
-                                        tmpOut = pOutArr + ( tmpOutEnd - tmpOut );
+                                        tmpOut -= retDblArr.Length - 1;
 
                                     // increment higher dimensions 
                                     d = 1;

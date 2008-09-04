@@ -38,6 +38,8 @@ namespace ILNumerics.Test {
 			// tests: creation
 			// =================
 			Header();
+			Test_Apply(); 
+            Test_abs(); 
             Test_diff(); 
 			Test_Sum();
             Test_MMult(); 
@@ -56,7 +58,6 @@ namespace ILNumerics.Test {
             Test_istriup();
             Test_istrilow(); 
             Test_Find();
-			Test_Apply(); 
             Test_vector(); 
             Test_Basic(); 
             Test_Prod(); 
@@ -67,6 +68,67 @@ namespace ILNumerics.Test {
 			// summary
 			Footer();
 		}
+
+        private void Test_abs() {
+            int errorCode = 0; 
+            try {
+                ILArray<double> A = new double[,]{
+                    {-1,-2,-3,-4},
+                    {-5,-6,-7,-8},
+                    {-9,-10,-11,-12}};
+                ILArray<double> ARes = new double[,]{
+                    {1,2,3,4},
+                    {5,6,7,8},
+                    {9,10,11,12}};
+                if (!ARes.Equals(ILMath.abs(A))) 
+                    throw new Exception("dense matrix: wrong result"); 
+                if (!ARes.Equals(ILMath.abs(A.R)))
+                    throw new Exception("reference matrix: wrong result"); 
+                // test dense 2x2x3
+                A.Reshape(new ILDimension(2,2,3)); 
+                ARes.Reshape(new ILDimension(2,2,3)); 
+                if (A.IsReference || ARes.IsReference) 
+                    throw new Exception("unable to create dense: 2x2x3"); 
+                if (!ARes.Equals(ILMath.abs(A)))
+                    throw new Exception("dense 2x2x3 array: wrong result"); 
+                // test reference 2x2x3
+                A = A.R; ARes = ARes.R; 
+                if (!A.IsReference || !ARes.IsReference) 
+                    throw new Exception("unable to create reference: 2x2x3"); 
+                if (!ARes.Equals(ILMath.abs(A)))
+                    throw new Exception("reference 2x2x3 array: wrong result"); 
+                // test reference 2x3x2
+                A = A.T; ARes = ARes.T;
+                if (!A.IsReference || !ARes.IsReference) 
+                    throw new Exception("unable to create reference: 2x3x2"); 
+                if (!ARes.Equals(ILMath.abs(A)))
+                    throw new Exception("reference 2x2x3 array: wrong result"); 
+                // test reference 3x2x2
+                A = A.T; ARes = ARes.T;
+                if (!A.IsReference || !ARes.IsReference) 
+                    throw new Exception("unable to create reference: 3x2x2"); 
+                if (!ARes.Equals(ILMath.abs(A)))
+                    throw new Exception("reference 2x2x3 array: wrong result"); 
+                // test vector (dense)
+                A = A[":"]; ARes = ARes[":"]; 
+                if (A.IsReference || ARes.IsReference) 
+                    throw new Exception("unable to create dense vector: 1x12");
+                if (!ARes.Equals(ILMath.abs(A)))
+                    throw new Exception("reference 2x2x3 array: wrong result"); 
+                // test scalar
+                A = A[2]; ARes = ARes[2]; 
+                if (!ARes.Equals(ILMath.abs(A)))
+                    throw new Exception("scalar: wrong result"); 
+                // test empty 
+                A = ILArray<double>.empty(); 
+                if (!ILMath.abs(A).IsEmpty) 
+                    throw new Exception("empty: wrong result"); 
+                Success();
+            } catch(Exception e) {
+                Error(errorCode,e.Message);
+            }
+        }
+
         public void Test_diff() {
             int errorCode = 0;
             try {

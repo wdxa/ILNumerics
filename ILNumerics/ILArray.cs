@@ -33,6 +33,7 @@ using System.Runtime.Serialization;
 using ILNumerics.Storage;
 using ILNumerics.Misc;
 using ILNumerics.Exceptions;
+using ILNumerics.BuiltInFunctions; 
 
 namespace ILNumerics {
     /// <summary>
@@ -3721,7 +3722,16 @@ namespace ILNumerics {
         /// <param name="shiftDimensions">number of dimensions to shift this array (to the left for positive values)</param>
         /// <returns>Referencing ILArray of the same type and size with <c>shiftDimensions</c> dimensions shifted to the left.</returns>
         public ILArray<BaseT> GetShifted(int shiftDimensions) {
-            return (ILArray<BaseT>) ShiftDimensions(shiftDimensions); 
+            //if (shiftDimensions != 1 || !IsComplex || !IsMatrix) 
+                return (ILArray<BaseT>) ShiftDimensions(shiftDimensions);
+            // handle complex conjugate transpose
+            //if (this is ILArray<complex>) { 
+            //    ILArray<complex> A = (ILArray<complex>)ShiftDimensions(shiftDimensions);
+            //    return (ILBaseArray<BaseT>) ILMath.ccomplex(ILMath.real(A),-ILMath.imag(A)); 
+            //} else if (this is ILArray<fcomplex>) {
+            //    ILArray<fcomplex> fA = (ILArray<fcomplex>)ShiftDimensions(shiftDimensions);
+            //    return (ILArray<BaseT>) ILMath.ccomplex(ILMath.real(fA),-ILMath.imag(fA)); 
+            //}
         }
         #endregion
 
