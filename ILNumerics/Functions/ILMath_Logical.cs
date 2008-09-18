@@ -1216,6 +1216,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -1420,6 +1421,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -1621,6 +1623,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -1822,6 +1825,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -2023,6 +2027,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -2224,6 +2229,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -2425,6 +2431,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -2626,6 +2633,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -2827,6 +2835,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -3028,6 +3037,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -3229,6 +3239,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -3430,6 +3441,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
         }
+
         /// <summary>
         /// Applys the function (delegate) given to all elements of the storage
         /// </summary>
@@ -28948,7 +28960,7 @@ namespace ILNumerics.BuiltInFunctions {
         }
 
 #endregion HYCALPER AUTO GENERATED CODE
-        
+
         #region HYCALPER LOOPSTART AND &  OR
         /// <summary>
         /// elementwise logical 'and' operator 
@@ -28956,8 +28968,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and(/*!HC:inCls1*/ ILArray<double> A, /*!HC:inCls2*/ ILArray<double> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             /*!HC:ClsName*/ oplogical_doubledouble helper = new /*!HC:ClsName*/ oplogical_doubledouble ();
             return /*!HC:logicalbinaryop*/ LogicalBinaryDoubleOperator (A, B, helper.and);
         }
@@ -28969,6 +28995,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or(/*!HC:inCls1*/ ILArray<double> A, /*!HC:inCls2*/ ILArray<double> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             /*!HC:ClsName*/ oplogical_doubledouble helper = new /*!HC:ClsName*/ oplogical_doubledouble ();
             return /*!HC:logicalbinaryop*/ LogicalBinaryDoubleOperator (A, B, helper.or);
         }
@@ -28981,8 +29018,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and( ILArray<UInt64> A,  ILArray<UInt64> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             oplogical_uint64uint64 helper = new  oplogical_uint64uint64 ();
             return  LogicalBinaryUInt64Operator (A, B, helper.and);
         }
@@ -28994,6 +29045,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or( ILArray<UInt64> A,  ILArray<UInt64> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             oplogical_uint64uint64 helper = new  oplogical_uint64uint64 ();
             return  LogicalBinaryUInt64Operator (A, B, helper.or);
         }
@@ -29003,8 +29065,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and( ILArray<UInt32> A,  ILArray<UInt32> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             oplogical_uint32uint32 helper = new  oplogical_uint32uint32 ();
             return  LogicalBinaryUInt32Operator (A, B, helper.and);
         }
@@ -29016,6 +29092,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or( ILArray<UInt32> A,  ILArray<UInt32> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             oplogical_uint32uint32 helper = new  oplogical_uint32uint32 ();
             return  LogicalBinaryUInt32Operator (A, B, helper.or);
         }
@@ -29025,8 +29112,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and( ILArray<UInt16> A,  ILArray<UInt16> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             oplogical_uint16uint16 helper = new  oplogical_uint16uint16 ();
             return  LogicalBinaryUInt16Operator (A, B, helper.and);
         }
@@ -29038,6 +29139,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or( ILArray<UInt16> A,  ILArray<UInt16> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             oplogical_uint16uint16 helper = new  oplogical_uint16uint16 ();
             return  LogicalBinaryUInt16Operator (A, B, helper.or);
         }
@@ -29047,8 +29159,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and( ILArray<Int64> A,  ILArray<Int64> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             oplogical_int64int64 helper = new  oplogical_int64int64 ();
             return  LogicalBinaryInt64Operator (A, B, helper.and);
         }
@@ -29060,6 +29186,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or( ILArray<Int64> A,  ILArray<Int64> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             oplogical_int64int64 helper = new  oplogical_int64int64 ();
             return  LogicalBinaryInt64Operator (A, B, helper.or);
         }
@@ -29069,8 +29206,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and( ILArray<Int32> A,  ILArray<Int32> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             oplogical_int32int32 helper = new  oplogical_int32int32 ();
             return  LogicalBinaryInt32Operator (A, B, helper.and);
         }
@@ -29082,6 +29233,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or( ILArray<Int32> A,  ILArray<Int32> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             oplogical_int32int32 helper = new  oplogical_int32int32 ();
             return  LogicalBinaryInt32Operator (A, B, helper.or);
         }
@@ -29091,8 +29253,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and( ILArray<Int16> A,  ILArray<Int16> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             oplogical_int16int16 helper = new  oplogical_int16int16 ();
             return  LogicalBinaryInt16Operator (A, B, helper.and);
         }
@@ -29104,6 +29280,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or( ILArray<Int16> A,  ILArray<Int16> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             oplogical_int16int16 helper = new  oplogical_int16int16 ();
             return  LogicalBinaryInt16Operator (A, B, helper.or);
         }
@@ -29113,8 +29300,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and( ILArray<float> A,  ILArray<float> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             oplogical_floatfloat helper = new  oplogical_floatfloat ();
             return  LogicalBinaryFloatOperator (A, B, helper.and);
         }
@@ -29126,6 +29327,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or( ILArray<float> A,  ILArray<float> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             oplogical_floatfloat helper = new  oplogical_floatfloat ();
             return  LogicalBinaryFloatOperator (A, B, helper.or);
         }
@@ -29135,8 +29347,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             oplogical_fcomplexfcomplex helper = new  oplogical_fcomplexfcomplex ();
             return  LogicalBinaryFcomplexOperator (A, B, helper.and);
         }
@@ -29148,6 +29374,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             oplogical_fcomplexfcomplex helper = new  oplogical_fcomplexfcomplex ();
             return  LogicalBinaryFcomplexOperator (A, B, helper.or);
         }
@@ -29157,8 +29394,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and( ILArray<complex> A,  ILArray<complex> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             oplogical_complexcomplex helper = new  oplogical_complexcomplex ();
             return  LogicalBinaryComplexOperator (A, B, helper.and);
         }
@@ -29170,6 +29421,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or( ILArray<complex> A,  ILArray<complex> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             oplogical_complexcomplex helper = new  oplogical_complexcomplex ();
             return  LogicalBinaryComplexOperator (A, B, helper.or);
         }
@@ -29179,8 +29441,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and( ILArray<char> A,  ILArray<char> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             oplogical_charchar helper = new  oplogical_charchar ();
             return  LogicalBinaryCharOperator (A, B, helper.and);
         }
@@ -29192,6 +29468,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or( ILArray<char> A,  ILArray<char> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             oplogical_charchar helper = new  oplogical_charchar ();
             return  LogicalBinaryCharOperator (A, B, helper.or);
         }
@@ -29201,8 +29488,22 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array A</param>
         /// <param name="B">input array B</param>
         /// <returns>logical array of same size as A and B, elements with result of logical 'and'.</returns>
-        /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
+        /// <remarks>A and B must have the same size or either one may be scalar. If one of A or B is empty, 
+        /// an empty array of the same inner element type is returned.</remarks>
         public static ILLogicalArray and( ILArray<byte> A,  ILArray<byte> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) != 0) return B != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) != 0) return A != 0.0; 
+                byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
+                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+            }
             oplogical_bytebyte helper = new  oplogical_bytebyte ();
             return  LogicalBinaryByteOperator (A, B, helper.and);
         }
@@ -29214,11 +29515,24 @@ namespace ILNumerics.BuiltInFunctions {
         /// <returns>logical array of same size as A and B, elements with result of logical 'or'.</returns>
         /// <remarks>A and B must have the same size or either one may be scalar.</remarks>
         public static ILLogicalArray or( ILArray<byte> A,  ILArray<byte> B) {
+            if (A == null || B == null) 
+                throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (A.IsEmpty || B.IsEmpty) 
+                return ILLogicalArray.empty(); 
+            if (A.IsScalar) {
+                if (A.GetValue(0) == 0) return B != 0.0; 
+                return tological(ones(B.Dimensions));  
+            } else if (B.IsScalar) {
+                if (B.GetValue(0) == 0) return A != 0.0; 
+                return tological(ones(A.Dimensions));  
+            }
             oplogical_bytebyte helper = new  oplogical_bytebyte ();
             return  LogicalBinaryByteOperator (A, B, helper.or);
         }
 
 #endregion HYCALPER AUTO GENERATED CODE
+
+
         #endregion Relational_(binary)_Operators
 
     }
