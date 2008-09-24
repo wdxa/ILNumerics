@@ -435,7 +435,6 @@ namespace ILNumerics.BuiltInFunctions {
             int[] Adim0 = A.m_indexOffset[0]; 
             int[] Adim1 = A.m_indexOffset[1];    
             /*!HC:inArr1*/ double diagVal = /*!HC:zeroVal*/ 0.0 ;
-            retArr = new /*!HC:inArr1*/ double [n * m];
             /*!HC:inArr1*/ double tmpVal;
             for (int b = 0; b < m; b++) {
                 for (int r = 0; r < n; r++) {
@@ -735,7 +734,6 @@ namespace ILNumerics.BuiltInFunctions {
             int[] Adim0 = A.m_indexOffset[0]; 
             int[] Adim1 = A.m_indexOffset[1];    
             float diagVal =  0.0f ;
-            retArr = new  float [n * m];
             float tmpVal;
             for (int b = 0; b < m; b++) {
                 for (int r = 0; r < n; r++) {
@@ -1032,7 +1030,6 @@ namespace ILNumerics.BuiltInFunctions {
             int[] Adim0 = A.m_indexOffset[0]; 
             int[] Adim1 = A.m_indexOffset[1];    
             fcomplex diagVal =  new fcomplex(0.0f,0.0f) ;
-            retArr = new  fcomplex [n * m];
             fcomplex tmpVal;
             for (int b = 0; b < m; b++) {
                 for (int r = 0; r < n; r++) {
@@ -1329,7 +1326,6 @@ namespace ILNumerics.BuiltInFunctions {
             int[] Adim0 = A.m_indexOffset[0]; 
             int[] Adim1 = A.m_indexOffset[1];    
             complex diagVal =  new complex(0.0,0.0) ;
-            retArr = new  complex [n * m];
             complex tmpVal;
             for (int b = 0; b < m; b++) {
                 for (int r = 0; r < n; r++) {

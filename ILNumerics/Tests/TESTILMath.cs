@@ -38,6 +38,7 @@ namespace ILNumerics.Test {
 			// tests: creation
 			// =================
 			Header();
+            Test_solve(); 
 			Test_Apply(); 
             Test_abs(); 
             Test_diff(); 
@@ -497,6 +498,28 @@ namespace ILNumerics.Test {
             }
         }
 
+        public void Test_solve() {
+            int errorCode = 0; 
+            try {
+                // this test is due the bugreport by Zafer.
+                // TODO: it is by no means complete! Only testing lower triangul. matrix... 
+                // some test data: upper triangular
+                ILArray<double> A = new double[,]{{1,0,8,0},{2,3,8,0},{6,7,8,8},{4,5,8,6}};
+                // delete 3rd row & column
+                A[null,2] = null; A[2.0,null] = null;
+                // make sure, we are handling a reference array
+                if (!A.IsReference) A = A.R;
+                // create right hand side
+                ILArray<double> x = new double[]{16,-1,2};
+                // solve via linsolve
+                MatrixProperties props = MatrixProperties.LowerTriangular;
+                A = A.C; 
+                ILArray<double> y = ILMath.linsolve(A.T,x.T,ref props);
+                Success(); 
+            } catch(Exception e) {
+                Error(errorCode,e.Message);
+            }
+        }
         public void Test_solveLowerTriag() {
             int errorCode = 0; 
             try {
@@ -1663,7 +1686,7 @@ namespace ILNumerics.Test {
                 p.Tic(); 
                     B = ILMath.multiply (A,A.T); 
                 p.Toc(); 
-                Info("MMult 1000x1000 procceeded in " + p.ToString() + "msec."); 
+                Info("MMult 1000x1000 procceeded in " + p.ToString() + "msec.");
                 Success("MMult finished successfully"); 
             } catch (Exception e) {
 				Error("Test_MMult failed at errorCode: " + errorCode + " Reason: " + e.Message);
