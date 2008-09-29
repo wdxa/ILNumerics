@@ -105,6 +105,14 @@ using ILNumerics.Exceptions;
     <destination>Lapack.cgesdd(jobz, M, N, dInput, LDA, dS, dU, LDU, dVT, LDVT, ref info);</destination>
     <destination>Lapack.sgesdd(jobz, M, N, dInput, LDA, dS, dU, LDU, dVT, LDVT, ref info);</destination>
 </type>
+<type>
+    <source locate="nextline">
+        complxConj
+    </source>
+    <destination><![CDATA[V = conj(new  ILArray<complex> (dVT,N,dVT.Length / N).T);]]></destination>
+    <destination><![CDATA[V = conj(new  ILArray<fcomplex> (dVT,N,dVT.Length / N).T);]]></destination>
+    <destination><![CDATA[V = new  ILArray<float> (dVT,N,dVT.Length / N).T;]]></destination>
+</type>
 </hycalper>
 */
 
@@ -435,8 +443,10 @@ namespace ILNumerics.BuiltInFunctions {
                     }
                     if (!Object.Equals(U, null))
                         U = new /*!HC:outClsU*/ ILArray<double> (dU,M,dU.Length / M);
-                    if (!Object.Equals(V, null))
-                        V = new /*!HC:outClsV*/ ILArray<double> (dVT,N,dVT.Length / N).T;  
+                    if (!Object.Equals(V, null)) {
+                        /*!HC:complxConj*/
+                        V = new  ILArray<double> (dVT,N,dVT.Length / N).T;  
+                    }
                 } else {
                     ret = new /*!HC:outClsS*/ ILArray<double> (dS,minMN,1); 
                 }
@@ -533,8 +543,9 @@ namespace ILNumerics.BuiltInFunctions {
                     }
                     if (!Object.Equals(U, null))
                         U = new  ILArray<float> (dU,M,dU.Length / M);
-                    if (!Object.Equals(V, null))
-                        V = new  ILArray<float> (dVT,N,dVT.Length / N).T;  
+                    if (!Object.Equals(V, null)) {
+                        V = new  ILArray<float> (dVT,N,dVT.Length / N).T;
+                    }
                 } else {
                     ret = new  ILArray<float> (dS,minMN,1); 
                 }
@@ -628,8 +639,9 @@ namespace ILNumerics.BuiltInFunctions {
                     }
                     if (!Object.Equals(U, null))
                         U = new  ILArray<fcomplex> (dU,M,dU.Length / M);
-                    if (!Object.Equals(V, null))
-                        V = new  ILArray<fcomplex> (dVT,N,dVT.Length / N).T;  
+                    if (!Object.Equals(V, null)) {
+                        V = conj(new  ILArray<fcomplex> (dVT,N,dVT.Length / N).T);
+                    }
                 } else {
                     ret = new  ILArray<float> (dS,minMN,1); 
                 }
@@ -723,8 +735,9 @@ namespace ILNumerics.BuiltInFunctions {
                     }
                     if (!Object.Equals(U, null))
                         U = new  ILArray<complex> (dU,M,dU.Length / M);
-                    if (!Object.Equals(V, null))
-                        V = new  ILArray<complex> (dVT,N,dVT.Length / N).T;  
+                    if (!Object.Equals(V, null)) {
+                        V = conj(new  ILArray<complex> (dVT,N,dVT.Length / N).T);
+                    }
                 } else {
                     ret = new  ILArray<double> (dS,minMN,1); 
                 }

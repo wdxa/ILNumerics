@@ -109,6 +109,24 @@ using ILNumerics.Misc;
 
 namespace ILNumerics.BuiltInFunctions {
     public partial class ILMath {
+
+        #region convenience functions (real arguments)
+        /// <summary>
+        /// complex conjugate of A
+        /// </summary>
+        /// <param name="A">input array</param>
+        /// <returns>the array itself</returns>
+        /// <remarks>This overload is provided for convenience only. It eases the implementation of complex functions, where complex conjugate transposes are needed.</remarks>
+        public static ILArray<double> conj (ILArray<double> A) { return A; }
+        /// <summary>
+        /// complex conjugate of A
+        /// </summary>
+        /// <param name="A">input array</param>
+        /// <returns>the array itself</returns>
+        /// <remarks>This overload is provided for convenience only. It eases the implementation of complex functions, where complex conjugate transposes are needed.</remarks>
+        public static ILArray<float> conj (ILArray<float> A) { return A; }
+        #endregion convenience functions (real arguments)
+
         #region HYCALPER LOOPSTART UNARY_OPERATOR_TEMPLATE@Functions\builtin\sin.cs
 
         #endregion HYCALPER LOOPEND UNARY_OPERATOR_TEMPLATE@Functions\builtin\sin.cs

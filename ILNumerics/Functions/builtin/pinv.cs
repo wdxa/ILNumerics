@@ -141,6 +141,22 @@ namespace ILNumerics.BuiltInFunctions  {
     <destination>Ret = multiply(multiply(V[":;0:" + (count - 1)], real2fcomplex(S)), U);</destination>
     <destination>Ret = multiply(multiply(V[":;0:" + (count - 1)], S), U);</destination>
 </type>
+<type>
+    <source locate="nextline">
+        Uconj
+    </source>
+    <destination>U = conj(U[":;0:" + (count - 1)]);</destination>
+    <destination>U = conj(U[":;0:" + (count - 1)]);</destination>
+    <destination>U = U[(short)1,":;0:" + (count - 1)];</destination>
+</type>
+<type>
+    <source locate="nextline">
+        speedyexit
+    </source>
+    <destination><![CDATA[ILArray<complex> ret = pinv(conj(M.T), tolerance); return conj(ret.T);]]></destination>
+    <destination><![CDATA[ILArray<fcomplex> ret = pinv(conj(M.T), tolerance); return conj(ret.T);]]></destination>
+    <destination><![CDATA[ILArray<float> ret = pinv(M.T, tolerance); return ret.T;]]></destination>
+</type>
 </hycalper>
 */
 
@@ -206,8 +222,8 @@ namespace ILNumerics.BuiltInFunctions  {
 
             // in order to use the cheap packed version of svd, the matrix must be m x n with m > n! 
             if (M.m_dimensions[0] < M.m_dimensions[1]) {
-                /*!HC:outClsRet*/ ILArray<double> ret = pinv(M.T, tolerance);
-                return ret.T;
+                /*!HC:speedyexit*/ 
+                ILArray<double> ret = pinv(M.T, tolerance); return ret.T;
             }
             if (M.IsScalar)
                 return new /*!HC:outClsRet*/ ILArray<double> (/*!HC:outClsOne*/ 1.0 / M.GetValue(0)); 
@@ -234,7 +250,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (tolerance < 0) {
                 tolerance = (/*!HC:inArr1*/ double )(M.Dimensions.Longest * max(s).GetValue(0) * /*!HC:HycalpEPS*/ MachineParameterDouble.eps );  
             }
-            // sum vector elements: ret must (and should) be physical vector returned from svd
+            // sum vector elements: ret must (and should) be dense vector returned from svd
             int count = (int)sum(s> (double)tolerance);
 
             /*!HC:outClsRet*/ ILArray<double> Ret = null; 
@@ -244,6 +260,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 /*!HC:outClsS*/ ILArray<double> OneVec =  /*!HC:outClsS*/ ILArray<double> .zeros(count,1);
                 OneVec = set(OneVec, /*!HC:outClsOne*/ 1.0 ); 
                 S = diag(divide( OneVec,s["0:" + (count - 1)])); 
+                /*!HC:Uconj*/
                 U = U[(short)1,":;0:" + (count - 1)]; 
                 /*!HC:multiplyCast*/
                 Ret = multiply(multiply(V[":;0:" + (count - 1)], S), U);
@@ -317,8 +334,7 @@ namespace ILNumerics.BuiltInFunctions  {
 
             // in order to use the cheap packed version of svd, the matrix must be m x n with m > n! 
             if (M.m_dimensions[0] < M.m_dimensions[1]) {
-                ILArray<float> ret = pinv(M.T, tolerance);
-                return ret.T;
+                ILArray<float> ret = pinv(M.T, tolerance); return ret.T;
             }
             if (M.IsScalar)
                 return new  ILArray<float> ( 1.0f / M.GetValue(0)); 
@@ -345,7 +361,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (tolerance < 0) {
                 tolerance = ( float )(M.Dimensions.Longest * max(s).GetValue(0) *  ILMath.MachineParameterFloat.eps );  
             }
-            // sum vector elements: ret must (and should) be physical vector returned from svd
+            // sum vector elements: ret must (and should) be dense vector returned from svd
             int count = (int)sum(s> (double)tolerance);
 
             ILArray<float> Ret = null; 
@@ -355,7 +371,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 ILArray<float> OneVec =  ILArray<float> .zeros(count,1);
                 OneVec = set(OneVec,  1.0f ); 
                 S = diag(divide( OneVec,s["0:" + (count - 1)])); 
-                U = U[(short)1,":;0:" + (count - 1)]; 
+                U = U[(short)1,":;0:" + (count - 1)];
                 Ret = multiply(multiply(V[":;0:" + (count - 1)], S), U);
             }
             return Ret;
@@ -424,8 +440,7 @@ namespace ILNumerics.BuiltInFunctions  {
 
             // in order to use the cheap packed version of svd, the matrix must be m x n with m > n! 
             if (M.m_dimensions[0] < M.m_dimensions[1]) {
-                ILArray<fcomplex> ret = pinv(M.T, tolerance);
-                return ret.T;
+                ILArray<fcomplex> ret = pinv(conj(M.T), tolerance); return conj(ret.T);
             }
             if (M.IsScalar)
                 return new  ILArray<fcomplex> ( 1.0f / M.GetValue(0)); 
@@ -452,7 +467,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (tolerance < 0) {
                 tolerance = ( fcomplex )(M.Dimensions.Longest * max(s).GetValue(0) *  ILMath.MachineParameterFloat.eps );  
             }
-            // sum vector elements: ret must (and should) be physical vector returned from svd
+            // sum vector elements: ret must (and should) be dense vector returned from svd
             int count = (int)sum(s> (double)tolerance);
 
             ILArray<fcomplex> Ret = null; 
@@ -462,7 +477,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 ILArray<float> OneVec =  ILArray<float> .zeros(count,1);
                 OneVec = set(OneVec,  1.0f ); 
                 S = diag(divide( OneVec,s["0:" + (count - 1)])); 
-                U = U[(short)1,":;0:" + (count - 1)]; 
+                U = conj(U[":;0:" + (count - 1)]);
                 Ret = multiply(multiply(V[":;0:" + (count - 1)], real2fcomplex(S)), U);
             }
             return Ret;
@@ -531,8 +546,7 @@ namespace ILNumerics.BuiltInFunctions  {
 
             // in order to use the cheap packed version of svd, the matrix must be m x n with m > n! 
             if (M.m_dimensions[0] < M.m_dimensions[1]) {
-                ILArray<complex> ret = pinv(M.T, tolerance);
-                return ret.T;
+                ILArray<complex> ret = pinv(conj(M.T), tolerance); return conj(ret.T);
             }
             if (M.IsScalar)
                 return new  ILArray<complex> ( 1.0 / M.GetValue(0)); 
@@ -559,7 +573,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (tolerance < 0) {
                 tolerance = ( complex )(M.Dimensions.Longest * max(s).GetValue(0) *  ILMath.MachineParameterDouble.eps );  
             }
-            // sum vector elements: ret must (and should) be physical vector returned from svd
+            // sum vector elements: ret must (and should) be dense vector returned from svd
             int count = (int)sum(s> (double)tolerance);
 
             ILArray<complex> Ret = null; 
@@ -569,7 +583,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 ILArray<double> OneVec =  ILArray<double> .zeros(count,1);
                 OneVec = set(OneVec,  1.0 ); 
                 S = diag(divide( OneVec,s["0:" + (count - 1)])); 
-                U = U[(short)1,":;0:" + (count - 1)]; 
+                U = conj(U[":;0:" + (count - 1)]);
                 Ret = multiply(multiply(V[":;0:" + (count - 1)], real2complex(S)), U);
             }
             return Ret;
