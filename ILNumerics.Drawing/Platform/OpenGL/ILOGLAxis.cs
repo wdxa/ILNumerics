@@ -62,7 +62,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         private void initialize(object sender, EventArgs eventArgs) {
             if (m_panel == null || m_panel.GetDeviceContext() == null)
                 return; 
-            Dispose(); 
+            Invalidate(); 
             // todo: setup font + sprite objects for OpenGL ?
             m_primitivCount = countPrimitves(); 
             //m_labeledTicks.TextRenderer = m_panel.TextRendererManager.CreateInstance(

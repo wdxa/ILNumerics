@@ -131,13 +131,7 @@ namespace ILNumerics.Drawing.Marker {
 
         #region public interface
         internal static ILTexMarkerShape Create(ILPanel panel, string expression) {
-            switch (panel.GraphicDeviceType) {
-                case GraphicDeviceType.OpenGL:
-                    return new ILOGLTexMarkerShape(panel,expression);    
-                    break;
-                default:
-                    throw new NotImplementedException("TexMarkerShapes are not implemented yet for this graphics device type!");
-            }
+            return new ILTexMarkerShape(panel,expression);    
         }
         internal static ILStyledMarkerShape Create(ILPanel panel, MarkerStyle style) {
             switch (panel.GraphicDeviceType) {

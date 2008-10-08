@@ -189,7 +189,7 @@ namespace ILNumerics.Drawing.Labeling {
             m_size = Size.Empty; 
             m_expression = string.Empty; 
             // init interpreter & renderer
-            m_renderer = panel.TextRendererManager.GetDefault();
+            m_renderer = panel.TextRendererManager.GetDefault(CoordSystem.Screen);
             m_renderer.CacheCleared += new EventHandler(m_renderer_CacheCleared);
             m_interpreter = new ILSimpleTexInterpreter(); 
         }
@@ -202,8 +202,11 @@ namespace ILNumerics.Drawing.Labeling {
         /// Dispose off this element's ressources
         /// </summary>
         internal void Dispose() {
-            if (m_renderer != null && m_renderer is IDisposable) {
-                (m_renderer as IDisposable).Dispose();
+            if (m_renderer != null) {
+                m_renderer.CacheCleared -= m_renderer_CacheCleared;
+                if (m_renderer is IDisposable) {
+                    (m_renderer as IDisposable).Dispose();
+                }
                 m_renderer = null; 
             }
         }

@@ -39,7 +39,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
     /// <summary>
     /// Basic OpenGL implementation for IILRenderer
     /// </summary>
-    [ILRenderer(GraphicDeviceType.OpenGL,"Outline","OpenGL cached, outlined textures",true)] 
+    [ILRenderer(GraphicDeviceType.OpenGL,"Outline","OpenGL cached, outlined textures",true,CoordSystem.Screen)] 
     public class ILOGLRenderer : IILRenderer {
 
         #region event handling
@@ -68,6 +68,11 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         #endregion
 
         #region IILTextRenderer Member
+
+        public CoordSystem CoordSystem {
+            get { return CoordSystem.Screen; }
+        }
+
         public bool Cached { 
             get {
                 return true; 

@@ -342,7 +342,7 @@ namespace ILNumerics.Drawing.Controls {
             m_selectionRectangle.Width = 1; 
             m_selectionRectangle.Style = LineStyle.Solid; 
             m_selectionRectangle.Changed += new EventHandler(m_selectionRectangle_Changed);
-            m_textRendererManager = new ILRendererManager(this,GetDeviceContext()); 
+            m_textRendererManager = new ILRendererManager(this); 
             m_clippingView = new ILClippingData();
             m_camera = new ILCamera(0.0f,0.0f,5.0f);
             m_defaultView = new ILCamera(0.0f,0.0f,5.0f); 

@@ -34,17 +34,17 @@ using ILNumerics.Drawing.Labeling;
 namespace ILNumerics.Drawing.Interfaces {
     /// <summary>
     /// interface for all classes capable of renderung (device 
-    /// dependent) texts into plot panels 
+    /// dependend) texts into plot panels 
     /// </summary>
     /// <remarks>class definitions should also implement the ILRendererAttribute. See <see cref="ILNumerics.Drawing.Platform.OpenGL.ILOGLRenderer"/> for an example.</remarks>
     /// <seealso cref="ILNumerics.Drawing.Platform.OpenGL.ILOGLRenderer"/>
     public interface IILRenderer {
         /// <summary>
-        /// The name of the TextRenderer instance (implementation dependant)
+        /// The name of the TextRenderer instance (implementation dependent)
         /// </summary>
         string Name { get; }
         /// <summary>
-        /// A more descriptive name to be displayed into GUI's (implementation dependant)
+        /// A more descriptive name to be displayed into GUI's (implementation dependent)
         /// </summary>
         string NameLong { get; } 
         /// <summary>
@@ -62,11 +62,13 @@ namespace ILNumerics.Drawing.Interfaces {
         /// </summary>
         bool Cached { get; }
         /// <summary>
+        /// Determine the coord system this renderer is specialized to draw in
+        /// </summary>
+        CoordSystem CoordSystem { get; }
+        /// <summary>
         /// begins drawing, to be called before Draw()!
         /// </summary>
         /// <param name="g">graphics object (from OnPaint event)</param>
-        /// <returns>The finally selected font. The font may be different 
-        /// from the one requested.</returns>
         void Begin (Graphics g); 
         /// <summary>
         /// Draw the text (screen coords) 

@@ -45,9 +45,15 @@ namespace ILNumerics.Drawing.Labeling {
         /// </summary>
         public readonly string NameLong; 
         /// <summary>
-        /// determine, if this renderer should be used as default renderer for the graphic device
+        /// determine, if this renderer should be used as default 
+        /// renderer for the graphic device and the coord system
         /// </summary>
         public readonly bool IsDefault; 
+
+        /// <summary>
+        /// Detemine the coord system the renderer is based on
+        /// </summary>
+        public readonly CoordSystem Coords; 
 
         /// <summary>
         /// Constructor for a new attribute describing non-default renderer
@@ -59,7 +65,8 @@ namespace ILNumerics.Drawing.Labeling {
             this.GraphicDeviceType = type; 
             this.Name = Name; 
             this.NameLong = NameLong; 
-            this.IsDefault = false; 
+            this.IsDefault = false;
+            this.Coords = CoordSystem.Screen; 
         }
         /// <summary>
         /// Constructor creating a new renderer attribute
@@ -68,11 +75,12 @@ namespace ILNumerics.Drawing.Labeling {
         /// <param name="Name">short name</param>
         /// <param name="NameLong">long name</param>
         /// <param name="Default">'default' flag</param>
-        public ILRendererAttribute(GraphicDeviceType type, string Name, string NameLong, bool Default) {
+        public ILRendererAttribute(GraphicDeviceType type, string Name, string NameLong, bool Default, CoordSystem coords) {
             this.GraphicDeviceType = type; 
             this.Name = Name; 
             this.NameLong = NameLong; 
-            this.IsDefault = Default; 
+            this.IsDefault = Default;
+            this.Coords = coords;
         }
     }
 }

@@ -39,12 +39,12 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
     /// <summary>
     /// Basic OpenGL implementation for IILRenderer
     /// </summary>
-    [ILRenderer(GraphicDeviceType.OpenGL,"Outline","OpenGL cached, outlined textures, world coords",true)] 
+    [ILRenderer(GraphicDeviceType.OpenGL,"Outline","OpenGL cached, outlined textures, world coords",true,CoordSystem.World3D)] 
     public class ILOGLWorldRenderer : IILRenderer {
 
         #region event handling
         /// <summary>
-        /// (IILRenderer) Event firing if the texture storage has been cleared 
+        /// fires when the texture storage has been cleared 
         /// </summary>
         public event EventHandler CacheCleared; 
         void m_textureManager_TextureCacheCleared(object sender, EventArgs e) {
@@ -68,6 +68,11 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         #endregion
 
         #region IILTextRenderer Member
+        
+        public CoordSystem CoordSystem {
+            get { return CoordSystem.World3D; }
+        }
+
         public bool Cached { 
             get {
                 return true; 
@@ -155,7 +160,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// <param name="z2">z2-position (not used)</param>
         /// <param name="color">base color for items not containing individual colors</param>
         /// <remarks><para>The render queue must contain only keys for already cached items!</para>
-        /// <para>The color parameter serves as a global color definition. It may be overridem 
+        /// <para>The color parameter serves as a global color definition. It may be overwritten 
         /// by individual color specifications of the queue items.</para>
         /// <para>Use this function to draw the render queue in world coords. The position parameters mark the upper left 
         /// and lower right corner of the quads to contain the render queue content.</para>

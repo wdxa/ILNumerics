@@ -149,8 +149,11 @@ namespace ILNumerics.Drawing.Graphs {
         }
         public virtual void Dispose() {
             m_globalClipping.Changed -= new ILClippingDataChangedEvent(m_globalClipping_Changed); 
+            if (m_label != null) {
+                m_label.Changed -= m_label_Changed; 
+                m_label.Dispose(); 
+            }
         }
-
         #endregion
     }
 }

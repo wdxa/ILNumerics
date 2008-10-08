@@ -41,8 +41,10 @@ namespace ILNumerics.Drawing.Labeling {
         #region members / properties 
         
         Dictionary<string,string> m_rendererCollection; 
+        Dictionary<string,IILRenderer> m_rendererCache; 
         GraphicDeviceType m_graphicsDevice;
-        string m_defaultRenderer; 
+        string m_defaultRendererScreen; 
+        string m_defaultRendererWorld; 
         ILPanel m_panel; 
         #endregion 
         
@@ -50,24 +52,25 @@ namespace ILNumerics.Drawing.Labeling {
         /// <summary>
         /// create manager instance, device dependent
         /// </summary>
-        /// <param name="type">graphics device, only Renderer mathing this device will be available</param>
+        /// <param name="panel">the hosting panel, will give access to this manager instance</param>
         /// <remarks>While creating ILTextRendereManager instances, the executing assembly will be queried for 
         /// available classes matching the device. Corresponding types are than provided by calling the GetRenderer() method.</remarks>
-        public ILRendererManager (ILPanel panel, object gContext) 
-            : this(panel,gContext,new Assembly[] { Assembly.GetExecutingAssembly()} ) {
+        public ILRendererManager (ILPanel panel) 
+            : this(panel,new Assembly[] { Assembly.GetExecutingAssembly()} ) {
         }
         /// <summary>
         /// create manager instance, device dependent
         /// </summary>
-        /// <param name="graphicsdevice">graphics device, only ILRenderer mathing this device will be available</param>
+        /// <param name="panel">The hosting panel, giving access to his manager instance</param>
         /// <param name="assemblies">assemblies to query for matching ILRenderer types</param>
         /// <remarks>While creating ILRendererManager instances, the given assemblies will be queried for 
         /// available classes matching the device. Corresponding types are than provided by calling the 
         /// GetRenderer() method.</remarks>
-        public ILRendererManager (ILPanel panel, object gContext, Assembly[] assemblies) {
+        public ILRendererManager (ILPanel panel, Assembly[] assemblies) {
             m_graphicsDevice = panel.GraphicDeviceType; 
             m_panel = panel; 
             m_rendererCollection = new Dictionary<string,string>();
+            m_rendererCache = new Dictionary<string,IILRenderer>(); 
             foreach (Assembly ass in assemblies) {
                 AddAssemblyTypes(ass); 
             }
@@ -87,27 +90,54 @@ namespace ILNumerics.Drawing.Labeling {
         public IILRenderer CreateInstance (string typeName, Assembly assembly) {
             if (typeName == null) 
                 throw new ILArgumentException ("The type must be a valid ILRenderer!"); 
+            string key = (assembly==null) 
+                ? typeName : assembly.FullName +  "|" + typeName; 
+            if (m_rendererCache.ContainsKey(key))
+                return m_rendererCache[key]; 
             if (assembly == null) 
                 assembly = Assembly.GetExecutingAssembly(); 
-            Type type = assembly.GetType(typeName); 
+            Type type = assembly.GetType(typeName);
             if (type == null  || type.GetInterface("IILRenderer") == null)
                 throw new ILArgumentException (String.Format(
-                            "The type '{0}' was not found in assembly {1} or is not a valid ILRenderer!"
+                            "The type '{0}' was not found in assembly {1} or is not a valid IILRenderer!"
                             ,typeName,assembly)); 
-            if (!m_rendererCollection.ContainsKey(typeName))
-                throw new ILArgumentException ("The type is not a valid ILRenderer!"); 
-            return (IILRenderer)type.InvokeMember(
-                typeName, BindingFlags.DeclaredOnly | 
+            queryAddRenderer(type); 
+            if (!m_rendererCollection.ContainsKey(key)) 
+                throw new ILArgumentException("The renderer could not be loaded. Make sure, to specify the correct assembly and the type is properly decorated by the ILRendererAttribute!");
+            IILRenderer ret = (IILRenderer)type.InvokeMember(
+                          typeName, BindingFlags.DeclaredOnly | 
                           BindingFlags.Public | BindingFlags.NonPublic | 
                           BindingFlags.Instance | BindingFlags.CreateInstance, null, null, 
                           new object[] {m_panel});
+            if (!m_rendererCache.ContainsKey(typeName)) {
+                m_rendererCache[typeName] = ret;  
+            }
+            return ret; 
         }
         /// <summary>
-        /// Create the default instance of IILRenderer for this graphics device
+        /// Create the default instance of IILRenderer for 
+        /// the current graphics device and a coord system
         /// </summary>
-        /// <returns>default ILRenderer object</returns>
-        public IILRenderer GetDefault() {
-            return CreateInstance(m_defaultRenderer,null);         
+        /// <param name="coords">coord system, the renderer is 
+        /// specialized and the default renderer for</param>
+        /// <returns>default IILRenderer object</returns>
+        public IILRenderer GetDefault(CoordSystem coords) {
+            string key = (coords == CoordSystem.World3D)  
+                 ? m_defaultRendererWorld : m_defaultRendererScreen; 
+            if (m_rendererCache.ContainsKey(key) && m_rendererCache[key] != null) 
+                return m_rendererCache[key]; 
+            // must create a new instance 
+            IILRenderer ret; 
+            switch (coords) {
+                case CoordSystem.World3D:
+                    ret = CreateInstance(m_defaultRendererWorld,null);
+                    break; 
+                default:
+                    ret = CreateInstance(m_defaultRendererScreen,null);
+                    break; 
+            }
+            m_rendererCache[key] = ret; 
+            return ret; 
         }
         /// <summary>
         /// Get a collection of all IILRenderer types and corresponding displayNames available
@@ -124,33 +154,48 @@ namespace ILNumerics.Drawing.Labeling {
         #endregion
 
         #region private helper
+        /// <summary>
+        /// iterate over types attribute, select IILRenderer attribute, 
+        /// register for later reference, add/overwrite default renderers
+        /// </summary>
+        /// <param name="t">IILRenderer type</param>
+        private void queryAddRenderer(Type t)
+        {
+            foreach (object att in t.GetCustomAttributes(false)) {
+                if (att is ILRendererAttribute) {
+                    ILRendererAttribute trAttr = (ILRendererAttribute)att; 
+                    if (trAttr.GraphicDeviceType == m_graphicsDevice ||
+                        trAttr.GraphicDeviceType == GraphicDeviceType.GDI) {
+                        if (t.GetInterface("IILRenderer") == null)
+                            continue; 
+                        if (m_rendererCollection.ContainsKey(t.FullName)) 
+                            m_rendererCollection[t.FullName] = trAttr.Name; 
+                        else 
+                            m_rendererCollection.Add(t.FullName,trAttr.Name); 
+                        if (trAttr.IsDefault) {
+                            if (trAttr.Coords == CoordSystem.Screen) 
+                                m_defaultRendererScreen = t.FullName; 
+                            else if (trAttr.Coords == CoordSystem.World3D)
+                                m_defaultRendererWorld = t.FullName; 
+                        }
+                        break; 
+                    }
+                }
+            }
+        }
 
         private void AddAssemblyTypes (Assembly assembly) {
             try {
                 Type[] types = assembly.GetTypes(); 
                 foreach (Type t in types) {
-                    foreach (object att in t.GetCustomAttributes(false)) {
-                        if (att is ILRendererAttribute) {
-                            ILRendererAttribute trAttr = (ILRendererAttribute)att; 
-                            if (trAttr.GraphicDeviceType == m_graphicsDevice ||
-                                trAttr.GraphicDeviceType == GraphicDeviceType.GDI) {
-                                if (t.GetInterface("IILRenderer") == null)
-                                    continue; 
-                                if (m_rendererCollection.ContainsKey(t.FullName)) 
-                                    throw new InvalidOperationException(String.Format("multiple types for IILRenderer found! The type {0} is already loaded.",t.FullName)); 
-                                m_rendererCollection.Add(t.FullName,trAttr.Name); 
-                                if (trAttr.IsDefault || m_defaultRenderer == null) 
-                                    m_defaultRenderer = t.FullName; 
-                                break; 
-                            }
-                        }
-                    }
+                    queryAddRenderer(t);
                 }
             } catch (Exception e) {
                 m_rendererCollection.Add("ILNumerics.Drawing.Labeling.ILGDIRenderer","GDI Renderer"); 
-                m_defaultRenderer = "GDI Renderer"; 
+                m_defaultRendererScreen = "GDI Renderer"; 
             }
         }
+
         #endregion
     }
 }
