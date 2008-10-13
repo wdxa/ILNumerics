@@ -49,8 +49,8 @@ namespace ILNumerics {
         /// </param>
         /// <param name="data">preallocated array with data. The array will
         /// directly be used for storage. No copy will be done.</param>
-        /// <remarks>The size parameter may not be null or an empty array! 
-        /// An Exception will be thrown in this case. The dimensions will be trimmed 
+        /// <remarks>The size parameter may not be null or empty! 
+        /// An exception will be thrown in this case. The dimensions will be trimmed 
         /// before processing (removing non singleton dimensions from the end). 
         /// Depending on the requested size an ILArray of the specified type and 
         /// dimension will be created. 
@@ -59,7 +59,7 @@ namespace ILNumerics {
             if (size == null || size.Length == 0) {
                 m_dimensions = new ILDimension(1,data.Length); 
             } else {
-                m_dimensions = new ILDimension(size).Trim();
+                m_dimensions = new ILDimension(true,size);
             }
             if (data.Length != m_dimensions.NumberOfElements)
                 throw new ILArgumentException("size of data must match dimensions!");
@@ -76,8 +76,8 @@ namespace ILNumerics {
         /// dimension specification. The ILDimension given must not be null and will 
         /// directly be used for the new object! No copy will be made for it!
         /// </param>
-        /// <remarks>The size parameter may not be null or an empty array! 
-        /// An Exception will be thrown in this case. The dimensions will be trimmed 
+        /// <remarks>The size parameter may not be null or empty! 
+        /// An exception will be thrown in this case. The dimensions will be trimmed 
         /// before processing (removing non singleton dimensions from the end). 
         /// Depending on the requested size an ILArray of the specified type and 
         /// dimension will be created. 
@@ -109,7 +109,7 @@ namespace ILNumerics {
             if (size == null || size.Length == 0)
                 throw new ArgumentException("ILArray|(construct): dimension specification needed!");
             try {
-                m_dimensions = new ILDimension(size).Trim();
+                m_dimensions = new ILDimension(true,size);
                 bool dummy; 
                 m_data = ILMemoryPool.Pool.New<BaseT>(m_dimensions.NumberOfElements, true, out dummy);
                 m_name = "";
@@ -248,7 +248,7 @@ namespace ILNumerics {
         /// <returns>subarray as specified</returns>
         public override ILBaseArray<BaseT> Subarray (params ILBaseArray[] range) {
             if (range.Length == 0) {
-                return ILArray<BaseT>.empty();
+                return ILArray<BaseT>.empty(0,0);
             } else if (range.Length == 1) {
                 #region sequential index access
                 if (IsReference) {
@@ -315,7 +315,7 @@ namespace ILNumerics {
                 #endregion sequential index access
             } else {
                 ILRange rng = new ILRange(m_dimensions,RangeSide.Right, range); 
-                if (rng.NumberOfElements == 0) return ILArray<BaseT>.empty(); 
+                if (rng.NumberOfElements == 0) return ILArray<BaseT>.empty(0,0); 
                 if (rng.nonSingletonDimensions >= MinimumRefDimensions) {
                     if (m_indexOffset == null) 
                         return CreateReferenceSubarrayFromPhysical(rng); 
@@ -340,7 +340,7 @@ namespace ILNumerics {
             if (shift == 0)
                 return Subarray(range);
             if (range.Length == 0) {
-                return ILArray<BaseT>.empty();
+                return ILArray<BaseT>.empty(0,0);
             } else if (range.Length == 1) {
                 #region sequential indices access
                 if (IsReference) {
@@ -407,7 +407,7 @@ namespace ILNumerics {
                 #endregion sequential index access
             } else {
                 ILRange rng = new ILRange(m_dimensions,RangeSide.Right, range); 
-                if (rng.NumberOfElements == 0) return ILArray<BaseT>.empty(); 
+                if (rng.NumberOfElements == 0) return ILArray<BaseT>.empty(0,0); 
                 if (rng.nonSingletonDimensions >= MinimumRefDimensions) {
                     if (m_indexOffset == null) 
                         return CreateReferenceSubarrayFromPhysicalShifted((short)shift,rng); 
@@ -435,7 +435,7 @@ namespace ILNumerics {
             if (range == null) 
                 return ShiftDimensions(shift); 
             ILRange rng = new ILRange(m_dimensions,RangeSide.Right, range); 
-            if (rng.NumberOfElements == 0) return ILArray<BaseT>.empty();
+            if (rng.NumberOfElements == 0) return ILArray<BaseT>.empty(0,0);
             if (rng.nonSingletonDimensions >= MinimumRefDimensions) {
                 // create reference 
                 if (IsReference) 
@@ -459,7 +459,7 @@ namespace ILNumerics {
             if (range == null) 
                 return ShiftDimensions(0); 
             ILRange rng = new ILRange(m_dimensions,RangeSide.Right, range); 
-            if (rng.NumberOfElements == 0) return ILArray<BaseT>.empty();
+            if (rng.NumberOfElements == 0) return ILArray<BaseT>.empty(0,0);
             if (rng.nonSingletonDimensions >= MinimumRefDimensions) {
                 // create reference 
                 if (IsReference) 
@@ -534,7 +534,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -547,7 +547,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -588,7 +588,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -601,8 +601,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -649,7 +648,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -662,7 +661,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -703,7 +702,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -716,8 +715,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -761,7 +759,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -774,7 +772,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -815,7 +813,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -828,8 +826,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -873,7 +870,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -886,7 +883,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -927,7 +924,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -940,8 +937,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -985,7 +981,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -998,7 +994,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1039,7 +1035,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -1052,8 +1048,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1097,7 +1092,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -1110,7 +1105,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1151,7 +1146,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -1164,8 +1159,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1209,7 +1203,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -1222,7 +1216,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1263,7 +1257,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -1276,8 +1270,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1321,7 +1314,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -1334,7 +1327,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1375,7 +1368,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -1388,8 +1381,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1433,7 +1425,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -1446,7 +1438,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1487,7 +1479,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -1500,8 +1492,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1545,7 +1536,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -1558,7 +1549,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1599,7 +1590,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -1612,8 +1603,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1657,7 +1647,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -1670,7 +1660,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1711,7 +1701,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -1724,8 +1714,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1769,7 +1758,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[(int)indData[i]]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical copy from this physical array and shift dimensions 
@@ -1782,7 +1771,7 @@ namespace ILNumerics {
                 shift = 0; 
             if (shift > indices.m_dimensions.NumberOfDimensions)
                 shift %= indices.m_dimensions.NumberOfDimensions; 
-            ILDimension dim = indices.m_dimensions.getShiftedVersion(shift); 
+            ILDimension dim = indices.m_dimensions.GetShifted(shift); 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -1823,7 +1812,7 @@ namespace ILNumerics {
                     outdata[i] = m_data[getBaseIndex((int)indData[i])]; 
                 }
             }
-            return new ILArray<BaseT>(outdata, dim.Clone());
+            return new ILArray<BaseT>(outdata, dim);
         }
         /// <summary>
         /// create physical subarray from this referencing array and shift dimensions 
@@ -1836,8 +1825,7 @@ namespace ILNumerics {
                 shift %= indices.Dimensions.NumberOfDimensions; 
             if (shift < 0) 
                 shift = 0; 
-            ILDimension dim = indices.m_dimensions; 
-            dim = dim.getShiftedVersion(shift);
+            ILDimension dim = indices.m_dimensions.GetShifted(shift).Trim();
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
@@ -2294,7 +2282,7 @@ namespace ILNumerics {
                     #endregion
                 }
             }
-            return new ILArray<BaseT> (retArr,range.GetDimensions().getShiftedVersion(shift)); 
+            return new ILArray<BaseT> (retArr,range.GetDimensions().GetShifted(shift)); 
         }
         /// <summary>
         /// create physical subarray from physical ILArray 
@@ -2311,8 +2299,8 @@ namespace ILNumerics {
             int[] idxArr = new int[rangeDimLen];    // used to store current position inside higher dims 
             bool[] isFullDim = new bool[rangeDimLen]; 
             int[][] r = range.RangeArray; 
+            int [] seqDistances = m_dimensions.GetSequentialIndexDistances(range.NumberOfDimensions); 
             int[] rleadDim = range[0]; 
-            int[] seqDistances = m_dimensions.SequentialIndexDistances; 
             if (rleadDim[0] < 0) {
                 #region LeadDim is full (specified as ':')
                 // leading dimension is a "full" dimension: only its largest index is (negative) given in range[d]
@@ -2443,7 +2431,7 @@ namespace ILNumerics {
             bool[] isFullDim = new bool[rangeDimLen]; 
             int[][] r = range.RangeArray; 
             int[] rleadDim = r[leadDimNr];   // faster access 
-            int[] seqDistances = m_dimensions.SequentialIndexDistances; 
+            int[] seqDistances = m_dimensions.GetSequentialIndexDistances(range.NumberOfDimensions); 
             if (rleadDim[0] < 0) {
                 #region LeadDim is full (specified as ':')
                 // leading dimension is a "full" dimension: only its largest 
@@ -2560,7 +2548,7 @@ namespace ILNumerics {
                 }
                 #endregion
             }
-            return new ILArray<BaseT> (retArr,range.GetDimensions().getShiftedVersion(shift)); 
+            return new ILArray<BaseT> (retArr,range.GetDimensions().GetShifted(shift)); 
         }
         #endregion 
 
@@ -2576,7 +2564,8 @@ namespace ILNumerics {
             int singlDimAdds = 0; // offset increment for singleton dimensions passed
             int[][] indexOffset;
             int[][] rangeArr = range.RangeArray; 
-            int[] seqDistances = m_dimensions.SequentialIndexDistances, isRegularSpaced; 
+            int[] seqDistances = m_dimensions.GetSequentialIndexDistances(range.NumberOfDimensions);
+            int[] isRegularSpaced; 
             // reference will be tensor order 2 or greater 
             // create temp jagged array as if no dims from range 
             // would be trimmed
@@ -2758,7 +2747,7 @@ namespace ILNumerics {
             int singlDimAdds = 0; // offset increment for singleton dimensions passed
             int[][] indexOffset;
             int[][] rangeArr = range.RangeArray; 
-            int[] seqDistances = m_dimensions.SequentialIndexDistances; 
+            int[] seqDistances = m_dimensions.GetSequentialIndexDistances(range.NumberOfDimensions); 
             int[] regularSpacing = new int[rDimLen]; 
             // reference will be tensor order 2 or greater 
             // create temp jagged array as if no dims from range 
@@ -2824,10 +2813,9 @@ namespace ILNumerics {
                 outIDXOffset = new ILIndexOffset(tmp,tmpRegularSpacing);
             } else {
                 // tensor order 2 ...
-                ILDimension outDims = range.GetDimensions().Trim();
+                ILDimension outDims = range.GetDimensions();
                 // dimensions may be trimmable (again) after shift!!
-                outDims.Shift(shift); 
-                outDims.Trim();
+                outDims = outDims.GetShifted(shift).Trim(); 
                 // trim + transfer indexOffset 
                 if (outDims.NumberOfDimensions < indexOffset.Length || posIdxOffset >= 0) {
                     int[][] tmp = new int[outDims.NumberOfDimensions][];
@@ -4491,7 +4479,7 @@ namespace ILNumerics {
         /// <param name="shift">number of dimensions to shift</param>
         /// <returns>physical array</returns>
         private ILArray<BaseT> CreatePhysicalShiftedFromPhysical(int shift) {
-            if (IsEmpty) return ILArray<BaseT>.empty(); 
+            if (IsEmpty) return ILArray<BaseT>.empty(m_dimensions.GetShifted(shift)); 
             BaseT[] retArr = ILMemoryPool.Pool.New<BaseT>(m_dimensions.NumberOfElements); 
             int inc = 1, len = m_dimensions.NumberOfDimensions;
             int numElem = m_dimensions.NumberOfElements-1; 
@@ -4505,7 +4493,7 @@ namespace ILNumerics {
                 pos = (pos + inc) % numElem; 
             }
             retArr[i] = m_data[numElem];
-            return new ILArray<BaseT>(retArr, m_dimensions.getShiftedVersion(shift)); 
+            return new ILArray<BaseT>(retArr, m_dimensions.GetShifted(shift)); 
         }
         /// <summary>
         /// create physical shifted version if this is a reference array 
@@ -4513,7 +4501,7 @@ namespace ILNumerics {
         /// <param name="shift">number of dimensions to shift</param>
         /// <returns>reference array</returns>
         private ILArray<BaseT> CreatePhysicalShiftedFromReference(int shift) {
-            if (IsEmpty) return ILArray<BaseT>.empty(); 
+            if (IsEmpty) return ILArray<BaseT>.empty(m_dimensions.GetShifted(shift)); 
             BaseT[] retArr = ILMemoryPool.Pool.New< BaseT> (m_dimensions.NumberOfElements); 
             int inc = 1, len = m_dimensions.NumberOfDimensions;
             int numElem = m_dimensions.NumberOfElements-1; 
@@ -4527,7 +4515,7 @@ namespace ILNumerics {
                 pos = (pos + inc) % numElem; 
             }
             retArr[i] = m_data[getBaseIndex(numElem)];
-            return new ILArray<BaseT>(retArr, m_dimensions.getShiftedVersion(shift)); 
+            return new ILArray<BaseT>(retArr, m_dimensions.GetShifted(shift)); 
         }
         /// <summary>
         /// create reference array by shifting its dimensions 
@@ -4535,13 +4523,13 @@ namespace ILNumerics {
         /// <param name="shift">number of dimension to shift</param>
         /// <returns>reference array with shifted dimensions</returns>
         private ILArray<BaseT> CreateReferenceShiftedFromPhysical(int shift) {
-            if (IsEmpty) return ILArray<BaseT>.empty(); 
+            if (IsEmpty) return ILArray<BaseT>.empty(m_dimensions.GetShifted(shift)); 
             int idxPos = 0;
             int srcPos = 0;
             if (shift < 0) shift = 0; 
             ILDimension srcDims = m_dimensions.Trim();
             int[][] idxOffset = new int[srcDims.NumberOfDimensions][];
-            int[] seqDistances = m_dimensions.SequentialIndexDistances; 
+            int[] seqDistances = m_dimensions.GetSequentialIndexDistances(0); 
             int[] regularSpacing = new int [srcDims.NumberOfDimensions]; 
             for (int i = 0; i < srcDims.NumberOfDimensions; i++) {
                 idxPos = i;
@@ -4560,7 +4548,7 @@ namespace ILNumerics {
         /// <param name="shift">number of dimensions to shift </param>
         /// <returns>referencing array with shifted dimensions</returns>
         private ILArray<BaseT> CreateReferenceShiftedFromReference(int shift) {
-            if (IsEmpty) return ILArray<BaseT>.empty(); 
+            if (IsEmpty) return ILArray<BaseT>.empty(m_dimensions.GetShifted(shift)); 
             int idxPos = 0;
             int srcPos = 0;
             if (shift < 0) shift = 0; 

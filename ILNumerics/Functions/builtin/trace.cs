@@ -79,7 +79,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static /*!HC:inCls1*/ ILArray<double> trace (/*!HC:inCls1*/ ILArray<double> A) {
             if (A.IsEmpty) 
-                return /*!HC:inCls1*/ ILArray<double> .empty(); 
+                return /*!HC:inCls1*/ ILArray<double> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));
@@ -94,7 +94,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static  ILArray<UInt64> trace ( ILArray<UInt64> A) {
             if (A.IsEmpty) 
-                return  ILArray<UInt64> .empty(); 
+                return  ILArray<UInt64> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));
@@ -106,7 +106,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static  ILArray<UInt32> trace ( ILArray<UInt32> A) {
             if (A.IsEmpty) 
-                return  ILArray<UInt32> .empty(); 
+                return  ILArray<UInt32> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));
@@ -118,7 +118,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static  ILArray<UInt16> trace ( ILArray<UInt16> A) {
             if (A.IsEmpty) 
-                return  ILArray<UInt16> .empty(); 
+                return  ILArray<UInt16> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));
@@ -130,7 +130,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static  ILArray<Int64> trace ( ILArray<Int64> A) {
             if (A.IsEmpty) 
-                return  ILArray<Int64> .empty(); 
+                return  ILArray<Int64> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));
@@ -142,7 +142,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static  ILArray<Int32> trace ( ILArray<Int32> A) {
             if (A.IsEmpty) 
-                return  ILArray<Int32> .empty(); 
+                return  ILArray<Int32> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));
@@ -154,7 +154,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static  ILArray<Int16> trace ( ILArray<Int16> A) {
             if (A.IsEmpty) 
-                return  ILArray<Int16> .empty(); 
+                return  ILArray<Int16> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));
@@ -166,7 +166,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static  ILArray<float> trace ( ILArray<float> A) {
             if (A.IsEmpty) 
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));
@@ -178,7 +178,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static  ILArray<fcomplex> trace ( ILArray<fcomplex> A) {
             if (A.IsEmpty) 
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));
@@ -190,7 +190,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static  ILArray<complex> trace ( ILArray<complex> A) {
             if (A.IsEmpty) 
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));
@@ -202,7 +202,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static  ILArray<char> trace ( ILArray<char> A) {
             if (A.IsEmpty) 
-                return  ILArray<char> .empty(); 
+                return  ILArray<char> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));
@@ -214,7 +214,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <returns>scalar of same type as A with the sum of diagonal elements of A.</returns>
         public static  ILArray<byte> trace ( ILArray<byte> A) {
             if (A.IsEmpty) 
-                return  ILArray<byte> .empty(); 
+                return  ILArray<byte> .empty(A.Dimensions); 
             if (A.IsVector || A.IsScalar) 
                 return A[0]; 
             return sum(diag(A));

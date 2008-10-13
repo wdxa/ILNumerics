@@ -120,7 +120,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("minall: argument must not be null!");
             if (A.IsEmpty) {
-                return /*!HC:inCls1*/ ILArray<double> .empty(); 
+                return /*!HC:inCls1*/ ILArray<double> .empty(A.Dimensions); 
             } 
             /*!HC:outArr1*/ double retArr = /*!HC:outArr1*/ double .MaxValue;  
             if (A.m_indexOffset == null) {
@@ -164,7 +164,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("minall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<UInt64> .empty(); 
+                return  ILArray<UInt64> .empty(A.Dimensions); 
             } 
             UInt64 retArr =  UInt64 .MaxValue;  
             if (A.m_indexOffset == null) {
@@ -205,7 +205,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("minall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<UInt32> .empty(); 
+                return  ILArray<UInt32> .empty(A.Dimensions); 
             } 
             UInt32 retArr =  UInt32 .MaxValue;  
             if (A.m_indexOffset == null) {
@@ -246,7 +246,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("minall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<UInt16> .empty(); 
+                return  ILArray<UInt16> .empty(A.Dimensions); 
             } 
             UInt16 retArr =  UInt16 .MaxValue;  
             if (A.m_indexOffset == null) {
@@ -287,7 +287,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("minall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<Int64> .empty(); 
+                return  ILArray<Int64> .empty(A.Dimensions); 
             } 
             Int64 retArr =  Int64 .MaxValue;  
             if (A.m_indexOffset == null) {
@@ -328,7 +328,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("minall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<Int32> .empty(); 
+                return  ILArray<Int32> .empty(A.Dimensions); 
             } 
             Int32 retArr =  Int32 .MaxValue;  
             if (A.m_indexOffset == null) {
@@ -369,7 +369,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("minall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<Int16> .empty(); 
+                return  ILArray<Int16> .empty(A.Dimensions); 
             } 
             Int16 retArr =  Int16 .MaxValue;  
             if (A.m_indexOffset == null) {
@@ -410,7 +410,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("minall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<char> .empty(); 
+                return  ILArray<char> .empty(A.Dimensions); 
             } 
             char retArr =  char .MaxValue;  
             if (A.m_indexOffset == null) {
@@ -451,7 +451,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("minall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<byte> .empty(); 
+                return  ILArray<byte> .empty(A.Dimensions); 
             } 
             byte retArr =  byte .MaxValue;  
             if (A.m_indexOffset == null) {
@@ -492,7 +492,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("minall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(A.Dimensions); 
             } 
             float retArr =  float .MaxValue;  
             if (A.m_indexOffset == null) {

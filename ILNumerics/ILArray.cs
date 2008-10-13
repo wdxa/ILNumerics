@@ -30,10 +30,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO; 
 using System.Runtime.Serialization; 
+using System.Runtime.CompilerServices;
 using ILNumerics.Storage;
 using ILNumerics.Misc;
 using ILNumerics.Exceptions;
 using ILNumerics.BuiltInFunctions; 
+
+[assembly:InternalsVisibleTo("ILNumericsTest, PublicKey=0024000004800000940000000602000000240000525341310004000001000100bb4dc9610b0cfe6f698d933c322979c2c69d17f119c94e6a182426ead00f8972014ef3cf8ba4c2499eaf3c314775b32d152a67375d0a48f4d2617c82b72e0a8fa0684c757366bbda6adc6a0c4fed35e73eece3c55e3dd51636dc32acf0d443a0a8033f9206854cfec8e35b8c8c2f7447cac8c52b6d88fcd3d4f72b64e295e2b2")]
 
 namespace ILNumerics {
     /// <summary>
@@ -1667,14 +1670,23 @@ namespace ILNumerics {
         public static ILArray<BaseT> zeros (ILDimension dimension) {
             bool cleared = false; 
             BaseT[] data = ILMemoryPool.Pool.New<BaseT>(dimension.NumberOfElements, true, out cleared);
-            return new ILArray<BaseT>(data, dimension.Clone());
+            return new ILArray<BaseT>(data, dimension);
         }
         /// <summary>
-        /// create empty array
+        /// create empty array, size (0 x 0)
         /// </summary>
         /// <returns>Empty ILArray</returns>
-        public static ILArray<BaseT> empty() {
-            return new ILArray<BaseT>(new BaseT [0], 0,0);
+        public static ILArray<BaseT> empty(ILDimension dims) {
+            return new ILArray<BaseT>(new BaseT [0],dims);
+        }
+        /// <summary>
+        /// create empty array, size (0 x 0)
+        /// </summary>
+        /// <returns>Empty ILArray</returns>
+        public static ILArray<BaseT> empty(params int[] dims) {
+            if (dims == null || dims.Length == 0) 
+                return empty(0,0); 
+            return new ILArray<BaseT>(new BaseT [0],dims);
         }
         #endregion static functions
 
@@ -2812,7 +2824,7 @@ namespace ILNumerics {
                     // increase range pointer
                     d = 0;
                     while (d <= ldIdx) {
-                        idxPos = d % m_dimensions.NumberOfDimensions;
+                        idxPos = d % rdims.Length;
                         c[idxPos]++;
                         if (c[idxPos] < rdims[idxPos]) break;
                         c[idxPos] = 0;
@@ -3755,6 +3767,20 @@ namespace ILNumerics {
             m_dimensions = newDimensions; 
             return this; 
         }
+        /// <summary>
+        /// Reshape this array
+        /// </summary>
+        /// <param name="dims">new dimension length</param>
+        /// <returns>this array after reshaping</returns>
+        /// <remarks><para>This member changes the current objects dimension. The ILArray will have the 
+        /// size and number of dimension specified by newDimensions. </para>
+        /// <para>If this is a reference array, it is beeing detached.</para></remarks>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if the number of elements dont stay the same</exception>
+        public ILArray<BaseT> Reshape(params int[] dims) {
+            ILDimension newDimension = new ILDimension(dims); 
+            return Reshape(newDimension); 
+        }
+
 
         /// <summary>
         /// Concatenate this array 
@@ -3864,7 +3890,7 @@ namespace ILNumerics {
                 int lenOutArr = m_dimensions.NumberOfElements + inDim.NumberOfElements;
                 BaseT[] retData = new BaseT[lenOutArr];
                 int[] retDims = m_dimensions.ToIntArray();
-                retDims[leadDim] = m_dimensions[leadDim] + inDim[leadDim];
+                retDims[leadDim] += inDim[leadDim];
                 ILDimension retDimension = new ILDimension(retDims);
                 int len1 = m_dimensions.SequentialIndexDistance(leadDim + 1);
                 int len2 = inDim.SequentialIndexDistance(leadDim + 1);
@@ -3922,7 +3948,7 @@ namespace ILNumerics {
                     newDim[d] = m_dimensions[d];
                 }
             }
-            outDim = new ILDimension(newDim).Trim();
+            outDim = new ILDimension(true,newDim);
             // reference storage creation
             #region Create reference storage 
             int [][] newIdx = new int [outDim.NumberOfDimensions][];
@@ -4194,8 +4220,6 @@ namespace ILNumerics {
                 throw new ILOutputException("Error writing to matlab format!", e);
             }
         }      
-	
-
 
         #endregion 
 
@@ -4430,7 +4454,7 @@ namespace ILNumerics {
                 int destIdx = idx[0], d, highDims; 
                 if (destIdx >= m_dimensions[0] || destIdx < 0)
                         throw new ILArgumentException("GetValue: index out of bound for dimensions: 0");
-                int [] seqDist = m_dimensions.SequentialIndexDistances; 
+                int [] seqDist = m_dimensions.GetSequentialIndexDistances(0); 
                 if (idx.Length <= m_dimensions.NumberOfDimensions) {
                     for (d = 1; d < idx.Length - 1; d++) {
                         if (idx[d] >= m_dimensions[d] || idx[d] < 0)
@@ -5173,79 +5197,6 @@ namespace ILNumerics {
 #endregion
 
         /// <summary>
-        /// copy upper triangular part of this array into new physical array
-        /// </summary>
-        /// <param name="n">length of first dimension of destination array </param>
-        /// <returns>physical array of size [n x {ThisColumnCount})]</returns>
-        internal ILArray<BaseT> copyUpperTriangle(int n) {
-            BaseT[] arr = new BaseT[n * n];
-            if (m_dimensions[0] == n) {
-                if (m_indexOffset == null) {
-                    for (int rcount = 0 , pos = 0; rcount < n; rcount++) {
-                        for (int i = 0; i <= rcount; i++) {
-                            arr[pos] = m_data[pos++];
-                        }
-                        pos += (n - rcount - 1);
-                    }
-                } else {
-                    for (int rcount = 0 , pos = 0; rcount < n; rcount++) {
-                        for (int i = 0; i <= rcount; i++) {
-                            arr[pos] = m_data[m_indexOffset.Map(pos++)];
-                        }
-                        pos += (n - rcount - 1);
-                    }
-                }
-            } else {
-                if (m_indexOffset == null)
-                for (int rcount = 0 , posIn = 0, posOut = 0, lenA = m_dimensions[0]; rcount < n; rcount++) {
-                    for (int i = 0; i <= rcount; i++) {
-                        arr[posOut++] = m_data[posIn++];
-                    }
-                    posOut += (n - rcount - 1);
-                    posIn += (lenA - rcount - 1);
-                }
-                else 
-                for (int rcount = 0 , posIn = 0, posOut = 0, lenA = m_dimensions[0]; rcount < n; rcount++) {
-                    for (int i = 0; i <= rcount; i++) {
-                        arr[posOut++] = m_data[m_indexOffset.Map(posIn++)];
-                    }
-                    posOut += (n - rcount - 1);
-                    posIn += (lenA - rcount - 1);
-                }
-            }
-            return new ILArray<BaseT> (arr,n,n);
-        }
-        /// <summary>
-        /// copy lower triangular part of this array into new physical array
-        /// </summary>
-        /// <returns>physical array of same size than this array</returns>
-        /// <remarks>if this is not a 2D array, only the first dimension is referenced.</remarks>
-        internal ILArray<BaseT> copyLowerTriangle() {
-            int n = m_dimensions[0],pos = 0; 
-            BaseT[] arr = new BaseT[n * n];
-            if (m_indexOffset == null) {
-                for (int c = 0; c < m_dimensions[1]; c++) {
-                    pos += c;
-                    for (int r = c; r < n; r++,pos++) {
-                        arr[pos] = m_data[pos];
-                        pos++; 
-                    } 
-                }
-            } else {
-                int [] idx0 = m_indexOffset[0]; 
-                int [] idx1 = m_indexOffset[1];
-                for (int c = 0; c < m_dimensions[1]; c++) {
-                    pos += c;
-                    for (int r = c; r < n; r++,pos++) {
-                        arr[pos] = m_data[idx0[r]+ idx1[c]];
-                        pos++; 
-                    } 
-                }
-            }
-            return new ILArray<BaseT> (arr,n,n);
-        }
-
-        /// <summary>
         /// Create full (shallow) copy of this storage. 
         /// </summary>
         /// <returns>ILFullArray as new (physical) representation of this storages data.</returns>
@@ -5332,6 +5283,7 @@ namespace ILNumerics {
         }
         #endregion
 
+        #region private helper 
         private void ExtractFullRange(ILBaseArray[] range) {
             int maxDimLen = m_dimensions.NumberOfDimensions; 
             for (int i = 0; i < range.Length; i++) {
@@ -5420,7 +5372,81 @@ namespace ILNumerics {
             DecreaseReference();
             m_data = outData; 
             IncreaseReference();
-            m_indexOffset = null; 
+            m_indexOffset = null;
         }
+        /// <summary>
+        /// copy upper triangular part of this array into new physical array
+        /// </summary>
+        /// <param name="n">length of first dimension of destination array </param>
+        /// <returns>physical array of size [n x {ThisColumnCount})]</returns>
+        internal ILArray<BaseT> copyUpperTriangle(int n) {
+            BaseT[] arr = new BaseT[n * n];
+            if (m_dimensions[0] == n) {
+                if (m_indexOffset == null) {
+                    for (int rcount = 0 , pos = 0; rcount < n; rcount++) {
+                        for (int i = 0; i <= rcount; i++) {
+                            arr[pos] = m_data[pos++];
+                        }
+                        pos += (n - rcount - 1);
+                    }
+                } else {
+                    for (int rcount = 0 , pos = 0; rcount < n; rcount++) {
+                        for (int i = 0; i <= rcount; i++) {
+                            arr[pos] = m_data[m_indexOffset.Map(pos++)];
+                        }
+                        pos += (n - rcount - 1);
+                    }
+                }
+            } else {
+                if (m_indexOffset == null)
+                for (int rcount = 0 , posIn = 0, posOut = 0, lenA = m_dimensions[0]; rcount < n; rcount++) {
+                    for (int i = 0; i <= rcount; i++) {
+                        arr[posOut++] = m_data[posIn++];
+                    }
+                    posOut += (n - rcount - 1);
+                    posIn += (lenA - rcount - 1);
+                }
+                else 
+                for (int rcount = 0 , posIn = 0, posOut = 0, lenA = m_dimensions[0]; rcount < n; rcount++) {
+                    for (int i = 0; i <= rcount; i++) {
+                        arr[posOut++] = m_data[m_indexOffset.Map(posIn++)];
+                    }
+                    posOut += (n - rcount - 1);
+                    posIn += (lenA - rcount - 1);
+                }
+            }
+            return new ILArray<BaseT> (arr,n,n);
+        }
+        /// <summary>
+        /// copy lower triangular part of this array into new physical array
+        /// </summary>
+        /// <returns>physical array of same size than this array</returns>
+        /// <remarks>if this is not a 2D array, only the first dimension is referenced.</remarks>
+        internal ILArray<BaseT> copyLowerTriangle() {
+            int n = m_dimensions[0],pos = 0; 
+            BaseT[] arr = new BaseT[n * n];
+            if (m_indexOffset == null) {
+                for (int c = 0; c < m_dimensions[1]; c++) {
+                    pos += c;
+                    for (int r = c; r < n; r++,pos++) {
+                        arr[pos] = m_data[pos];
+                        pos++; 
+                    } 
+                }
+            } else {
+                int [] idx0 = m_indexOffset[0]; 
+                int [] idx1 = m_indexOffset[1];
+                for (int c = 0; c < m_dimensions[1]; c++) {
+                    pos += c;
+                    for (int r = c; r < n; r++,pos++) {
+                        arr[pos] = m_data[idx0[r]+ idx1[c]];
+                        pos++; 
+                    } 
+                }
+            }
+            return new ILArray<BaseT> (arr,n,n);
+        }
+
+        #endregion
     }
 }

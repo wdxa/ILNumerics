@@ -586,8 +586,8 @@ namespace ILNumerics {
         /// [deprecated] create empty ILLogicalArray 
         /// </summary>
         /// <returns>empty ILLogicalArray.</returns>
-        public static new ILLogicalArray empty() {
-            return new ILLogicalArray(new byte[0],0,0);
+        public static new ILLogicalArray empty(ILDimension dim) {
+            return new ILLogicalArray(new byte[0],dim);
         }
         #endregion
 

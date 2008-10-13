@@ -139,7 +139,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<fcomplex>  conj ( ILArray<fcomplex> A) {
             if (A.IsEmpty)
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             fcomplex [] retDblArr;
             // build ILDimension    
@@ -252,7 +252,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<fcomplex> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<fcomplex> ( retDblArr, inDim );
         }
         /// <summary>Complex conjugate of array A</summary>
         /// <param name="A">input array</param>
@@ -261,7 +261,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<complex>  conj ( ILArray<complex> A) {
             if (A.IsEmpty)
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             complex [] retDblArr;
             // build ILDimension    
@@ -374,7 +374,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<complex> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<complex> ( retDblArr, inDim );
         }
 
 #endregion HYCALPER AUTO GENERATED CODE

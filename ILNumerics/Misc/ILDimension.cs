@@ -21,96 +21,90 @@
 using System;
 using ILNumerics.Storage;     
 using ILNumerics.Exceptions;
+using System.Collections.Generic; 
 
 namespace ILNumerics.Misc
 {
 	/// <summary>
-	/// ILDimension - specify dimensions for ILArray objects.
+	/// ILDimension - dimensions for ILArray objects (immutable)
 	/// </summary>
 	/// <remarks>The class internally manages the dimensions of ILArray. 
     /// The class is immutable. Therefore, once created, it informs the user 
-    /// about all dimension related properties, but cannot be altered.</remarks>
+    /// about all dimension related properties, but cannot get altered.</remarks>
 	[Serializable]
     [System.Diagnostics.DebuggerDisplay("{ToString(),nq}")]
-    public class ILDimension
-	{
-		int [] m_dims; 
+    public class ILDimension {
+        
+        #region attributes
+        int [] m_dims; 
 		int m_nrDims = 0;
 		int m_numberOfElements = 0;
-        int m_length = 0; 
-		/// <summary>
-		///  construct vector dimensions
-		/// </summary>
-		/// <param name="dims">variable length for dimsensions. 
-		/// exmpl: 2,3,2,4 </param>
-		public ILDimension (params int[] dims){
-            if (dims.Length == 0) 
-				throw new ArgumentOutOfRangeException("dims","dimensions must not be empty!");
-			else {
-				// create dimensions 
-                int curDim = 0;  
-				if (dims.Length > 1) {
-					m_dims  = dims;  // do NOT copy this!! 
-					m_nrDims = dims.Length;
-				} else if (dims.Length == 1) {
-					m_dims  = new int[2]; 
-					m_dims[1] = 1; 
-                    m_dims[0] = dims[0]; 
-					m_nrDims = 2;
-				} else {
-					m_dims  = new int[2]; 
-					m_dims[1] = 0; 
-                    m_dims[0] = 0; 
-					m_nrDims = 2;
-                }
-				m_numberOfElements = 1; 
-                int t = 0; 
-				for(; t < m_dims.Length; t++){
-					curDim = m_dims[t]; 
-                    if (curDim > m_length) m_length = curDim;
-                    m_numberOfElements *= curDim; 
-				}
-                // if last dimension is singleton -> must be trimmed
-                if (m_dims[t-1] == 1) 
-                    Trim(); 
-                if (m_numberOfElements == 0) {
-                    // dimension object for empty array
-                    m_nrDims = 2;
-                    m_dims = new int[2]; 
-                    m_dims[0] = 0; 
-                    m_dims[1] = 0; 
-                }
+        int m_length = 0;
+        #endregion
 
+        #region constructors
+        /// <summary>
+		///  create new ILDimension 
+		/// </summary>
+		/// <param name="dims">variable length dimensions specifier</param>
+        /// <remarks>trailing singleton dimensions of dims will be kept.</remarks>
+		public ILDimension (params int[] dims) 
+            : this(false,dims) {}
+        /// <summary>
+        /// create new ILDimension, without trimming trailing singleton dimensions
+        /// </summary>
+        /// <param name="keepSingletons">true: trailing singleton 
+        /// dimensions will be trimmed, false: those singleton dimensions will be kept.</param>
+        /// <param name="dims">dimension lenght specifiers</param>
+        public ILDimension (bool trimSingletons, params int[] dims)  {
+			List<int> tmp = new List<int>(dims);
+            while(tmp.Count < 2) tmp.Add(1); 
+            if (trimSingletons) 
+                for (int i = tmp.Count; i-->2;) {
+                    if (tmp[i] == 1) tmp.RemoveAt(i); 
+                    else break; 
+                }
+            m_dims = tmp.ToArray(); 
+			m_numberOfElements = 1; 
+            m_nrDims = m_dims.Length; 
+            int t = 0, d; 
+			for(; t < m_dims.Length; t++){
+				d = m_dims[t]; 
+                if (d > m_length) m_length = d;
+                m_numberOfElements *= d; 
 			}
-		}
-		/// <summary>		
-		/// copy constructor
+        }
+        /// <summary>		
+		/// [obsolete] copy constructor
 		/// </summary>
 		/// <param name="newDim">ILDimension object to copy this object from</param>
-		public ILDimension (ILDimension newDim) {
-			m_nrDims = newDim.m_nrDims;
-			m_numberOfElements = newDim.m_numberOfElements; 
-			m_dims = new int[m_nrDims]; 
+        /// <remarks>This function is obsolete and will be removed in a future version. Resona: 
+        /// ILDimension objects are immutable and can therefore savely be reused for 
+        /// multiple arrays.</remarks>
+        private ILDimension (ILDimension newDim) {
+            m_nrDims = newDim.m_nrDims;
+            m_numberOfElements = newDim.m_numberOfElements; 
+            m_dims = new int[m_nrDims]; 
             m_length = newDim.m_length; 
-			for (int i = 0; i < m_nrDims; i++) {
-				m_dims[i] = newDim[i]; 
+            for (int i = 0; i < m_nrDims; i++) {
+                m_dims[i] = newDim[i]; 
                 if (m_length < m_dims[i]) m_length = m_dims[i]; 
-			}
-		}
-		
-		/// <summary>Get/set Number of Dimensions.</summary>
-		/// <description>setting this value will clear the dimension object 
-		/// and reinitialize it with all "1" for all dimensions! </description>
-		/// <remarks>Make sure to disable write access to this property from outside of 
-		/// the library to prevent for storage inconsistency!</remarks>
+            }
+        }
+        #endregion
+
+        #region properties
+        /// <summary>Get number of dimensions.</summary>
 		public int NumberOfDimensions {
 			get {
 				return m_nrDims; 
 			}
 		}
         /// <summary>
-        /// Number of non singleton dimensions this ILDimension is holding
+        /// Number of non singleton dimensions this ILDimension is referencing
         /// </summary>
+        /// <remarks>non singleton dimensions are dimensions which length is larger than 1. 
+        /// Empty dimensions (length = 0) will not be take into account.</remarks>
         public int NonSingletonDimensions {
             get {
                 int ret = 0;
@@ -120,26 +114,47 @@ namespace ILNumerics.Misc
                 return ret;
             }
         }
-
 		/// <summary>
-		/// Number of elements this ILDimension will produce in a storage array
+		/// The number of elements the dimensions reference in an array of that size
 		/// </summary>
 		public int NumberOfElements {
 			get {
 				return m_numberOfElements;
 			}
-		}
-		/// <summary>
-		/// Marks the number of elements between adjecent elementes of 
-		/// each dimension as if the underlying storage was a physical storage.
+        }
+        /// <summary>
+		/// return longest dimension length
 		/// </summary>
-		/// <param name="dim">dimension number to query the distance for. The
-		/// first dimension has index 0 (zero)!</param>
-		/// <returns>number of elements between adjecent elementes of dimension dim.
+		public int Longest {
+			get {
+				return m_length; 
+			}
+		}
+        /// <summary>
+        /// find first non singleton dimension - if exist
+        /// </summary>
+        /// <returns>index of first non singleton dimension or -1, if this is a scalar.</returns>
+        public int FirstNonSingleton() {
+            if (m_numberOfElements <= 1) return -1; 
+            for (int i = 0; i < m_nrDims; i++) {
+                if (m_dims[i] > 1) return i; 
+            }
+            return -1; // this should not happen! Test on scalar above 
+        }
+        #endregion 
+
+        #region public member
+        /// <summary>
+		/// Marks the number of elements between adjacent elementes of 
+		/// each dimension as if the underlying storage was a dense storage.
+		/// </summary>
+		/// <param name="dim">dimension number to query the element distance for. The
+		/// first dimension has index 0 ('zero')!</param>
+		/// <returns>number of elements between adjacent elementes of dimension dim.
         /// </returns>
         /// <remarks>if dimension index dim is larger than the number of 
         /// dimensions inside this ILDimension, the number of elements will 
-        /// be returned (assuming the trailing dimensions to be 0).</remarks>
+        /// be returned (assuming the trailing dimensions to be 1).</remarks>
 		public int SequentialIndexDistance(int dim) {
             if (dim == m_nrDims)
                 return m_numberOfElements; 
@@ -151,24 +166,34 @@ namespace ILNumerics.Misc
 			return ret; 
 		}
         /// <summary>
-        /// distances between adjacent elements for all dimension
+        /// distances between adjacent elements for all dimensions
         /// </summary>
-        /// <remarks>This is provided for performance reasons and should be used internaly only.
-        /// It enables developer for index access routines to cache the element distances directly inside 
-        /// their functions without having to query the info every for every index.
-        /// <para>keep in mind, only the distances for the number of my dimensions are returned. 
-        /// Higher dimensions must be set to NumberOfElements by hand. This is different than querying 
-        /// the distances by SequentialIndexDistance(int), which will assume trailing dimensions to be set to 0.</para></remarks>
-		internal int[] SequentialIndexDistances {
-            get{
-                int[] ret = new int[m_nrDims];
-                int tmp = 1; 
-                for (int i = 0; i < m_nrDims; i++) {
-                    ret[i] = tmp; 
-                    tmp *= m_dims[i];
-                }
-			    return ret; 
+        /// <param name="minLength">minimum length of array to be 
+        /// returned. If this is larger than the number of dimensions 
+        /// in this ILDimension, the array will have minLength elements, 
+        /// with elements outside this dimensions repeating the value 
+        /// of the last dimension. The length of the array returned will 
+        /// equal min(minLength,NumberOfDimensions).</param>
+        /// <remarks>This is provided for performance reasons and should be 
+        /// used internally only. It enables developer of index access routines 
+        /// to cache the elements distances directly inside their functions 
+        /// without having to query the info on every index access.
+        /// <para>Keep in mind, only the distances for the number of my 
+        /// dimensions are returned. Higher dimensions must be set to 
+        /// NumberOfElements if needed. This is different than querying 
+        /// the distances by SequentialIndexDistance(int), which will assume 
+        /// and return trailing dimensions to be 1.</para></remarks>
+		internal int[] GetSequentialIndexDistances(int minLength) {
+            int[] ret = new int[Math.Max(m_nrDims,minLength)];
+            int tmp = 1,i = 0; 
+            for (; i < m_nrDims; i++) {
+                ret[i] = tmp; 
+                tmp *= m_dims[i];
             }
+            for (; i < ret.Length; i++) {
+                ret[i] = tmp; 
+            }
+		    return ret; 
         }
 		/// <summary>
 		/// transfer my dimensions to integer array 
@@ -180,19 +205,26 @@ namespace ILNumerics.Misc
 		/// <summary>
 		/// transfer my dimensions to integer array 
 		/// </summary>
-        /// <param name="length">minimum length of output array. If length is larger than my dimensions, trailing zeros will be added.</param>
-		/// <returns>integer array containing a copy of dimensions length. Trailing elements outside my dims will be zero.</returns>
+        /// <param name="length">minimum length of output array. If length 
+        /// is larger than my dimensions, trailing ones will be added.</param>
+		/// <returns>integer array containing a copy of dimensions length. 
+        /// Trailing elements outside my dims will be one.</returns>
 		internal int[] ToIntArray (int length) {
 			int[] ret; 
             ret = new int[length > m_nrDims ? length : m_nrDims];
-			Array.Copy(m_dims,0,ret,0,m_nrDims); 
+			Array.Copy(m_dims,0,ret,0,m_nrDims);
+            for (int i = m_nrDims; i < length; i++) {
+                ret[i] = 1; 
+            }
 			return ret; 
 		}
 		/// <summary>
-		/// Translate indices from int[] Array to sequential storage access in my dimensions
+		/// Translate indices from int[] Array to sequential storage access 
+        /// in my dimensions
 		/// </summary>
 		/// <param name="idx">int array of nrDims length</param>
-		/// <returns>Index number pointing to the value's position in sequential storage.</returns>
+		/// <returns>Index number pointing to the value's position in 
+        /// sequential storage.</returns>
 		public int IndexFromArray(int[] idx) {
 			try {
 				int faktor = m_dims[0]; 
@@ -219,16 +251,21 @@ namespace ILNumerics.Misc
 			}
 		}
 		/// <summary>
-		/// Transform dimension position into sequential index, gather expand information
+		/// Transform dimension position into sequential index, gather expand 
+        /// information
 		/// </summary>
 		/// <param name="idx">int array of arbitrary length</param>
-        /// <param name="MustExpand">[output] true, if the indices given address an element outside of 
-        /// this dimensions size. In this case, the output parameter 'Dimensions' carry the sizes 
+        /// <param name="MustExpand">[output] true, if the indices 
+        /// given address an element outside of 
+        /// this dimensions size. In this case, the output parameter 
+        /// 'Dimensions' carry the sizes 
         /// of new dimensions needed. False otherwise</param>
         /// <param name="Dimensions">sizes of dimension if expansion is needed</param>
-		/// <returns>Index number pointing to the value's position in sequential storage.</returns>
-        /// <remarks>no checks are made for idx to fit inside dimensions! This functions is used 
-        /// for left side assignments. Therefore it computes the destination index also if it lays outside 
+		/// <returns>Index number pointing to the value's position in 
+        /// sequential storage.</returns>
+        /// <remarks>no checks are made for idx to fit inside dimensions! 
+        /// This functions is used for left side assignments. Therefore it 
+        /// computes the destination index also if it lays outside 
         /// the array bounds.</remarks>
 		internal int IndexFromArray(ref bool MustExpand, ref int[] Dimensions, int[] idx) {
             if (idx.Length < m_nrDims) {
@@ -310,17 +347,21 @@ namespace ILNumerics.Misc
             }
 		}
 		/// <summary>
-		/// Unshift dimensions of indices from int[] Array and translate to index 
-		/// for sequential storage access in my dimensions
-		/// </summary>
-		/// <param name="idx">int array of the same length as the number of dimensions
-		/// of this storage. Indices must lay within my dimensions.</param>
-		/// <param name="unshift">number of dimensions to unshift idx before computing index</param>
-		/// <returns>Index number pointing to the value's position in sequential storage.</returns>
-		/// <remarks> If idx contains elements (indices) larger than my dimension bounds, 
-		/// an Exception will be thrown. If unshift is 0, the length of idx may be smaller than 
-		/// the length of my dimensions. However, with unshift > 0 the result 
-		/// of such a case would be undefined.</remarks>
+		/// Unshift dimensions of indices from int[] Array 
+        /// and translate to index for sequential storage access 
+        /// in my dimensions </summary>
+		/// <param name="idx">int array of the same length as 
+        /// the number of dimensions of this storage. Indices must 
+        /// lay within my dimensions.</param>
+		/// <param name="unshift">number of dimensions to unshift 
+        /// idx before computing index</param>
+		/// <returns>Index number pointing to the value's position 
+        /// in sequential storage.</returns>
+		/// <remarks> If idx contains elements (indices) larger than 
+        /// my dimension bounds, an exception will be thrown. If unshift 
+        /// is 0, the length of idx may be smaller than the length of 
+        /// my dimensions. However, with unshift &gt; 0 the result 
+		/// is undefined.</remarks>
 		public int IndexFromArray(int[] idx, int unshift) {
 			unshift %= m_nrDims;
 			int faktor = m_dims[0];
@@ -338,101 +379,55 @@ namespace ILNumerics.Misc
 		/// <return>
 		/// New ILDimension object as exact copy of this object.
 		/// </return>
-		public ILDimension Clone() {
+		private ILDimension Clone() {
 			ILDimension ret = new ILDimension(this); 
 			return ret;
 		}
 		/// <summary>
-		/// Shift dimension specification. 
+		/// [deprecated] Shift this ILDimension
 		/// </summary>
-		/// <param name="nrs">Number of dimensions to shift.</param>
-		/// <remarks>this will only alter the dimensions order. Neither the Number of Elements nor 
-		/// the number of dimensions addressed will change.</remarks>
-		internal void Shift (int nrs) {
-			nrs %= m_nrDims; 
+		/// <param name="shift">number of dimensions to shift.</param>
+		/// <remarks>this will not alter this object anymore but return the shifted version!
+        /// The function will be removed in a future release! Use 
+        /// ILDimension.GetShiftedVersion() instead!</remarks>
+		private ILDimension Shift (int shift) {
+		    return GetShifted(shift); 
+        }
+		/// <summary>
+		/// return shifted version
+		/// </summary>
+		/// <param name="shift">number of dimensions to shift. The value
+        /// will be considered modules the number of dimensions of 
+        /// this ILDimension.</param>
+		/// <returns>shifted version of this ILDimension object.</returns>
+		public ILDimension GetShifted(int shift){ 
+			shift %= m_nrDims; 
 			int [] tmp = new int [m_nrDims]; 
 			int id;
             for (int d = 0; d < m_nrDims; d++) {
-                id = (d + nrs) % m_nrDims;
+                id = (d + shift) % m_nrDims;
                 tmp[d] = m_dims[id];
             }
-			m_dims = tmp;
+			return new ILDimension(tmp);
 		}
-
-		/// <summary>
-		/// Create shifted version
-		/// </summary>
-		/// <param name="shift">number of dimensions to shift</param>
-		/// <returns>shifted version of this ILDimension object</returns>
-		public ILDimension getShiftedVersion(int shift){ 
-			ILDimension ret = new ILDimension(m_dims);
-			ret.Shift(shift);
-			return ret; 
-		}
-        ///// <summary>
-        ///// test if range fits inside dimensions
-        ///// </summary>
-        ///// <param name="range">ILRange to test against dimension size</param>
-        ///// <returns>true if this range can get applied to this dimensions, or false if not.</returns>
-        ///// <remarks>range may be of more dimensions than this dimension if on the end of range only exist "0" dimensions.
-        ///// If range is of less dimensions than this dimension, zero will be added -> this is valid also.</remarks>
-        //public bool ValidRange(ILRange range){
-        //    int d=0; 
-        //    for (; d < m_nrDims && d < range.NumberOfDimensions; d++) {
-        //        if (range.MaxValue(d) >= m_dims[d] || range.MinValue(d) < 0)
-        //                return false;
-        //    }
-        //    // dimensions at end must be singleton dimensions 
-        //    while (d < range.NumberOfDimensions) 
-        //        if (range.MaxValue(d) != 0 || range.MinValue(d++) != 0) return false; 
-        //    return true;
-        //}
-		/// Access for ILDimension dimensions with [d]-braces.
-		/// alowed is read AND write access 
-		/// if d is smaller 1, an ArgumentOutOfRange Exception is thrown
-		/// if d is greater as NumberOfDimensions 
-		/// <item>on Write Access: the dimensions are extended. 
-		/// Empty dimensions are marked as having length '1'. </item>
-        /// <item> on Read Access: 1 will be returned</item>
-		/// <remarks> Index Access is Zero-based, i.e. the first element start at 0, the 
-        /// last element ends at (N-1)
+        /// <summary>
+        /// Get length for dimension specified (Readonly)
+        /// </summary>
+        /// <param name="idx">index of dimension</param>
+        /// <returns>length of dimension specified by idx</returns>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if idx is negative</exception>
+        /// <remarks><para>for idx corresponds to an existing dimension, 
+        /// the length of that dimension is returned. If idx is larger than 
+        /// the number of dimensions 1 is returned. </para>
         /// </remarks>
-		public int this [int idx] {
+        public int this [int idx] {
 			get {
 				if (idx < 0) 
 					throw new ArgumentOutOfRangeException("index","Index out of Range!");
 				else if (idx >= m_nrDims) {
                     return 1; 
                 }
-					// get specified dimension
 				return m_dims[idx];
-			}
-			internal set{
-                // todo: there was a bugreport on this part. Check it, if it's still needed!
-				if (idx < 0)
-					throw new ArgumentOutOfRangeException("index","Index must be positive!");
-				else if (idx >= m_nrDims){
-					// extend dimensions 
-					int [] tmp = new int[idx+1];
-					Array.Copy(m_dims,tmp,m_nrDims);
-					// fill with ones between
-					for (int t = m_nrDims; t < idx; t++) {
-						tmp[t] = 1;
-                    }
-					// set new Dimension
-					tmp[idx] = value;
-					m_dims = tmp;
-                    m_numberOfElements *= value; 
-                    m_nrDims = m_dims.Length; 
-				} else if (idx < m_nrDims) {
-					m_numberOfElements /= m_dims[idx]; 
-                    m_dims[idx] = value; 
-                    m_numberOfElements *= value; 
-				}
-                //m_numberOfElements = 1; 
-                //if (m_length < value) m_length = value; 
-                //foreach (int tmp in m_dims)
-                //    m_numberOfElements *= tmp;
 			}
 		}
 		/// <summary>
@@ -440,9 +435,11 @@ namespace ILNumerics.Misc
 		/// </summary>
 		/// <param name="dim2">ILDimension object to compare this to.</param>
 		/// <returns>Returns true if the sizes are the same, else returns false. 
-		/// The comparison is made by recognizing singleton dimesnions. Therefore 
-		/// only non singleton dimesnions are compared in the order of their 
-		/// appearence. </returns>
+		/// The comparison is made by recognizing singleton dimensions. Therefore 
+		/// only non singleton dimensions are compared in the order of their 
+		/// appearance. </returns>
+        /// <remarks>The function reutrns true, if the squeezed dimensions of 
+        /// both ILDimensions match.</remarks>
 		public bool IsSameSize(ILDimension dim2) { 
 			if (dim2.NumberOfElements != m_numberOfElements) return false; 
 			for (int d2 = dim2.NumberOfDimensions,d1 = m_nrDims;d1 >= 0;) {
@@ -458,86 +455,70 @@ namespace ILNumerics.Misc
 			return true;
 		}
 		/// <summary>
-		/// Create a copy of this ILDimension object with all singleton dimensions removed.
+		/// Compares the shape of this dimension to another dimension object 
 		/// </summary>
-		/// <returns></returns>
+		/// <param name="dim2">ILDimension object to compare this to.</param>
+		/// <returns>Returns true if the shapes are the same, else returns false. </returns>
+        /// <remarks>This function is more strict than IsSameSize. In order 
+        /// for two dimensions to have the same shape, ALL dimensions must match - 
+        /// even singleton dimensions.</remarks>
+		public bool IsSameShape(ILDimension dim2) { 
+            if (dim2.NumberOfElements != m_numberOfElements) return false; 
+            if (dim2.NumberOfDimensions != m_nrDims) return false; 
+			for (int d1 = m_nrDims;d1-->0;) { 
+				if (m_dims[d1] != dim2.m_dims[d1]) 
+					return false;
+			}
+			return true;
+		}
+		/// <summary>
+		/// [deprecated] Create copy of this ILDimension having all singleton 
+        /// dimensions removed.
+		/// </summary>
+		/// <returns>a squeezed copy</returns>
+        /// <remarks>This function is deprecated. Use the ILDimension.Squeeze()
+        /// memeber instead. </remarks>
 		public ILDimension GetSqueezed() {
-			ILDimension ret = new ILDimension(this); 
-			return ret.Squeeze();
+			return Squeeze();
 		}
 		/// <summary>
-		/// Remove singleton dimensions from this ILDimension object.
+		/// Create and return copy without singleton dimensions
 		/// </summary>
-		/// <returns>This object after singleton dimensions have been removed.</returns>
-		/// <remarks> this object will be altered AND returned! 
-        /// TODO: Check, if this is valid, since 
-        /// ILDimension should be immutable! </remarks>
+		/// <returns>Copy of this ILDimension having all singleton dimensions removed.</returns>
+		/// <remarks> This function does not alter this object (since ILDimension is 
+        /// immutable).
+        /// <para>All arrays in ILNumerics.Net have at least 2 dimensions. 
+        /// Therefore all but the first two singleton dimensions can be removed.</para>
+        /// </remarks>
 		public ILDimension Squeeze() {
-			int p1 = 0; 
-			int p2 = 0; 
-			while (p1 < m_nrDims) {
-				if (m_dims[p1] != 1)
-					m_dims[p2++] = m_dims[p1];
-				p1++;
-			}
-			m_nrDims = p2 +1;
-			if (m_nrDims < 2) {
-				if (m_nrDims == 1) 
-					m_dims[1] = 1; 
-				if (m_nrDims == 0)
-					throw new ArgumentException ("ILDimensions|Squeeze:This dimension does not contain data!"); 
-				m_nrDims = 2; 
-			}
-			int [] newDims = new int[m_nrDims]; 
-			System.Array.Copy(m_dims,0,newDims,0,m_nrDims);
-			m_dims = newDims; 
-			return this;
-		}
-		/// <summary>
-		/// Remove singleton dimensions from this ILDimension objects end.
-		/// </summary>
-		/// <returns>This object after singleton dimensions have been removed.</returns>
-		/// <remarks> this object will be altered AND returned! The result wil have at
-        /// least 2 dimensions.</remarks>
-		public ILDimension Trim() {
-			int p1 = m_nrDims-1; 
-			bool hasTrimmed = false; 
-            while (p1 > 1) {
-				if (m_dims[p1] > 1) break; 
-                hasTrimmed = true; 
-				p1--;
-			}
-			if (hasTrimmed) {
-                m_nrDims = p1+1;
-			    int [] newDims = new int[m_nrDims]; 
-			    System.Array.Copy(m_dims,0,newDims,0,m_nrDims);
-			    m_dims = newDims; 
-			}
-            return this;
-		}
-
-		/// <summary>
-		/// return longest dimension length
-		/// </summary>
-		public int Longest {
-			get {
-				return m_length; 
-			}
-		}
-        /// <summary>
-        /// find first non singleton dimension - if exist
-        /// </summary>
-        /// <returns>index of first non singleton dimension or -1, if this is a scalar.</returns>
-        public int FirstNonSingleton() {
-            if (m_numberOfElements <= 1) return -1; 
-            for (int i = 0; i < m_nrDims; i++) {
-                if (m_dims[i] > 1) return i; 
+            List<int> tmp = new List<int>(); 
+            foreach (int d in m_dims) {
+                if (d != 1) tmp.Add(d); 
             }
-            return -1; // this should not happen! Test on scalar above 
+            while (tmp.Count < 2) { 
+                tmp.Add(1); 
+            }
+			return new ILDimension(tmp.ToArray());
+		}
+		/// <summary>
+		/// Return ILDimension having trailing singleton dimensions removed
+		/// </summary>
+		/// <returns>Copy without trailing singleton dimensions</returns>
+		/// <remarks> this object will NOT be altered. As usual for all ILArrays, 
+        /// the result wil have at least 2 dimensions.</remarks>
+		public ILDimension Trim() {
+            if (m_nrDims == 2 || m_dims[m_nrDims-1] != 1) {
+                return this; 
+            }
+            int i = m_nrDims; 
+            for (; i-->2; ) if (m_dims[i] != 1) break; 
+            int[] newdims = new int[++i]; 
+			System.Array.Copy(m_dims,0,newdims,0,i);
+            return new ILDimension(newdims);
         }
 		/// toString: prints out dimensions 
 		public override String ToString (){
-			String s = "["; 
+			String s = "[";
 			for (int t = 0; t < m_nrDims; t++) {
 				s = s + m_dims[t];
 				if (t < m_nrDims -1 ) 
@@ -546,5 +527,7 @@ namespace ILNumerics.Misc
 			s = s + "]"; 
 			return s;
         }
+        #endregion 
+
     }
 }

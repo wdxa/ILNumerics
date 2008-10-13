@@ -117,7 +117,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static /*!HC:outCls1*/ ILArray<double> diff(/*!HC:inCls1*/ ILArray<double> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return /*!HC:outCls1*/ ILArray<double> .empty(); 
+            if (fnsd < 0) return /*!HC:outCls1*/ ILArray<double> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -132,15 +132,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static /*!HC:outCls1*/ ILArray<double> diff(/*!HC:inCls1*/ ILArray<double> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return /*!HC:outCls1*/ ILArray<double> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return /*!HC:outCls1*/ ILArray<double> .empty(outDims); 
+            }
+            if (A.IsScalar) return /*!HC:outCls1*/ ILArray<double> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return /*!HC:outCls1*/ ILArray<double> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return /*!HC:outCls1*/ ILArray<double> .empty(); 
+                return /*!HC:outCls1*/ ILArray<double> .empty(0,0); 
             }
             /*!HC:outCls1*/ ILArray<double> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -155,14 +166,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static /*!HC:outCls1*/ ILArray<double> diff(int leadDim, /*!HC:inCls1*/ ILArray<double> A) {
-            if (A.IsEmpty || A.IsScalar) return /*!HC:outCls1*/ ILArray<double> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return /*!HC:outCls1*/ ILArray<double> .empty(A.Dimensions);
+            if (A.IsScalar) return /*!HC:outCls1*/ ILArray<double> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return /*!HC:outCls1*/ ILArray<double> .empty(outDims); 
+            }
             /*!HC:outCls1*/ ILArray<double> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             /*!HC:singletonDimOp*/
-            if (inDim[leadDim] == 1) return /*!HC:outCls1*/ ILArray<double> .empty();
+            if (inDim[leadDim] == 1) return /*!HC:outCls1*/ ILArray<double> .empty(0,0);
 			int newLength;
 			/*!HC:outArr1*/ double [] retDblArr;
 			// build ILDimension
@@ -300,7 +317,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static  ILArray<UInt64> diff( ILArray<UInt64> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return  ILArray<UInt64> .empty(); 
+            if (fnsd < 0) return  ILArray<UInt64> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -315,15 +332,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static  ILArray<UInt64> diff( ILArray<UInt64> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return  ILArray<UInt64> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<UInt64> .empty(outDims); 
+            }
+            if (A.IsScalar) return  ILArray<UInt64> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return  ILArray<UInt64> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return  ILArray<UInt64> .empty(); 
+                return  ILArray<UInt64> .empty(0,0); 
             }
             ILArray<UInt64> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -338,14 +366,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static  ILArray<UInt64> diff(int leadDim,  ILArray<UInt64> A) {
-            if (A.IsEmpty || A.IsScalar) return  ILArray<UInt64> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return  ILArray<UInt64> .empty(A.Dimensions);
+            if (A.IsScalar) return  ILArray<UInt64> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<UInt64> .empty(outDims); 
+            }
             ILArray<UInt64> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
-            if (inDim[leadDim] == 1) return  ILArray<UInt64> .empty();
+            if (inDim[leadDim] == 1) return  ILArray<UInt64> .empty(0,0);
 			int newLength;
 			 UInt64 [] retDblArr;
 			// build ILDimension
@@ -480,7 +514,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static  ILArray<UInt32> diff( ILArray<UInt32> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return  ILArray<UInt32> .empty(); 
+            if (fnsd < 0) return  ILArray<UInt32> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -495,15 +529,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static  ILArray<UInt32> diff( ILArray<UInt32> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return  ILArray<UInt32> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<UInt32> .empty(outDims); 
+            }
+            if (A.IsScalar) return  ILArray<UInt32> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return  ILArray<UInt32> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return  ILArray<UInt32> .empty(); 
+                return  ILArray<UInt32> .empty(0,0); 
             }
             ILArray<UInt32> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -518,14 +563,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static  ILArray<UInt32> diff(int leadDim,  ILArray<UInt32> A) {
-            if (A.IsEmpty || A.IsScalar) return  ILArray<UInt32> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return  ILArray<UInt32> .empty(A.Dimensions);
+            if (A.IsScalar) return  ILArray<UInt32> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<UInt32> .empty(outDims); 
+            }
             ILArray<UInt32> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
-            if (inDim[leadDim] == 1) return  ILArray<UInt32> .empty();
+            if (inDim[leadDim] == 1) return  ILArray<UInt32> .empty(0,0);
 			int newLength;
 			 UInt32 [] retDblArr;
 			// build ILDimension
@@ -660,7 +711,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static  ILArray<UInt16> diff( ILArray<UInt16> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return  ILArray<UInt16> .empty(); 
+            if (fnsd < 0) return  ILArray<UInt16> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -675,15 +726,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static  ILArray<UInt16> diff( ILArray<UInt16> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return  ILArray<UInt16> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<UInt16> .empty(outDims); 
+            }
+            if (A.IsScalar) return  ILArray<UInt16> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return  ILArray<UInt16> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return  ILArray<UInt16> .empty(); 
+                return  ILArray<UInt16> .empty(0,0); 
             }
             ILArray<UInt16> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -698,14 +760,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static  ILArray<UInt16> diff(int leadDim,  ILArray<UInt16> A) {
-            if (A.IsEmpty || A.IsScalar) return  ILArray<UInt16> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return  ILArray<UInt16> .empty(A.Dimensions);
+            if (A.IsScalar) return  ILArray<UInt16> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<UInt16> .empty(outDims); 
+            }
             ILArray<UInt16> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
-            if (inDim[leadDim] == 1) return  ILArray<UInt16> .empty();
+            if (inDim[leadDim] == 1) return  ILArray<UInt16> .empty(0,0);
 			int newLength;
 			 UInt16 [] retDblArr;
 			// build ILDimension
@@ -840,7 +908,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static  ILArray<Int64> diff( ILArray<Int64> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return  ILArray<Int64> .empty(); 
+            if (fnsd < 0) return  ILArray<Int64> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -855,15 +923,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static  ILArray<Int64> diff( ILArray<Int64> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return  ILArray<Int64> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<Int64> .empty(outDims); 
+            }
+            if (A.IsScalar) return  ILArray<Int64> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return  ILArray<Int64> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return  ILArray<Int64> .empty(); 
+                return  ILArray<Int64> .empty(0,0); 
             }
             ILArray<Int64> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -878,14 +957,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static  ILArray<Int64> diff(int leadDim,  ILArray<Int64> A) {
-            if (A.IsEmpty || A.IsScalar) return  ILArray<Int64> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return  ILArray<Int64> .empty(A.Dimensions);
+            if (A.IsScalar) return  ILArray<Int64> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<Int64> .empty(outDims); 
+            }
             ILArray<Int64> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
-            if (inDim[leadDim] == 1) return  ILArray<Int64> .empty();
+            if (inDim[leadDim] == 1) return  ILArray<Int64> .empty(0,0);
 			int newLength;
 			 Int64 [] retDblArr;
 			// build ILDimension
@@ -1020,7 +1105,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static  ILArray<Int32> diff( ILArray<Int32> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return  ILArray<Int32> .empty(); 
+            if (fnsd < 0) return  ILArray<Int32> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -1035,15 +1120,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static  ILArray<Int32> diff( ILArray<Int32> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return  ILArray<Int32> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<Int32> .empty(outDims); 
+            }
+            if (A.IsScalar) return  ILArray<Int32> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return  ILArray<Int32> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return  ILArray<Int32> .empty(); 
+                return  ILArray<Int32> .empty(0,0); 
             }
             ILArray<Int32> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -1058,14 +1154,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static  ILArray<Int32> diff(int leadDim,  ILArray<Int32> A) {
-            if (A.IsEmpty || A.IsScalar) return  ILArray<Int32> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return  ILArray<Int32> .empty(A.Dimensions);
+            if (A.IsScalar) return  ILArray<Int32> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<Int32> .empty(outDims); 
+            }
             ILArray<Int32> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
-            if (inDim[leadDim] == 1) return  ILArray<Int32> .empty();
+            if (inDim[leadDim] == 1) return  ILArray<Int32> .empty(0,0);
 			int newLength;
 			 Int32 [] retDblArr;
 			// build ILDimension
@@ -1200,7 +1302,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static  ILArray<Int16> diff( ILArray<Int16> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return  ILArray<Int16> .empty(); 
+            if (fnsd < 0) return  ILArray<Int16> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -1215,15 +1317,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static  ILArray<Int16> diff( ILArray<Int16> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return  ILArray<Int16> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<Int16> .empty(outDims); 
+            }
+            if (A.IsScalar) return  ILArray<Int16> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return  ILArray<Int16> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return  ILArray<Int16> .empty(); 
+                return  ILArray<Int16> .empty(0,0); 
             }
             ILArray<Int16> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -1238,14 +1351,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static  ILArray<Int16> diff(int leadDim,  ILArray<Int16> A) {
-            if (A.IsEmpty || A.IsScalar) return  ILArray<Int16> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return  ILArray<Int16> .empty(A.Dimensions);
+            if (A.IsScalar) return  ILArray<Int16> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<Int16> .empty(outDims); 
+            }
             ILArray<Int16> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
-            if (inDim[leadDim] == 1) return  ILArray<Int16> .empty();
+            if (inDim[leadDim] == 1) return  ILArray<Int16> .empty(0,0);
 			int newLength;
 			 Int16 [] retDblArr;
 			// build ILDimension
@@ -1380,7 +1499,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static  ILArray<char> diff( ILArray<char> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return  ILArray<char> .empty(); 
+            if (fnsd < 0) return  ILArray<char> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -1395,15 +1514,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static  ILArray<char> diff( ILArray<char> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return  ILArray<char> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<char> .empty(outDims); 
+            }
+            if (A.IsScalar) return  ILArray<char> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return  ILArray<char> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return  ILArray<char> .empty(); 
+                return  ILArray<char> .empty(0,0); 
             }
             ILArray<char> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -1418,14 +1548,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static  ILArray<char> diff(int leadDim,  ILArray<char> A) {
-            if (A.IsEmpty || A.IsScalar) return  ILArray<char> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return  ILArray<char> .empty(A.Dimensions);
+            if (A.IsScalar) return  ILArray<char> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<char> .empty(outDims); 
+            }
             ILArray<char> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
-            if (inDim[leadDim] == 1) return  ILArray<char> .empty();
+            if (inDim[leadDim] == 1) return  ILArray<char> .empty(0,0);
 			int newLength;
 			 char [] retDblArr;
 			// build ILDimension
@@ -1560,7 +1696,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static  ILArray<byte> diff( ILArray<byte> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return  ILArray<byte> .empty(); 
+            if (fnsd < 0) return  ILArray<byte> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -1575,15 +1711,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static  ILArray<byte> diff( ILArray<byte> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return  ILArray<byte> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<byte> .empty(outDims); 
+            }
+            if (A.IsScalar) return  ILArray<byte> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return  ILArray<byte> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return  ILArray<byte> .empty(); 
+                return  ILArray<byte> .empty(0,0); 
             }
             ILArray<byte> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -1598,14 +1745,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static  ILArray<byte> diff(int leadDim,  ILArray<byte> A) {
-            if (A.IsEmpty || A.IsScalar) return  ILArray<byte> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return  ILArray<byte> .empty(A.Dimensions);
+            if (A.IsScalar) return  ILArray<byte> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<byte> .empty(outDims); 
+            }
             ILArray<byte> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
-            if (inDim[leadDim] == 1) return  ILArray<byte> .empty();
+            if (inDim[leadDim] == 1) return  ILArray<byte> .empty(0,0);
 			int newLength;
 			 byte [] retDblArr;
 			// build ILDimension
@@ -1740,7 +1893,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static  ILArray<fcomplex> diff( ILArray<fcomplex> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return  ILArray<fcomplex> .empty(); 
+            if (fnsd < 0) return  ILArray<fcomplex> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -1755,15 +1908,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static  ILArray<fcomplex> diff( ILArray<fcomplex> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return  ILArray<fcomplex> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<fcomplex> .empty(outDims); 
+            }
+            if (A.IsScalar) return  ILArray<fcomplex> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return  ILArray<fcomplex> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(0,0); 
             }
             ILArray<fcomplex> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -1778,14 +1942,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static  ILArray<fcomplex> diff(int leadDim,  ILArray<fcomplex> A) {
-            if (A.IsEmpty || A.IsScalar) return  ILArray<fcomplex> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return  ILArray<fcomplex> .empty(A.Dimensions);
+            if (A.IsScalar) return  ILArray<fcomplex> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<fcomplex> .empty(outDims); 
+            }
             ILArray<fcomplex> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
-            if (inDim[leadDim] == 1) return  ILArray<fcomplex> .empty();
+            if (inDim[leadDim] == 1) return  ILArray<fcomplex> .empty(0,0);
 			int newLength;
 			 fcomplex [] retDblArr;
 			// build ILDimension
@@ -1920,7 +2090,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static  ILArray<float> diff( ILArray<float> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return  ILArray<float> .empty(); 
+            if (fnsd < 0) return  ILArray<float> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -1935,15 +2105,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static  ILArray<float> diff( ILArray<float> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return  ILArray<float> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<float> .empty(outDims); 
+            }
+            if (A.IsScalar) return  ILArray<float> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return  ILArray<float> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(0,0); 
             }
             ILArray<float> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -1958,14 +2139,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static  ILArray<float> diff(int leadDim,  ILArray<float> A) {
-            if (A.IsEmpty || A.IsScalar) return  ILArray<float> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return  ILArray<float> .empty(A.Dimensions);
+            if (A.IsScalar) return  ILArray<float> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<float> .empty(outDims); 
+            }
             ILArray<float> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
-            if (inDim[leadDim] == 1) return  ILArray<float> .empty();
+            if (inDim[leadDim] == 1) return  ILArray<float> .empty(0,0);
 			int newLength;
 			 float [] retDblArr;
 			// build ILDimension
@@ -2100,7 +2287,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>For A beeing scalar or empty, an empty result will be returned.</para></remarks>
         public static  ILArray<complex> diff( ILArray<complex> A) {
             int fnsd = A.Dimensions.FirstNonSingleton();
-            if (fnsd < 0) return  ILArray<complex> .empty(); 
+            if (fnsd < 0) return  ILArray<complex> .empty(0,0); 
             return diff(A,1,fnsd); 
         }
         /// <summary>
@@ -2115,15 +2302,26 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If A is empty or scalar, or if N exceeds the length the specified dimension of A, 
         /// an empty array will be returned.</para></remarks>
         public static  ILArray<complex> diff( ILArray<complex> A, int N, int leadDim) {
-            if (A.IsEmpty || A.IsScalar) 
-                return  ILArray<complex> .empty(); 
-            if (leadDim < 0 || leadDim >= A.Dimensions.NumberOfDimensions) {
+            if (Object.Equals(A,null)) 
+                throw new ILArgumentException ("input array must not be null!"); 
+            if (leadDim < 0) {
                 throw new ILArgumentException("diff: leadDim out of range");
+            }
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<complex> .empty(outDims); 
+            }
+            if (A.IsScalar) return  ILArray<complex> .empty(0,0);
+            if (A.IsEmpty) {
+                int [] retDim = A.Dimensions.ToIntArray(); 
+                retDim[leadDim]--; 
+                return  ILArray<complex> .empty(retDim); 
             }
             if (N == 0) 
                 return A.R; 
             if (N < 1 || N > A.Dimensions[leadDim]) {
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(0,0); 
             }
             ILArray<complex> ret = A; 
             for (int n = 0; n < N; n++) {
@@ -2138,14 +2336,20 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="leadDim">dimensions to create derivative along</param>
         /// <returns>array with first derivative of A along dimension <code>lieadDim</code></returns>
         private static  ILArray<complex> diff(int leadDim,  ILArray<complex> A) {
-            if (A.IsEmpty || A.IsScalar) return  ILArray<complex> .empty(); 
-            if (leadDim >= A.Dimensions.NumberOfDimensions || leadDim < 0)
+            if (A.IsEmpty) return  ILArray<complex> .empty(A.Dimensions);
+            if (A.IsScalar) return  ILArray<complex> .empty(0,0);
+            if (leadDim < 0)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (leadDim >= A.Dimensions.NumberOfDimensions) {
+                int[] outDims = A.Dimensions.ToIntArray(leadDim+1); 
+                outDims[leadDim] = 0; 
+                return  ILArray<complex> .empty(outDims); 
+            }
             ILArray<complex> ret; 
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
            
-            if (inDim[leadDim] == 1) return  ILArray<complex> .empty();
+            if (inDim[leadDim] == 1) return  ILArray<complex> .empty(0,0);
 			int newLength;
 			 complex [] retDblArr;
 			// build ILDimension

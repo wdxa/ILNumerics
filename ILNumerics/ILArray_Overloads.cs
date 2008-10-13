@@ -1698,8 +1698,8 @@ namespace ILNumerics {
         /// <param name="vector_elements">1d system array arbitrary type</param>
         /// <returns>ILArray of same type as elements - built as row vector. Empty array if input is null.</returns>
         public static implicit operator ILArray<BaseT> (BaseT[] vector_elements) {
-            if (vector_elements == null) {
-                return ILArray<BaseT>.empty();
+            if (vector_elements == null || vector_elements.Length == 0) {
+                return ILArray<BaseT>.empty(0,0);
             }
             return new ILArray<BaseT>(vector_elements,1,vector_elements.Length); 
         }
@@ -1711,8 +1711,8 @@ namespace ILNumerics {
         /// <remarks>The inner type of input array <paramref name="elements"/> must match the requested type <typeparamref name="BaseT"/>. The resulting ILArray will reflect all dimensions of the input. Elements of input array will get copied to elements of output array (shallow copy).</remarks>
         /// <exception cref="ILNumerics.Exceptions.ILCastException"> if type of input does not match requested type BaseT</exception>
         public static implicit operator ILArray<BaseT> (Array elements) {
-            if (elements == null) {
-                return ILArray<BaseT>.empty();
+            if (elements == null || elements.Length == 0) {
+                return ILArray<BaseT>.empty(0,0);
             }
             if (elements.GetType().GetElementType() != typeof(BaseT)) 
                 throw new ILCastException("cast: inner type of System.Array must match!"); 
@@ -1747,7 +1747,7 @@ namespace ILNumerics {
             if (object.Equals(in1,null))
                 throw new ILArgumentException("operator -(): parameter must not be null!");
             BaseT[] retArr = ILMemoryPool.Pool.New<BaseT>(in1.Dimensions.NumberOfElements);
-            ILArray<BaseT> ret = new ILArray<BaseT>(retArr,in1.Dimensions.Clone()); 
+            ILArray<BaseT> ret = new ILArray<BaseT>(retArr,in1.Dimensions); 
             if (false) {
             } else if (in1 is /*!HC:inCls1*/ ILArray<double> ) {
                 ILMath.invert (in1 as ILArray<double>,ret as ILArray<double>);  

@@ -228,8 +228,8 @@ namespace ILNumerics.BuiltInFunctions  {
             if (M.IsScalar)
                 return new /*!HC:outClsRet*/ ILArray<double> (/*!HC:outClsOne*/ 1.0 / M.GetValue(0)); 
 
-            /*!HC:outClsU*/ ILArray<double> U = /*!HC:outClsU*/ ILArray<double> .empty();
-            /*!HC:outClsV*/ ILArray<double> V = /*!HC:outClsV*/ ILArray<double> .empty();
+            /*!HC:outClsU*/ ILArray<double> U = /*!HC:outClsU*/ ILArray<double> .empty(0,0);
+            /*!HC:outClsV*/ ILArray<double> V = /*!HC:outClsV*/ ILArray<double> .empty(0,0);
             /*!HC:outClsS*/ ILArray<double> S = svd(M, ref U, ref V, true,false); 
 
             int m = M.m_dimensions[0]; 
@@ -339,8 +339,8 @@ namespace ILNumerics.BuiltInFunctions  {
             if (M.IsScalar)
                 return new  ILArray<float> ( 1.0f / M.GetValue(0)); 
 
-            ILArray<float> U =  ILArray<float> .empty();
-            ILArray<float> V =  ILArray<float> .empty();
+            ILArray<float> U =  ILArray<float> .empty(0,0);
+            ILArray<float> V =  ILArray<float> .empty(0,0);
             ILArray<float> S = svd(M, ref U, ref V, true,false); 
 
             int m = M.m_dimensions[0]; 
@@ -445,8 +445,8 @@ namespace ILNumerics.BuiltInFunctions  {
             if (M.IsScalar)
                 return new  ILArray<fcomplex> ( 1.0f / M.GetValue(0)); 
 
-            ILArray<fcomplex> U =  ILArray<fcomplex> .empty();
-            ILArray<fcomplex> V =  ILArray<fcomplex> .empty();
+            ILArray<fcomplex> U =  ILArray<fcomplex> .empty(0,0);
+            ILArray<fcomplex> V =  ILArray<fcomplex> .empty(0,0);
             ILArray<float> S = svd(M, ref U, ref V, true,false); 
 
             int m = M.m_dimensions[0]; 
@@ -551,8 +551,8 @@ namespace ILNumerics.BuiltInFunctions  {
             if (M.IsScalar)
                 return new  ILArray<complex> ( 1.0 / M.GetValue(0)); 
 
-            ILArray<complex> U =  ILArray<complex> .empty();
-            ILArray<complex> V =  ILArray<complex> .empty();
+            ILArray<complex> U =  ILArray<complex> .empty(0,0);
+            ILArray<complex> V =  ILArray<complex> .empty(0,0);
             ILArray<double> S = svd(M, ref U, ref V, true,false); 
 
             int m = M.m_dimensions[0]; 

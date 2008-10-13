@@ -163,7 +163,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<double>  abs ( ILArray<double> A) {
             if (A.IsEmpty)
-                return  ILArray<double> .empty(); 
+                return  ILArray<double> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             double [] retDblArr;
             // build ILDimension    
@@ -279,7 +279,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<double> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<double> ( retDblArr, inDim );
         }
         /// <summary>Absolute values of array elements</summary>
         /// <param name="A">input array</param>
@@ -288,7 +288,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<float>  abs ( ILArray<float> A) {
             if (A.IsEmpty)
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             float [] retDblArr;
             // build ILDimension    
@@ -404,7 +404,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<float> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<float> ( retDblArr, inDim );
         }
         /// <summary>Magnitude of array elements</summary>
         /// <param name="A">input array</param>
@@ -413,7 +413,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<float>  abs ( ILArray<fcomplex> A) {
             if (A.IsEmpty)
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             float [] retDblArr;
             // build ILDimension    
@@ -529,7 +529,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<float> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<float> ( retDblArr, inDim );
         }
         /// <summary>Magnitude of array elements</summary>
         /// <param name="A">input array</param>
@@ -538,7 +538,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<double>  abs ( ILArray<complex> A) {
             if (A.IsEmpty)
-                return  ILArray<double> .empty(); 
+                return  ILArray<double> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             double [] retDblArr;
             // build ILDimension    
@@ -654,7 +654,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<double> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<double> ( retDblArr, inDim );
         }
         /// <summary>Absolute values of array elements</summary>
         /// <param name="A">input array</param>
@@ -663,7 +663,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<Int64>  abs ( ILArray<Int64> A) {
             if (A.IsEmpty)
-                return  ILArray<Int64> .empty(); 
+                return  ILArray<Int64> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             Int64 [] retDblArr;
             // build ILDimension    
@@ -779,7 +779,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<Int64> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<Int64> ( retDblArr, inDim );
         }
         /// <summary>Absolute values of array elements</summary>
         /// <param name="A">input array</param>
@@ -788,7 +788,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<Int32>  abs ( ILArray<Int32> A) {
             if (A.IsEmpty)
-                return  ILArray<Int32> .empty(); 
+                return  ILArray<Int32> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             Int32 [] retDblArr;
             // build ILDimension    
@@ -904,7 +904,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<Int32> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<Int32> ( retDblArr, inDim );
         }
         /// <summary>Absolute values of array elements</summary>
         /// <param name="A">input array</param>
@@ -913,7 +913,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<Int16>  abs ( ILArray<Int16> A) {
             if (A.IsEmpty)
-                return  ILArray<Int16> .empty(); 
+                return  ILArray<Int16> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             Int16 [] retDblArr;
             // build ILDimension    
@@ -1029,7 +1029,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<Int16> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<Int16> ( retDblArr, inDim );
         }
         /// <summary>Absolute values of array elements</summary>
         /// <param name="A">input array</param>
@@ -1038,7 +1038,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<char>  abs ( ILArray<char> A) {
             if (A.IsEmpty)
-                return  ILArray<char> .empty(); 
+                return  ILArray<char> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             char [] retDblArr;
             // build ILDimension    
@@ -1154,7 +1154,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<char> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<char> ( retDblArr, inDim );
         }
         /// <summary>Absolute values of array elements</summary>
         /// <param name="A">input array</param>
@@ -1163,7 +1163,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<byte>  abs ( ILArray<byte> A) {
             if (A.IsEmpty)
-                return  ILArray<byte> .empty(); 
+                return  ILArray<byte> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             byte [] retDblArr;
             // build ILDimension    
@@ -1279,7 +1279,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<byte> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<byte> ( retDblArr, inDim );
         }
 
 #endregion HYCALPER AUTO GENERATED CODE

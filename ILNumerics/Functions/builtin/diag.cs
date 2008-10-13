@@ -57,7 +57,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 throw new ILArgumentException("diag: input array must be matrix, vector or scalar."); 
             }
             if (X.IsEmpty) 
-                return ILArray<T> .empty(); 
+                return ILArray<T> .empty(X.Dimensions); 
             ILArray<T> ret = null;
             if  (X.IsScalar) {
                 ret = new ILArray<T> (X[0,0]);
@@ -80,13 +80,13 @@ namespace ILNumerics.BuiltInFunctions  {
                 T [] dRet = ret.m_data;
                 if (diagPosition > 0) {
                     if (diagPosition >= X.Dimensions[1])
-                        return ILArray<T> .empty();
+                        return ILArray<T> .empty(0,0);
                     for (int i = 0; i < retLen; i++) {
                         dRet[i] = X.GetValue(i, diagPosition + i);
                     }
                 } else {
                     if (diagPosition <= -X.Dimensions[0])
-                        return ILArray<T> .empty();
+                        return ILArray<T> .empty(0,0);
                     for (int i = 0; i < retLen; i++) {
                         dRet[i] = X.GetValue(diagPosition + i, i);
                     }

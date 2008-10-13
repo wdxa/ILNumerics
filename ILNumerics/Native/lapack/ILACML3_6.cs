@@ -32,7 +32,11 @@ namespace ILNumerics.Native {
 	/// </summary>
     public class ILACML3_6 : IILLapack {
 
-	#region DLL IMPORTS 
+        #region constructor 
+        public ILACML3_6 () {}
+        #endregion
+
+        #region DLL IMPORTS
         ////////////////////////////////////  DOUBLE LAPACK //////////////////
         [DllImport("libacml_dll", EntryPoint = "dgemm"),SuppressUnmanagedCodeSecurity]
 		private static extern void acml_dgemm(char TransA, char TransB, int M, int N, int K, double alpha, IntPtr A, int lda, IntPtr B, int ldb, double beta, double[] C, int ldc);

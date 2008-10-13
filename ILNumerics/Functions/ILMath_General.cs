@@ -26,6 +26,7 @@ using ILNumerics.Storage;
 using ILNumerics.Misc;
 using ILNumerics.Native;
 using ILNumerics.Exceptions;
+using ILNumerics.BuiltInFunctions; 
 using System.IO; 
 
 namespace ILNumerics.BuiltInFunctions {
@@ -42,14 +43,25 @@ namespace ILNumerics.BuiltInFunctions {
 		/// native module to load is done by use of native CPUID assembly statements.
 		/// If the current processor does not support those calls or is not recognizable
 		/// by ILNumerics.Net, a generic - not optimized - version of native LAPACK code will
-		/// be used.</remarks>
+		/// be used than.</remarks>
         public static IILLapack Lapack;
+
+        /// <summary>
+        /// platform specific FFT implementation, <b>internally</b> used to compute fft 
+        /// </summary>
+        public static IILFFT FFT; 
+        
+        /// <summary>
+        /// main math class providing static builtin functions
+        /// </summary>
         static ILMath() {
-            #region initialize LAPACK
+            #region initialize proc specific interfaces
             ILCPUID cpuid; 
+            ILArray<double> A = new double[]{1.0,-1.0}, B = new double[]{1.0, 2.0};
             switch (Environment.OSVersion.Platform) {
                 case PlatformID.Unix:
                     Lapack = new ILLapackGenLinux(); 
+                    FFT = new ILFFTW3FFT(); 
                     break; 
                 default: 
                     if (Lapack == null) {
@@ -57,13 +69,32 @@ namespace ILNumerics.BuiltInFunctions {
                         switch (cpuid.vendor) {
                             case "AuthenticAMD":
                                 //Lapack = new ILACMLWrapper();
-                                Lapack = new ILACML3_6(); 
+                                try {
+                                    Lapack = new ILACML4_1(); 
+                                    FFT = new ILACMLFFT(); 
+                                    multiply(A.T,B); 
+                                } catch (Exception e) {
+                                    FFT = new ILMKLFFT();
+                                    try {
+                                        Lapack = new ILLapackMKL10_0();
+                                        multiply(A.T,B); 
+                                    } catch (Exception) {
+                                        Lapack = new ILLapackGeneric(); 
+                                    }
+                                }
                                 break; 
                             case "GenuineIntel":
-                                Lapack = new ILLapackMKL10_0();    // ILLapackMKL() <-> ILLapackGeneric()
+                                FFT = new ILMKLFFT(); 
+                                try {
+                                    Lapack = new ILLapackMKL10_0();
+                                    multiply(A.T,B); 
+                                } catch (Exception) {
+                                    Lapack = new ILLapackGeneric(); 
+                                }
                                 break; 
                             default:
                                 Lapack = new ILLapackGeneric(); 
+                                FFT = new ILMKLFFT(); 
                                 break;
                         }
                     }
@@ -77,9 +108,9 @@ namespace ILNumerics.BuiltInFunctions {
 
         }
 		/// <summary>
-		/// Minimal size of dimensions, expensive operations will be carried out dur native LAPACK libs. 
+		/// Minimal size of dimensions, expensive operations will be carried out by native LAPACK libs. 
 		/// </summary>
-		/// <remarks>This property is not implemented yet. All arrays will be using LAPACK.
+		/// <remarks>This property is not yet implemented. All computations (unless for scalars) will be using LAPACK.
 		/// </remarks>
         internal static readonly int ILAtlasMinimumElementSize = 1;
     }

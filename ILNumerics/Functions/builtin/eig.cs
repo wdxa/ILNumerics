@@ -201,7 +201,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;,ref ILArray&lt;complex&gt;,ref MatrixProperties,bool)"/>
         public static /*!HC:HCClsCmplx*/ ILArray<complex> eig(/*!HC:HCCls1*/ ILArray<double> A, ref /*!HC:HCClsCmplx*/ ILArray<complex> V) {
             if (object.Equals(V,null)) 
-                V = /*!HC:HCClsCmplx*/ ILArray<complex> .empty(); 
+                V = /*!HC:HCClsCmplx*/ ILArray<complex> .empty(0,0); 
             MatrixProperties props = MatrixProperties.None; 
             return eig(A,ref V, ref props, true); 
         }
@@ -211,18 +211,34 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input: square matrix, size [n x n]</param>
         /// <param name="V">output (optional): eigenvectors</param>   
-        /// <param name="propsA">matrix properties, on input - if specified, will be used to choose the proper method of solution. On exit will be filled according to the properties of A.</param>
-        /// <param name="balance">true: permute A in order to increase the numerical stability, false: do not permute A.</param>
-        /// <returns>eigenvalues as vector (if V is null) or as diagonoal matrix (if V was requested, i.e. not equaled null).</returns>
-        /// <remarks><para>The eigenvalues of A are found by use of the Lapack functions dgeevx, sgeevx, cgeevx and zgeevx. </para>
-        /// <para>The arrays returned will be of complex inner type, since no further constraints are set on the structure of A (it may be nonsymmetric). Use <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;)"/> or <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> functions for computing the real eigenvalues of symmetric matrices explicitly.</para>
-        /// <para>Depending on the parameter <paramref name="balance"/>, A will be balanced first. This includes permutations and scaling of A in order to improve the conditioning of the eigenvalues.</para></remarks>
+        /// <param name="propsA">matrix properties, on input - if specified, 
+        /// will be used to choose the proper method of solution. On exit will be 
+        /// filled according to the properties of A.</param>
+        /// <param name="balance">true: permute A in order to increase the 
+        /// numerical stability, false: do not permute A.</param>
+        /// <returns>eigenvalues as vector (if V is null) or as diagonoal 
+        /// matrix (if V was requested, i.e. not equaled null).</returns>
+        /// <remarks><para>The eigenvalues of A are found by use of the 
+        /// Lapack functions dgeevx, sgeevx, cgeevx and zgeevx. </para>
+        /// <para>The arrays returned will be of complex inner type, 
+        /// since no further constraints are set on the structure of 
+        /// A (it may be nonsymmetric). Use 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;)"/> 
+        /// or <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> 
+        /// functions for computing the real eigenvalues of symmetric 
+        /// matrices explicitly.</para>
+        /// <para>Depending on the parameter <paramref name="balance"/>, 
+        /// A will be balanced first. This includes permutations and 
+        /// scaling of A in order to improve the conditioning of the 
+        /// eigenvalues.</para></remarks>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;)"/>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;,ref ILArray&lt;complex&gt;,ref MatrixProperties,bool)"/>
-        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if a is not square</exception>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if a 
+        /// is not square</exception>
         public static /*!HC:HCClsCmplx*/ ILArray<complex> eig(/*!HC:HCCls1*/ ILArray<double> A, ref /*!HC:HCClsCmplx*/ ILArray<complex> V, ref MatrixProperties propsA, bool balance) {
             if (A.IsEmpty) {
-                return /*!HC:HCClsCmplx*/ ILArray<complex> .empty(); 
+                V = /*!HC:HCClsCmplx*/ ILArray<complex> .empty(A.Dimensions); 
+                return /*!HC:HCClsCmplx*/ ILArray<complex> .empty(A.Dimensions); 
             }
             /*!HC:HCClsCmplx*/ ILArray<complex> ret = null;  
             int n = A.Dimensions[0]; 
@@ -234,7 +250,7 @@ namespace ILNumerics.BuiltInFunctions {
                 propsA |= MatrixProperties.Hermitian; 
                 /*!HC:HCCls1*/ ILArray<double> Vd = null; 
                 if (createVR) 
-                    Vd = /*!HC:HCCls1*/ ILArray<double> .empty();
+                    Vd = /*!HC:HCCls1*/ ILArray<double> .empty(0,0);
                 /*!HC:HCCls1*/ ILArray<double> tmpRet = eigSymm(A,ref Vd);
                 if (createVR)
                     V = /*!HC:HCCls2Cmplx*/ ILMath.tocomplex (Vd); 
@@ -313,7 +329,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square.</exception>
         public static /*!HC:HCCls1*/ ILArray<double> eigSymm (/*!HC:HCCls1*/ ILArray<double> A) {
             if (A.IsEmpty) {
-                return /*!HC:HCCls1*/ ILArray<double> .empty(); 
+                return /*!HC:HCCls1*/ ILArray<double> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -339,8 +355,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square.</exception>
         public static /*!HC:HCCls1*/ ILArray<double> eigSymm (/*!HC:HCCls1*/ ILArray<double> A, ref /*!HC:HCCls1*/ ILArray<double> V) {
             if (A.IsEmpty) {
-                V = /*!HC:HCCls1*/ ILArray<double> .empty(); 
-                return /*!HC:HCCls1*/ ILArray<double> .empty(); 
+                V = /*!HC:HCCls1*/ ILArray<double> .empty(A.Dimensions); 
+                return /*!HC:HCCls1*/ ILArray<double> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -386,8 +402,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square or <paramref name="rangeEnd"/> &lt; <paramref name="rangeStart"/></exception>
         public static /*!HC:HCCls1*/ ILArray<double> eigSymm (/*!HC:HCCls1*/ ILArray<double> A, ref /*!HC:HCCls1*/ ILArray<double> V, int rangeStart, int rangeEnd) {
             if (A.IsEmpty) {
-                V = /*!HC:HCCls1*/ ILArray<double> .empty(); 
-                return /*!HC:HCCls1*/ ILArray<double> .empty(); 
+                V = /*!HC:HCCls1*/ ILArray<double> .empty(A.Dimensions); 
+                return /*!HC:HCCls1*/ ILArray<double> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -431,8 +447,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square or <paramref name="rangeEnd"/> &lt; <paramref name="rangeStart"/> or if either one is &lt;= 0.</exception>
         public static /*!HC:HCCls1*/ ILArray<double> eigSymm (/*!HC:HCCls1*/ ILArray<double> A, ref /*!HC:HCCls1*/ ILArray<double> V, /*!HC:HCArrReal*/ double rangeStart, /*!HC:HCArrReal*/ double rangeEnd) {
             if (A.IsEmpty) {
-                V = /*!HC:HCCls1*/ ILArray<double> .empty(); 
-                return /*!HC:HCCls1*/ ILArray<double> .empty(); 
+                V = /*!HC:HCCls1*/ ILArray<double> .empty(A.Dimensions); 
+                return /*!HC:HCCls1*/ ILArray<double> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -495,7 +511,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;,ref ILArray&lt;complex&gt;,ref MatrixProperties,bool)"/>
         public static  ILArray<fcomplex> eig( ILArray<float> A, ref  ILArray<fcomplex> V) {
             if (object.Equals(V,null)) 
-                V =  ILArray<fcomplex> .empty(); 
+                V =  ILArray<fcomplex> .empty(0,0); 
             MatrixProperties props = MatrixProperties.None; 
             return eig(A,ref V, ref props, true); 
         }
@@ -505,18 +521,34 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input: square matrix, size [n x n]</param>
         /// <param name="V">output (optional): eigenvectors</param>   
-        /// <param name="propsA">matrix properties, on input - if specified, will be used to choose the proper method of solution. On exit will be filled according to the properties of A.</param>
-        /// <param name="balance">true: permute A in order to increase the numerical stability, false: do not permute A.</param>
-        /// <returns>eigenvalues as vector (if V is null) or as diagonoal matrix (if V was requested, i.e. not equaled null).</returns>
-        /// <remarks><para>The eigenvalues of A are found by use of the Lapack functions dgeevx, sgeevx, cgeevx and zgeevx. </para>
-        /// <para>The arrays returned will be of complex inner type, since no further constraints are set on the structure of A (it may be nonsymmetric). Use <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;)"/> or <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> functions for computing the real eigenvalues of symmetric matrices explicitly.</para>
-        /// <para>Depending on the parameter <paramref name="balance"/>, A will be balanced first. This includes permutations and scaling of A in order to improve the conditioning of the eigenvalues.</para></remarks>
+        /// <param name="propsA">matrix properties, on input - if specified, 
+        /// will be used to choose the proper method of solution. On exit will be 
+        /// filled according to the properties of A.</param>
+        /// <param name="balance">true: permute A in order to increase the 
+        /// numerical stability, false: do not permute A.</param>
+        /// <returns>eigenvalues as vector (if V is null) or as diagonoal 
+        /// matrix (if V was requested, i.e. not equaled null).</returns>
+        /// <remarks><para>The eigenvalues of A are found by use of the 
+        /// Lapack functions dgeevx, sgeevx, cgeevx and zgeevx. </para>
+        /// <para>The arrays returned will be of complex inner type, 
+        /// since no further constraints are set on the structure of 
+        /// A (it may be nonsymmetric). Use 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;)"/> 
+        /// or <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> 
+        /// functions for computing the real eigenvalues of symmetric 
+        /// matrices explicitly.</para>
+        /// <para>Depending on the parameter <paramref name="balance"/>, 
+        /// A will be balanced first. This includes permutations and 
+        /// scaling of A in order to improve the conditioning of the 
+        /// eigenvalues.</para></remarks>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;)"/>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;,ref ILArray&lt;complex&gt;,ref MatrixProperties,bool)"/>
-        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if a is not square</exception>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if a 
+        /// is not square</exception>
         public static  ILArray<fcomplex> eig( ILArray<float> A, ref  ILArray<fcomplex> V, ref MatrixProperties propsA, bool balance) {
             if (A.IsEmpty) {
-                return  ILArray<fcomplex> .empty(); 
+                V =  ILArray<fcomplex> .empty(A.Dimensions); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             }
             ILArray<fcomplex> ret = null;  
             int n = A.Dimensions[0]; 
@@ -528,7 +560,7 @@ namespace ILNumerics.BuiltInFunctions {
                 propsA |= MatrixProperties.Hermitian; 
                 ILArray<float> Vd = null; 
                 if (createVR) 
-                    Vd =  ILArray<float> .empty();
+                    Vd =  ILArray<float> .empty(0,0);
                 ILArray<float> tmpRet = eigSymm(A,ref Vd);
                 if (createVR)
                     V =  ILMath.tofcomplex (Vd); 
@@ -602,7 +634,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square.</exception>
         public static  ILArray<float> eigSymm ( ILArray<float> A) {
             if (A.IsEmpty) {
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -628,8 +660,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square.</exception>
         public static  ILArray<float> eigSymm ( ILArray<float> A, ref  ILArray<float> V) {
             if (A.IsEmpty) {
-                V =  ILArray<float> .empty(); 
-                return  ILArray<float> .empty(); 
+                V =  ILArray<float> .empty(A.Dimensions); 
+                return  ILArray<float> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -675,8 +707,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square or <paramref name="rangeEnd"/> &lt; <paramref name="rangeStart"/></exception>
         public static  ILArray<float> eigSymm ( ILArray<float> A, ref  ILArray<float> V, int rangeStart, int rangeEnd) {
             if (A.IsEmpty) {
-                V =  ILArray<float> .empty(); 
-                return  ILArray<float> .empty(); 
+                V =  ILArray<float> .empty(A.Dimensions); 
+                return  ILArray<float> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -720,8 +752,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square or <paramref name="rangeEnd"/> &lt; <paramref name="rangeStart"/> or if either one is &lt;= 0.</exception>
         public static  ILArray<float> eigSymm ( ILArray<float> A, ref  ILArray<float> V,  float rangeStart,  float rangeEnd) {
             if (A.IsEmpty) {
-                V =  ILArray<float> .empty(); 
-                return  ILArray<float> .empty(); 
+                V =  ILArray<float> .empty(A.Dimensions); 
+                return  ILArray<float> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -781,7 +813,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;,ref ILArray&lt;complex&gt;,ref MatrixProperties,bool)"/>
         public static  ILArray<fcomplex> eig( ILArray<fcomplex> A, ref  ILArray<fcomplex> V) {
             if (object.Equals(V,null)) 
-                V =  ILArray<fcomplex> .empty(); 
+                V =  ILArray<fcomplex> .empty(0,0); 
             MatrixProperties props = MatrixProperties.None; 
             return eig(A,ref V, ref props, true); 
         }
@@ -791,18 +823,34 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input: square matrix, size [n x n]</param>
         /// <param name="V">output (optional): eigenvectors</param>   
-        /// <param name="propsA">matrix properties, on input - if specified, will be used to choose the proper method of solution. On exit will be filled according to the properties of A.</param>
-        /// <param name="balance">true: permute A in order to increase the numerical stability, false: do not permute A.</param>
-        /// <returns>eigenvalues as vector (if V is null) or as diagonoal matrix (if V was requested, i.e. not equaled null).</returns>
-        /// <remarks><para>The eigenvalues of A are found by use of the Lapack functions dgeevx, sgeevx, cgeevx and zgeevx. </para>
-        /// <para>The arrays returned will be of complex inner type, since no further constraints are set on the structure of A (it may be nonsymmetric). Use <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;)"/> or <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> functions for computing the real eigenvalues of symmetric matrices explicitly.</para>
-        /// <para>Depending on the parameter <paramref name="balance"/>, A will be balanced first. This includes permutations and scaling of A in order to improve the conditioning of the eigenvalues.</para></remarks>
+        /// <param name="propsA">matrix properties, on input - if specified, 
+        /// will be used to choose the proper method of solution. On exit will be 
+        /// filled according to the properties of A.</param>
+        /// <param name="balance">true: permute A in order to increase the 
+        /// numerical stability, false: do not permute A.</param>
+        /// <returns>eigenvalues as vector (if V is null) or as diagonoal 
+        /// matrix (if V was requested, i.e. not equaled null).</returns>
+        /// <remarks><para>The eigenvalues of A are found by use of the 
+        /// Lapack functions dgeevx, sgeevx, cgeevx and zgeevx. </para>
+        /// <para>The arrays returned will be of complex inner type, 
+        /// since no further constraints are set on the structure of 
+        /// A (it may be nonsymmetric). Use 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;)"/> 
+        /// or <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> 
+        /// functions for computing the real eigenvalues of symmetric 
+        /// matrices explicitly.</para>
+        /// <para>Depending on the parameter <paramref name="balance"/>, 
+        /// A will be balanced first. This includes permutations and 
+        /// scaling of A in order to improve the conditioning of the 
+        /// eigenvalues.</para></remarks>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;)"/>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;,ref ILArray&lt;complex&gt;,ref MatrixProperties,bool)"/>
-        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if a is not square</exception>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if a 
+        /// is not square</exception>
         public static  ILArray<fcomplex> eig( ILArray<fcomplex> A, ref  ILArray<fcomplex> V, ref MatrixProperties propsA, bool balance) {
             if (A.IsEmpty) {
-                return  ILArray<fcomplex> .empty(); 
+                V =  ILArray<fcomplex> .empty(A.Dimensions); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             }
             ILArray<fcomplex> ret = null;  
             int n = A.Dimensions[0]; 
@@ -814,7 +862,7 @@ namespace ILNumerics.BuiltInFunctions {
                 propsA |= MatrixProperties.Hermitian; 
                 ILArray<fcomplex> Vd = null; 
                 if (createVR) 
-                    Vd =  ILArray<fcomplex> .empty();
+                    Vd =  ILArray<fcomplex> .empty(0,0);
                 ILArray<fcomplex> tmpRet = eigSymm(A,ref Vd);
                 if (createVR)
                     V =   (Vd); 
@@ -868,7 +916,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square.</exception>
         public static  ILArray<fcomplex> eigSymm ( ILArray<fcomplex> A) {
             if (A.IsEmpty) {
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -894,8 +942,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square.</exception>
         public static  ILArray<fcomplex> eigSymm ( ILArray<fcomplex> A, ref  ILArray<fcomplex> V) {
             if (A.IsEmpty) {
-                V =  ILArray<fcomplex> .empty(); 
-                return  ILArray<fcomplex> .empty(); 
+                V =  ILArray<fcomplex> .empty(A.Dimensions); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -941,8 +989,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square or <paramref name="rangeEnd"/> &lt; <paramref name="rangeStart"/></exception>
         public static  ILArray<fcomplex> eigSymm ( ILArray<fcomplex> A, ref  ILArray<fcomplex> V, int rangeStart, int rangeEnd) {
             if (A.IsEmpty) {
-                V =  ILArray<fcomplex> .empty(); 
-                return  ILArray<fcomplex> .empty(); 
+                V =  ILArray<fcomplex> .empty(A.Dimensions); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -986,8 +1034,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square or <paramref name="rangeEnd"/> &lt; <paramref name="rangeStart"/> or if either one is &lt;= 0.</exception>
         public static  ILArray<fcomplex> eigSymm ( ILArray<fcomplex> A, ref  ILArray<fcomplex> V,  float rangeStart,  float rangeEnd) {
             if (A.IsEmpty) {
-                V =  ILArray<fcomplex> .empty(); 
-                return  ILArray<fcomplex> .empty(); 
+                V =  ILArray<fcomplex> .empty(A.Dimensions); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -1047,7 +1095,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;,ref ILArray&lt;complex&gt;,ref MatrixProperties,bool)"/>
         public static  ILArray<complex> eig( ILArray<complex> A, ref  ILArray<complex> V) {
             if (object.Equals(V,null)) 
-                V =  ILArray<complex> .empty(); 
+                V =  ILArray<complex> .empty(0,0); 
             MatrixProperties props = MatrixProperties.None; 
             return eig(A,ref V, ref props, true); 
         }
@@ -1057,18 +1105,34 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input: square matrix, size [n x n]</param>
         /// <param name="V">output (optional): eigenvectors</param>   
-        /// <param name="propsA">matrix properties, on input - if specified, will be used to choose the proper method of solution. On exit will be filled according to the properties of A.</param>
-        /// <param name="balance">true: permute A in order to increase the numerical stability, false: do not permute A.</param>
-        /// <returns>eigenvalues as vector (if V is null) or as diagonoal matrix (if V was requested, i.e. not equaled null).</returns>
-        /// <remarks><para>The eigenvalues of A are found by use of the Lapack functions dgeevx, sgeevx, cgeevx and zgeevx. </para>
-        /// <para>The arrays returned will be of complex inner type, since no further constraints are set on the structure of A (it may be nonsymmetric). Use <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;)"/> or <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> functions for computing the real eigenvalues of symmetric matrices explicitly.</para>
-        /// <para>Depending on the parameter <paramref name="balance"/>, A will be balanced first. This includes permutations and scaling of A in order to improve the conditioning of the eigenvalues.</para></remarks>
+        /// <param name="propsA">matrix properties, on input - if specified, 
+        /// will be used to choose the proper method of solution. On exit will be 
+        /// filled according to the properties of A.</param>
+        /// <param name="balance">true: permute A in order to increase the 
+        /// numerical stability, false: do not permute A.</param>
+        /// <returns>eigenvalues as vector (if V is null) or as diagonoal 
+        /// matrix (if V was requested, i.e. not equaled null).</returns>
+        /// <remarks><para>The eigenvalues of A are found by use of the 
+        /// Lapack functions dgeevx, sgeevx, cgeevx and zgeevx. </para>
+        /// <para>The arrays returned will be of complex inner type, 
+        /// since no further constraints are set on the structure of 
+        /// A (it may be nonsymmetric). Use 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;)"/> 
+        /// or <see cref="ILNumerics.BuiltInFunctions.ILMath.eigSymm(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> 
+        /// functions for computing the real eigenvalues of symmetric 
+        /// matrices explicitly.</para>
+        /// <para>Depending on the parameter <paramref name="balance"/>, 
+        /// A will be balanced first. This includes permutations and 
+        /// scaling of A in order to improve the conditioning of the 
+        /// eigenvalues.</para></remarks>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;)"/>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.eig(ILArray&lt;double&gt;,ref ILArray&lt;complex&gt;,ref MatrixProperties,bool)"/>
-        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if a is not square</exception>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if a 
+        /// is not square</exception>
         public static  ILArray<complex> eig( ILArray<complex> A, ref  ILArray<complex> V, ref MatrixProperties propsA, bool balance) {
             if (A.IsEmpty) {
-                return  ILArray<complex> .empty(); 
+                V =  ILArray<complex> .empty(A.Dimensions); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             }
             ILArray<complex> ret = null;  
             int n = A.Dimensions[0]; 
@@ -1080,7 +1144,7 @@ namespace ILNumerics.BuiltInFunctions {
                 propsA |= MatrixProperties.Hermitian; 
                 ILArray<complex> Vd = null; 
                 if (createVR) 
-                    Vd =  ILArray<complex> .empty();
+                    Vd =  ILArray<complex> .empty(0,0);
                 ILArray<complex> tmpRet = eigSymm(A,ref Vd);
                 if (createVR)
                     V =   (Vd); 
@@ -1134,7 +1198,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square.</exception>
         public static  ILArray<complex> eigSymm ( ILArray<complex> A) {
             if (A.IsEmpty) {
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -1160,8 +1224,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square.</exception>
         public static  ILArray<complex> eigSymm ( ILArray<complex> A, ref  ILArray<complex> V) {
             if (A.IsEmpty) {
-                V =  ILArray<complex> .empty(); 
-                return  ILArray<complex> .empty(); 
+                V =  ILArray<complex> .empty(A.Dimensions); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -1207,8 +1271,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square or <paramref name="rangeEnd"/> &lt; <paramref name="rangeStart"/></exception>
         public static  ILArray<complex> eigSymm ( ILArray<complex> A, ref  ILArray<complex> V, int rangeStart, int rangeEnd) {
             if (A.IsEmpty) {
-                V =  ILArray<complex> .empty(); 
-                return  ILArray<complex> .empty(); 
+                V =  ILArray<complex> .empty(A.Dimensions); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -1252,8 +1316,8 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if A is not square or <paramref name="rangeEnd"/> &lt; <paramref name="rangeStart"/> or if either one is &lt;= 0.</exception>
         public static  ILArray<complex> eigSymm ( ILArray<complex> A, ref  ILArray<complex> V,  double rangeStart,  double rangeEnd) {
             if (A.IsEmpty) {
-                V =  ILArray<complex> .empty(); 
-                return  ILArray<complex> .empty(); 
+                V =  ILArray<complex> .empty(A.Dimensions); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             }
             int n = A.Dimensions[0]; 
             if (n != A.Dimensions[1])
@@ -1414,7 +1478,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if <paramref name="skipSymmCheck"/> is false and either A and/or B was found not to be symmetric/hermitian</exception>
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if the algorithm did not converge. All exceptions will contain an informational message describing the problem verbosely.</exception>
         public static /*!HC:RetCls*/ ILArray<double> eigSymm(/*!HC:InClsA*/ ILArray<double> A,/*!HC:InClsB*/  ILArray<double> B, out /*!HC:OutClsV*/  ILArray<double> V, bool skipSymmCheck) {
-            V = /*!HC:OutClsV*/ ILArray<double> .empty(); 
+            V = /*!HC:OutClsV*/ ILArray<double> .empty(A.Dimensions); 
             return eigSymm(A,B,ref V,GenEigenType.Ax_eq_lambBx,skipSymmCheck); 
         }
 
@@ -1453,10 +1517,10 @@ namespace ILNumerics.BuiltInFunctions {
                 throw new ILArgumentException("eigSymm: A and B must be have the same size!");
             if (A.IsEmpty) {
                 if (object.Equals(V,null)) 
-                    return /*!HC:RetCls*/ ILArray<double> .empty();
+                    return /*!HC:RetCls*/ ILArray<double> .empty(A.Dimensions);
                 else {
                     V = A.C; 
-                    return /*!HC:RetCls*/ ILArray<double> .empty();
+                    return /*!HC:RetCls*/ ILArray<double> .empty(A.Dimensions);
                 }
             }
             if (!skipSymmCheck && !ILMath.ishermitian(A)) {
@@ -1543,7 +1607,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if <paramref name="skipSymmCheck"/> is false and either A and/or B was found not to be symmetric/hermitian</exception>
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if the algorithm did not converge. All exceptions will contain an informational message describing the problem verbosely.</exception>
         public static  ILArray<float> eigSymm( ILArray<float> A,  ILArray<float> B, out   ILArray<float> V, bool skipSymmCheck) {
-            V =  ILArray<float> .empty(); 
+            V =  ILArray<float> .empty(A.Dimensions); 
             return eigSymm(A,B,ref V,GenEigenType.Ax_eq_lambBx,skipSymmCheck); 
         }
 
@@ -1582,10 +1646,10 @@ namespace ILNumerics.BuiltInFunctions {
                 throw new ILArgumentException("eigSymm: A and B must be have the same size!");
             if (A.IsEmpty) {
                 if (object.Equals(V,null)) 
-                    return  ILArray<float> .empty();
+                    return  ILArray<float> .empty(A.Dimensions);
                 else {
                     V = A.C; 
-                    return  ILArray<float> .empty();
+                    return  ILArray<float> .empty(A.Dimensions);
                 }
             }
             if (!skipSymmCheck && !ILMath.ishermitian(A)) {
@@ -1669,7 +1733,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if <paramref name="skipSymmCheck"/> is false and either A and/or B was found not to be symmetric/hermitian</exception>
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if the algorithm did not converge. All exceptions will contain an informational message describing the problem verbosely.</exception>
         public static  ILArray<float> eigSymm( ILArray<fcomplex> A,  ILArray<fcomplex> B, out   ILArray<fcomplex> V, bool skipSymmCheck) {
-            V =  ILArray<fcomplex> .empty(); 
+            V =  ILArray<fcomplex> .empty(A.Dimensions); 
             return eigSymm(A,B,ref V,GenEigenType.Ax_eq_lambBx,skipSymmCheck); 
         }
 
@@ -1708,10 +1772,10 @@ namespace ILNumerics.BuiltInFunctions {
                 throw new ILArgumentException("eigSymm: A and B must be have the same size!");
             if (A.IsEmpty) {
                 if (object.Equals(V,null)) 
-                    return  ILArray<float> .empty();
+                    return  ILArray<float> .empty(A.Dimensions);
                 else {
                     V = A.C; 
-                    return  ILArray<float> .empty();
+                    return  ILArray<float> .empty(A.Dimensions);
                 }
             }
             if (!skipSymmCheck && !ILMath.ishermitian(A)) {
@@ -1795,7 +1859,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if <paramref name="skipSymmCheck"/> is false and either A and/or B was found not to be symmetric/hermitian</exception>
         /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if the algorithm did not converge. All exceptions will contain an informational message describing the problem verbosely.</exception>
         public static  ILArray<double> eigSymm( ILArray<complex> A,  ILArray<complex> B, out   ILArray<complex> V, bool skipSymmCheck) {
-            V =  ILArray<complex> .empty(); 
+            V =  ILArray<complex> .empty(A.Dimensions); 
             return eigSymm(A,B,ref V,GenEigenType.Ax_eq_lambBx,skipSymmCheck); 
         }
 
@@ -1834,10 +1898,10 @@ namespace ILNumerics.BuiltInFunctions {
                 throw new ILArgumentException("eigSymm: A and B must be have the same size!");
             if (A.IsEmpty) {
                 if (object.Equals(V,null)) 
-                    return  ILArray<double> .empty();
+                    return  ILArray<double> .empty(A.Dimensions);
                 else {
                     V = A.C; 
-                    return  ILArray<double> .empty();
+                    return  ILArray<double> .empty(A.Dimensions);
                 }
             }
             if (!skipSymmCheck && !ILMath.ishermitian(A)) {

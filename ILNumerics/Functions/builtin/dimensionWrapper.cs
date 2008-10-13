@@ -43,7 +43,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <remarks>If A is null, an empty array will be returned. Otherwise the array returned will always be a row vector of length s. s &gt;= 2</remarks>
         public static ILArray<double> size(ILBaseArray A) {
             if (object.Equals (A,null))
-                return ILArray<double>.empty(); 
+                return ILArray<double>.empty(0,0); 
             int numDim = A.Dimensions.NumberOfDimensions;
             double [] retArr = new double[numDim]; 
             for (int i = 0; i < numDim; i++) {

@@ -95,7 +95,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <returns>ILArray of inner type double which is empty. </returns>
         public static ILArray<double> empty() {
-            return ILArray<double>.empty();
+            return ILArray<double>.empty(0,0);
         }
         #endregion
 

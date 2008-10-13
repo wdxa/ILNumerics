@@ -3968,7 +3968,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<UInt64> A,  ILArray<UInt64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -4084,7 +4084,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -4201,7 +4201,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -4274,7 +4274,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -4288,7 +4288,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<UInt32> A,  ILArray<UInt32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -4404,7 +4404,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -4521,7 +4521,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -4594,7 +4594,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -4608,7 +4608,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<UInt16> A,  ILArray<UInt16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -4724,7 +4724,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -4841,7 +4841,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -4914,7 +4914,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -4928,7 +4928,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<Int64> A,  ILArray<Int64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -5044,7 +5044,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -5161,7 +5161,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -5234,7 +5234,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -5248,7 +5248,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<Int32> A,  ILArray<Int32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -5364,7 +5364,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -5481,7 +5481,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -5554,7 +5554,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -5568,7 +5568,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<Int16> A,  ILArray<Int16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -5684,7 +5684,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -5801,7 +5801,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -5874,7 +5874,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -5888,7 +5888,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<float> A,  ILArray<float> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -6004,7 +6004,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -6121,7 +6121,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -6194,7 +6194,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -6208,7 +6208,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -6324,7 +6324,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -6441,7 +6441,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -6514,7 +6514,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -6528,7 +6528,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<complex> A,  ILArray<complex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -6644,7 +6644,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -6761,7 +6761,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -6834,7 +6834,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -6848,7 +6848,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<char> A,  ILArray<char> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -6964,7 +6964,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -7081,7 +7081,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -7154,7 +7154,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -7168,7 +7168,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<byte> A,  ILArray<byte> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -7284,7 +7284,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -7401,7 +7401,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -7474,7 +7474,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -7488,7 +7488,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  eq ( ILArray<double> A,  ILArray<double> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -7604,7 +7604,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -7721,7 +7721,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -7794,7 +7794,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -7817,8 +7817,10 @@ namespace ILNumerics.BuiltInFunctions {
                 throw new ILArgumentException("eq: input argurment A must not be null!");
             if (object.Equals(B,null)) 
                 throw new ILArgumentException("eq: input argurment B must not be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty)
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             ILLogicalArray ret = null; 
             string scalarValue; 
             ILDimension retDim = null; 
@@ -7828,7 +7830,7 @@ namespace ILNumerics.BuiltInFunctions {
                     retDim = new ILDimension(1,1); 
                     return new ILLogicalArray(new byte[1]{(A.GetValue(0) == B.GetValue(0))?(byte)1:(byte)0},1,1); 
                 } else {
-                    retDim = B.Dimensions.Clone(); 
+                    retDim = B.Dimensions; 
                     int len = B.Dimensions.NumberOfElements; 
                     retArr = new byte[len]; 
                     scalarValue = A.GetValue(0); 
@@ -7839,7 +7841,7 @@ namespace ILNumerics.BuiltInFunctions {
                     }
                 }
             } else {
-                retDim = A.Dimensions.Clone(); 
+                retDim = A.Dimensions; 
                 if (B.IsScalar) {
                     int len = A.Dimensions.NumberOfElements; 
                     retArr = new byte[len]; 
@@ -7876,8 +7878,10 @@ namespace ILNumerics.BuiltInFunctions {
                 throw new ILArgumentException("neq: input argurment A must not be null!");
             if (object.Equals(B,null)) 
                 throw new ILArgumentException("neq: input argurment B must not be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty)
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             ILLogicalArray ret = null; 
             string scalarValue; 
             ILDimension retDim = null; 
@@ -7887,7 +7891,7 @@ namespace ILNumerics.BuiltInFunctions {
                     retDim = new ILDimension(1,1); 
                     ret = new ILLogicalArray(new byte[1]{(A.GetValue(0) != B.GetValue(0))?(byte)1:(byte)0},1,1); 
                 } else {
-                    retDim = B.Dimensions.Clone(); 
+                    retDim = B.Dimensions; 
                     int len = B.Dimensions.NumberOfElements; 
                     retArr = new byte[len]; 
                     scalarValue = A.GetValue(0); 
@@ -7898,7 +7902,7 @@ namespace ILNumerics.BuiltInFunctions {
                     }
                 }
             } else {
-                retDim = A.Dimensions.Clone(); 
+                retDim = A.Dimensions; 
                 if (B.IsScalar) {
                     int len = A.Dimensions.NumberOfElements; 
                     retArr = new byte[len]; 
@@ -8295,7 +8299,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<UInt64> A,  ILArray<UInt64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -8411,7 +8415,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -8528,7 +8532,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -8601,7 +8605,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -8615,7 +8619,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<UInt32> A,  ILArray<UInt32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -8731,7 +8735,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -8848,7 +8852,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -8921,7 +8925,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -8935,7 +8939,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<UInt16> A,  ILArray<UInt16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -9051,7 +9055,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -9168,7 +9172,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -9241,7 +9245,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -9255,7 +9259,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<Int64> A,  ILArray<Int64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -9371,7 +9375,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -9488,7 +9492,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -9561,7 +9565,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -9575,7 +9579,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<Int32> A,  ILArray<Int32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -9691,7 +9695,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -9808,7 +9812,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -9881,7 +9885,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -9895,7 +9899,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<Int16> A,  ILArray<Int16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -10011,7 +10015,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -10128,7 +10132,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -10201,7 +10205,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -10215,7 +10219,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<float> A,  ILArray<float> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -10331,7 +10335,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -10448,7 +10452,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -10521,7 +10525,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -10535,7 +10539,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -10651,7 +10655,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -10768,7 +10772,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -10841,7 +10845,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -10855,7 +10859,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<complex> A,  ILArray<complex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -10971,7 +10975,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -11088,7 +11092,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -11161,7 +11165,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -11175,7 +11179,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<char> A,  ILArray<char> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -11291,7 +11295,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -11408,7 +11412,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -11481,7 +11485,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -11495,7 +11499,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<byte> A,  ILArray<byte> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -11611,7 +11615,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -11728,7 +11732,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -11801,7 +11805,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -11815,7 +11819,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  neq ( ILArray<double> A,  ILArray<double> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -11931,7 +11935,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -12048,7 +12052,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -12121,7 +12125,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -12503,7 +12507,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<UInt64> A,  ILArray<UInt64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -12619,7 +12623,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -12736,7 +12740,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -12809,7 +12813,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -12823,7 +12827,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<UInt32> A,  ILArray<UInt32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -12939,7 +12943,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -13056,7 +13060,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -13129,7 +13133,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -13143,7 +13147,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<UInt16> A,  ILArray<UInt16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -13259,7 +13263,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -13376,7 +13380,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -13449,7 +13453,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -13463,7 +13467,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<Int64> A,  ILArray<Int64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -13579,7 +13583,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -13696,7 +13700,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -13769,7 +13773,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -13783,7 +13787,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<Int32> A,  ILArray<Int32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -13899,7 +13903,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -14016,7 +14020,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -14089,7 +14093,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -14103,7 +14107,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<Int16> A,  ILArray<Int16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -14219,7 +14223,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -14336,7 +14340,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -14409,7 +14413,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -14423,7 +14427,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<float> A,  ILArray<float> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -14539,7 +14543,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -14656,7 +14660,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -14729,7 +14733,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -14743,7 +14747,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -14859,7 +14863,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -14976,7 +14980,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -15049,7 +15053,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -15063,7 +15067,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<complex> A,  ILArray<complex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -15179,7 +15183,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -15296,7 +15300,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -15369,7 +15373,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -15383,7 +15387,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<char> A,  ILArray<char> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -15499,7 +15503,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -15616,7 +15620,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -15689,7 +15693,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -15703,7 +15707,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<byte> A,  ILArray<byte> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -15819,7 +15823,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -15936,7 +15940,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -16009,7 +16013,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -16023,7 +16027,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  le ( ILArray<double> A,  ILArray<double> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -16139,7 +16143,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -16256,7 +16260,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -16329,7 +16333,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -16711,7 +16715,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<UInt64> A,  ILArray<UInt64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -16827,7 +16831,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -16944,7 +16948,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -17017,7 +17021,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -17031,7 +17035,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<UInt32> A,  ILArray<UInt32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -17147,7 +17151,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -17264,7 +17268,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -17337,7 +17341,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -17351,7 +17355,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<UInt16> A,  ILArray<UInt16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -17467,7 +17471,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -17584,7 +17588,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -17657,7 +17661,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -17671,7 +17675,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<Int64> A,  ILArray<Int64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -17787,7 +17791,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -17904,7 +17908,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -17977,7 +17981,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -17991,7 +17995,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<Int32> A,  ILArray<Int32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -18107,7 +18111,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -18224,7 +18228,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -18297,7 +18301,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -18311,7 +18315,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<Int16> A,  ILArray<Int16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -18427,7 +18431,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -18544,7 +18548,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -18617,7 +18621,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -18631,7 +18635,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<float> A,  ILArray<float> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -18747,7 +18751,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -18864,7 +18868,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -18937,7 +18941,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -18951,7 +18955,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -19067,7 +19071,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -19184,7 +19188,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -19257,7 +19261,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -19271,7 +19275,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<complex> A,  ILArray<complex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -19387,7 +19391,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -19504,7 +19508,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -19577,7 +19581,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -19591,7 +19595,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<char> A,  ILArray<char> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -19707,7 +19711,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -19824,7 +19828,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -19897,7 +19901,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -19911,7 +19915,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<byte> A,  ILArray<byte> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -20027,7 +20031,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -20144,7 +20148,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -20217,7 +20221,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -20231,7 +20235,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  ge ( ILArray<double> A,  ILArray<double> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -20347,7 +20351,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -20464,7 +20468,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -20537,7 +20541,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -20919,7 +20923,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<UInt64> A,  ILArray<UInt64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -21035,7 +21039,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -21152,7 +21156,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -21225,7 +21229,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -21239,7 +21243,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<UInt32> A,  ILArray<UInt32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -21355,7 +21359,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -21472,7 +21476,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -21545,7 +21549,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -21559,7 +21563,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<UInt16> A,  ILArray<UInt16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -21675,7 +21679,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -21792,7 +21796,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -21865,7 +21869,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -21879,7 +21883,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<Int64> A,  ILArray<Int64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -21995,7 +21999,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -22112,7 +22116,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -22185,7 +22189,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -22199,7 +22203,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<Int32> A,  ILArray<Int32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -22315,7 +22319,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -22432,7 +22436,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -22505,7 +22509,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -22519,7 +22523,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<Int16> A,  ILArray<Int16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -22635,7 +22639,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -22752,7 +22756,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -22825,7 +22829,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -22839,7 +22843,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<float> A,  ILArray<float> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -22955,7 +22959,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -23072,7 +23076,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -23145,7 +23149,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -23159,7 +23163,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -23275,7 +23279,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -23392,7 +23396,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -23465,7 +23469,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -23479,7 +23483,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<complex> A,  ILArray<complex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -23595,7 +23599,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -23712,7 +23716,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -23785,7 +23789,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -23799,7 +23803,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<char> A,  ILArray<char> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -23915,7 +23919,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -24032,7 +24036,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -24105,7 +24109,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -24119,7 +24123,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<byte> A,  ILArray<byte> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -24235,7 +24239,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -24352,7 +24356,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -24425,7 +24429,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -24439,7 +24443,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  lt ( ILArray<double> A,  ILArray<double> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -24555,7 +24559,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -24672,7 +24676,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -24745,7 +24749,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -25127,7 +25131,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<UInt64> A,  ILArray<UInt64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -25243,7 +25247,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -25360,7 +25364,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -25433,7 +25437,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -25447,7 +25451,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<UInt32> A,  ILArray<UInt32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -25563,7 +25567,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -25680,7 +25684,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -25753,7 +25757,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -25767,7 +25771,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<UInt16> A,  ILArray<UInt16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -25883,7 +25887,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -26000,7 +26004,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -26073,7 +26077,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -26087,7 +26091,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<Int64> A,  ILArray<Int64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -26203,7 +26207,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -26320,7 +26324,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -26393,7 +26397,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -26407,7 +26411,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<Int32> A,  ILArray<Int32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -26523,7 +26527,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -26640,7 +26644,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -26713,7 +26717,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -26727,7 +26731,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<Int16> A,  ILArray<Int16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -26843,7 +26847,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -26960,7 +26964,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -27033,7 +27037,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -27047,7 +27051,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<float> A,  ILArray<float> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -27163,7 +27167,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -27280,7 +27284,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -27353,7 +27357,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -27367,7 +27371,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -27483,7 +27487,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -27600,7 +27604,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -27673,7 +27677,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -27687,7 +27691,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<complex> A,  ILArray<complex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -27803,7 +27807,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -27920,7 +27924,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -27993,7 +27997,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -28007,7 +28011,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<char> A,  ILArray<char> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -28123,7 +28127,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -28240,7 +28244,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -28313,7 +28317,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -28327,7 +28331,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<byte> A,  ILArray<byte> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -28443,7 +28447,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -28560,7 +28564,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -28633,7 +28637,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -28647,7 +28651,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILLogicalArray  gt ( ILArray<double> A,  ILArray<double> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -28763,7 +28767,7 @@ namespace ILNumerics.BuiltInFunctions {
                         }
                         #endregion
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -28880,7 +28884,7 @@ namespace ILNumerics.BuiltInFunctions {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILLogicalArray ( retArr, inDim.Clone() );
+                    return new  ILLogicalArray ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -28953,7 +28957,7 @@ namespace ILNumerics.BuiltInFunctions {
                             }
                         }
                     }
-                    return new  ILLogicalArray ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILLogicalArray ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -28973,16 +28977,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and(/*!HC:inCls1*/ ILArray<double> A, /*!HC:inCls2*/ ILArray<double> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             /*!HC:ClsName*/ oplogical_doubledouble helper = new /*!HC:ClsName*/ oplogical_doubledouble ();
             return /*!HC:logicalbinaryop*/ LogicalBinaryDoubleOperator (A, B, helper.and);
@@ -28997,8 +29003,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or(/*!HC:inCls1*/ ILArray<double> A, /*!HC:inCls2*/ ILArray<double> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29023,16 +29031,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and( ILArray<UInt64> A,  ILArray<UInt64> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             oplogical_uint64uint64 helper = new  oplogical_uint64uint64 ();
             return  LogicalBinaryUInt64Operator (A, B, helper.and);
@@ -29047,8 +29057,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or( ILArray<UInt64> A,  ILArray<UInt64> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29070,16 +29082,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and( ILArray<UInt32> A,  ILArray<UInt32> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             oplogical_uint32uint32 helper = new  oplogical_uint32uint32 ();
             return  LogicalBinaryUInt32Operator (A, B, helper.and);
@@ -29094,8 +29108,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or( ILArray<UInt32> A,  ILArray<UInt32> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29117,16 +29133,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and( ILArray<UInt16> A,  ILArray<UInt16> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             oplogical_uint16uint16 helper = new  oplogical_uint16uint16 ();
             return  LogicalBinaryUInt16Operator (A, B, helper.and);
@@ -29141,8 +29159,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or( ILArray<UInt16> A,  ILArray<UInt16> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29164,16 +29184,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and( ILArray<Int64> A,  ILArray<Int64> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             oplogical_int64int64 helper = new  oplogical_int64int64 ();
             return  LogicalBinaryInt64Operator (A, B, helper.and);
@@ -29188,8 +29210,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or( ILArray<Int64> A,  ILArray<Int64> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29211,16 +29235,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and( ILArray<Int32> A,  ILArray<Int32> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             oplogical_int32int32 helper = new  oplogical_int32int32 ();
             return  LogicalBinaryInt32Operator (A, B, helper.and);
@@ -29235,8 +29261,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or( ILArray<Int32> A,  ILArray<Int32> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29258,16 +29286,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and( ILArray<Int16> A,  ILArray<Int16> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             oplogical_int16int16 helper = new  oplogical_int16int16 ();
             return  LogicalBinaryInt16Operator (A, B, helper.and);
@@ -29282,8 +29312,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or( ILArray<Int16> A,  ILArray<Int16> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29305,16 +29337,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and( ILArray<float> A,  ILArray<float> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             oplogical_floatfloat helper = new  oplogical_floatfloat ();
             return  LogicalBinaryFloatOperator (A, B, helper.and);
@@ -29329,8 +29363,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or( ILArray<float> A,  ILArray<float> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29352,16 +29388,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             oplogical_fcomplexfcomplex helper = new  oplogical_fcomplexfcomplex ();
             return  LogicalBinaryFcomplexOperator (A, B, helper.and);
@@ -29376,8 +29414,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29399,16 +29439,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and( ILArray<complex> A,  ILArray<complex> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             oplogical_complexcomplex helper = new  oplogical_complexcomplex ();
             return  LogicalBinaryComplexOperator (A, B, helper.and);
@@ -29423,8 +29465,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or( ILArray<complex> A,  ILArray<complex> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29446,16 +29490,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and( ILArray<char> A,  ILArray<char> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             oplogical_charchar helper = new  oplogical_charchar ();
             return  LogicalBinaryCharOperator (A, B, helper.and);
@@ -29470,8 +29516,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or( ILArray<char> A,  ILArray<char> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29493,16 +29541,18 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray and( ILArray<byte> A,  ILArray<byte> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) != 0) return B != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(B.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, B.Dimensions.Clone(),0); 
+                return new ILLogicalArray(ret, B.Dimensions,0); 
             } else if (B.IsScalar) {
                 if (B.GetValue(0) != 0) return A != 0.0; 
                 byte[] ret = ILMemoryPool.Pool.New<byte>(A.Dimensions.NumberOfElements); 
-                return new ILLogicalArray(ret, A.Dimensions.Clone(),0);
+                return new ILLogicalArray(ret, A.Dimensions,0);
             }
             oplogical_bytebyte helper = new  oplogical_bytebyte ();
             return  LogicalBinaryByteOperator (A, B, helper.and);
@@ -29517,8 +29567,10 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILLogicalArray or( ILArray<byte> A,  ILArray<byte> B) {
             if (A == null || B == null) 
                 throw new ILArgumentException ("ILMath.and: A and B must be matrices and cannot be null!");
+            if (!A.Dimensions.IsSameShape(B.Dimensions)) 
+                throw new ILArgumentException("input arrays must have the same size"); 
             if (A.IsEmpty || B.IsEmpty) 
-                return ILLogicalArray.empty(); 
+                return ILLogicalArray.empty(A.Dimensions); 
             if (A.IsScalar) {
                 if (A.GetValue(0) == 0) return B != 0.0; 
                 return tological(ones(B.Dimensions));  
@@ -29531,7 +29583,6 @@ namespace ILNumerics.BuiltInFunctions {
         }
 
 #endregion HYCALPER AUTO GENERATED CODE
-
 
         #endregion Relational_(binary)_Operators
 

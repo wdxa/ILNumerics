@@ -89,7 +89,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static /*!HC:outCls*/ ILArray<double> /*!HC:HCfuncname*/ sin (/*!HC:inCls1*/ ILArray<double> A) {
             if (A.IsEmpty)
-                return /*!HC:outCls*/ ILArray<double> .empty(); 
+                return /*!HC:outCls*/ ILArray<double> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             /*!HC:outArr*/ double [] retDblArr;
             // build ILDimension    
@@ -205,7 +205,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new /*!HC:outCls*/ ILArray<double> ( retDblArr, inDim.ToIntArray () );
+            return new /*!HC:outCls*/ ILArray<double> ( retDblArr, inDim );
         }
         #endregion HYCALPER LOOPEND UNARY_OPERATOR_TEMPLATE
 #region HYCALPER AUTO GENERATED CODE
@@ -219,7 +219,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<complex>  sin ( ILArray<complex> A) {
             if (A.IsEmpty)
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             complex [] retDblArr;
             // build ILDimension    
@@ -335,7 +335,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<complex> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<complex> ( retDblArr, inDim );
         }
         /// <summary>
         /// Sinus of array elements 
@@ -346,7 +346,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<fcomplex>  sin ( ILArray<fcomplex> A) {
             if (A.IsEmpty)
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             fcomplex [] retDblArr;
             // build ILDimension    
@@ -462,7 +462,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<fcomplex> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<fcomplex> ( retDblArr, inDim );
         }
         /// <summary>
         /// Sinus of array elements 
@@ -473,7 +473,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<float>  sin ( ILArray<float> A) {
             if (A.IsEmpty)
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             float [] retDblArr;
             // build ILDimension    
@@ -589,7 +589,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<float> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<float> ( retDblArr, inDim );
         }
 
 #endregion HYCALPER AUTO GENERATED CODE

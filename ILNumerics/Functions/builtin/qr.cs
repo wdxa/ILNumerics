@@ -132,10 +132,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition - raw Lapack output
         /// </summary>
         /// <param name="A">general input matrix A</param>
-        /// <returns>orthonormal / unitary matrix Q and upper triangular matrix R packed into single matrix. This is the output of the lapack function ?geqrf.</returns>
+        /// <returns>orthonormal / unitary matrix Q and upper triangular 
+        /// matrix R packed into single matrix. This is the output of the 
+        /// lapack function ?geqrf.</returns>
         /// <remarks><para>Input matrix A will not be altered. </para>
-        /// <para>The matrix returned is the direct output of the lapack function [d,s,c,z]geqrf respectively. This mean that it contains the decomposition factors Q and R, but they are cmbined into a single matrix for performance reasons. If you need one of the factors, 
-        /// you would use the overloaded function <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> instead, which returns those factors seperately.</para></remarks>
+        /// <para>The matrix returned is the direct output of the lapack 
+        /// function [d,s,c,z]geqrf respectively. This mean that it contains 
+        /// the decomposition factors Q and R, but they are cmbined into a 
+        /// single matrix for performance reasons. If you need one of the factors, 
+        /// you would use the overloaded function 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> 
+        /// instead, which returns those factors seperately.</para></remarks>
         public static /*!HC:inCls1*/ ILArray<double> qr(/*!HC:inCls1*/ ILArray<double> A) {
             if (!A.IsMatrix) 
                 throw new ILArgumentException("qr decomposition: A must be a matrix"); 
@@ -152,25 +159,38 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition, returning Q and R
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n]</param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m]</returns>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n]</param>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m]</returns>
         /// <remarks>The function returns Q and R such that the equation 
-        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes matrix multiplication.) 
+        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes 
+        /// matrix multiplication.) 
         /// <para>Q and R will be solid ILArray's.</para></remarks>
-        public static /*!HC:inCls1*/ ILArray<double> qr(/*!HC:inCls1*/ ILArray<double> A, ref /*!HC:inCls1*/ ILArray<double> R) {
+        public static /*!HC:inCls1*/ ILArray<double> qr(
+                                      /*!HC:inCls1*/ ILArray<double> A, 
+                                  ref /*!HC:inCls1*/ ILArray<double> R) {
             return qr(A,ref R,false); 
         }
         /// <summary>
-        /// QR decomposition, returning Q and R, as economical sized (if choosen)
+        /// QR decomposition, returning Q and R, optionally economical sized
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
-        /// <param name="economySize">if true, the size of Q and R will be [m x m] and [m x n] respectively. However, if m &lt; n, the economySize parameter has no effect. </param>
-        /// <returns>Orthonormal real / unitary complex matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
+        /// <param name="economySize">if true, the size of Q and R will 
+        /// be [m x m] and [m x n] respectively. However, if m &lt; n, 
+        /// the economySize parameter has no effect. </param>
+        /// <returns>Orthonormal real / unitary complex matrix Q as result 
+        /// of decomposition. Size [m x m] or [m x min(m,n)], depending 
+        /// on <paramref name="economySize"/> (see remarks below)</returns>
         /// <remarks>The function returns Q and R such that the equation 
-        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes matrix multiplication.) 
+        /// <para>A = Q * R</para> holds with roundoff errors. ('*' 
+        /// denotes matrix multiplication.) 
         /// <para>Q and R will be solid ILArray's.</para></remarks>
-        public static /*!HC:inCls1*/ ILArray<double> qr(/*!HC:inCls1*/ ILArray<double> A, ref /*!HC:inCls1*/ ILArray<double> R, bool economySize) {
+        public static /*!HC:inCls1*/ ILArray<double> qr(
+                                /*!HC:inCls1*/ ILArray<double> A, 
+                                ref /*!HC:inCls1*/ ILArray<double> R, bool economySize) {
             if (Object.Equals(R,null)) {
                 return qr(A); 
             }
@@ -180,7 +200,7 @@ namespace ILNumerics.BuiltInFunctions {
             /*!HC:inCls1*/ ILArray<double> ret;
             if (m == 0 || n == 0) { 
                 R = new /*!HC:inCls1*/ ILArray<double> (new /*!HC:inArr1*/ double [0],m,n); 
-                return /*!HC:inCls1*/ ILArray<double> .empty();  
+                return /*!HC:inCls1*/ ILArray<double> .empty(A.Dimensions);  
             }
             int minMN = (m<n)?m:n;
             int info = 0; 
@@ -222,34 +242,61 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition with pivoting
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
+        /// <param name="R">output parameter. Upper triangular matrix 
+        /// R as result of decomposition. Size [m x n] or [min(m,n) x n] 
+        /// (see remarks). </param>
         /// <param name="E">permutation matrix from pivoting. Size [m x m]</param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> 
+        /// (see remarks below)</returns>
         /// <remarks>The function returns Q, R and E such that the equation 
-        /// <para>A * E = Q * R</para> holds with roundoff errors, where '*' denotes matrix multiplication. I.e. E reflects the pivoting done inside LAPACK in order to give R increasingly diagonal elements.  
+        /// <para>A * E = Q * R</para> holds with roundoff errors, where '*' 
+        /// denotes matrix multiplication. I.e. E reflects the pivoting done 
+        /// inside LAPACK in order to give R increasingly diagonal elements.  
         /// <para>Q, R and E will be solid ILArray's.</para></remarks>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;, ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,bool)"/>
-        public static /*!HC:inCls1*/ ILArray<double> qr(/*!HC:inCls1*/ ILArray<double> A, ref /*!HC:inCls1*/ ILArray<double> R, ref /*!HC:inCls1*/ ILArray<double> E) {
+        public static /*!HC:inCls1*/ ILArray<double> qr(
+                                    /*!HC:inCls1*/ ILArray<double> A, 
+                                    ref /*!HC:inCls1*/ ILArray<double> R, 
+                                    ref /*!HC:inCls1*/ ILArray<double> E) {
             return qr(A, ref R, ref E, false); 
         }
         /// <summary>
         /// QR decomposition with pivoting, possibly economical sized
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] depending on <paramref name="economySize"/> (see remarks). </param>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n] or [min(m,n) x n] depending 
+        /// on <paramref name="economySize"/> (see remarks). </param>
         /// <param name="economySize"><para>if true, <list type="bullet">
-        /// <item>the size of Q and R will be [m x m] and [m x n] respectively. However, if m &lt; n, the economySize parameter has no effect on those sizes.</item>
-        /// <item>the output parameter E will be returned as row permutation vector rather than as permutation matrix</item></list></para>
-        /// <para>if false, this function acts exactly as its overload <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/></para>
+        /// <item>the size of Q and R will be [m x m] and [m x n] respectively. 
+        /// However, if m &lt; n, the economySize parameter has no effect on 
+        /// those sizes.</item>
+        /// <item>the output parameter E will be returned as row permutation 
+        /// vector rather than as permutation matrix</item></list></para>
+        /// <para>if false, this function acts exactly as its overload 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/></para>
         /// </param>
-        /// <param name="E">permutation matrix from pivoting. Size [m x m]. If this is not null, the permutation matrix/ vector E will be returned.
-        /// <para>E is of size [n x n], if <paramref name="economySize"/> is true, a row vector of length n otherwise</para></param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
-        /// <remarks><para> If <paramref name="economySize"/> is false, the function returns Q, R and E such that the equation A * E = Q * R holds except roundoff errors. </para>
-        /// <para>If <paramref name="economySize"/> is true, E will be a permutation vector and the equation A[null,E] == Q * R holds (except roundoff).</para>
-        /// <para>E reflects the pivoting of A done inside LAPACK in order to give R increasingly diagonal elements.</para>
+        /// <param name="E">permutation matrix from pivoting. Size [m x m]. 
+        /// If this is not null, the permutation matrix/ vector E will be returned.
+        /// <para>E is of size [n x n], if <paramref name="economySize"/> is 
+        /// true, a row vector of length n otherwise</para></param>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> 
+        /// (see remarks below)</returns>
+        /// <remarks><para> If <paramref name="economySize"/> is false, the function 
+        /// returns Q, R and E such that the equation A * E = Q * R holds except 
+        /// roundoff errors. </para>
+        /// <para>If <paramref name="economySize"/> is true, E will be a permutation 
+        /// vector and the equation A[null,E] == Q * R holds (except roundoff).</para>
+        /// <para>E reflects the pivoting of A done inside LAPACK in order to give R 
+        /// increasingly diagonal elements.</para>
         /// <para>Q, R and E will be solid ILArray's.</para></remarks>
-        public static /*!HC:inCls1*/ ILArray<double> qr(/*!HC:inCls1*/ ILArray<double> A, ref /*!HC:inCls1*/ ILArray<double> R, ref /*!HC:inCls1*/ ILArray<double> E, bool economySize) {
+        public static /*!HC:inCls1*/ ILArray<double> qr(
+                                /*!HC:inCls1*/ ILArray<double> A, 
+                                ref /*!HC:inCls1*/ ILArray<double> R, 
+                                ref /*!HC:inCls1*/ ILArray<double> E, 
+                                bool economySize) {
             if (Object.Equals(R,null)) {
                 return qr(A); 
             }
@@ -260,7 +307,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (m == 0 || n == 0) { 
                 R = new /*!HC:inCls1*/ ILArray<double> (new /*!HC:inArr1*/ double [0],m,n); 
                 E = new /*!HC:inCls1*/ ILArray<double> (new /*!HC:inArr1*/ double [0],1,0); 
-                return /*!HC:inCls1*/ ILArray<double> .empty();  
+                return /*!HC:inCls1*/ ILArray<double> .empty(A.Dimensions);  
             }
             // prepare IPVT
             if (object.Equals(E,null)) 
@@ -323,10 +370,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition - raw Lapack output
         /// </summary>
         /// <param name="A">general input matrix A</param>
-        /// <returns>orthonormal / unitary matrix Q and upper triangular matrix R packed into single matrix. This is the output of the lapack function ?geqrf.</returns>
+        /// <returns>orthonormal / unitary matrix Q and upper triangular 
+        /// matrix R packed into single matrix. This is the output of the 
+        /// lapack function ?geqrf.</returns>
         /// <remarks><para>Input matrix A will not be altered. </para>
-        /// <para>The matrix returned is the direct output of the lapack function [d,s,c,z]geqrf respectively. This mean that it contains the decomposition factors Q and R, but they are cmbined into a single matrix for performance reasons. If you need one of the factors, 
-        /// you would use the overloaded function <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> instead, which returns those factors seperately.</para></remarks>
+        /// <para>The matrix returned is the direct output of the lapack 
+        /// function [d,s,c,z]geqrf respectively. This mean that it contains 
+        /// the decomposition factors Q and R, but they are cmbined into a 
+        /// single matrix for performance reasons. If you need one of the factors, 
+        /// you would use the overloaded function 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> 
+        /// instead, which returns those factors seperately.</para></remarks>
         public static  ILArray<float> qr( ILArray<float> A) {
             if (!A.IsMatrix) 
                 throw new ILArgumentException("qr decomposition: A must be a matrix"); 
@@ -343,25 +397,38 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition, returning Q and R
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n]</param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m]</returns>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n]</param>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m]</returns>
         /// <remarks>The function returns Q and R such that the equation 
-        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes matrix multiplication.) 
+        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes 
+        /// matrix multiplication.) 
         /// <para>Q and R will be solid ILArray's.</para></remarks>
-        public static  ILArray<float> qr( ILArray<float> A, ref  ILArray<float> R) {
+        public static  ILArray<float> qr(
+                                      ILArray<float> A, 
+                                  ref  ILArray<float> R) {
             return qr(A,ref R,false); 
         }
         /// <summary>
-        /// QR decomposition, returning Q and R, as economical sized (if choosen)
+        /// QR decomposition, returning Q and R, optionally economical sized
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
-        /// <param name="economySize">if true, the size of Q and R will be [m x m] and [m x n] respectively. However, if m &lt; n, the economySize parameter has no effect. </param>
-        /// <returns>Orthonormal real / unitary complex matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
+        /// <param name="economySize">if true, the size of Q and R will 
+        /// be [m x m] and [m x n] respectively. However, if m &lt; n, 
+        /// the economySize parameter has no effect. </param>
+        /// <returns>Orthonormal real / unitary complex matrix Q as result 
+        /// of decomposition. Size [m x m] or [m x min(m,n)], depending 
+        /// on <paramref name="economySize"/> (see remarks below)</returns>
         /// <remarks>The function returns Q and R such that the equation 
-        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes matrix multiplication.) 
+        /// <para>A = Q * R</para> holds with roundoff errors. ('*' 
+        /// denotes matrix multiplication.) 
         /// <para>Q and R will be solid ILArray's.</para></remarks>
-        public static  ILArray<float> qr( ILArray<float> A, ref  ILArray<float> R, bool economySize) {
+        public static  ILArray<float> qr(
+                                ILArray<float> A, 
+                                ref  ILArray<float> R, bool economySize) {
             if (Object.Equals(R,null)) {
                 return qr(A); 
             }
@@ -371,7 +438,7 @@ namespace ILNumerics.BuiltInFunctions {
             ILArray<float> ret;
             if (m == 0 || n == 0) { 
                 R = new  ILArray<float> (new  float [0],m,n); 
-                return  ILArray<float> .empty();  
+                return  ILArray<float> .empty(A.Dimensions);  
             }
             int minMN = (m<n)?m:n;
             int info = 0; 
@@ -413,34 +480,61 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition with pivoting
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
+        /// <param name="R">output parameter. Upper triangular matrix 
+        /// R as result of decomposition. Size [m x n] or [min(m,n) x n] 
+        /// (see remarks). </param>
         /// <param name="E">permutation matrix from pivoting. Size [m x m]</param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> 
+        /// (see remarks below)</returns>
         /// <remarks>The function returns Q, R and E such that the equation 
-        /// <para>A * E = Q * R</para> holds with roundoff errors, where '*' denotes matrix multiplication. I.e. E reflects the pivoting done inside LAPACK in order to give R increasingly diagonal elements.  
+        /// <para>A * E = Q * R</para> holds with roundoff errors, where '*' 
+        /// denotes matrix multiplication. I.e. E reflects the pivoting done 
+        /// inside LAPACK in order to give R increasingly diagonal elements.  
         /// <para>Q, R and E will be solid ILArray's.</para></remarks>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;, ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,bool)"/>
-        public static  ILArray<float> qr( ILArray<float> A, ref  ILArray<float> R, ref  ILArray<float> E) {
+        public static  ILArray<float> qr(
+                                    ILArray<float> A, 
+                                    ref  ILArray<float> R, 
+                                    ref  ILArray<float> E) {
             return qr(A, ref R, ref E, false); 
         }
         /// <summary>
         /// QR decomposition with pivoting, possibly economical sized
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] depending on <paramref name="economySize"/> (see remarks). </param>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n] or [min(m,n) x n] depending 
+        /// on <paramref name="economySize"/> (see remarks). </param>
         /// <param name="economySize"><para>if true, <list type="bullet">
-        /// <item>the size of Q and R will be [m x m] and [m x n] respectively. However, if m &lt; n, the economySize parameter has no effect on those sizes.</item>
-        /// <item>the output parameter E will be returned as row permutation vector rather than as permutation matrix</item></list></para>
-        /// <para>if false, this function acts exactly as its overload <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/></para>
+        /// <item>the size of Q and R will be [m x m] and [m x n] respectively. 
+        /// However, if m &lt; n, the economySize parameter has no effect on 
+        /// those sizes.</item>
+        /// <item>the output parameter E will be returned as row permutation 
+        /// vector rather than as permutation matrix</item></list></para>
+        /// <para>if false, this function acts exactly as its overload 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/></para>
         /// </param>
-        /// <param name="E">permutation matrix from pivoting. Size [m x m]. If this is not null, the permutation matrix/ vector E will be returned.
-        /// <para>E is of size [n x n], if <paramref name="economySize"/> is true, a row vector of length n otherwise</para></param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
-        /// <remarks><para> If <paramref name="economySize"/> is false, the function returns Q, R and E such that the equation A * E = Q * R holds except roundoff errors. </para>
-        /// <para>If <paramref name="economySize"/> is true, E will be a permutation vector and the equation A[null,E] == Q * R holds (except roundoff).</para>
-        /// <para>E reflects the pivoting of A done inside LAPACK in order to give R increasingly diagonal elements.</para>
+        /// <param name="E">permutation matrix from pivoting. Size [m x m]. 
+        /// If this is not null, the permutation matrix/ vector E will be returned.
+        /// <para>E is of size [n x n], if <paramref name="economySize"/> is 
+        /// true, a row vector of length n otherwise</para></param>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> 
+        /// (see remarks below)</returns>
+        /// <remarks><para> If <paramref name="economySize"/> is false, the function 
+        /// returns Q, R and E such that the equation A * E = Q * R holds except 
+        /// roundoff errors. </para>
+        /// <para>If <paramref name="economySize"/> is true, E will be a permutation 
+        /// vector and the equation A[null,E] == Q * R holds (except roundoff).</para>
+        /// <para>E reflects the pivoting of A done inside LAPACK in order to give R 
+        /// increasingly diagonal elements.</para>
         /// <para>Q, R and E will be solid ILArray's.</para></remarks>
-        public static  ILArray<float> qr( ILArray<float> A, ref  ILArray<float> R, ref  ILArray<float> E, bool economySize) {
+        public static  ILArray<float> qr(
+                                ILArray<float> A, 
+                                ref  ILArray<float> R, 
+                                ref  ILArray<float> E, 
+                                bool economySize) {
             if (Object.Equals(R,null)) {
                 return qr(A); 
             }
@@ -451,7 +545,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (m == 0 || n == 0) { 
                 R = new  ILArray<float> (new  float [0],m,n); 
                 E = new  ILArray<float> (new  float [0],1,0); 
-                return  ILArray<float> .empty();  
+                return  ILArray<float> .empty(A.Dimensions);  
             }
             // prepare IPVT
             if (object.Equals(E,null)) 
@@ -511,10 +605,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition - raw Lapack output
         /// </summary>
         /// <param name="A">general input matrix A</param>
-        /// <returns>orthonormal / unitary matrix Q and upper triangular matrix R packed into single matrix. This is the output of the lapack function ?geqrf.</returns>
+        /// <returns>orthonormal / unitary matrix Q and upper triangular 
+        /// matrix R packed into single matrix. This is the output of the 
+        /// lapack function ?geqrf.</returns>
         /// <remarks><para>Input matrix A will not be altered. </para>
-        /// <para>The matrix returned is the direct output of the lapack function [d,s,c,z]geqrf respectively. This mean that it contains the decomposition factors Q and R, but they are cmbined into a single matrix for performance reasons. If you need one of the factors, 
-        /// you would use the overloaded function <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> instead, which returns those factors seperately.</para></remarks>
+        /// <para>The matrix returned is the direct output of the lapack 
+        /// function [d,s,c,z]geqrf respectively. This mean that it contains 
+        /// the decomposition factors Q and R, but they are cmbined into a 
+        /// single matrix for performance reasons. If you need one of the factors, 
+        /// you would use the overloaded function 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> 
+        /// instead, which returns those factors seperately.</para></remarks>
         public static  ILArray<fcomplex> qr( ILArray<fcomplex> A) {
             if (!A.IsMatrix) 
                 throw new ILArgumentException("qr decomposition: A must be a matrix"); 
@@ -531,25 +632,38 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition, returning Q and R
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n]</param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m]</returns>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n]</param>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m]</returns>
         /// <remarks>The function returns Q and R such that the equation 
-        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes matrix multiplication.) 
+        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes 
+        /// matrix multiplication.) 
         /// <para>Q and R will be solid ILArray's.</para></remarks>
-        public static  ILArray<fcomplex> qr( ILArray<fcomplex> A, ref  ILArray<fcomplex> R) {
+        public static  ILArray<fcomplex> qr(
+                                      ILArray<fcomplex> A, 
+                                  ref  ILArray<fcomplex> R) {
             return qr(A,ref R,false); 
         }
         /// <summary>
-        /// QR decomposition, returning Q and R, as economical sized (if choosen)
+        /// QR decomposition, returning Q and R, optionally economical sized
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
-        /// <param name="economySize">if true, the size of Q and R will be [m x m] and [m x n] respectively. However, if m &lt; n, the economySize parameter has no effect. </param>
-        /// <returns>Orthonormal real / unitary complex matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
+        /// <param name="economySize">if true, the size of Q and R will 
+        /// be [m x m] and [m x n] respectively. However, if m &lt; n, 
+        /// the economySize parameter has no effect. </param>
+        /// <returns>Orthonormal real / unitary complex matrix Q as result 
+        /// of decomposition. Size [m x m] or [m x min(m,n)], depending 
+        /// on <paramref name="economySize"/> (see remarks below)</returns>
         /// <remarks>The function returns Q and R such that the equation 
-        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes matrix multiplication.) 
+        /// <para>A = Q * R</para> holds with roundoff errors. ('*' 
+        /// denotes matrix multiplication.) 
         /// <para>Q and R will be solid ILArray's.</para></remarks>
-        public static  ILArray<fcomplex> qr( ILArray<fcomplex> A, ref  ILArray<fcomplex> R, bool economySize) {
+        public static  ILArray<fcomplex> qr(
+                                ILArray<fcomplex> A, 
+                                ref  ILArray<fcomplex> R, bool economySize) {
             if (Object.Equals(R,null)) {
                 return qr(A); 
             }
@@ -559,7 +673,7 @@ namespace ILNumerics.BuiltInFunctions {
             ILArray<fcomplex> ret;
             if (m == 0 || n == 0) { 
                 R = new  ILArray<fcomplex> (new  fcomplex [0],m,n); 
-                return  ILArray<fcomplex> .empty();  
+                return  ILArray<fcomplex> .empty(A.Dimensions);  
             }
             int minMN = (m<n)?m:n;
             int info = 0; 
@@ -601,34 +715,61 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition with pivoting
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
+        /// <param name="R">output parameter. Upper triangular matrix 
+        /// R as result of decomposition. Size [m x n] or [min(m,n) x n] 
+        /// (see remarks). </param>
         /// <param name="E">permutation matrix from pivoting. Size [m x m]</param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> 
+        /// (see remarks below)</returns>
         /// <remarks>The function returns Q, R and E such that the equation 
-        /// <para>A * E = Q * R</para> holds with roundoff errors, where '*' denotes matrix multiplication. I.e. E reflects the pivoting done inside LAPACK in order to give R increasingly diagonal elements.  
+        /// <para>A * E = Q * R</para> holds with roundoff errors, where '*' 
+        /// denotes matrix multiplication. I.e. E reflects the pivoting done 
+        /// inside LAPACK in order to give R increasingly diagonal elements.  
         /// <para>Q, R and E will be solid ILArray's.</para></remarks>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;, ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,bool)"/>
-        public static  ILArray<fcomplex> qr( ILArray<fcomplex> A, ref  ILArray<fcomplex> R, ref  ILArray<fcomplex> E) {
+        public static  ILArray<fcomplex> qr(
+                                    ILArray<fcomplex> A, 
+                                    ref  ILArray<fcomplex> R, 
+                                    ref  ILArray<fcomplex> E) {
             return qr(A, ref R, ref E, false); 
         }
         /// <summary>
         /// QR decomposition with pivoting, possibly economical sized
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] depending on <paramref name="economySize"/> (see remarks). </param>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n] or [min(m,n) x n] depending 
+        /// on <paramref name="economySize"/> (see remarks). </param>
         /// <param name="economySize"><para>if true, <list type="bullet">
-        /// <item>the size of Q and R will be [m x m] and [m x n] respectively. However, if m &lt; n, the economySize parameter has no effect on those sizes.</item>
-        /// <item>the output parameter E will be returned as row permutation vector rather than as permutation matrix</item></list></para>
-        /// <para>if false, this function acts exactly as its overload <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/></para>
+        /// <item>the size of Q and R will be [m x m] and [m x n] respectively. 
+        /// However, if m &lt; n, the economySize parameter has no effect on 
+        /// those sizes.</item>
+        /// <item>the output parameter E will be returned as row permutation 
+        /// vector rather than as permutation matrix</item></list></para>
+        /// <para>if false, this function acts exactly as its overload 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/></para>
         /// </param>
-        /// <param name="E">permutation matrix from pivoting. Size [m x m]. If this is not null, the permutation matrix/ vector E will be returned.
-        /// <para>E is of size [n x n], if <paramref name="economySize"/> is true, a row vector of length n otherwise</para></param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
-        /// <remarks><para> If <paramref name="economySize"/> is false, the function returns Q, R and E such that the equation A * E = Q * R holds except roundoff errors. </para>
-        /// <para>If <paramref name="economySize"/> is true, E will be a permutation vector and the equation A[null,E] == Q * R holds (except roundoff).</para>
-        /// <para>E reflects the pivoting of A done inside LAPACK in order to give R increasingly diagonal elements.</para>
+        /// <param name="E">permutation matrix from pivoting. Size [m x m]. 
+        /// If this is not null, the permutation matrix/ vector E will be returned.
+        /// <para>E is of size [n x n], if <paramref name="economySize"/> is 
+        /// true, a row vector of length n otherwise</para></param>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> 
+        /// (see remarks below)</returns>
+        /// <remarks><para> If <paramref name="economySize"/> is false, the function 
+        /// returns Q, R and E such that the equation A * E = Q * R holds except 
+        /// roundoff errors. </para>
+        /// <para>If <paramref name="economySize"/> is true, E will be a permutation 
+        /// vector and the equation A[null,E] == Q * R holds (except roundoff).</para>
+        /// <para>E reflects the pivoting of A done inside LAPACK in order to give R 
+        /// increasingly diagonal elements.</para>
         /// <para>Q, R and E will be solid ILArray's.</para></remarks>
-        public static  ILArray<fcomplex> qr( ILArray<fcomplex> A, ref  ILArray<fcomplex> R, ref  ILArray<fcomplex> E, bool economySize) {
+        public static  ILArray<fcomplex> qr(
+                                ILArray<fcomplex> A, 
+                                ref  ILArray<fcomplex> R, 
+                                ref  ILArray<fcomplex> E, 
+                                bool economySize) {
             if (Object.Equals(R,null)) {
                 return qr(A); 
             }
@@ -639,7 +780,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (m == 0 || n == 0) { 
                 R = new  ILArray<fcomplex> (new  fcomplex [0],m,n); 
                 E = new  ILArray<fcomplex> (new  fcomplex [0],1,0); 
-                return  ILArray<fcomplex> .empty();  
+                return  ILArray<fcomplex> .empty(A.Dimensions);  
             }
             // prepare IPVT
             if (object.Equals(E,null)) 
@@ -699,10 +840,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition - raw Lapack output
         /// </summary>
         /// <param name="A">general input matrix A</param>
-        /// <returns>orthonormal / unitary matrix Q and upper triangular matrix R packed into single matrix. This is the output of the lapack function ?geqrf.</returns>
+        /// <returns>orthonormal / unitary matrix Q and upper triangular 
+        /// matrix R packed into single matrix. This is the output of the 
+        /// lapack function ?geqrf.</returns>
         /// <remarks><para>Input matrix A will not be altered. </para>
-        /// <para>The matrix returned is the direct output of the lapack function [d,s,c,z]geqrf respectively. This mean that it contains the decomposition factors Q and R, but they are cmbined into a single matrix for performance reasons. If you need one of the factors, 
-        /// you would use the overloaded function <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> instead, which returns those factors seperately.</para></remarks>
+        /// <para>The matrix returned is the direct output of the lapack 
+        /// function [d,s,c,z]geqrf respectively. This mean that it contains 
+        /// the decomposition factors Q and R, but they are cmbined into a 
+        /// single matrix for performance reasons. If you need one of the factors, 
+        /// you would use the overloaded function 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/> 
+        /// instead, which returns those factors seperately.</para></remarks>
         public static  ILArray<complex> qr( ILArray<complex> A) {
             if (!A.IsMatrix) 
                 throw new ILArgumentException("qr decomposition: A must be a matrix"); 
@@ -719,25 +867,38 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition, returning Q and R
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n]</param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m]</returns>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n]</param>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m]</returns>
         /// <remarks>The function returns Q and R such that the equation 
-        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes matrix multiplication.) 
+        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes 
+        /// matrix multiplication.) 
         /// <para>Q and R will be solid ILArray's.</para></remarks>
-        public static  ILArray<complex> qr( ILArray<complex> A, ref  ILArray<complex> R) {
+        public static  ILArray<complex> qr(
+                                      ILArray<complex> A, 
+                                  ref  ILArray<complex> R) {
             return qr(A,ref R,false); 
         }
         /// <summary>
-        /// QR decomposition, returning Q and R, as economical sized (if choosen)
+        /// QR decomposition, returning Q and R, optionally economical sized
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
-        /// <param name="economySize">if true, the size of Q and R will be [m x m] and [m x n] respectively. However, if m &lt; n, the economySize parameter has no effect. </param>
-        /// <returns>Orthonormal real / unitary complex matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
+        /// <param name="economySize">if true, the size of Q and R will 
+        /// be [m x m] and [m x n] respectively. However, if m &lt; n, 
+        /// the economySize parameter has no effect. </param>
+        /// <returns>Orthonormal real / unitary complex matrix Q as result 
+        /// of decomposition. Size [m x m] or [m x min(m,n)], depending 
+        /// on <paramref name="economySize"/> (see remarks below)</returns>
         /// <remarks>The function returns Q and R such that the equation 
-        /// <para>A = Q * R</para> holds with roundoff errors. ('*' denotes matrix multiplication.) 
+        /// <para>A = Q * R</para> holds with roundoff errors. ('*' 
+        /// denotes matrix multiplication.) 
         /// <para>Q and R will be solid ILArray's.</para></remarks>
-        public static  ILArray<complex> qr( ILArray<complex> A, ref  ILArray<complex> R, bool economySize) {
+        public static  ILArray<complex> qr(
+                                ILArray<complex> A, 
+                                ref  ILArray<complex> R, bool economySize) {
             if (Object.Equals(R,null)) {
                 return qr(A); 
             }
@@ -747,7 +908,7 @@ namespace ILNumerics.BuiltInFunctions {
             ILArray<complex> ret;
             if (m == 0 || n == 0) { 
                 R = new  ILArray<complex> (new  complex [0],m,n); 
-                return  ILArray<complex> .empty();  
+                return  ILArray<complex> .empty(A.Dimensions);  
             }
             int minMN = (m<n)?m:n;
             int info = 0; 
@@ -789,34 +950,61 @@ namespace ILNumerics.BuiltInFunctions {
         /// QR decomposition with pivoting
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] (see remarks). </param>
+        /// <param name="R">output parameter. Upper triangular matrix 
+        /// R as result of decomposition. Size [m x n] or [min(m,n) x n] 
+        /// (see remarks). </param>
         /// <param name="E">permutation matrix from pivoting. Size [m x m]</param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> 
+        /// (see remarks below)</returns>
         /// <remarks>The function returns Q, R and E such that the equation 
-        /// <para>A * E = Q * R</para> holds with roundoff errors, where '*' denotes matrix multiplication. I.e. E reflects the pivoting done inside LAPACK in order to give R increasingly diagonal elements.  
+        /// <para>A * E = Q * R</para> holds with roundoff errors, where '*' 
+        /// denotes matrix multiplication. I.e. E reflects the pivoting done 
+        /// inside LAPACK in order to give R increasingly diagonal elements.  
         /// <para>Q, R and E will be solid ILArray's.</para></remarks>
         /// <seealso cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;, ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,bool)"/>
-        public static  ILArray<complex> qr( ILArray<complex> A, ref  ILArray<complex> R, ref  ILArray<complex> E) {
+        public static  ILArray<complex> qr(
+                                    ILArray<complex> A, 
+                                    ref  ILArray<complex> R, 
+                                    ref  ILArray<complex> E) {
             return qr(A, ref R, ref E, false); 
         }
         /// <summary>
         /// QR decomposition with pivoting, possibly economical sized
         /// </summary>
         /// <param name="A">general input matrix A of size [m x n]</param>
-        /// <param name="R">output parameter. Upper triangular matrix R as result of decomposition. Size [m x n] or [min(m,n) x n] depending on <paramref name="economySize"/> (see remarks). </param>
+        /// <param name="R">output parameter. Upper triangular matrix R as 
+        /// result of decomposition. Size [m x n] or [min(m,n) x n] depending 
+        /// on <paramref name="economySize"/> (see remarks). </param>
         /// <param name="economySize"><para>if true, <list type="bullet">
-        /// <item>the size of Q and R will be [m x m] and [m x n] respectively. However, if m &lt; n, the economySize parameter has no effect on those sizes.</item>
-        /// <item>the output parameter E will be returned as row permutation vector rather than as permutation matrix</item></list></para>
-        /// <para>if false, this function acts exactly as its overload <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/></para>
+        /// <item>the size of Q and R will be [m x m] and [m x n] respectively. 
+        /// However, if m &lt; n, the economySize parameter has no effect on 
+        /// those sizes.</item>
+        /// <item>the output parameter E will be returned as row permutation 
+        /// vector rather than as permutation matrix</item></list></para>
+        /// <para>if false, this function acts exactly as its overload 
+        /// <see cref="ILNumerics.BuiltInFunctions.ILMath.qr(ILArray&lt;double&gt;,ref ILArray&lt;double&gt;,ref ILArray&lt;double&gt;)"/></para>
         /// </param>
-        /// <param name="E">permutation matrix from pivoting. Size [m x m]. If this is not null, the permutation matrix/ vector E will be returned.
-        /// <para>E is of size [n x n], if <paramref name="economySize"/> is true, a row vector of length n otherwise</para></param>
-        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> (see remarks below)</returns>
-        /// <remarks><para> If <paramref name="economySize"/> is false, the function returns Q, R and E such that the equation A * E = Q * R holds except roundoff errors. </para>
-        /// <para>If <paramref name="economySize"/> is true, E will be a permutation vector and the equation A[null,E] == Q * R holds (except roundoff).</para>
-        /// <para>E reflects the pivoting of A done inside LAPACK in order to give R increasingly diagonal elements.</para>
+        /// <param name="E">permutation matrix from pivoting. Size [m x m]. 
+        /// If this is not null, the permutation matrix/ vector E will be returned.
+        /// <para>E is of size [n x n], if <paramref name="economySize"/> is 
+        /// true, a row vector of length n otherwise</para></param>
+        /// <returns>Orthonormal / unitary matrix Q as result of decomposition. 
+        /// Size [m x m] or [m x min(m,n)], depending on <paramref name="economySize"/> 
+        /// (see remarks below)</returns>
+        /// <remarks><para> If <paramref name="economySize"/> is false, the function 
+        /// returns Q, R and E such that the equation A * E = Q * R holds except 
+        /// roundoff errors. </para>
+        /// <para>If <paramref name="economySize"/> is true, E will be a permutation 
+        /// vector and the equation A[null,E] == Q * R holds (except roundoff).</para>
+        /// <para>E reflects the pivoting of A done inside LAPACK in order to give R 
+        /// increasingly diagonal elements.</para>
         /// <para>Q, R and E will be solid ILArray's.</para></remarks>
-        public static  ILArray<complex> qr( ILArray<complex> A, ref  ILArray<complex> R, ref  ILArray<complex> E, bool economySize) {
+        public static  ILArray<complex> qr(
+                                ILArray<complex> A, 
+                                ref  ILArray<complex> R, 
+                                ref  ILArray<complex> E, 
+                                bool economySize) {
             if (Object.Equals(R,null)) {
                 return qr(A); 
             }
@@ -827,7 +1015,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (m == 0 || n == 0) { 
                 R = new  ILArray<complex> (new  complex [0],m,n); 
                 E = new  ILArray<complex> (new  complex [0],1,0); 
-                return  ILArray<complex> .empty();  
+                return  ILArray<complex> .empty(A.Dimensions);  
             }
             // prepare IPVT
             if (object.Equals(E,null)) 

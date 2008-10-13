@@ -239,7 +239,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (object.Equals(B,null))
                 throw new ILArgumentException("linsolve: input argument B must not be null!"); 
             if (A.IsEmpty || B.IsEmpty)
-                return /*!HC:inCls1*/ ILArray<double> .empty(); 
+                return /*!HC:inCls1*/ ILArray<double> .empty(A.Dimensions); 
             if (A.Dimensions[0] != B.Dimensions[0])
                 throw new ILArgumentException("linsolve: number of rows for matrix A must match number of rows for RHS!");
             int info = 0, m = A.Dimensions[0]; 
@@ -538,7 +538,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (object.Equals(B,null))
                 throw new ILArgumentException("linsolve: input argument B must not be null!"); 
             if (A.IsEmpty || B.IsEmpty)
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(A.Dimensions); 
             if (A.Dimensions[0] != B.Dimensions[0])
                 throw new ILArgumentException("linsolve: number of rows for matrix A must match number of rows for RHS!");
             int info = 0, m = A.Dimensions[0]; 
@@ -834,7 +834,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (object.Equals(B,null))
                 throw new ILArgumentException("linsolve: input argument B must not be null!"); 
             if (A.IsEmpty || B.IsEmpty)
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             if (A.Dimensions[0] != B.Dimensions[0])
                 throw new ILArgumentException("linsolve: number of rows for matrix A must match number of rows for RHS!");
             int info = 0, m = A.Dimensions[0]; 
@@ -1130,7 +1130,7 @@ namespace ILNumerics.BuiltInFunctions {
             if (object.Equals(B,null))
                 throw new ILArgumentException("linsolve: input argument B must not be null!"); 
             if (A.IsEmpty || B.IsEmpty)
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             if (A.Dimensions[0] != B.Dimensions[0])
                 throw new ILArgumentException("linsolve: number of rows for matrix A must match number of rows for RHS!");
             int info = 0, m = A.Dimensions[0]; 

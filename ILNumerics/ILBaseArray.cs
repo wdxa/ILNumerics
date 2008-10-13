@@ -112,7 +112,7 @@ namespace ILNumerics {
         /// <para>If input is null or empty, an empty ILArray will be returned</para></remarks>
         public static implicit operator ILBaseArray(int[] input) {
             if (input == null || input.Length == 0) {
-                return ILArray<int>.empty(); 
+                return new ILArray<int>(input); 
             } 
             return new ILArray<int>(input, 1,input.Length); 
         }

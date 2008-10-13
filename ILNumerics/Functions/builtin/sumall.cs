@@ -130,7 +130,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return /*!HC:inCls1*/ ILArray<double> .empty(); 
+                return /*!HC:inCls1*/ ILArray<double> .empty(0,0); 
             } 
             /*!HC:outArr1*/ double retArr = /*!HC:HCzero*/ 0 ; 
             if (A.m_indexOffset == null) {
@@ -169,7 +169,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<UInt64> .empty(); 
+                return  ILArray<UInt64> .empty(0,0); 
             } 
             UInt64 retArr =  0 ; 
             if (A.m_indexOffset == null) {
@@ -205,7 +205,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<UInt32> .empty(); 
+                return  ILArray<UInt32> .empty(0,0); 
             } 
             UInt32 retArr =  0 ; 
             if (A.m_indexOffset == null) {
@@ -241,7 +241,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<UInt16> .empty(); 
+                return  ILArray<UInt16> .empty(0,0); 
             } 
             UInt16 retArr =  0 ; 
             if (A.m_indexOffset == null) {
@@ -277,7 +277,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<Int64> .empty(); 
+                return  ILArray<Int64> .empty(0,0); 
             } 
             Int64 retArr =  0 ; 
             if (A.m_indexOffset == null) {
@@ -313,7 +313,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<Int32> .empty(); 
+                return  ILArray<Int32> .empty(0,0); 
             } 
             Int32 retArr =  0 ; 
             if (A.m_indexOffset == null) {
@@ -349,7 +349,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<Int16> .empty(); 
+                return  ILArray<Int16> .empty(0,0); 
             } 
             Int16 retArr =  0 ; 
             if (A.m_indexOffset == null) {
@@ -385,7 +385,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<char> .empty(); 
+                return  ILArray<char> .empty(0,0); 
             } 
             char retArr =  (char)0 ; 
             if (A.m_indexOffset == null) {
@@ -421,7 +421,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<byte> .empty(); 
+                return  ILArray<byte> .empty(0,0); 
             } 
             byte retArr =  0 ; 
             if (A.m_indexOffset == null) {
@@ -457,7 +457,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(0,0); 
             } 
             fcomplex retArr =  new fcomplex(0.0f,0.0f) ; 
             if (A.m_indexOffset == null) {
@@ -493,7 +493,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(0,0); 
             } 
             float retArr =  0.0f ; 
             if (A.m_indexOffset == null) {
@@ -529,7 +529,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("sumall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(0,0); 
             } 
             complex retArr =  new complex(0.0,0.0) ; 
             if (A.m_indexOffset == null) {

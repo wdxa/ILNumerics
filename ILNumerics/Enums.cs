@@ -87,6 +87,35 @@ namespace ILNumerics {
         Matlab
     }
     /// <summary>
+    /// [deprecated]
+    /// </summary>
+    public enum FFTModes {
+        /// <summary>
+        /// 3-dim fft, real input
+        /// </summary>
+        FFT3DReal,
+        /// <summary>
+        /// 3-dim fft, complex input
+        /// </summary>
+        FFT3DComplex,
+        /// <summary>
+        /// 2-dim fft, real input
+        /// </summary>
+        FFT2DReal,
+        /// <summary>
+        /// 2-dim fft, complex input
+        /// </summary>
+        FFT2DComplex,
+        /// <summary>
+        /// 1-dim fft, real input
+        /// </summary>
+        FFT1DReal,
+        /// <summary>
+        /// 1-dim fft, complex input
+        /// </summary>
+        FFT1DComplex
+    }
+    /// <summary>
     /// possible properties for matrices 
     /// </summary>
     /// <remarks><para>These properties may be returned by function overloads receiving a MatrixProperties parameter by reference. The properties must be checked inside the function, the result is returned also.</para>

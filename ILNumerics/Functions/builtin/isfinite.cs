@@ -154,7 +154,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILLogicalArray  isfinite ( ILArray<double> A) {
             if (A.IsEmpty)
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             byte [] retDblArr;
             // build ILDimension    
@@ -270,7 +270,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILLogicalArray ( retDblArr, inDim.ToIntArray () );
+            return new  ILLogicalArray ( retDblArr, inDim );
         }
         /// <summary>Finds finite value elements</summary>
         /// <param name="A">input array</param>
@@ -279,7 +279,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILLogicalArray  isfinite ( ILArray<float> A) {
             if (A.IsEmpty)
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             byte [] retDblArr;
             // build ILDimension    
@@ -395,7 +395,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILLogicalArray ( retDblArr, inDim.ToIntArray () );
+            return new  ILLogicalArray ( retDblArr, inDim );
         }
         /// <summary>Finds finite value elements</summary>
         /// <param name="A">input array</param>
@@ -404,7 +404,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILLogicalArray  isfinite ( ILArray<fcomplex> A) {
             if (A.IsEmpty)
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             byte [] retDblArr;
             // build ILDimension    
@@ -520,7 +520,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILLogicalArray ( retDblArr, inDim.ToIntArray () );
+            return new  ILLogicalArray ( retDblArr, inDim );
         }
         /// <summary>Finds finite value elements</summary>
         /// <param name="A">input array</param>
@@ -529,7 +529,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILLogicalArray  isfinite ( ILArray<complex> A) {
             if (A.IsEmpty)
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             byte [] retDblArr;
             // build ILDimension    
@@ -645,7 +645,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILLogicalArray ( retDblArr, inDim.ToIntArray () );
+            return new  ILLogicalArray ( retDblArr, inDim );
         }
 
 #endregion HYCALPER AUTO GENERATED CODE

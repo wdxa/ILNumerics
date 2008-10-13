@@ -176,7 +176,7 @@ namespace ILNumerics.BuiltInFunctions {
         ///                         <para>The array returned will be a solid array.</para></remarks>
         public static  ILArray<double>  sign ( ILArray<double> A) {
             if (A.IsEmpty)
-                return  ILArray<double> .empty(); 
+                return  ILArray<double> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             double [] retDblArr;
             // build ILDimension    
@@ -292,7 +292,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<double> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<double> ( retDblArr, inDim );
         }
         /// <summary>Signum of array elements</summary>
         /// <param name="A">input array</param>
@@ -301,7 +301,7 @@ namespace ILNumerics.BuiltInFunctions {
         ///                         <para>The array returned will be a solid array.</para></remarks>
         public static  ILArray<float>  sign ( ILArray<float> A) {
             if (A.IsEmpty)
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             float [] retDblArr;
             // build ILDimension    
@@ -417,7 +417,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<float> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<float> ( retDblArr, inDim );
         }
         /// <summary>Signum of array elements</summary>
         /// <param name="A">input array</param>
@@ -426,7 +426,7 @@ namespace ILNumerics.BuiltInFunctions {
         ///                         <para>The array returned will be a solid array.</para></remarks>
         public static  ILArray<fcomplex>  sign ( ILArray<fcomplex> A) {
             if (A.IsEmpty)
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             fcomplex [] retDblArr;
             // build ILDimension    
@@ -542,7 +542,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<fcomplex> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<fcomplex> ( retDblArr, inDim );
         }
         /// <summary>Signum of array elements</summary>
         /// <param name="A">input array</param>
@@ -551,7 +551,7 @@ namespace ILNumerics.BuiltInFunctions {
         ///                         <para>The array returned will be a solid array.</para></remarks>
         public static  ILArray<complex>  sign ( ILArray<complex> A) {
             if (A.IsEmpty)
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             complex [] retDblArr;
             // build ILDimension    
@@ -667,7 +667,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<complex> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<complex> ( retDblArr, inDim );
         }
         /// <summary>Signum of array elements</summary>
         /// <param name="A">input array</param>
@@ -676,7 +676,7 @@ namespace ILNumerics.BuiltInFunctions {
         ///                         <para>The array returned will be a solid array.</para></remarks>
         public static  ILArray<Int64>  sign ( ILArray<Int64> A) {
             if (A.IsEmpty)
-                return  ILArray<Int64> .empty(); 
+                return  ILArray<Int64> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             Int64 [] retDblArr;
             // build ILDimension    
@@ -792,7 +792,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<Int64> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<Int64> ( retDblArr, inDim );
         }
         /// <summary>Signum of array elements</summary>
         /// <param name="A">input array</param>
@@ -801,7 +801,7 @@ namespace ILNumerics.BuiltInFunctions {
         ///                         <para>The array returned will be a solid array.</para></remarks>
         public static  ILArray<Int32>  sign ( ILArray<Int32> A) {
             if (A.IsEmpty)
-                return  ILArray<Int32> .empty(); 
+                return  ILArray<Int32> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             Int32 [] retDblArr;
             // build ILDimension    
@@ -917,7 +917,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<Int32> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<Int32> ( retDblArr, inDim );
         }
         /// <summary>Signum of array elements</summary>
         /// <param name="A">input array</param>
@@ -926,7 +926,7 @@ namespace ILNumerics.BuiltInFunctions {
         ///                         <para>The array returned will be a solid array.</para></remarks>
         public static  ILArray<Int16>  sign ( ILArray<Int16> A) {
             if (A.IsEmpty)
-                return  ILArray<Int16> .empty(); 
+                return  ILArray<Int16> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             Int16 [] retDblArr;
             // build ILDimension    
@@ -1042,7 +1042,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<Int16> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<Int16> ( retDblArr, inDim );
         }
         /// <summary>Signum of array elements</summary>
         /// <param name="A">input array</param>
@@ -1051,7 +1051,7 @@ namespace ILNumerics.BuiltInFunctions {
         ///                         <para>The array returned will be a solid array.</para></remarks>
         public static  ILArray<byte>  sign ( ILArray<byte> A) {
             if (A.IsEmpty)
-                return  ILArray<byte> .empty(); 
+                return  ILArray<byte> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             byte [] retDblArr;
             // build ILDimension    
@@ -1167,7 +1167,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<byte> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<byte> ( retDblArr, inDim );
         }
 
 #endregion HYCALPER AUTO GENERATED CODE

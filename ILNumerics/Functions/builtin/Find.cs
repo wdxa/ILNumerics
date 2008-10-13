@@ -190,13 +190,13 @@ namespace ILNumerics.Untyped {
                     throw new ILArgumentTypeException ( "Find: Limit parameter must be of any signed numeric type and must not be complex." );
             }  
             ILArray<double> C = null; 
-            if (outValue.Length > 1) C = ILArray<double>.empty(); 
+            if (outValue.Length > 1) C = ILArray<double>.empty(0,0); 
             if (false) {
             #region HYCALPER LOOPSTART UNTYPED 
             } else if (X[0] is /*!HC:inCls1*/ ILArray<double> )  {
                 /*!HC:inCls1*/ ILArray<double> V = null; 
                 if (outValue.Length == 3)
-                    V = /*!HC:inCls1*/ ILArray<double> .empty();
+                    V = /*!HC:inCls1*/ ILArray<double> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( (/*!HC:inCls1*/ ILArray<double> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -209,7 +209,7 @@ namespace ILNumerics.Untyped {
             } else if (X[0] is  ILArray<UInt64> )  {
                 ILArray<UInt64> V = null; 
                 if (outValue.Length == 3)
-                    V =  ILArray<UInt64> .empty();
+                    V =  ILArray<UInt64> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( ( ILArray<UInt64> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -219,7 +219,7 @@ namespace ILNumerics.Untyped {
             } else if (X[0] is  ILArray<UInt32> )  {
                 ILArray<UInt32> V = null; 
                 if (outValue.Length == 3)
-                    V =  ILArray<UInt32> .empty();
+                    V =  ILArray<UInt32> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( ( ILArray<UInt32> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -229,7 +229,7 @@ namespace ILNumerics.Untyped {
             } else if (X[0] is  ILArray<UInt16> )  {
                 ILArray<UInt16> V = null; 
                 if (outValue.Length == 3)
-                    V =  ILArray<UInt16> .empty();
+                    V =  ILArray<UInt16> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( ( ILArray<UInt16> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -239,7 +239,7 @@ namespace ILNumerics.Untyped {
             } else if (X[0] is  ILArray<Int64> )  {
                 ILArray<Int64> V = null; 
                 if (outValue.Length == 3)
-                    V =  ILArray<Int64> .empty();
+                    V =  ILArray<Int64> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( ( ILArray<Int64> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -249,7 +249,7 @@ namespace ILNumerics.Untyped {
             } else if (X[0] is  ILArray<Int32> )  {
                 ILArray<Int32> V = null; 
                 if (outValue.Length == 3)
-                    V =  ILArray<Int32> .empty();
+                    V =  ILArray<Int32> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( ( ILArray<Int32> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -259,7 +259,7 @@ namespace ILNumerics.Untyped {
             } else if (X[0] is  ILArray<Int16> )  {
                 ILArray<Int16> V = null; 
                 if (outValue.Length == 3)
-                    V =  ILArray<Int16> .empty();
+                    V =  ILArray<Int16> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( ( ILArray<Int16> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -269,7 +269,7 @@ namespace ILNumerics.Untyped {
             } else if (X[0] is  ILArray<float> )  {
                 ILArray<float> V = null; 
                 if (outValue.Length == 3)
-                    V =  ILArray<float> .empty();
+                    V =  ILArray<float> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( ( ILArray<float> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -279,7 +279,7 @@ namespace ILNumerics.Untyped {
             } else if (X[0] is  ILArray<fcomplex> )  {
                 ILArray<fcomplex> V = null; 
                 if (outValue.Length == 3)
-                    V =  ILArray<fcomplex> .empty();
+                    V =  ILArray<fcomplex> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( ( ILArray<fcomplex> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -289,7 +289,7 @@ namespace ILNumerics.Untyped {
             } else if (X[0] is  ILArray<complex> )  {
                 ILArray<complex> V = null; 
                 if (outValue.Length == 3)
-                    V =  ILArray<complex> .empty();
+                    V =  ILArray<complex> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( ( ILArray<complex> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -299,7 +299,7 @@ namespace ILNumerics.Untyped {
             } else if (X[0] is  ILArray<char> )  {
                 ILArray<char> V = null; 
                 if (outValue.Length == 3)
-                    V =  ILArray<char> .empty();
+                    V =  ILArray<char> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( ( ILArray<char> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -309,7 +309,7 @@ namespace ILNumerics.Untyped {
             } else if (X[0] is  ILArray<byte> )  {
                 ILArray<byte> V = null; 
                 if (outValue.Length == 3)
-                    V =  ILArray<byte> .empty();
+                    V =  ILArray<byte> .empty(0,0);
                 outValue[0] = ILNumerics.BuiltInFunctions.ILMath.find ( ( ILArray<byte> ) X [0], limit, ref C, ref V);
                 if (outValue.Length > 1) 
                     outValue[1] = C; 
@@ -848,12 +848,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V = /*!HC:inCls1*/ ILArray<double> .empty();
+                        V = /*!HC:inCls1*/ ILArray<double> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -950,7 +950,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 
@@ -1071,12 +1071,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V =  ILArray<UInt64> .empty();
+                        V =  ILArray<UInt64> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -1170,7 +1170,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 
@@ -1288,12 +1288,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V =  ILArray<UInt32> .empty();
+                        V =  ILArray<UInt32> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -1387,7 +1387,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 
@@ -1505,12 +1505,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V =  ILArray<UInt16> .empty();
+                        V =  ILArray<UInt16> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -1604,7 +1604,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 
@@ -1722,12 +1722,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V =  ILArray<Int64> .empty();
+                        V =  ILArray<Int64> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -1821,7 +1821,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 
@@ -1939,12 +1939,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V =  ILArray<Int32> .empty();
+                        V =  ILArray<Int32> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -2038,7 +2038,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 
@@ -2156,12 +2156,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V =  ILArray<Int16> .empty();
+                        V =  ILArray<Int16> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -2255,7 +2255,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 
@@ -2373,12 +2373,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V =  ILArray<float> .empty();
+                        V =  ILArray<float> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -2472,7 +2472,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 
@@ -2590,12 +2590,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V =  ILArray<fcomplex> .empty();
+                        V =  ILArray<fcomplex> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -2689,7 +2689,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 
@@ -2807,12 +2807,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V =  ILArray<complex> .empty();
+                        V =  ILArray<complex> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -2906,7 +2906,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 
@@ -3024,12 +3024,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V =  ILArray<char> .empty();
+                        V =  ILArray<char> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -3123,7 +3123,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 
@@ -3241,12 +3241,12 @@ namespace ILNumerics.BuiltInFunctions {
                     return new ILArray<double>(retArray, 1, 1);
                 } else {
                     if (create_row_columns) {
-                        C = ILArray<double>.empty();
+                        C = ILArray<double>.empty(0,0);
                     }
                     if (return_values) {
-                        V =  ILArray<byte> .empty();
+                        V =  ILArray<byte> .empty(0,0);
                     }
-                    return ILArray<double>.empty();
+                    return ILArray<double>.empty(0,0);
                 }
                 #endregion SCALAR
             }
@@ -3340,7 +3340,7 @@ namespace ILNumerics.BuiltInFunctions {
             }
             if (foundIdx == 0) {
                 // return empty array
-                return ILArray<double>.empty();
+                return ILArray<double>.empty(0,0);
             }
             // transform to row / columns; extract values if needed
             int leadDimLen = inDim[0]; 

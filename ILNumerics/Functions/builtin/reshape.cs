@@ -30,14 +30,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// array reshaping
         /// </summary>
         /// <param name="A">input array A</param>
-        /// <param name="newDimensions">new dimension array. This may be a comma seperated list or an int array</param>
+        /// <param name="newDimensions">new dimension array. This may be 
+        /// a comma seperated list or an int array</param>
         /// <returns>reshaped X</returns>
-        /// <remarks>The ILArray will be changed to the size and number of dimension specified by newDimensions. If A currently is a reference 
-        /// to another ILArray, it will be detached before and reshaped than. </remarks>
-        /// <exception cref="ILNumerics.Exceptions.ILArgumentSizeException"> if the number of elements in A and the number of elements for the 
-        /// new dimensions specified by <paramref name="newDimensions"/> do not match.</exception>
+        /// <remarks>A will not be changed. A new array is created, having 
+        /// the size and number of dimension specified by newDimensions. </remarks>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentSizeException"> 
+        /// if the number of elements in A and the number of elements for the 
+        /// new dimensions specified by <paramref name="newDimensions"/> 
+        /// do not match.</exception>
         public static ILArray<T> reshape<T>(ILArray<T> A, params int[] newDimensions) {
-            return A.Reshape(new ILDimension (newDimensions)); 
+            return A.R.Reshape(new ILDimension (newDimensions)); 
         }
     }
 }

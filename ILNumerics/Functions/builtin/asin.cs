@@ -139,7 +139,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<fcomplex>  asinc ( ILArray<float> A) {
             if (A.IsEmpty)
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             fcomplex [] retDblArr;
             // build ILDimension    
@@ -255,7 +255,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<fcomplex> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<fcomplex> ( retDblArr, inDim );
         }
         /// <summary>Arcsine of array elements - complex output</summary>
         /// <param name="A">input array</param>
@@ -264,7 +264,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<complex>  asinc ( ILArray<double> A) {
             if (A.IsEmpty)
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             complex [] retDblArr;
             // build ILDimension    
@@ -380,7 +380,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<complex> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<complex> ( retDblArr, inDim );
         }
         /// <summary>Arcsine values of array elements</summary>
         /// <param name="A">input array</param>
@@ -389,7 +389,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<complex>  asin ( ILArray<complex> A) {
             if (A.IsEmpty)
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             complex [] retDblArr;
             // build ILDimension    
@@ -505,7 +505,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<complex> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<complex> ( retDblArr, inDim );
         }
         /// <summary>Arcsine values of array elements</summary>
         /// <param name="A">input array</param>
@@ -514,7 +514,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<fcomplex>  asin ( ILArray<fcomplex> A) {
             if (A.IsEmpty)
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             fcomplex [] retDblArr;
             // build ILDimension    
@@ -630,7 +630,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<fcomplex> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<fcomplex> ( retDblArr, inDim );
         }
         /// <summary>Arcsine of array elements - real output</summary>
         /// <param name="A">input array</param>
@@ -639,7 +639,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<float>  asin ( ILArray<float> A) {
             if (A.IsEmpty)
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             float [] retDblArr;
             // build ILDimension    
@@ -755,7 +755,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<float> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<float> ( retDblArr, inDim );
         }
         /// <summary>Arcsine of array elements - real output</summary>
         /// <param name="A">input array</param>
@@ -764,7 +764,7 @@ namespace ILNumerics.BuiltInFunctions {
         /// <para>The array returned will be a dense array.</para></remarks>
         public static  ILArray<double>  asin ( ILArray<double> A) {
             if (A.IsEmpty)
-                return  ILArray<double> .empty(); 
+                return  ILArray<double> .empty(A.Dimensions); 
             ILDimension inDim = A.Dimensions;
             double [] retDblArr;
             // build ILDimension    
@@ -880,7 +880,7 @@ namespace ILNumerics.BuiltInFunctions {
                 }
                 #endregion
             }
-            return new  ILArray<double> ( retDblArr, inDim.ToIntArray () );
+            return new  ILArray<double> ( retDblArr, inDim );
         }
 
 #endregion HYCALPER AUTO GENERATED CODE

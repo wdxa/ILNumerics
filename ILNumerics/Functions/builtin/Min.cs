@@ -5154,7 +5154,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<UInt64>  min ( ILArray<UInt64> A,  ILArray<UInt64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<UInt64> .empty(); 
+                return  ILArray<UInt64> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -5270,7 +5270,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<UInt64> ( retArr, inDim.Clone() );
+                    return new  ILArray<UInt64> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -5387,7 +5387,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<UInt64> ( retArr, inDim.Clone() );
+                    return new  ILArray<UInt64> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -5460,7 +5460,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<UInt64> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<UInt64> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -5474,7 +5474,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<UInt32>  min ( ILArray<UInt32> A,  ILArray<UInt32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<UInt32> .empty(); 
+                return  ILArray<UInt32> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -5590,7 +5590,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<UInt32> ( retArr, inDim.Clone() );
+                    return new  ILArray<UInt32> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -5707,7 +5707,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<UInt32> ( retArr, inDim.Clone() );
+                    return new  ILArray<UInt32> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -5780,7 +5780,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<UInt32> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<UInt32> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -5794,7 +5794,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<UInt16>  min ( ILArray<UInt16> A,  ILArray<UInt16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<UInt16> .empty(); 
+                return  ILArray<UInt16> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -5910,7 +5910,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<UInt16> ( retArr, inDim.Clone() );
+                    return new  ILArray<UInt16> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -6027,7 +6027,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<UInt16> ( retArr, inDim.Clone() );
+                    return new  ILArray<UInt16> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -6100,7 +6100,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<UInt16> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<UInt16> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -6114,7 +6114,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<Int64>  min ( ILArray<Int64> A,  ILArray<Int64> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<Int64> .empty(); 
+                return  ILArray<Int64> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -6230,7 +6230,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<Int64> ( retArr, inDim.Clone() );
+                    return new  ILArray<Int64> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -6347,7 +6347,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<Int64> ( retArr, inDim.Clone() );
+                    return new  ILArray<Int64> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -6420,7 +6420,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<Int64> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<Int64> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -6434,7 +6434,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<Int32>  min ( ILArray<Int32> A,  ILArray<Int32> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<Int32> .empty(); 
+                return  ILArray<Int32> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -6550,7 +6550,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<Int32> ( retArr, inDim.Clone() );
+                    return new  ILArray<Int32> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -6667,7 +6667,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<Int32> ( retArr, inDim.Clone() );
+                    return new  ILArray<Int32> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -6740,7 +6740,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<Int32> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<Int32> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -6754,7 +6754,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<Int16>  min ( ILArray<Int16> A,  ILArray<Int16> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<Int16> .empty(); 
+                return  ILArray<Int16> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -6870,7 +6870,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<Int16> ( retArr, inDim.Clone() );
+                    return new  ILArray<Int16> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -6987,7 +6987,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<Int16> ( retArr, inDim.Clone() );
+                    return new  ILArray<Int16> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -7060,7 +7060,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<Int16> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<Int16> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -7074,7 +7074,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<float>  min ( ILArray<float> A,  ILArray<float> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -7190,7 +7190,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<float> ( retArr, inDim.Clone() );
+                    return new  ILArray<float> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -7307,7 +7307,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<float> ( retArr, inDim.Clone() );
+                    return new  ILArray<float> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -7380,7 +7380,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<float> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<float> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -7394,7 +7394,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<fcomplex>  min ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -7510,7 +7510,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<fcomplex> ( retArr, inDim.Clone() );
+                    return new  ILArray<fcomplex> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -7627,7 +7627,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<fcomplex> ( retArr, inDim.Clone() );
+                    return new  ILArray<fcomplex> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -7700,7 +7700,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<fcomplex> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<fcomplex> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -7714,7 +7714,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<complex>  min ( ILArray<complex> A,  ILArray<complex> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -7830,7 +7830,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<complex> ( retArr, inDim.Clone() );
+                    return new  ILArray<complex> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -7947,7 +7947,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<complex> ( retArr, inDim.Clone() );
+                    return new  ILArray<complex> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -8020,7 +8020,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<complex> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<complex> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -8034,7 +8034,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<char>  min ( ILArray<char> A,  ILArray<char> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<char> .empty(); 
+                return  ILArray<char> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -8150,7 +8150,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<char> ( retArr, inDim.Clone() );
+                    return new  ILArray<char> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -8267,7 +8267,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<char> ( retArr, inDim.Clone() );
+                    return new  ILArray<char> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -8340,7 +8340,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<char> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<char> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -8354,7 +8354,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<byte>  min ( ILArray<byte> A,  ILArray<byte> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<byte> .empty(); 
+                return  ILArray<byte> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -8470,7 +8470,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<byte> ( retArr, inDim.Clone() );
+                    return new  ILArray<byte> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -8587,7 +8587,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<byte> ( retArr, inDim.Clone() );
+                    return new  ILArray<byte> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -8660,7 +8660,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<byte> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<byte> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -8674,7 +8674,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
         public static  ILArray<double>  min ( ILArray<double> A,  ILArray<double> B) {
             if (A.IsEmpty || B.IsEmpty ) {
-                return  ILArray<double> .empty(); 
+                return  ILArray<double> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
@@ -8790,7 +8790,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         }
                         #endregion
                     }
-                    return new  ILArray<double> ( retArr, inDim.Clone() );
+                    return new  ILArray<double> ( retArr, inDim );
                     #endregion scalar + array
                 }
             } else {
@@ -8907,7 +8907,7 @@ namespace ILNumerics.BuiltInFunctions  {
                         #endregion
                         //tmpValue1 = 0; 
                     }
-                    return new  ILArray<double> ( retArr, inDim.Clone() );
+                    return new  ILArray<double> ( retArr, inDim );
                     #endregion array + scalar
                 } else {
                     #region array + array
@@ -8980,7 +8980,7 @@ namespace ILNumerics.BuiltInFunctions  {
                             }
                         }
                     }
-                    return new  ILArray<double> ( retSystemArr, inDim.ToIntArray () );
+                    return new  ILArray<double> ( retSystemArr, inDim );
                     #endregion array + array
                 }
             }
@@ -9104,7 +9104,7 @@ namespace ILNumerics.Untyped {
                                 if (false) {
                                 #region HYCALPER LOOPSTART
                                 } else if (inParameter[0] is /*!HC:TinCls*/ ILArray<double> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min((/*!HC:TinCls*/ ILArray<double> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
@@ -9112,57 +9112,57 @@ namespace ILNumerics.Untyped {
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
                                 } else if (inParameter[0] is  ILArray<UInt64> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<UInt64> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<UInt32> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<UInt32> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<UInt16> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<UInt16> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<Int64> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<Int64> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<Int32> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<Int32> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<Int16> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<Int16> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<char> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<char> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<byte> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<byte> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<fcomplex> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<fcomplex> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<float> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<float> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<complex> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<complex> )inParameter[0], ref I, -1);
                                     outParameter[1] = I;
@@ -9397,7 +9397,7 @@ namespace ILNumerics.Untyped {
                                 if (false) {
                                 #region HYCALPER LOOPSTART
                                 } else if (inParameter[0] is /*!HC:TinCls*/ ILArray<double> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");
@@ -9413,7 +9413,7 @@ namespace ILNumerics.Untyped {
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
                                 } else if (inParameter[0] is  ILArray<UInt64> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");
@@ -9426,7 +9426,7 @@ namespace ILNumerics.Untyped {
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<UInt64> )inParameter[0], ref I, dimension);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<UInt32> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");
@@ -9439,7 +9439,7 @@ namespace ILNumerics.Untyped {
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<UInt32> )inParameter[0], ref I, dimension);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<UInt16> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");
@@ -9452,7 +9452,7 @@ namespace ILNumerics.Untyped {
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<UInt16> )inParameter[0], ref I, dimension);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<Int64> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");
@@ -9465,7 +9465,7 @@ namespace ILNumerics.Untyped {
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<Int64> )inParameter[0], ref I, dimension);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<Int32> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");
@@ -9478,7 +9478,7 @@ namespace ILNumerics.Untyped {
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<Int32> )inParameter[0], ref I, dimension);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<Int16> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");
@@ -9491,7 +9491,7 @@ namespace ILNumerics.Untyped {
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<Int16> )inParameter[0], ref I, dimension);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<char> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");
@@ -9504,7 +9504,7 @@ namespace ILNumerics.Untyped {
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<char> )inParameter[0], ref I, dimension);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<byte> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");
@@ -9517,7 +9517,7 @@ namespace ILNumerics.Untyped {
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<byte> )inParameter[0], ref I, dimension);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<fcomplex> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");
@@ -9530,7 +9530,7 @@ namespace ILNumerics.Untyped {
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<fcomplex> )inParameter[0], ref I, dimension);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<float> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");
@@ -9543,7 +9543,7 @@ namespace ILNumerics.Untyped {
                                     outParameter[0] = BuiltInFunctions.ILMath.min(( ILArray<float> )inParameter[0], ref I, dimension);
                                     outParameter[1] = I;
                                 } else if (inParameter[0] is  ILArray<complex> ) {
-                                    ILArray<double> I = ILArray<double>.empty();
+                                    ILArray<double> I = ILArray<double>.empty(0,0);
                                     outParameter = new ILBaseArray[2];
                                     if (!inParameter[2].IsScalar)
                                         throw new ILArgumentSizeException("min: dimension argument must be positive, scalar double array!");

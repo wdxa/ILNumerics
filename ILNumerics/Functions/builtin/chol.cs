@@ -91,16 +91,28 @@ namespace ILNumerics.BuiltInFunctions {
         /// <summary>
         /// cholesky factorization 
         /// </summary>
-        /// <param name="A">hermitian matrix A. A must be a symmetric matrix. Therefore the upper triangular part of A must be 
-        /// <param name="throwException">throw an ILArgumentException if A is found not to be positive definite.</param>
-        /// the (complex conjugate) of the lower triangular part. No check is made for that! <br/> 
+        /// <param name="A">hermitian matrix A. A must be a symmetric matrix. 
+        /// Therefore the upper triangular part of A must be 
+        /// <param name="throwException">throw an ILArgumentException if A 
+        /// is found not to be positive definite.</param>
+        /// the (complex conjugate) of the lower triangular part. No check 
+        /// is made for that! <br/> 
         /// The elements of A will not be altered.</param>
         /// <returns>cholesky factorization</returns>
-        /// <remarks><para>if <paramref name="throwException"/> is true and A is found not to be positive definite, an ILArgumentException will be thrown and the operation will be canceled.</para>
-        /// <para> If <paramref name="throwException"/> is false, check the return value's dimension to determine the success of the operation (unless you are sure, A was positive definite). If A was found not pos.def. the matrix returned 
-        /// will be of dimension [k x k] and the result of the cholesky factorization of A[0:k-1;0:k-1]. Here k is the first leading minor of A which was found to be not positive definite.  </para>
-        /// The factorization is carried out by use of the LAPACK functions DPOTRF, ZPOTRF, SPOTRF or CPOTRF respectively. </remarks>
-        public static /*!HC:inCls1*/ ILArray<double> chol(/*!HC:inCls1*/ ILArray<double> A, bool throwException) {
+        /// <remarks><para>if <paramref name="throwException"/> is true and 
+        /// A is found not to be positive definite, an ILArgumentException 
+        /// will be thrown and the operation will be canceled.</para>
+        /// <para> If <paramref name="throwException"/> is false, check the
+        /// return value's dimension to determine the success of the 
+        /// operation (unless you are sure, A was positive definite). 
+        /// If A was found not pos.def. the matrix returned 
+        /// will be of dimension [k x k] and the result of the cholesky 
+        /// factorization of A[0:k-1;0:k-1]. Here k is the first leading 
+        /// minor of A which was found to be not positive definite.  </para>
+        /// The factorization is carried out by use of the LAPACK functions 
+        /// DPOTRF, ZPOTRF, SPOTRF or CPOTRF respectively. </remarks>
+        public static /*!HC:inCls1*/ ILArray<double> chol(
+                      /*!HC:inCls1*/ ILArray<double> A, bool throwException) {
             if (!A.IsMatrix)
                 throw new ILArgumentSizeException("chol is defined for matrices only!");
             int n = A.Dimensions[0], info = 0; 
@@ -121,7 +133,7 @@ namespace ILNumerics.BuiltInFunctions {
                             throw new ILArgumentException("chol: the original matrix given was not pos. definit. An attempt to decompose the submatrix of order " + (newDim + 1).ToString() + " failed."); 
                         return ret; 
                     } else {
-                        return /*!HC:inCls1*/ ILArray<double> .empty(); 
+                        return /*!HC:inCls1*/ ILArray<double> .empty(0,0); 
                     } 
                 } else {
                     throw new ILArgumentException("chol: the matrix given is not positive definite!"); 
@@ -135,16 +147,28 @@ namespace ILNumerics.BuiltInFunctions {
         /// <summary>
         /// cholesky factorization 
         /// </summary>
-        /// <param name="A">hermitian matrix A. A must be a symmetric matrix. Therefore the upper triangular part of A must be 
-        /// <param name="throwException">throw an ILArgumentException if A is found not to be positive definite.</param>
-        /// the (complex conjugate) of the lower triangular part. No check is made for that! <br/> 
+        /// <param name="A">hermitian matrix A. A must be a symmetric matrix. 
+        /// Therefore the upper triangular part of A must be 
+        /// <param name="throwException">throw an ILArgumentException if A 
+        /// is found not to be positive definite.</param>
+        /// the (complex conjugate) of the lower triangular part. No check 
+        /// is made for that! <br/> 
         /// The elements of A will not be altered.</param>
         /// <returns>cholesky factorization</returns>
-        /// <remarks><para>if <paramref name="throwException"/> is true and A is found not to be positive definite, an ILArgumentException will be thrown and the operation will be canceled.</para>
-        /// <para> If <paramref name="throwException"/> is false, check the return value's dimension to determine the success of the operation (unless you are sure, A was positive definite). If A was found not pos.def. the matrix returned 
-        /// will be of dimension [k x k] and the result of the cholesky factorization of A[0:k-1;0:k-1]. Here k is the first leading minor of A which was found to be not positive definite.  </para>
-        /// The factorization is carried out by use of the LAPACK functions DPOTRF, ZPOTRF, SPOTRF or CPOTRF respectively. </remarks>
-        public static  ILArray<float> chol( ILArray<float> A, bool throwException) {
+        /// <remarks><para>if <paramref name="throwException"/> is true and 
+        /// A is found not to be positive definite, an ILArgumentException 
+        /// will be thrown and the operation will be canceled.</para>
+        /// <para> If <paramref name="throwException"/> is false, check the
+        /// return value's dimension to determine the success of the 
+        /// operation (unless you are sure, A was positive definite). 
+        /// If A was found not pos.def. the matrix returned 
+        /// will be of dimension [k x k] and the result of the cholesky 
+        /// factorization of A[0:k-1;0:k-1]. Here k is the first leading 
+        /// minor of A which was found to be not positive definite.  </para>
+        /// The factorization is carried out by use of the LAPACK functions 
+        /// DPOTRF, ZPOTRF, SPOTRF or CPOTRF respectively. </remarks>
+        public static  ILArray<float> chol(
+                      ILArray<float> A, bool throwException) {
             if (!A.IsMatrix)
                 throw new ILArgumentSizeException("chol is defined for matrices only!");
             int n = A.Dimensions[0], info = 0; 
@@ -165,7 +189,7 @@ namespace ILNumerics.BuiltInFunctions {
                             throw new ILArgumentException("chol: the original matrix given was not pos. definit. An attempt to decompose the submatrix of order " + (newDim + 1).ToString() + " failed."); 
                         return ret; 
                     } else {
-                        return  ILArray<float> .empty(); 
+                        return  ILArray<float> .empty(0,0); 
                     } 
                 } else {
                     throw new ILArgumentException("chol: the matrix given is not positive definite!"); 
@@ -176,16 +200,28 @@ namespace ILNumerics.BuiltInFunctions {
         /// <summary>
         /// cholesky factorization 
         /// </summary>
-        /// <param name="A">hermitian matrix A. A must be a symmetric matrix. Therefore the upper triangular part of A must be 
-        /// <param name="throwException">throw an ILArgumentException if A is found not to be positive definite.</param>
-        /// the (complex conjugate) of the lower triangular part. No check is made for that! <br/> 
+        /// <param name="A">hermitian matrix A. A must be a symmetric matrix. 
+        /// Therefore the upper triangular part of A must be 
+        /// <param name="throwException">throw an ILArgumentException if A 
+        /// is found not to be positive definite.</param>
+        /// the (complex conjugate) of the lower triangular part. No check 
+        /// is made for that! <br/> 
         /// The elements of A will not be altered.</param>
         /// <returns>cholesky factorization</returns>
-        /// <remarks><para>if <paramref name="throwException"/> is true and A is found not to be positive definite, an ILArgumentException will be thrown and the operation will be canceled.</para>
-        /// <para> If <paramref name="throwException"/> is false, check the return value's dimension to determine the success of the operation (unless you are sure, A was positive definite). If A was found not pos.def. the matrix returned 
-        /// will be of dimension [k x k] and the result of the cholesky factorization of A[0:k-1;0:k-1]. Here k is the first leading minor of A which was found to be not positive definite.  </para>
-        /// The factorization is carried out by use of the LAPACK functions DPOTRF, ZPOTRF, SPOTRF or CPOTRF respectively. </remarks>
-        public static  ILArray<fcomplex> chol( ILArray<fcomplex> A, bool throwException) {
+        /// <remarks><para>if <paramref name="throwException"/> is true and 
+        /// A is found not to be positive definite, an ILArgumentException 
+        /// will be thrown and the operation will be canceled.</para>
+        /// <para> If <paramref name="throwException"/> is false, check the
+        /// return value's dimension to determine the success of the 
+        /// operation (unless you are sure, A was positive definite). 
+        /// If A was found not pos.def. the matrix returned 
+        /// will be of dimension [k x k] and the result of the cholesky 
+        /// factorization of A[0:k-1;0:k-1]. Here k is the first leading 
+        /// minor of A which was found to be not positive definite.  </para>
+        /// The factorization is carried out by use of the LAPACK functions 
+        /// DPOTRF, ZPOTRF, SPOTRF or CPOTRF respectively. </remarks>
+        public static  ILArray<fcomplex> chol(
+                      ILArray<fcomplex> A, bool throwException) {
             if (!A.IsMatrix)
                 throw new ILArgumentSizeException("chol is defined for matrices only!");
             int n = A.Dimensions[0], info = 0; 
@@ -206,7 +242,7 @@ namespace ILNumerics.BuiltInFunctions {
                             throw new ILArgumentException("chol: the original matrix given was not pos. definit. An attempt to decompose the submatrix of order " + (newDim + 1).ToString() + " failed."); 
                         return ret; 
                     } else {
-                        return  ILArray<fcomplex> .empty(); 
+                        return  ILArray<fcomplex> .empty(0,0); 
                     } 
                 } else {
                     throw new ILArgumentException("chol: the matrix given is not positive definite!"); 
@@ -217,16 +253,28 @@ namespace ILNumerics.BuiltInFunctions {
         /// <summary>
         /// cholesky factorization 
         /// </summary>
-        /// <param name="A">hermitian matrix A. A must be a symmetric matrix. Therefore the upper triangular part of A must be 
-        /// <param name="throwException">throw an ILArgumentException if A is found not to be positive definite.</param>
-        /// the (complex conjugate) of the lower triangular part. No check is made for that! <br/> 
+        /// <param name="A">hermitian matrix A. A must be a symmetric matrix. 
+        /// Therefore the upper triangular part of A must be 
+        /// <param name="throwException">throw an ILArgumentException if A 
+        /// is found not to be positive definite.</param>
+        /// the (complex conjugate) of the lower triangular part. No check 
+        /// is made for that! <br/> 
         /// The elements of A will not be altered.</param>
         /// <returns>cholesky factorization</returns>
-        /// <remarks><para>if <paramref name="throwException"/> is true and A is found not to be positive definite, an ILArgumentException will be thrown and the operation will be canceled.</para>
-        /// <para> If <paramref name="throwException"/> is false, check the return value's dimension to determine the success of the operation (unless you are sure, A was positive definite). If A was found not pos.def. the matrix returned 
-        /// will be of dimension [k x k] and the result of the cholesky factorization of A[0:k-1;0:k-1]. Here k is the first leading minor of A which was found to be not positive definite.  </para>
-        /// The factorization is carried out by use of the LAPACK functions DPOTRF, ZPOTRF, SPOTRF or CPOTRF respectively. </remarks>
-        public static  ILArray<complex> chol( ILArray<complex> A, bool throwException) {
+        /// <remarks><para>if <paramref name="throwException"/> is true and 
+        /// A is found not to be positive definite, an ILArgumentException 
+        /// will be thrown and the operation will be canceled.</para>
+        /// <para> If <paramref name="throwException"/> is false, check the
+        /// return value's dimension to determine the success of the 
+        /// operation (unless you are sure, A was positive definite). 
+        /// If A was found not pos.def. the matrix returned 
+        /// will be of dimension [k x k] and the result of the cholesky 
+        /// factorization of A[0:k-1;0:k-1]. Here k is the first leading 
+        /// minor of A which was found to be not positive definite.  </para>
+        /// The factorization is carried out by use of the LAPACK functions 
+        /// DPOTRF, ZPOTRF, SPOTRF or CPOTRF respectively. </remarks>
+        public static  ILArray<complex> chol(
+                      ILArray<complex> A, bool throwException) {
             if (!A.IsMatrix)
                 throw new ILArgumentSizeException("chol is defined for matrices only!");
             int n = A.Dimensions[0], info = 0; 
@@ -247,7 +295,7 @@ namespace ILNumerics.BuiltInFunctions {
                             throw new ILArgumentException("chol: the original matrix given was not pos. definit. An attempt to decompose the submatrix of order " + (newDim + 1).ToString() + " failed."); 
                         return ret; 
                     } else {
-                        return  ILArray<complex> .empty(); 
+                        return  ILArray<complex> .empty(0,0); 
                     } 
                 } else {
                     throw new ILArgumentException("chol: the matrix given is not positive definite!"); 

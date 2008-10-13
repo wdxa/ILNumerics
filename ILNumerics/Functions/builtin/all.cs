@@ -473,7 +473,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if all elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<double> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0.0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
@@ -636,7 +636,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if all elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<UInt64> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
@@ -799,7 +799,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if all elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<UInt32> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
@@ -962,7 +962,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if all elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<UInt16> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
@@ -1125,7 +1125,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if all elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<Int64> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
@@ -1288,7 +1288,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if all elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<Int32> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
@@ -1451,7 +1451,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if all elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<Int16> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
@@ -1614,7 +1614,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if all elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<char> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
@@ -1777,7 +1777,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if all elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<byte> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
@@ -1940,7 +1940,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if all elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<fcomplex> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0).iszero())?(byte)1:(byte)0},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
@@ -2103,7 +2103,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if any elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<float> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0.0f)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
@@ -2266,7 +2266,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <returns><para>array of same size as A, having 'leadDim's dimension reduced to 1, if any elements along that dimension are nonzero, '0' else. </para></returns>
         public static  ILLogicalArray  all ( ILArray<complex> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILLogicalArray .empty(); 
+                return  ILLogicalArray .empty(A.Dimensions); 
             if (A.IsScalar)
                 return new ILLogicalArray (new byte [1]{(A.GetValue(0).iszero())?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)

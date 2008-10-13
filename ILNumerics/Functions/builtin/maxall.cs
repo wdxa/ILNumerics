@@ -109,7 +109,7 @@ namespace ILNumerics.BuiltInFunctions  {
     public partial class ILMath {
         #region HYCALPER LOOPSTART maxall
         /// <summary>
-        /// maximum of all elements for array A
+        /// maximum for all elements of A
         /// </summary>
         /// <param name="A">n-dim array</param>
         /// <returns><para>scalar maximum of all elements for A.</para>
@@ -120,7 +120,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("maxall: argument must not be null!");
             if (A.IsEmpty) {
-                return /*!HC:inCls1*/ ILArray<double> .empty(); 
+                return /*!HC:inCls1*/ ILArray<double> .empty(0,0); 
             } 
             /*!HC:outArr1*/ double retArr = /*!HC:outArr1*/ double .MinValue;  
             if (A.m_indexOffset == null) {
@@ -153,7 +153,7 @@ namespace ILNumerics.BuiltInFunctions  {
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
         /// <summary>
-        /// maximum of all elements for array A
+        /// maximum for all elements of A
         /// </summary>
         /// <param name="A">n-dim array</param>
         /// <returns><para>scalar maximum of all elements for A.</para>
@@ -164,7 +164,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("maxall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<UInt64> .empty(); 
+                return  ILArray<UInt64> .empty(0,0); 
             } 
             UInt64 retArr =  UInt64 .MinValue;  
             if (A.m_indexOffset == null) {
@@ -194,7 +194,7 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<UInt64> (new  UInt64 [1]{retArr},1,1);
         }
         /// <summary>
-        /// maximum of all elements for array A
+        /// maximum for all elements of A
         /// </summary>
         /// <param name="A">n-dim array</param>
         /// <returns><para>scalar maximum of all elements for A.</para>
@@ -205,7 +205,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("maxall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<UInt32> .empty(); 
+                return  ILArray<UInt32> .empty(0,0); 
             } 
             UInt32 retArr =  UInt32 .MinValue;  
             if (A.m_indexOffset == null) {
@@ -235,7 +235,7 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<UInt32> (new  UInt32 [1]{retArr},1,1);
         }
         /// <summary>
-        /// maximum of all elements for array A
+        /// maximum for all elements of A
         /// </summary>
         /// <param name="A">n-dim array</param>
         /// <returns><para>scalar maximum of all elements for A.</para>
@@ -246,7 +246,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("maxall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<UInt16> .empty(); 
+                return  ILArray<UInt16> .empty(0,0); 
             } 
             UInt16 retArr =  UInt16 .MinValue;  
             if (A.m_indexOffset == null) {
@@ -276,7 +276,7 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<UInt16> (new  UInt16 [1]{retArr},1,1);
         }
         /// <summary>
-        /// maximum of all elements for array A
+        /// maximum for all elements of A
         /// </summary>
         /// <param name="A">n-dim array</param>
         /// <returns><para>scalar maximum of all elements for A.</para>
@@ -287,7 +287,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("maxall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<Int64> .empty(); 
+                return  ILArray<Int64> .empty(0,0); 
             } 
             Int64 retArr =  Int64 .MinValue;  
             if (A.m_indexOffset == null) {
@@ -317,7 +317,7 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<Int64> (new  Int64 [1]{retArr},1,1);
         }
         /// <summary>
-        /// maximum of all elements for array A
+        /// maximum for all elements of A
         /// </summary>
         /// <param name="A">n-dim array</param>
         /// <returns><para>scalar maximum of all elements for A.</para>
@@ -328,7 +328,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("maxall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<Int32> .empty(); 
+                return  ILArray<Int32> .empty(0,0); 
             } 
             Int32 retArr =  Int32 .MinValue;  
             if (A.m_indexOffset == null) {
@@ -358,7 +358,7 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<Int32> (new  Int32 [1]{retArr},1,1);
         }
         /// <summary>
-        /// maximum of all elements for array A
+        /// maximum for all elements of A
         /// </summary>
         /// <param name="A">n-dim array</param>
         /// <returns><para>scalar maximum of all elements for A.</para>
@@ -369,7 +369,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("maxall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<Int16> .empty(); 
+                return  ILArray<Int16> .empty(0,0); 
             } 
             Int16 retArr =  Int16 .MinValue;  
             if (A.m_indexOffset == null) {
@@ -399,7 +399,7 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<Int16> (new  Int16 [1]{retArr},1,1);
         }
         /// <summary>
-        /// maximum of all elements for array A
+        /// maximum for all elements of A
         /// </summary>
         /// <param name="A">n-dim array</param>
         /// <returns><para>scalar maximum of all elements for A.</para>
@@ -410,7 +410,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("maxall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<char> .empty(); 
+                return  ILArray<char> .empty(0,0); 
             } 
             char retArr =  char .MinValue;  
             if (A.m_indexOffset == null) {
@@ -440,7 +440,7 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<char> (new  char [1]{retArr},1,1);
         }
         /// <summary>
-        /// maximum of all elements for array A
+        /// maximum for all elements of A
         /// </summary>
         /// <param name="A">n-dim array</param>
         /// <returns><para>scalar maximum of all elements for A.</para>
@@ -451,7 +451,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("maxall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<byte> .empty(); 
+                return  ILArray<byte> .empty(0,0); 
             } 
             byte retArr =  byte .MinValue;  
             if (A.m_indexOffset == null) {
@@ -481,7 +481,7 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<byte> (new  byte [1]{retArr},1,1);
         }
         /// <summary>
-        /// maximum of all elements for array A
+        /// maximum for all elements of A
         /// </summary>
         /// <param name="A">n-dim array</param>
         /// <returns><para>scalar maximum of all elements for A.</para>
@@ -492,7 +492,7 @@ namespace ILNumerics.BuiltInFunctions  {
             if (object.Equals(A,null))
                 throw new ILArgumentException("maxall: argument must not be null!");
             if (A.IsEmpty) {
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(0,0); 
             } 
             float retArr =  float .MinValue;  
             if (A.m_indexOffset == null) {

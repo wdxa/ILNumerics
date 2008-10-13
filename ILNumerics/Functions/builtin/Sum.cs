@@ -324,7 +324,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static /*!HC:outCls1*/ ILArray<double> /*!HC:funcname*/ sum (/*!HC:inCls1*/ ILArray<double> A, int leadDim) {
             if (A.IsEmpty) 
-                return /*!HC:outCls1*/ ILArray<double> .empty(); 
+                return /*!HC:outCls1*/ ILArray<double> .empty(A.Dimensions); 
             if (A.IsScalar)
                 /*!HC:HCscalarOp*/
                 return new /*!HC:outCls1*/ ILArray<double> (new /*!HC:inArr1*/ double []{A.GetValue(0)},1,1);
@@ -504,7 +504,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static  ILArray<UInt64>  sum ( ILArray<UInt64> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILArray<UInt64> .empty(); 
+                return  ILArray<UInt64> .empty(A.Dimensions); 
             if (A.IsScalar)
                
                 return new  ILArray<UInt64> (new  UInt64 []{A.GetValue(0)},1,1);
@@ -677,7 +677,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static  ILArray<UInt32>  sum ( ILArray<UInt32> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILArray<UInt32> .empty(); 
+                return  ILArray<UInt32> .empty(A.Dimensions); 
             if (A.IsScalar)
                
                 return new  ILArray<UInt32> (new  UInt32 []{A.GetValue(0)},1,1);
@@ -850,7 +850,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static  ILArray<UInt16>  sum ( ILArray<UInt16> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILArray<UInt16> .empty(); 
+                return  ILArray<UInt16> .empty(A.Dimensions); 
             if (A.IsScalar)
                
                 return new  ILArray<UInt16> (new  UInt16 []{A.GetValue(0)},1,1);
@@ -1023,7 +1023,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static  ILArray<Int64>  sum ( ILArray<Int64> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILArray<Int64> .empty(); 
+                return  ILArray<Int64> .empty(A.Dimensions); 
             if (A.IsScalar)
                
                 return new  ILArray<Int64> (new  Int64 []{A.GetValue(0)},1,1);
@@ -1196,7 +1196,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static  ILArray<Int32>  sum ( ILArray<Int32> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILArray<Int32> .empty(); 
+                return  ILArray<Int32> .empty(A.Dimensions); 
             if (A.IsScalar)
                
                 return new  ILArray<Int32> (new  Int32 []{A.GetValue(0)},1,1);
@@ -1369,7 +1369,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static  ILArray<Int16>  sum ( ILArray<Int16> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILArray<Int16> .empty(); 
+                return  ILArray<Int16> .empty(A.Dimensions); 
             if (A.IsScalar)
                
                 return new  ILArray<Int16> (new  Int16 []{A.GetValue(0)},1,1);
@@ -1542,7 +1542,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static  ILArray<char>  sum ( ILArray<char> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILArray<char> .empty(); 
+                return  ILArray<char> .empty(A.Dimensions); 
             if (A.IsScalar)
                
                 return new  ILArray<char> (new  char []{A.GetValue(0)},1,1);
@@ -1715,7 +1715,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static  ILArray<byte>  sum ( ILArray<byte> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILArray<byte> .empty(); 
+                return  ILArray<byte> .empty(A.Dimensions); 
             if (A.IsScalar)
                
                 return new  ILArray<byte> (new  byte []{A.GetValue(0)},1,1);
@@ -1888,7 +1888,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static  ILArray<fcomplex>  sum ( ILArray<fcomplex> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILArray<fcomplex> .empty(); 
+                return  ILArray<fcomplex> .empty(A.Dimensions); 
             if (A.IsScalar)
                
                 return new  ILArray<fcomplex> (new  fcomplex []{A.GetValue(0)},1,1);
@@ -2061,7 +2061,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static  ILArray<float>  sum ( ILArray<float> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILArray<float> .empty(); 
+                return  ILArray<float> .empty(A.Dimensions); 
             if (A.IsScalar)
                
                 return new  ILArray<float> (new  float []{A.GetValue(0)},1,1);
@@ -2234,7 +2234,7 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// elements along that dimension.</returns>
         public static  ILArray<complex>  sum ( ILArray<complex> A, int leadDim) {
             if (A.IsEmpty) 
-                return  ILArray<complex> .empty(); 
+                return  ILArray<complex> .empty(A.Dimensions); 
             if (A.IsScalar)
                
                 return new  ILArray<complex> (new  complex []{A.GetValue(0)},1,1);

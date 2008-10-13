@@ -1349,7 +1349,16 @@ namespace ILNumerics.Storage {
                 return; 
             }
 			// expand string range definition to multidimensional array m_range
-			int start,ende,step,rngLenUse = (rng.Length <= dims.NumberOfDimensions)?rng.Length:dims.NumberOfDimensions;
+            /* 
+             * Note: by specifying a range definition for less dimension than
+             * dimensions in the dims, subsequent trailing dimensions will be 
+             * merged and added to the last dimension of range. The 'reshaped'
+             * dimension is than considered for output. The decision, if that 
+             * dimension must get expanded is determined by the limits of those
+             * output dimensions.
+             */
+			int start,ende,step;
+            int rngLenUse = rng.Length; //(rng.Length <= dims.NumberOfDimensions)? rng.Length:dims.NumberOfDimensions;
 			int tmpValue;
 			Resize(rngLenUse);
             #region prepare out dimension length
@@ -1369,10 +1378,10 @@ namespace ILNumerics.Storage {
                         outDims[start] = dims[start];
                     }
                     for (; start < rng.Length; start++) {                        
-                        //outDims[start] = 1;
-                        string[] ranges = rng[start].Split(',');
-                        if (ranges.Length != 1 || !int.TryParse(ranges[0].Trim(),out step) || step != 0)
-                            throw new ILArgumentException("For right side subarray access, trailing dimensions must be singleton! Check dimension " + start.ToString() + "!");
+                        outDims[start] = 1;
+                        //string[] ranges = rng[start].Split(',');
+                        //if (ranges.Length != 1 || !int.TryParse(ranges[0].Trim(),out step) || step != 0)
+                        //    throw new ILArgumentException("For right side subarray access, trailing dimensions must be singleton! Check dimension " + start.ToString() + "!");
                     }
                 }
             }
@@ -1564,7 +1573,7 @@ namespace ILNumerics.Storage {
 		/// <returns>new ILDimension object with the neccessary size to 
 		/// hold all indices in this range</returns>
 		public ILDimension GetDimensions() {
-            return new ILDimension(Limits); 
+            return new ILDimension(true,Limits); 
 		}
         /// <summary>
         /// length of all dimensions of this range

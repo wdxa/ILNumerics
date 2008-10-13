@@ -150,6 +150,7 @@
     <Compile Include="Functions\builtin\exp.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Functions\builtin\fft.cs" />
     <Compile Include="Functions\builtin\Find.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -320,37 +321,20 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Functions\builtin\MultiplyElem.cs" />
+    <Compile Include="Native\FFT\IILFFT.cs" />
+    <Compile Include="Native\FFT\ILACMLFFT.cs" />
+    <Compile Include="Native\FFT\ILFFTW3FFT.cs" />
+    <Compile Include="Native\FFT\ILMKLFFT.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Native\lapack\IILLapack.cs" />
-    <Compile Include="Native\lapack\ILACML3_6.cs" />
+    <Compile Include="Native\lapack\ILACML4_1.cs" />
     <Compile Include="Native\lapack\ILLapackGeneric.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Native\lapack\ILLapackGenLinux.cs" />
     <Compile Include="Native\lapack\ILLapackMKL10.0C.cs" />
     <Compile Include="ReferenceManagement.cs" />
-    <Compile Include="Tests\TESTBucketSort.cs" />
-    <Compile Include="Tests\TESTIArray.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\TESTILAlgorithm.cs" />
-    <Compile Include="Tests\TESTILCell.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\TESTILComplex.cs" />
-    <Compile Include="Tests\TESTILLapack.cs" />
-    <Compile Include="Tests\TESTILMath.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\TESTILMemoryPool.cs" />
-    <Compile Include="Tests\TESTILNumericArray.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\TESTILStorage.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\TESTLogical.cs" />
-    <Compile Include="Tests\TESTMatFile.cs" />
-    <Compile Include="Tests\TESTQuickSort.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

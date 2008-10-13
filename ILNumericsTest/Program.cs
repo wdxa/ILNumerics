@@ -1,4 +1,4 @@
-// $Id: Program.cs 651 2008-08-30 23:43:03Z ho $
+// $Id: Program.cs 664 2008-10-11 23:26:44Z ho $
 using System;
 using System.Globalization; 
 using System.Collections.Generic;
@@ -20,28 +20,33 @@ namespace ILNumerics.Test {
         static void Main(string[] args) {
         	Console.Out.Write(Info());
             //new TESTILBinTreeNode().Run();
-            new TESTILComplex().Run(); 
-            new TESTILMath().Run();
+            new TESTILFFT().Run(); 
+
             IILLapack oldLapack = Lapack; 
             Lapack = new ILLapackMKL10_0(); 
             new TESTILLapack().Run();
 
             Lapack = new ILLapackGeneric(); 
             new TESTILLapack().Run();
-            Lapack = new ILACML3_6(); 
+            Lapack = new ILACML4_1(); 
             new TESTILLapack().Run();
             Lapack = oldLapack;
             
+            new TESTILMath().Run();
+            new TESTILComplex().Run(); 
+            new TESTILMemoryPool().Run(); 
+
             new TESTILArray().Run();
+            new TESTILStorage().Run();
             new TESTILMatFile().Run();
             new TESTILCell().Run();
             new TESTBucketSort().Run();
             new TESTQuickSort().Run(); 
-            new TESTILMemoryPool().Run(); 
             new TESTILAlgorithm().Run();
             new TESTILNumericArray().Run();
             new TESTLogical().Run(); 
-            new TESTILStorage().Run();
+            new TESTILDimension().Run(); 
+            
             Console.Out.WriteLine("Done.");
 			Console.In.ReadLine();
 		}

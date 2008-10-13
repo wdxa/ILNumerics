@@ -109,7 +109,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray</*!HC:inType1*/ double > X) {
             if (outputType  == /*!HC:inTypeName*/ NumericType.Double )
                 return X; 
@@ -138,7 +139,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -164,7 +165,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -190,7 +191,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -216,7 +217,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -242,7 +243,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -268,7 +269,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -294,7 +295,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -320,7 +321,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -346,7 +347,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -372,7 +373,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -398,7 +399,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -424,7 +425,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -436,7 +437,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -445,7 +447,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -454,7 +457,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -463,7 +467,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -472,7 +477,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -481,7 +487,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray</*!HC:inType1*/ double > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -490,7 +497,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -499,7 +507,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -508,7 +517,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -517,7 +527,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -526,7 +537,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -535,7 +547,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -544,7 +557,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray</*!HC:inType1*/ double > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
@@ -558,7 +572,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray< UInt64 > X) {
             if (outputType  ==  NumericType.UInt64 )
                 return X; 
@@ -587,7 +602,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -613,7 +628,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -639,7 +654,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -665,7 +680,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -691,7 +706,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -717,7 +732,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -743,7 +758,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -769,7 +784,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -795,7 +810,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -821,7 +836,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -847,7 +862,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -873,7 +888,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -885,7 +900,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray< UInt64 > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -894,7 +910,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray< UInt64 > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -903,7 +920,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray< UInt64 > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -912,7 +930,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray< UInt64 > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -921,7 +940,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray< UInt64 > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -930,7 +950,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray< UInt64 > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -939,7 +960,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray< UInt64 > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -948,7 +970,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray< UInt64 > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -957,7 +980,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray< UInt64 > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -966,7 +990,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray< UInt64 > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -975,7 +1000,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray< UInt64 > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -984,7 +1010,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray< UInt64 > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -993,7 +1020,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray< UInt64 > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
@@ -1004,7 +1032,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray< UInt32 > X) {
             if (outputType  ==  NumericType.UInt32 )
                 return X; 
@@ -1033,7 +1062,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -1059,7 +1088,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -1085,7 +1114,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -1111,7 +1140,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -1137,7 +1166,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -1163,7 +1192,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -1189,7 +1218,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -1215,7 +1244,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -1241,7 +1270,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -1267,7 +1296,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -1293,7 +1322,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -1319,7 +1348,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -1331,7 +1360,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray< UInt32 > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -1340,7 +1370,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray< UInt32 > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -1349,7 +1380,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray< UInt32 > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -1358,7 +1390,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray< UInt32 > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -1367,7 +1400,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray< UInt32 > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -1376,7 +1410,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray< UInt32 > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -1385,7 +1420,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray< UInt32 > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -1394,7 +1430,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray< UInt32 > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -1403,7 +1440,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray< UInt32 > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -1412,7 +1450,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray< UInt32 > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -1421,7 +1460,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray< UInt32 > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -1430,7 +1470,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray< UInt32 > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -1439,7 +1480,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray< UInt32 > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
@@ -1450,7 +1492,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray< UInt16 > X) {
             if (outputType  ==  NumericType.UInt16 )
                 return X; 
@@ -1479,7 +1522,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -1505,7 +1548,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -1531,7 +1574,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -1557,7 +1600,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -1583,7 +1626,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -1609,7 +1652,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -1635,7 +1678,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -1661,7 +1704,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -1687,7 +1730,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -1713,7 +1756,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -1739,7 +1782,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -1765,7 +1808,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -1777,7 +1820,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray< UInt16 > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -1786,7 +1830,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray< UInt16 > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -1795,7 +1840,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray< UInt16 > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -1804,7 +1850,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray< UInt16 > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -1813,7 +1860,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray< UInt16 > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -1822,7 +1870,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray< UInt16 > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -1831,7 +1880,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray< UInt16 > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -1840,7 +1890,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray< UInt16 > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -1849,7 +1900,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray< UInt16 > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -1858,7 +1910,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray< UInt16 > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -1867,7 +1920,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray< UInt16 > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -1876,7 +1930,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray< UInt16 > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -1885,7 +1940,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray< UInt16 > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
@@ -1896,7 +1952,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray< Int64 > X) {
             if (outputType  ==  NumericType.Int64 )
                 return X; 
@@ -1925,7 +1982,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -1951,7 +2008,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -1977,7 +2034,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -2003,7 +2060,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -2029,7 +2086,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -2055,7 +2112,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -2081,7 +2138,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -2107,7 +2164,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -2133,7 +2190,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -2159,7 +2216,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -2185,7 +2242,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -2211,7 +2268,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -2223,7 +2280,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray< Int64 > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -2232,7 +2290,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray< Int64 > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -2241,7 +2300,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray< Int64 > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -2250,7 +2310,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray< Int64 > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -2259,7 +2320,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray< Int64 > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -2268,7 +2330,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray< Int64 > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -2277,7 +2340,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray< Int64 > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -2286,7 +2350,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray< Int64 > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -2295,7 +2360,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray< Int64 > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -2304,7 +2370,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray< Int64 > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -2313,7 +2380,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray< Int64 > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -2322,7 +2390,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray< Int64 > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -2331,7 +2400,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray< Int64 > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
@@ -2342,7 +2412,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray< Int32 > X) {
             if (outputType  ==  NumericType.Int32 )
                 return X; 
@@ -2371,7 +2442,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -2397,7 +2468,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -2423,7 +2494,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -2449,7 +2520,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -2475,7 +2546,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -2501,7 +2572,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -2527,7 +2598,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -2553,7 +2624,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -2579,7 +2650,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -2605,7 +2676,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -2631,7 +2702,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -2657,7 +2728,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -2669,7 +2740,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray< Int32 > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -2678,7 +2750,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray< Int32 > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -2687,7 +2760,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray< Int32 > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -2696,7 +2770,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray< Int32 > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -2705,7 +2780,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray< Int32 > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -2714,7 +2790,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray< Int32 > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -2723,7 +2800,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray< Int32 > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -2732,7 +2810,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray< Int32 > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -2741,7 +2820,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray< Int32 > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -2750,7 +2830,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray< Int32 > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -2759,7 +2840,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray< Int32 > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -2768,7 +2850,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray< Int32 > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -2777,7 +2860,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray< Int32 > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
@@ -2788,7 +2872,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray< Int16 > X) {
             if (outputType  ==  NumericType.Int16 )
                 return X; 
@@ -2817,7 +2902,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -2843,7 +2928,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -2869,7 +2954,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -2895,7 +2980,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -2921,7 +3006,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -2947,7 +3032,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -2973,7 +3058,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -2999,7 +3084,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -3025,7 +3110,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -3051,7 +3136,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -3077,7 +3162,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -3103,7 +3188,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -3115,7 +3200,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray< Int16 > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -3124,7 +3210,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray< Int16 > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -3133,7 +3220,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray< Int16 > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -3142,7 +3230,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray< Int16 > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -3151,7 +3240,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray< Int16 > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -3160,7 +3250,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray< Int16 > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -3169,7 +3260,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray< Int16 > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -3178,7 +3270,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray< Int16 > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -3187,7 +3280,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray< Int16 > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -3196,7 +3290,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray< Int16 > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -3205,7 +3300,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray< Int16 > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -3214,7 +3310,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray< Int16 > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -3223,7 +3320,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray< Int16 > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
@@ -3234,7 +3332,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray< char > X) {
             if (outputType  ==  NumericType.Char )
                 return X; 
@@ -3263,7 +3362,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -3289,7 +3388,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -3315,7 +3414,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -3341,7 +3440,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -3367,7 +3466,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -3393,7 +3492,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -3419,7 +3518,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -3445,7 +3544,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -3471,7 +3570,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -3497,7 +3596,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -3523,7 +3622,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -3549,7 +3648,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -3561,7 +3660,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray< char > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -3570,7 +3670,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray< char > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -3579,7 +3680,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray< char > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -3588,7 +3690,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray< char > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -3597,7 +3700,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray< char > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -3606,7 +3710,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray< char > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -3615,7 +3720,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray< char > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -3624,7 +3730,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray< char > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -3633,7 +3740,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray< char > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -3642,7 +3750,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray< char > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -3651,7 +3760,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray< char > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -3660,7 +3770,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray< char > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -3669,7 +3780,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray< char > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
@@ -3680,7 +3792,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray< byte > X) {
             if (outputType  ==  NumericType.Byte )
                 return X; 
@@ -3709,7 +3822,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -3735,7 +3848,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -3761,7 +3874,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -3787,7 +3900,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -3813,7 +3926,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -3839,7 +3952,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -3865,7 +3978,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -3891,7 +4004,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -3917,7 +4030,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -3943,7 +4056,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -3969,7 +4082,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -3995,7 +4108,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -4007,7 +4120,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray< byte > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -4016,7 +4130,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray< byte > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -4025,7 +4140,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray< byte > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -4034,7 +4150,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray< byte > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -4043,7 +4160,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray< byte > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -4052,7 +4170,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray< byte > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -4061,7 +4180,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray< byte > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -4070,7 +4190,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray< byte > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -4079,7 +4200,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray< byte > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -4088,7 +4210,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray< byte > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -4097,7 +4220,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray< byte > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -4106,7 +4230,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray< byte > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -4115,7 +4240,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray< byte > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
@@ -4126,7 +4252,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray< fcomplex > X) {
             if (outputType  ==  NumericType.FComplex )
                 return X; 
@@ -4155,7 +4282,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -4181,7 +4308,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -4207,7 +4334,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -4233,7 +4360,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -4259,7 +4386,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -4285,7 +4412,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -4311,7 +4438,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -4337,7 +4464,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -4363,7 +4490,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -4389,7 +4516,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -4415,7 +4542,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -4441,7 +4568,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -4453,7 +4580,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray< fcomplex > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -4462,7 +4590,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray< fcomplex > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -4471,7 +4600,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray< fcomplex > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -4480,7 +4610,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray< fcomplex > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -4489,7 +4620,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray< fcomplex > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -4498,7 +4630,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray< fcomplex > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -4507,7 +4640,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray< fcomplex > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -4516,7 +4650,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray< fcomplex > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -4525,7 +4660,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray< fcomplex > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -4534,7 +4670,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray< fcomplex > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -4543,7 +4680,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray< fcomplex > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -4552,7 +4690,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray< fcomplex > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -4561,7 +4700,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray< fcomplex > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
@@ -4572,7 +4712,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray< complex > X) {
             if (outputType  ==  NumericType.Complex )
                 return X; 
@@ -4601,7 +4742,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -4627,7 +4768,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -4653,7 +4794,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -4679,7 +4820,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -4705,7 +4846,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -4731,7 +4872,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -4757,7 +4898,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -4783,7 +4924,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -4809,7 +4950,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -4835,7 +4976,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -4861,7 +5002,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -4887,7 +5028,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -4899,7 +5040,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray< complex > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -4908,7 +5050,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray< complex > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -4917,7 +5060,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray< complex > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -4926,7 +5070,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray< complex > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -4935,7 +5080,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray< complex > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -4944,7 +5090,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray< complex > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -4953,7 +5100,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray< complex > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -4962,7 +5110,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray< complex > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -4971,7 +5120,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray< complex > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -4980,7 +5130,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray< complex > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -4989,7 +5140,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray< complex > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -4998,7 +5150,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray< complex > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -5007,7 +5160,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray< complex > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
@@ -5018,7 +5172,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="X">input array</param>
         /// <param name="outputType">type description for return type</param>
         /// <returns>converted array</returns>
-        /// <remarks> the newly created array will be solid array of the same size as X. X may be a solid or a reference array.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILBaseArray convert(NumericType outputType,  ILArray< float > X) {
             if (outputType  ==  NumericType.Single )
                 return X; 
@@ -5047,7 +5202,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<double> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<double> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Single:
@@ -5073,7 +5228,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<float> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<float> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Complex:
@@ -5099,7 +5254,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<complex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<complex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.FComplex:
@@ -5125,7 +5280,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<fcomplex> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<fcomplex> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Byte:
@@ -5151,7 +5306,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<byte> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<byte> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Char:
@@ -5177,7 +5332,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<char> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<char> (retA,X.Dimensions); 
                     }
                     return ret; 
                 case NumericType.Int16:
@@ -5203,7 +5358,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int32:
@@ -5229,7 +5384,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.Int64:
@@ -5255,7 +5410,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<Int64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<Int64> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt16:
@@ -5281,7 +5436,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt16> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt16> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt32:
@@ -5307,7 +5462,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt32> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt32> (retA,X.Dimensions); 
                     }
                     return ret; 
                  case NumericType.UInt64:
@@ -5333,7 +5488,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                 }
                             }
                         }
-                        ret = new ILArray<UInt64> (retA,X.Dimensions.Clone()); 
+                        ret = new ILArray<UInt64> (retA,X.Dimensions); 
                     }
                     return ret; 
             }
@@ -5345,7 +5500,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; double &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<double> todouble(ILArray< float > X) {
              return (ILArray<double>)convert(NumericType.Double,X); 
         }
@@ -5354,7 +5510,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; float &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<float> tosingle(ILArray< float > X) {
              return (ILArray<float>)convert(NumericType.Single,X); 
         }
@@ -5363,7 +5520,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; complex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<complex> tocomplex(ILArray< float > X) {
              return (ILArray<complex>)convert(NumericType.Complex,X); 
         }
@@ -5372,7 +5530,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; fcomplex &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<fcomplex> tofcomplex(ILArray< float > X) {
              return (ILArray<fcomplex>)convert(NumericType.FComplex,X); 
         }
@@ -5381,7 +5540,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; byte &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<byte> tobyte(ILArray< float > X) {
              return (ILArray<byte>)convert(NumericType.Byte,X); 
         }
@@ -5390,7 +5550,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILLogicalArray</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILLogicalArray tological(ILArray< float > X) {
              return new ILLogicalArray ((ILArray<byte>)convert(NumericType.Byte,X)); 
         }
@@ -5399,7 +5560,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; char &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<char> tochar(ILArray< float > X) {
              return (ILArray<char>)convert(NumericType.Char,X); 
         }
@@ -5408,7 +5570,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int16> toint16(ILArray< float > X) {
              return (ILArray<Int16>)convert(NumericType.Int16,X); 
         }
@@ -5417,7 +5580,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int32> toint32(ILArray< float > X) {
              return (ILArray<Int32>)convert(NumericType.Int32,X); 
         }
@@ -5426,7 +5590,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; Int64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<Int64> toint64(ILArray< float > X) {
              return (ILArray<Int64>)convert(NumericType.Int64,X); 
         }
@@ -5435,7 +5600,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt16 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt16> touint16(ILArray< float > X) {
              return (ILArray<UInt16>)convert(NumericType.UInt16,X); 
         }
@@ -5444,7 +5610,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt32 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt32> touint32(ILArray< float > X) {
              return (ILArray<UInt32>)convert(NumericType.UInt32,X); 
         }
@@ -5453,7 +5620,8 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="X">input array </param>
         /// <returns>ILArray &lt; UInt64 &gt;</returns>
-        /// <remarks>The array returned will be a solid array of the same size than X.</remarks>
+        /// <remarks> The newly created array will be converted to the type requested. 
+        /// <para>Important note: if X matches the type requested, NO COPY will be made for it and the SAME array will be returned!</para></remarks>
         public static ILArray<UInt64> touint64(ILArray< float > X) {
              return (ILArray<UInt64>)convert(NumericType.UInt64,X); 
         }
