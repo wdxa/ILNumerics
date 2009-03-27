@@ -1,0 +1,30 @@
+﻿<namespaces>
+  <namespace name="ILNumerics">
+    The ILNumerics namespace provides the main datatypes to be
+    used inside the library. At this time those are the main generic array type ILArray<![CDATA[<>]]>
+    and the derived types ILCell and ILLogicalArray. The former is a simple alias for
+    ILArray<![CDATA[<object>]]>. ILLogicalArray is to be used for boolean operations.
+    Also the namespace provides 2 complex datatypes: complex and fcomplex, which extends the
+    system's base value types for numerical mathematics on complex floating point base. Those
+    base value types may as well be used as inner (generic) types for all ILArray<![CDATA[<>]]>'s.
+    Some operations of ILNumerics.Net return a complex Array even on real input arrays. Therefore you
+    may want to make yourself familiar with those types also.
+  </namespace>
+  <namespace name="ILNumerics.Algorithms">
+    The ILNumerics.Algorithms namespace provides classes with more complex and/or long running algorithms to be utilized with ILArray<![CDATA[<>]]>'s.
+    All algorithms derive from ILAlgorithm class. Therefore ILAlgorithms are capable of informing the host application of special events. Those events may be fired from
+    inside of all ILAlgorithms before, during and after processing. A state is associated  with each ILAlgorithm throughout it's livetime. The state is one out the values of
+    ILAlgorithmRunningState enum. ILAlgorithms will be started by the public (overloaded) member Run(). The algorithm should inform the host application about its state from 
+    time to time, in order to deliver progress information and to query the state of a pending cancelation. Therefore the host application will have the chance to set a flag in 
+    the ILAlgorithmEventArgs in order to trigger the cancelation. <br/> ILAlgorithms are proceeding synchronously in general. The host application is responsible for starting 
+    a ILAlgorithm in a background thread (e.g. by use of a BackgroundWorker class) and to marshall the event arguments between the threads if necessary. 
+  </namespace>
+  <namespace name="ILNumerics.BuiltInFunctions">     
+		The ILNumerics.BuiltInFunctions namespace provides all built in
+		functions for all datatypes derived from ILBaseArray. Those includes all basic math operations
+		on ILArray<![CDATA[<>]]> types as well as some extensions to systems value types.
+		All functions found inside this namespace are excecuted synchronously. I.e. they are expected to
+		excecute in "short time". In contrast to that: see ILAlgorithm/ ILScript, which excecute synchronously also but are 
+    better prepared to be taken out into a seperate thread.
+	</namespace>
+</namespaces>

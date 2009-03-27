@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3B112BB0-9E2E-4F4C-8F12-D790ECC97B67}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ILNumerics.Net</RootNamespace>
+    <AssemblyName>ILNumericsLight</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WIN32 DEBUG</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>WIN32 RELEASE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Algorithms\ILAlgorithm.cs" />
+    <Compile Include="Algorithms\ILAlgorithmEventArgs.cs" />
+    <Compile Include="Algorithms\ILAsyncAlgorithm.cs" />
+    <Compile Include="Algorithms\LDA.cs" />
+    <Compile Include="Algorithms\SimpleAsyncSample.cs" />
+    <Compile Include="Algorithms\Sorting\ILBucketSort.cs" />
+    <Compile Include="Algorithms\Sorting\ILKeyMapper.cs" />
+    <Compile Include="Algorithms\Sorting\ILQueue.cs" />
+    <Compile Include="Algorithms\Sorting\ILQuickSort.cs" />
+    <Compile Include="Algorithms\Special\ILSpecialData.cs" />
+    <Compile Include="Data\ILBinTree.cs" />
+    <Compile Include="Data\ILProrityQueue.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Functions\builtin\abs.cs" />
+    <Compile Include="Functions\builtin\acos.cs" />
+    <Compile Include="Functions\builtin\Add.cs" />
+    <Compile Include="Functions\builtin\all.cs" />
+    <Compile Include="Functions\builtin\any.cs" />
+    <Compile Include="Functions\builtin\asin.cs" />
+    <Compile Include="Functions\builtin\atan.cs" />
+    <Compile Include="Functions\builtin\ceil.cs" />
+    <Compile Include="Functions\builtin\chol.cs" />
+    <Compile Include="Functions\builtin\conj.cs" />
+    <Compile Include="Functions\builtin\convert.cs" />
+    <Compile Include="Functions\builtin\atan2.cs" />
+    <Compile Include="Functions\builtin\stablesort.cs" />
+    <Compile Include="Functions\builtin\unique.cs" />
+    <Compile Include="Functions\builtin\linearInterp.cs" />
+    <Compile Include="Functions\builtin\cumsum.cs" />
+    <Compile Include="Functions\builtin\cross.cs" />
+    <Compile Include="Functions\builtin\hypot.cs" />
+    <Compile Include="Functions\builtin\cos.cs" />
+    <Compile Include="Functions\builtin\cosh.cs" />
+    <Compile Include="Functions\builtin\det.cs" />
+    <Compile Include="Functions\builtin\diag.cs" />
+    <Compile Include="Functions\builtin\diff.cs" />
+    <Compile Include="Functions\builtin\dimensionWrapper.cs" />
+    <Compile Include="Functions\builtin\DivideElem.cs" />
+    <Compile Include="Functions\builtin\eig.cs" />
+    <Compile Include="Functions\builtin\eps.cs" />
+    <Compile Include="Functions\builtin\exp.cs" />
+    <Compile Include="Functions\builtin\fft.cs" />
+    <Compile Include="Functions\builtin\Find.cs" />
+    <Compile Include="Functions\builtin\fix.cs" />
+    <Compile Include="Functions\builtin\floor.cs" />
+    <Compile Include="Functions\builtin\Horzcat.cs" />
+    <Compile Include="Functions\builtin\imag.cs" />
+    <Compile Include="Functions\builtin\ind2sub.cs" />
+    <Compile Include="Functions\builtin\Invert.cs" />
+    <Compile Include="Functions\builtin\isfinite.cs" />
+    <Compile Include="Functions\builtin\isinf.cs" />
+    <Compile Include="Functions\builtin\isnan.cs" />
+    <Compile Include="Functions\builtin\isneginf.cs" />
+    <Compile Include="Functions\builtin\isposinf.cs" />
+    <Compile Include="Functions\builtin\linspace.cs" />
+    <Compile Include="Functions\builtin\log.cs" />
+    <Compile Include="Functions\builtin\log10.cs" />
+    <Compile Include="Functions\builtin\logspace.cs" />
+    <Compile Include="Functions\builtin\lu.cs" />
+    <Compile Include="Functions\builtin\matrixTest.cs" />
+    <Compile Include="Functions\builtin\Max.cs" />
+    <Compile Include="Functions\builtin\maxall.cs" />
+    <Compile Include="Functions\builtin\mean.cs" />
+    <Compile Include="Functions\builtin\meshgrid.cs" />
+    <Compile Include="Functions\builtin\Min.cs" />
+    <Compile Include="Functions\builtin\minall.cs" />
+    <Compile Include="Functions\builtin\MultiplyElem.cs" />
+    <Compile Include="Functions\builtin\Norm.cs" />
+    <Compile Include="Functions\builtin\pinv.cs" />
+    <Compile Include="Functions\builtin\polyval.cs" />
+    <Compile Include="Functions\builtin\pow.cs" />
+    <Compile Include="Functions\builtin\prod.cs" />
+    <Compile Include="Functions\builtin\qr.cs" />
+    <Compile Include="Functions\builtin\rank.cs" />
+    <Compile Include="Functions\builtin\real.cs" />
+    <Compile Include="Functions\builtin\real2complex.cs" />
+    <Compile Include="Functions\builtin\repmat.cs" />
+    <Compile Include="Functions\builtin\reshape.cs" />
+    <Compile Include="Functions\builtin\round.cs" />
+    <Compile Include="Functions\builtin\set.cs" />
+    <Compile Include="Functions\builtin\sign.cs" />
+    <Compile Include="Functions\builtin\sin.cs" />
+    <Compile Include="Functions\builtin\single.cs" />
+    <Compile Include="Functions\builtin\sinh.cs" />
+    <Compile Include="Functions\builtin\slash.cs" />
+    <Compile Include="Functions\builtin\sort.cs" />
+    <Compile Include="Functions\builtin\sqrt.cs" />
+    <Compile Include="Functions\builtin\sub2ind.cs" />
+    <Compile Include="Functions\builtin\Subtract.cs" />
+    <Compile Include="Functions\builtin\Sum.cs" />
+    <Compile Include="Functions\builtin\sumall.cs" />
+    <Compile Include="Functions\builtin\Svd.cs" />
+    <Compile Include="Functions\builtin\tan.cs" />
+    <Compile Include="Functions\builtin\tanh.cs" />
+    <Compile Include="Functions\builtin\trace.cs" />
+    <Compile Include="Functions\builtin\tril_u.cs" />
+    <Compile Include="Functions\builtin\Vertcat.cs" />
+    <Compile Include="Functions\ILMathBasic.cs" />
+    <Compile Include="Functions\ILMathBasicCmplx.cs" />
+    <Compile Include="Functions\ILMathCreation.cs" />
+    <Compile Include="Functions\ILMath_BasicExtensions.cs" />
+    <Compile Include="Functions\ILMath_General.cs" />
+    <Compile Include="Functions\ILMath_Logical.cs" />
+    <Compile Include="Functions\ILMath_Walker.cs" />
+    <Compile Include="ILArray.cs" />
+    <Compile Include="ILArray_Constructors.cs" />
+    <Compile Include="ILArray_Overloads.cs" />
+    <Compile Include="ILBaseArray.cs" />
+    <Compile Include="ILCell.cs" />
+    <Compile Include="ILComplex.cs" />
+    <Compile Include="ILLogicalArray.cs" />
+    <Compile Include="ILPerformer.cs" />
+    <Compile Include="Misc\ILCPUID.cs" />
+    <Compile Include="Misc\ILDimension.cs" />
+    <Compile Include="Misc\ILException.cs" />
+    <Compile Include="Misc\ILFormatter.cs" />
+    <Compile Include="Misc\ILIterator.cs" />
+    <Compile Include="Misc\ILMatFile.cs" />
+    <Compile Include="Misc\ILMemoryPool.cs" />
+    <Compile Include="Misc\ILNRandom.cs" />
+    <Compile Include="Misc\ILRand.cs" />
+    <Compile Include="Misc\ILRange.cs" />
+    <Compile Include="Misc\ILTest.cs" />
+    <Compile Include="Native\FFT\IILFFT.cs" />
+    <Compile Include="Native\FFT\ILACMLFFT.cs" />
+    <Compile Include="Native\FFT\ILFFTW3FFT.cs" />
+    <Compile Include="Native\FFT\ILMKLFFT.cs" />
+    <Compile Include="Native\lapack\IILLapack.cs" />
+    <Compile Include="Native\lapack\ILACML4_1.cs" />
+    <Compile Include="Native\lapack\ILLapackGeneric.cs" />
+    <Compile Include="Native\lapack\ILLapackGenLinux.cs" />
+    <Compile Include="Native\lapack\ILLapackMKL10.0C.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Properties\NamespaceSummaries.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
