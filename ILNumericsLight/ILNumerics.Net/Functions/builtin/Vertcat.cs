@@ -67,11 +67,11 @@ namespace ILNumerics.BuiltInFunctions {
                     }
 
                     if (aValidDim.NumberOfDimensions != toCat[i].m_dimensions.NumberOfDimensions)
-                        throw new ILArgumentSizeException("horzcat: Both arrays to be concatenated must have the same number of dimensions!");
+                        throw new ILArgumentSizeException("vertcat: Both arrays to be concatenated must have the same number of dimensions!");
 
                     for (int j = 1; j < aValidDim.NumberOfDimensions; j++)
                         if (aValidDim[j] != toCat[i].m_dimensions[j])
-                            throw new Exception("horzcat: all but the second dimensions of all arrays must match!");
+                            throw new Exception("vertcat: all but the second dimensions of all arrays must match!");
                 }
             }
 
