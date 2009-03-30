@@ -48,6 +48,9 @@ namespace ILNumerics.BuiltInFunctions
             if (X.m_dimensions.NumberOfElements != Y.m_dimensions.NumberOfElements)
                 throw new ILDimensionMismatchException("X and Y must have the same number of elements.");
 
+            if (X.m_data.Length < 2)
+                throw new ILArgumentSizeException("There must be at least 2 data points to perform interpolation.");
+
             // 2. Declarations
             double[] xi = (double[])XI.m_data.Clone(); // will be sorted
             double[] x = (double[])X.m_data.Clone(); // will be sorted
@@ -114,6 +117,9 @@ namespace ILNumerics.BuiltInFunctions
             if (X.m_dimensions.NumberOfElements != Y.m_dimensions.NumberOfElements)
                 throw new ILDimensionMismatchException("X and Y must have the same number of elements.");
 
+            if (X.m_data.Length < 2)
+                throw new ILArgumentSizeException("There must be at least 2 data points to perform interpolation.");
+
             // 2. Declarations
             double[] x = X.m_data;
             double[] y = Y.m_data;
@@ -165,6 +171,9 @@ namespace ILNumerics.BuiltInFunctions
 
             if (X.m_dimensions.NumberOfElements != Z.m_dimensions[1] || Y.m_dimensions.NumberOfElements != Z.m_dimensions[0])
                 throw new ILDimensionMismatchException("Sizes of X and Y must correspond to Z.Cols and Z.Rows respectively.");
+
+            if (X.m_data.Length < 2)
+                throw new ILArgumentSizeException("There must be at least 2 data points to perform interpolation.");
 
             if (XI.m_dimensions.NumberOfElements != YI.m_dimensions.NumberOfElements)
                 throw new ILDimensionMismatchException("XI and YI must be the same size.");
@@ -253,6 +262,9 @@ namespace ILNumerics.BuiltInFunctions
             if (X.m_dimensions.NumberOfElements != Z.m_dimensions[1] || Y.m_dimensions.NumberOfElements != Z.m_dimensions[0])
                 throw new ILDimensionMismatchException("Sizes of X and Y must correspond to Z.Cols and Z.Rows respectively.");
 
+            if (X.m_data.Length < 2)
+                throw new ILArgumentSizeException("There must be at least 2 data points to perform interpolation.");
+
             // 2. Declarations
             double[] x = X.m_data;
             double[] y = Y.m_data;
@@ -317,6 +329,9 @@ namespace ILNumerics.BuiltInFunctions
                 Y.m_dimensions.NumberOfElements != V.m_dimensions[1] ||
                 Z.m_dimensions.NumberOfElements != V.m_dimensions[2])
                 throw new ILDimensionMismatchException("Sizes of X,Y,Z must correspond to V.Rows, V.Cols, V.Slabs.");
+
+            if (X.m_data.Length < 2)
+                throw new ILArgumentSizeException("There must be at least 2 data points to perform interpolation.");
 
             if (XI.m_dimensions.NumberOfElements != YI.m_dimensions.NumberOfElements ||
                 XI.m_dimensions.NumberOfElements != ZI.m_dimensions.NumberOfElements)
@@ -440,6 +455,9 @@ namespace ILNumerics.BuiltInFunctions
                 Y.m_dimensions.NumberOfElements != V.m_dimensions[1] ||
                 Z.m_dimensions.NumberOfElements != V.m_dimensions[2])
                 throw new ILDimensionMismatchException("Sizes of X,Y,Z must correspond to V.Rows, V.Cols, V.Slabs.");
+
+            if (X.m_data.Length < 2)
+                throw new ILArgumentSizeException("There must be at least 2 data points to perform interpolation.");
 
             // 2. Declarations
             double[] x = X.m_data;
