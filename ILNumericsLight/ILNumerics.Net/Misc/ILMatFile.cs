@@ -436,22 +436,31 @@ namespace ILNumerics {
         /// create MatFile object from existing mat file 
         /// </summary>
         /// <param name="file2open">path to Matlab mat file to open</param>
+        /// <param name="vars2load">variables to load from file: leave empty to load them all</param>
         /// <remarks>Curently mat files up to Matlab version 6.5 are supported. Compressed mat file content is not supported yet.</remarks>
-        public ILMatFile(string file2open) {
+        public ILMatFile(string file2open, params string[] vars2load)
+        {
             m_filename = file2open; 
-            using (FileStream fs = File.OpenRead(file2open)) { 
+            using (FileStream fs = File.OpenRead(file2open)) 
+            { 
                 BinaryReader br = new BinaryReader(fs); 
-                read_header (br); 
+                read_header (br);
+
                 // read elements 
                 Dictionary<string,ILBaseArray> lstBaseArray = new Dictionary<string,ILBaseArray>(); 
                 while (br.BaseStream.Position < br.BaseStream.Length) {
                     MatFileType dataType = (MatFileType)Enum.Parse(typeof(MatFileType), br.ReadInt32().ToString()); 
-                    // the length of this chunk may be used for error checking, but....
+                    
                     int len = br.ReadInt32(); 
+                    long curPos = br.BaseStream.Position;
+
                     if (dataType == MatFileType.miMATRIX) {
-                        ILBaseArray mat = read_miMATRIX(br); 
-                        lstBaseArray.Add(mat.Name,mat); 
+                        ILBaseArray mat = read_miMATRIX(br, vars2load);
+
+                        if (!object.ReferenceEquals(mat,null))
+                            lstBaseArray.Add(mat.Name, mat);
                     }
+                    br.BaseStream.Position = curPos + len;
                 }
                 m_data = lstBaseArray;
             }
@@ -509,8 +518,8 @@ namespace ILNumerics {
         /// read ONE array (arbitrary dimensions/type) from MAT file 
         /// </summary>
         /// <param name="br">binary reader initialized and pointing to the beginning of the subarray element.</param>
-        /// <returns>ILBaseArray of size and type originally stored into the mat file.</returns>
-        private ILBaseArray read_miMATRIX (BinaryReader br) {
+        /// <returns>ILBaseArray of size and type originally stored into the mat file. Null if not loading this variable.</returns>
+        private ILBaseArray read_miMATRIX (BinaryReader br, string[] vars2load) {
             long entryPositionInStream = br.BaseStream.Position; 
             bool complex = false;
             bool logical = false; 
@@ -575,6 +584,13 @@ namespace ILNumerics {
                     br.ReadByte(); 
                 }
                 name = nameBuild.ToString(); 
+            }
+            if (vars2load.Length != 0) {
+                int varNameIdx;
+                for (varNameIdx = 0; varNameIdx < vars2load.Length; varNameIdx++)
+                    if (name == vars2load[varNameIdx]) break;
+
+                if (varNameIdx == vars2load.Length) return null;
             }
             // read data flags + check if small format
             readInt = br.ReadInt32(); 
