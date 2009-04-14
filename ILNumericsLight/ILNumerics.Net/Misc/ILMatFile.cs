@@ -447,17 +447,19 @@ namespace ILNumerics {
                 read_header (br);
 
                 // read elements 
-                Dictionary<string,ILBaseArray> lstBaseArray = new Dictionary<string,ILBaseArray>(); 
-                while (br.BaseStream.Position < br.BaseStream.Length) {
-                    MatFileType dataType = (MatFileType)Enum.Parse(typeof(MatFileType), br.ReadInt32().ToString()); 
-                    
-                    int len = br.ReadInt32(); 
+                Dictionary<string,ILBaseArray> lstBaseArray = new Dictionary<string,ILBaseArray>();
+                while (br.BaseStream.Position < br.BaseStream.Length && (vars2load.Length == 0 || lstBaseArray.Count != vars2load.Length))
+                {
+                    MatFileType dataType = (MatFileType)Enum.Parse(typeof(MatFileType), br.ReadInt32().ToString());
+
+                    int len = br.ReadInt32();
                     long curPos = br.BaseStream.Position;
 
-                    if (dataType == MatFileType.miMATRIX) {
+                    if (dataType == MatFileType.miMATRIX)
+                    {
                         ILBaseArray mat = read_miMATRIX(br, vars2load);
 
-                        if (!object.ReferenceEquals(mat,null))
+                        if (!object.ReferenceEquals(mat, null))
                             lstBaseArray.Add(mat.Name, mat);
                     }
                     br.BaseStream.Position = curPos + len;
