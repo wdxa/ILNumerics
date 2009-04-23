@@ -1843,8 +1843,6 @@ namespace ILNumerics {
         /// <param name="idx">int array with dimensions specification</param>
         /// <returns>Index of requested value inside the physical storage. This 
         /// value may directly be used to query the value via m_data[return_value].
-        /// The value return is valid for physical storages as well as for reference 
-        /// storages.
         /// </returns>
         /// <remarks>If the length of idx is smaler than the number of dimensions 
         /// of this storage, the trailing dimensions will be replaced with "0". I.e 
