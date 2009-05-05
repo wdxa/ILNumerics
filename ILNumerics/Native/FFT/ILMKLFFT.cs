@@ -190,7 +190,7 @@ namespace ILNumerics.Native {
         [DllImport("mkl_custom", EntryPoint = "DftiCreateDescriptor",CallingConvention =CallingConvention.Cdecl),SuppressUnmanagedCodeSecurity]
         public static extern int DftiCreateDescriptor(ref IntPtr pDescriptor, int precision, int domain, int dimCount, int[] dims);
         [DllImport("mkl_custom", EntryPoint = "DftiFreeDescriptor",CallingConvention =CallingConvention.Cdecl),SuppressUnmanagedCodeSecurity]
-		public static extern int DftiFreeDescriptor(IntPtr pDescriptor);
+		public static extern int DftiFreeDescriptor(ref IntPtr pDescriptor);
         [DllImport("mkl_custom", EntryPoint = "DftiCommitDescriptor",CallingConvention =CallingConvention.Cdecl),SuppressUnmanagedCodeSecurity]
 		public static extern int DftiCommitDescriptor(IntPtr pDescriptor);
         [DllImport("mkl_custom", EntryPoint = "DftiErrorClass",CallingConvention =CallingConvention.Cdecl),SuppressUnmanagedCodeSecurity]
@@ -1468,7 +1468,8 @@ namespace ILNumerics.Native {
             lock (_lockobject) {
                 if (m_descriptors != null) {
                     foreach (IntPtr p in m_descriptors.Values) {
-                        MKLImports.DftiFreeDescriptor(p); 
+                        IntPtr tmp = p; 
+                        MKLImports.DftiFreeDescriptor(ref tmp); 
                     }
                     m_descriptors.Clear(); 
                 }
