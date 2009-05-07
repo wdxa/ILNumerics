@@ -177,6 +177,11 @@ namespace ILNumerics.Test {
                 if (!complex.IsNaN(maxc)) {
                     throw new Exception("MinValue should be NaN for row vector of complex.NaN's!");
                 }
+                A =  new ILArray<double>(new double[]{double.PositiveInfinity,double.PositiveInfinity}); 
+                if (ILMath.min(A) != double.PositiveInfinity) 
+                    throw new Exception("invalid MinValue returned for: double.PositiveInfinity!"); 
+                if (A.MinValue != double.PositiveInfinity) 
+                    throw new Exception("invalid MinValue returned for: double.PositiveInfinity!"); 
                 Success(); 
             } catch (Exception e) {
                 Error(errorCode,e.Message); 

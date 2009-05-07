@@ -1,0 +1,137 @@
+Changes in version 1.4.02
+===========================
+* sort: return indices rel. to dim length
+* repmat: simplified interface (no 'rows' parameter)
+* horzcat, vertcat: improved exception handling
+* added: isequal, isequalwithequalnans 
+* max,min handling NaN and Inf properly now
+* new testing framework: ILAutoTestCaseGenerator
+* ILMatFile: added Int64, UInt64 capabilities
+* binary function (add,.. etc) allowing one empty if the other parameter ist scalar
+* binary functions (add,...) saturate for integral types
+* fixed a bug in pinv for complex types (conj missed transpose)
+* complex division operator: properly handles NaN inputs
+* any() now truely ignores NaN values
+
+Changes in version 1.4.01
+===========================
+* bugfix and(scalar, array), or(scalar,array) 
+* ILArray.Reshape(params int[]) added
+* added: ILDimension.IsSameShape()
+* implemented FFT (generic interface)
+* implemented 3 FFT modules
+* moved all TESTs into seperate assembly 
+* ILDimension is _really_ immutable now
+* ILDimension.getShiftedVersion -> GetShifted()
+* ILMath.reshape(A,...) preserving A
+* empty arrays dimensions preserve true sizes
+* ILArray can have trailing singleton dimensions
+* AMD ACML updated to version 4.1 
+* ACML provided as seperate module 
+
+Changes in version 1.3.15
+===========================
+C: bugfix: diag(vect,-d)
+C: complex division with real values improved for NAN
+C: bugfix:ILArray<>.MaxValue, .MinValue on all NaN's
+C: bugfix:complex subtraction
+C: implemented unary minus on complex
+C: added ILMath.conj() - complex conjugate
+C: bugfix on n-dim reference unary operators for n>2 in certain situations
+
+Changes in version 1.3.14
+===========================
+* C: mkl update to 10.0.3.21
+* C: MatrixProperties: Unknown,None
+* C: complex: support for NaN
+* C: complex division 0/inf=>NaN
+* C: + robust against overflow
+* C: strong name for core dll
+* D: 0.10.0
+* D: ILAxisLabel -> ILLabel (in NS also)
+* D: AxisLabelAlign -> LabelAlign
+* D: legends implemented 
+
+Changes in version 1.3.13
+===========================
+* C: bugfix:binary operator (some ref.matrices op. on scalar)
+* C: bugfix:complex division handling inf's
+* C: bugfix:ILDimension (semi)immutable
+* C: added ILSpecialData.sphere(int), moebius()
+* D: 0.9.29: plot controls
+* D: Y-Line graphs starting at '0' now
+* D: all markers (and more), -> <a href="http://ilnumerics.net/main.php?site=5136312">docu</a>
+* D: implemented colormaps for ILPanel
+* D: surface graphs receive X,Y,C arguments
+* D: colorbar renders current colormap
+* D: SaveToBitmap for ILPanel, ILSubfigure
+
+Changes in version 1.3.12
+===========================
+* C: new function 'diff'
+* C: complex number bug fixes
+* D: 0.9.28: plot controls 
+* D: internal labeling redesign 
+* D: partial tex interpreter
+* D: X/Y plots
+
+Changes in version 1.3.11
+===========================
+* D: 0.9.27: more speaking trace log
+* D: removed assertion failure on TickMode.Manual
+* C: bugfix: expand emtpy ILArrays
+
+Changes in version 1.3.10
+===========================
+* new ILArray member: ExportValues(ref BaseT[] result)
+* bugfix on ILMath.ccomplex (had empty imag part)
+* new special data provider: ILSpecialData
+* redesigned ILFigure.dll -> ILNumerics.Drawing.dll
+* removed binary installer
+
+Changes in version 1.3.9
+===========================
+* ILMath.convert supports numeric ILBaseArray as argument
+* Intel MKL merged into single lib
+* Redesign for OpenGL plot panel (beta)
+
+Changes in version 1.3.8
+===========================
+* support for generalized eigenproblems for symmetrical/hermitian matrices A and B
+* improved string/debug display for complex number types
+* performance optimiziations for MKL working arrays (utilizing ILMemoryPool)
+
+Changes in version 1.3.7
+===========================
+* License changed to LGPL v3
+* implemented Intel's MKL v10.0 (sequential)
+
+Changes in version 1.3.6
+===========================
+* bugfix: expanding ILArray with left side ranges out of bounds, would not expand correctly in a special case
+* ILArray<T> A -> comparison with 'null' now also possible in boolean expressions like 'if (A==null) {...'
+* Improved array naming when writing to Matlab *.mat file. 
+
+Changes in version 1.3.5
+===========================
+* all ILMath.* functions now lowercase!
+-> PLEASE RENAME! find,vertact,horzcat!
+* bugfix: ILAsyncAlgorithm possibly caused
+  dead lock on start
+* bugfix: in certain situations sort(A,out B)
+  returned wrong indices
+
+Changes in version 1.3.4
+===========================
++ new determinant function: ILMath.det(A)
+* implicit cast System.Array ->ILArray
+* some changes/corrections for docu
+
+Changes in version 1.3.3
+===========================
+* Bugfix: calling linsolve with hermitian, pos.def. matrix A 
+  on non-AMD-processors was causing exception
+* added xml documentation files for IDE support: 
+  -> +ILNumerics.Net.xml, 
+  -> +ILFigure.xml
+

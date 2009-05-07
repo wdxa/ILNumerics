@@ -38,6 +38,8 @@ namespace ILNumerics.Test {
 			// tests: creation
 			// =================
 			Header();
+            Test_horzcat(); 
+            Test_Cat(); 
             Test_solve(); 
 			Test_Apply(); 
             Test_abs(); 
@@ -45,7 +47,6 @@ namespace ILNumerics.Test {
 			Test_Sum();
             Test_MMult(); 
             Test_Max();
-            Test_Cat(); 
             Test_sumall(); 
             Test_basicOps(); 
             Test_any();
@@ -898,12 +899,12 @@ namespace ILNumerics.Test {
             try {
                 ILArray<double> A = ILMath.vector(20.2,3.2,31.9); 
                 ILArray <double> Res = new ILArray<double>(new double [4] {20.2000 , 23.4000 ,  26.6000 ,  29.8000},1,4); 
-                if (ILMath.sum(ILMath.norm(Res - A)) > 1e-10)
+                if (ILMath.sum(ILMath.norm(Res - A.T)) > 1e-10)
                     throw new Exception ("Test_vector: invalid values detected!"); 
                 errorCode = 1; 
                 A = ILMath.vector(2.2,-1.2,-3.9); 
                 Res = new ILArray<double>(new double [6] {2.2000 ,   1.0000  , -0.2000  , -1.4000,   -2.6000  , -3.8000},1,6); 
-                if (ILMath.sum(ILMath.norm(Res - A)) > 1e-10)
+                if (ILMath.sum(ILMath.norm(Res - A.T)) > 1e-10)
                     throw new Exception ("Test_vector: invalid values detected!"); 
                 errorCode = 2; 
                 try {
@@ -915,13 +916,13 @@ namespace ILNumerics.Test {
                 errorCode = 3; 
                 A = ILMath.vector (4,10);
                 Res = new ILArray<double>(new double[7] {4,5,6,7,8,9,10},1,7); 
-                if (ILMath.sum(ILMath.norm(Res - A)) > 1e-10)
+                if (ILMath.sum(ILMath.norm(Res - A.T)) > 1e-10)
                     throw new Exception ("Test_vector: invalid values detected!"); 
 
                 errorCode = 4; 
                 A = ILMath.vector (6,-2);
                 Res = new ILArray<double>(new double[9] {6,5,4,3,2,1,0,-1,-2},1,9); 
-                if (ILMath.sum(ILMath.norm(Res - A)) > 1e-10)
+                if (ILMath.sum(ILMath.norm(Res - A.T)) > 1e-10)
                     throw new Exception ("Test_vector: invalid values detected!"); 
 
                 Success("Test_vector successfull.");
@@ -1790,7 +1791,26 @@ namespace ILNumerics.Test {
 			}
 		}
 
-		public void Test_Find() {
+        public void Test_horzcat() {
+			int errorCode = 0;
+			try {
+
+                ILArray<double> A = ILMath.counter(3, 4);
+				ILArray<double> B = ILMath.counter(3, 6);
+                ILArray<double> C = ILMath.horzcat(A, B);
+                ILArray<double> CRef = ILMath.horzcat(A.R, B.R, A.R, A.C);
+                CRef = ILMath.horzcat(A.C, B.R);
+                CRef = ILMath.horzcat(A.R, B.C);
+                ILArray<double> Result = new ILArray<double>(new double[]{1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18},3,4+6); 
+                if (!C.Equals(Result)) 
+                    throw new Exception("Test horzcat: invalid result"); 
+                Success();
+			} catch (Exception e) {
+                Error("errorCode: " + errorCode + " Reason: " + e.Message);
+			}
+		}
+        
+        public void Test_Find() {
 			int errorCode = 0;
 			try {
 				double[] data = new double[24];
@@ -1827,7 +1847,7 @@ namespace ILNumerics.Test {
                 if (!Rows.Equals(ResI))
                     throw new Exception ("Invalid values: Find(A/2 == ILMath.round(A/2),-200); A - physical");
                 Rows = ILMath.find(A/2 == ILMath.round(A/2),0,ref Cols, ref Vals); 
-                if (!Rows.Equals(ResR) || !Cols.Equals(ResC) || ILMath.find(Vals != ResV).Length > 0)
+                if (!Rows.Equals(ResR) || !Cols.Equals(ResC) || ILMath.find(Vals != ResV.T).Length > 0)
                     throw new Exception ("Invalid values: [r,c,v] = Find(A/2 == ILMath.round(A/2),-200); A - physical");
                 Rows = ILMath.find(A/2 == ILMath.round(A/2),-3,ref Cols, ref Vals); 
                 if (!Rows.Equals(ResR["0;9,10,11"]) || !Cols.Equals(ResC["0;9,10,11"]) || !Vals.Equals(ResV["0;9,10,11"]))
@@ -1851,7 +1871,7 @@ namespace ILNumerics.Test {
                 if (!Rows.Equals(ResI))
                     throw new Exception ("Invalid values: Find(A/2 == ILMath.round(A/2),-200); A - reference");
                 Rows = ILMath.find(A1,0,ref Cols, ref Vals); 
-                if (!Rows.Equals(ResR) || !Cols.Equals(ResC) || ILMath.find(Vals != ResV).Length > 0)
+                if (!Rows.Equals(ResR) || !Cols.Equals(ResC) || ILMath.find(Vals != ResV.T).Length > 0)
                     throw new Exception ("Invalid values: [r,c,v] = Find(A/2 == ILMath.round(A/2),-200); A - reference");
                 Rows = ILMath.find(A1,-3,ref Cols, ref Vals); 
                 if (!Rows.Equals(ResR["0;9,10,11"]) || !Cols.Equals(ResC["0;9,10,11"]) || !Vals.Equals(ResV["0;9,10,11"]))

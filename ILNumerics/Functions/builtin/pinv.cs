@@ -145,8 +145,8 @@ namespace ILNumerics.BuiltInFunctions  {
     <source locate="nextline">
         Uconj
     </source>
-    <destination>U = conj(U[":;0:" + (count - 1)]);</destination>
-    <destination>U = conj(U[":;0:" + (count - 1)]);</destination>
+    <destination>U = conj(U[(short)1,":;0:" + (count - 1)]);</destination>
+    <destination>U = conj(U[(short)1,":;0:" + (count - 1)]);</destination>
     <destination>U = U[(short)1,":;0:" + (count - 1)];</destination>
 </type>
 <type>
@@ -477,7 +477,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 ILArray<float> OneVec =  ILArray<float> .zeros(count,1);
                 OneVec = set(OneVec,  1.0f ); 
                 S = diag(divide( OneVec,s["0:" + (count - 1)])); 
-                U = conj(U[":;0:" + (count - 1)]);
+                U = conj(U[(short)1,":;0:" + (count - 1)]);
                 Ret = multiply(multiply(V[":;0:" + (count - 1)], real2fcomplex(S)), U);
             }
             return Ret;
@@ -583,7 +583,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 ILArray<double> OneVec =  ILArray<double> .zeros(count,1);
                 OneVec = set(OneVec,  1.0 ); 
                 S = diag(divide( OneVec,s["0:" + (count - 1)])); 
-                U = conj(U[":;0:" + (count - 1)]);
+                U = conj(U[(short)1,":;0:" + (count - 1)]);
                 Ret = multiply(multiply(V[":;0:" + (count - 1)], real2complex(S)), U);
             }
             return Ret;

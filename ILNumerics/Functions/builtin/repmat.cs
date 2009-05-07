@@ -27,7 +27,7 @@ using ILNumerics.Misc;
 namespace ILNumerics.BuiltInFunctions {
     public partial class ILMath {
         /// <summary>
-        /// array replication
+        /// array replication [deprecated]
         /// </summary>
         /// <param name="X">input array to be replicated</param>
         /// <param name="rows">number of rows</param>
@@ -38,6 +38,15 @@ namespace ILNumerics.BuiltInFunctions {
             size[0] = rows; 
             for (int i = 0; i < sizeEx.Length; i++)
                 size[i+1] = sizeEx[i]; 
+            return X.Repmat(size); 
+        }
+        /// <summary>
+        /// array replication 
+        /// </summary>
+        /// <param name="X">input array to be replicated</param>
+        /// <param name="size">dimensions specifier, number of rows, columns .. to replicate this array</param>
+        /// <returns>reference ILArray as replication of X</returns>
+        public static ILArray<T> repmat<T>(ILArray<T> X, params int[] size) {
             return X.Repmat(size); 
         }
     }

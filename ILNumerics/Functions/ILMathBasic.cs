@@ -3160,5 +3160,68 @@ namespace ILNumerics.BuiltInFunctions {
 
 #endregion HYCALPER AUTO GENERATED CODE
 
+        private static byte saturateByte(double a) {
+            if (double.IsNaN(a)) return 0; 
+            a = Math.Round(a,MidpointRounding.AwayFromZero); 
+            if (a > byte.MaxValue) return byte.MaxValue; 
+            if (a < byte.MinValue) return byte.MinValue; 
+            return (byte)a; 
+        }
+        private static sbyte saturateSByte(double a) {
+            if (double.IsNaN(a)) return 0; 
+            a = Math.Round(a,MidpointRounding.AwayFromZero); 
+            if (a > sbyte.MaxValue) return sbyte.MaxValue; 
+            if (a < sbyte.MinValue) return sbyte.MinValue; 
+            return (sbyte)a; 
+        }
+        private static char saturateChar(double a) {
+            if (double.IsNaN(a)) return (char)0; 
+            a = Math.Round(a,MidpointRounding.AwayFromZero); 
+            if (a > char.MaxValue) return char.MaxValue; 
+            if (a < char.MinValue) return char.MinValue; 
+            return (char)a; 
+        }
+        private static short saturateInt16(double a) {
+            if (double.IsNaN(a)) return 0; 
+            a = Math.Round(a,MidpointRounding.AwayFromZero); 
+            if (a > short.MaxValue) return short.MaxValue; 
+            if (a < short.MinValue) return short.MinValue; 
+            return (short)a; 
+        }
+        private static int saturateInt32(double a) {
+            if (double.IsNaN(a)) return 0; 
+            a = Math.Round(a,MidpointRounding.AwayFromZero); 
+            if (a > int.MaxValue) return int.MaxValue; 
+            if (a < int.MinValue) return int.MinValue; 
+            return (int)a; 
+        }
+        private static long saturateInt64(double a) {
+            if (double.IsNaN(a)) return 0; 
+            a = Math.Round(a,MidpointRounding.AwayFromZero); 
+            if (a > long.MaxValue) return long.MaxValue; 
+            if (a < long.MinValue) return long.MinValue; 
+            return (long)a; 
+        }
+        private static ushort saturateUInt16(double a) {
+            if (double.IsNaN(a)) return 0; 
+            a = Math.Round(a,MidpointRounding.AwayFromZero); 
+            if (a > ushort.MaxValue) return ushort.MaxValue; 
+            if (a < ushort.MinValue) return ushort.MinValue; 
+            return (ushort)a; 
+        }
+        private static uint saturateUInt32(double a) {
+            if (double.IsNaN(a)) return 0; 
+            a = Math.Round(a,MidpointRounding.AwayFromZero); 
+            if (a > uint.MaxValue) return uint.MaxValue; 
+            if (a < uint.MinValue) return uint.MinValue; 
+            return (uint)a; 
+        }
+        private static ulong saturateUInt64(double a) {
+            if (double.IsNaN(a)) return 0; 
+            a = Math.Round(a,MidpointRounding.AwayFromZero); 
+            if (a > ulong.MaxValue) return ulong.MaxValue; 
+            if (a < ulong.MinValue) return ulong.MinValue; 
+            return (ulong)a; 
+        }
     }
 }

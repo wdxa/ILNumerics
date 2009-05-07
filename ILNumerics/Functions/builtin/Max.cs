@@ -163,22 +163,6 @@ using ILNumerics.BuiltInFunctions;
     <destination></destination>
 </type>
 <type>
-    <source locate="endregion">
-        #region HYCALPER PRELOOP
-    </source>
-    <destination>curabsmaxval = double.MinValue; result = new complex(); </destination>
-    <destination>result = float.MinValue;</destination>
-    <destination>curabsmaxval = float.MinValue; result = new fcomplex();</destination>
-    <destination>result = byte.MinValue;</destination>
-    <destination>result = char.MinValue;</destination>
-    <destination>result = Int16.MinValue;</destination>
-    <destination>result = Int32.MinValue;</destination>
-    <destination>result = Int64.MinValue;</destination>
-    <destination>result = UInt16.MinValue;</destination>
-    <destination>result = UInt32.MinValue;</destination>
-    <destination>result = UInt64.MinValue;</destination>
-</type>
-<type>
     <source locate="endregion">#region HYCALPER INNERLOOP</source>
     <destination><![CDATA[curabsval = complex.Abs(curval);
                                             if (curabsval > curabsmaxval) {
@@ -217,6 +201,34 @@ using ILNumerics.BuiltInFunctions;
     <destination><![CDATA[if (curval > result) {
                                                 result = curval;
                                             ]]></destination>
+</type> 
+<type>
+    <source locate="nextline">checkResultStart</source>
+    <destination>complex.IsNaN(result)</destination>
+    <destination>float.IsNaN(result)</destination>
+    <destination>fcomplex.IsNaN(result)</destination>
+    <destination>false</destination>
+    <destination>false</destination>
+    <destination>false</destination>
+    <destination>false</destination>
+    <destination>false</destination>
+    <destination>false</destination>
+    <destination>false</destination>
+    <destination>false</destination>
+</type>
+<type>
+    <source locate="endregion">#region HYCALPER TAKERESULT</source>
+    <destination>curabsmaxval = complex.Abs(result);</destination>
+    <destination></destination>
+    <destination>curabsmaxval = fcomplex.Abs(result);</destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
 </type>
 </hycalper>
  */
@@ -361,35 +373,39 @@ namespace ILNumerics.BuiltInFunctions  {
 
 #endregion HYCALPER AUTO GENERATED CODE
 
-        #region HYCALPER LOOPSTART R=op(A, refI, dim)
+        #region HYCALPER LOOPSTART R=op(A_refI_dim)
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static /*!HC:ToutCls*/ ILArray<double> max(/*!HC:TinCls*/ ILArray<double> A, ref /*!HC:TindCls*/ ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static /*!HC:ToutCls*/ ILArray<double> /*!HC:funcname*/ max (/*!HC:TinCls*/ ILArray<double> A, ref /*!HC:TindCls*/ ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I = /*!HC:TindCls*/ ILArray<double> .empty(0,0); 
                 return  /*!HC:ToutCls*/ ILArray<double> .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I = /*!HC:TindCls*/ ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return (/*!HC:ToutCls*/ ILArray<double> )A.Clone();
+                return new /*!HC:ToutCls*/ ILArray<double> (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             /*!HC:ToutArr*/ double [] retSystemArr;
-            retSystemArr = new /*!HC:ToutArr*/ double [newLength];
+            retSystemArr = ILMemoryPool.Pool.New</*!HC:ToutArr*/ double >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -434,9 +450,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        #region HYCALPER PRELOOP
-                                        result = /*!HC:LIMITS*/ double.MinValue;
-                                        #endregion HYCALPER PRELOOP
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            /*!HC:checkResultStart*/
+                                            /*!HC:TinArr*/ double.IsNaN(result) 
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = (/*!HC:TindArr*/ double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        #region HYCALPER TAKERESULT
+
+                                        #endregion HYCALPER TAKERESULT
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             #region HYCALPER INNERLOOP
@@ -456,9 +482,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        #region HYCALPER PRELOOP
-                                        result = /*!HC:LIMITS*/ double.MinValue;
-                                        #endregion HYCALPER PRELOOP
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            /*!HC:checkResultStart*/
+                                            /*!HC:TinArr*/ double.IsNaN(result)
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        #region HYCALPER TAKERESULT
+
+                                        #endregion HYCALPER TAKERESULT
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             #region HYCALPER INNERLOOP
@@ -490,9 +525,19 @@ namespace ILNumerics.BuiltInFunctions  {
                             /*!HC:TinArr*/ double * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            #region HYCALPER PRELOOP
-                            result = /*!HC:LIMITS*/ double.MinValue;
-                            #endregion HYCALPER PRELOOP
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                /*!HC:checkResultStart*/
+                                /*!HC:TinArr*/ double .IsNaN(result) 
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            #region HYCALPER TAKERESULT
+
+                            #endregion HYCALPER TAKERESULT
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -546,16 +591,26 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    #region HYCALPER PRELOOP
-                                    result = /*!HC:LIMITS*/ double.MinValue;
-                                    #endregion HYCALPER PRELOOP
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        /*!HC:checkResultStart*/
+                                        /*!HC:TinArr*/ double .IsNaN(result) 
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    #region HYCALPER TAKERESULT
+
+                                    #endregion HYCALPER TAKERESULT
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         #region HYCALPER INNERLOOP
                                         if (curval > result) {
                                             result = curval;
                                         #endregion HYCALPER INNERLOOP
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = (/*!HC:TindArr*/ double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -584,12 +639,21 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    #region HYCALPER PRELOOP
-                                    result = /*!HC:LIMITS*/ double.MinValue;
-                                    #endregion HYCALPER PRELOOP
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        /*!HC:checkResultStart*/
+                                        /*!HC:TinArr*/ double .IsNaN(result) 
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    #region HYCALPER TAKERESULT
+
+                                    #endregion HYCALPER TAKERESULT
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         #region HYCALPER INNERLOOP
@@ -641,9 +705,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                 /*!HC:TindArr*/ double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    #region HYCALPER PRELOOP
-                                    result = /*!HC:LIMITS*/ double.MinValue;
-                                    #endregion HYCALPER PRELOOP
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        /*!HC:checkResultStart*/
+                                        /*!HC:TinArr*/ double .IsNaN(result) 
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    #region HYCALPER TAKERESULT
+
+                                    #endregion HYCALPER TAKERESULT
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         #region HYCALPER INNERLOOP
@@ -657,13 +731,22 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = (/*!HC:ToutArr*/ double )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 /*!HC:TindArr*/ double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    #region HYCALPER PRELOOP
-                                    result = /*!HC:LIMITS*/ double.MinValue;
-                                    #endregion HYCALPER PRELOOP
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        /*!HC:checkResultStart*/
+                                        /*!HC:TinArr*/ double .IsNaN(result) 
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    #region HYCALPER TAKERESULT
+
+                                    #endregion HYCALPER TAKERESULT
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         #region HYCALPER INNERLOOP
@@ -699,9 +782,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                 /*!HC:TindArr*/ double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    #region HYCALPER PRELOOP
-                                    result = /*!HC:LIMITS*/ double.MinValue;
-                                    #endregion HYCALPER PRELOOP
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        /*!HC:checkResultStart*/
+                                        /*!HC:TinArr*/ double.IsNaN(result)
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    #region HYCALPER TAKERESULT
+
+                                    #endregion HYCALPER TAKERESULT
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         #region HYCALPER INNERLOOP
@@ -724,12 +817,21 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    #region HYCALPER PRELOOP
-                                    result = /*!HC:LIMITS*/ double.MinValue;
-                                    #endregion HYCALPER PRELOOP
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        /*!HC:checkResultStart*/
+                                        /*!HC:TinArr*/ double .IsNaN(result) 
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    #region HYCALPER TAKERESULT
+
+                                    #endregion HYCALPER TAKERESULT
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         #region HYCALPER INNERLOOP
@@ -764,33 +866,37 @@ namespace ILNumerics.BuiltInFunctions  {
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static  ILArray<UInt64> max( ILArray<UInt64> A, ref  ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static  ILArray<UInt64>  max ( ILArray<UInt64> A, ref  ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I =  ILArray<double> .empty(0,0); 
                 return  ILArray<UInt64> .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I =  ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return ( ILArray<UInt64> )A.Clone();
+                return new  ILArray<UInt64> (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             UInt64 [] retSystemArr;
-            retSystemArr = new  UInt64 [newLength];
+            retSystemArr = ILMemoryPool.Pool.New< UInt64 >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -833,7 +939,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = UInt64.MinValue;
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             if (curval > result) {
@@ -852,7 +967,15 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = UInt64.MinValue;
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             if (curval > result) {
@@ -883,7 +1006,16 @@ namespace ILNumerics.BuiltInFunctions  {
                             UInt64 * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            result = UInt64.MinValue;
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                false
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -935,13 +1067,22 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    result = UInt64.MinValue;
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         if (curval > result) {
                                                 result = curval;
                                             
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -970,10 +1111,18 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    result = UInt64.MinValue;
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         if (curval > result) {
@@ -1024,7 +1173,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = UInt64.MinValue;
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -1037,11 +1195,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = ( UInt64 )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = UInt64.MinValue;
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         if (curval > result) {
@@ -1076,7 +1242,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = UInt64.MinValue;
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -1098,10 +1273,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = UInt64.MinValue;
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -1132,33 +1315,37 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<UInt64> (retSystemArr, newDims);  
 		}
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static  ILArray<UInt32> max( ILArray<UInt32> A, ref  ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static  ILArray<UInt32>  max ( ILArray<UInt32> A, ref  ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I =  ILArray<double> .empty(0,0); 
                 return  ILArray<UInt32> .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I =  ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return ( ILArray<UInt32> )A.Clone();
+                return new  ILArray<UInt32> (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             UInt32 [] retSystemArr;
-            retSystemArr = new  UInt32 [newLength];
+            retSystemArr = ILMemoryPool.Pool.New< UInt32 >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -1201,7 +1388,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = UInt32.MinValue;
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             if (curval > result) {
@@ -1220,7 +1416,15 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = UInt32.MinValue;
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             if (curval > result) {
@@ -1251,7 +1455,16 @@ namespace ILNumerics.BuiltInFunctions  {
                             UInt32 * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            result = UInt32.MinValue;
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                false
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -1303,13 +1516,22 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    result = UInt32.MinValue;
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         if (curval > result) {
                                                 result = curval;
                                             
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -1338,10 +1560,18 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    result = UInt32.MinValue;
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         if (curval > result) {
@@ -1392,7 +1622,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = UInt32.MinValue;
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -1405,11 +1644,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = ( UInt32 )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = UInt32.MinValue;
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         if (curval > result) {
@@ -1444,7 +1691,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = UInt32.MinValue;
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -1466,10 +1722,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = UInt32.MinValue;
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -1500,33 +1764,37 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<UInt32> (retSystemArr, newDims);  
 		}
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static  ILArray<UInt16> max( ILArray<UInt16> A, ref  ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static  ILArray<UInt16>  max ( ILArray<UInt16> A, ref  ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I =  ILArray<double> .empty(0,0); 
                 return  ILArray<UInt16> .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I =  ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return ( ILArray<UInt16> )A.Clone();
+                return new  ILArray<UInt16> (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             UInt16 [] retSystemArr;
-            retSystemArr = new  UInt16 [newLength];
+            retSystemArr = ILMemoryPool.Pool.New< UInt16 >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -1569,7 +1837,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = UInt16.MinValue;
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             if (curval > result) {
@@ -1588,7 +1865,15 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = UInt16.MinValue;
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             if (curval > result) {
@@ -1619,7 +1904,16 @@ namespace ILNumerics.BuiltInFunctions  {
                             UInt16 * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            result = UInt16.MinValue;
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                false
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -1671,13 +1965,22 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    result = UInt16.MinValue;
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         if (curval > result) {
                                                 result = curval;
                                             
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -1706,10 +2009,18 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    result = UInt16.MinValue;
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         if (curval > result) {
@@ -1760,7 +2071,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = UInt16.MinValue;
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -1773,11 +2093,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = ( UInt16 )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = UInt16.MinValue;
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         if (curval > result) {
@@ -1812,7 +2140,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = UInt16.MinValue;
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -1834,10 +2171,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = UInt16.MinValue;
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -1868,33 +2213,37 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<UInt16> (retSystemArr, newDims);  
 		}
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static  ILArray<Int64> max( ILArray<Int64> A, ref  ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static  ILArray<Int64>  max ( ILArray<Int64> A, ref  ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I =  ILArray<double> .empty(0,0); 
                 return  ILArray<Int64> .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I =  ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return ( ILArray<Int64> )A.Clone();
+                return new  ILArray<Int64> (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             Int64 [] retSystemArr;
-            retSystemArr = new  Int64 [newLength];
+            retSystemArr = ILMemoryPool.Pool.New< Int64 >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -1937,7 +2286,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = Int64.MinValue;
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             if (curval > result) {
@@ -1956,7 +2314,15 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = Int64.MinValue;
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             if (curval > result) {
@@ -1987,7 +2353,16 @@ namespace ILNumerics.BuiltInFunctions  {
                             Int64 * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            result = Int64.MinValue;
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                false
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -2039,13 +2414,22 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    result = Int64.MinValue;
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         if (curval > result) {
                                                 result = curval;
                                             
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -2074,10 +2458,18 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    result = Int64.MinValue;
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         if (curval > result) {
@@ -2128,7 +2520,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = Int64.MinValue;
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -2141,11 +2542,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = ( Int64 )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = Int64.MinValue;
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         if (curval > result) {
@@ -2180,7 +2589,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = Int64.MinValue;
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -2202,10 +2620,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = Int64.MinValue;
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -2236,33 +2662,37 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<Int64> (retSystemArr, newDims);  
 		}
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static  ILArray<Int32> max( ILArray<Int32> A, ref  ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static  ILArray<Int32>  max ( ILArray<Int32> A, ref  ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I =  ILArray<double> .empty(0,0); 
                 return  ILArray<Int32> .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I =  ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return ( ILArray<Int32> )A.Clone();
+                return new  ILArray<Int32> (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             Int32 [] retSystemArr;
-            retSystemArr = new  Int32 [newLength];
+            retSystemArr = ILMemoryPool.Pool.New< Int32 >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -2305,7 +2735,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = Int32.MinValue;
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             if (curval > result) {
@@ -2324,7 +2763,15 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = Int32.MinValue;
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             if (curval > result) {
@@ -2355,7 +2802,16 @@ namespace ILNumerics.BuiltInFunctions  {
                             Int32 * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            result = Int32.MinValue;
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                false
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -2407,13 +2863,22 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    result = Int32.MinValue;
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         if (curval > result) {
                                                 result = curval;
                                             
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -2442,10 +2907,18 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    result = Int32.MinValue;
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         if (curval > result) {
@@ -2496,7 +2969,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = Int32.MinValue;
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -2509,11 +2991,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = ( Int32 )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = Int32.MinValue;
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         if (curval > result) {
@@ -2548,7 +3038,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = Int32.MinValue;
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -2570,10 +3069,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = Int32.MinValue;
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -2604,33 +3111,37 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<Int32> (retSystemArr, newDims);  
 		}
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static  ILArray<Int16> max( ILArray<Int16> A, ref  ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static  ILArray<Int16>  max ( ILArray<Int16> A, ref  ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I =  ILArray<double> .empty(0,0); 
                 return  ILArray<Int16> .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I =  ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return ( ILArray<Int16> )A.Clone();
+                return new  ILArray<Int16> (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             Int16 [] retSystemArr;
-            retSystemArr = new  Int16 [newLength];
+            retSystemArr = ILMemoryPool.Pool.New< Int16 >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -2673,7 +3184,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = Int16.MinValue;
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             if (curval > result) {
@@ -2692,7 +3212,15 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = Int16.MinValue;
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             if (curval > result) {
@@ -2723,7 +3251,16 @@ namespace ILNumerics.BuiltInFunctions  {
                             Int16 * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            result = Int16.MinValue;
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                false
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -2775,13 +3312,22 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    result = Int16.MinValue;
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         if (curval > result) {
                                                 result = curval;
                                             
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -2810,10 +3356,18 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    result = Int16.MinValue;
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         if (curval > result) {
@@ -2864,7 +3418,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = Int16.MinValue;
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -2877,11 +3440,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = ( Int16 )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = Int16.MinValue;
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         if (curval > result) {
@@ -2916,7 +3487,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = Int16.MinValue;
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -2938,10 +3518,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = Int16.MinValue;
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -2972,33 +3560,37 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<Int16> (retSystemArr, newDims);  
 		}
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static  ILArray<char> max( ILArray<char> A, ref  ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static  ILArray<char>  max ( ILArray<char> A, ref  ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I =  ILArray<double> .empty(0,0); 
                 return  ILArray<char> .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I =  ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return ( ILArray<char> )A.Clone();
+                return new  ILArray<char> (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             char [] retSystemArr;
-            retSystemArr = new  char [newLength];
+            retSystemArr = ILMemoryPool.Pool.New< char >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -3041,7 +3633,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = char.MinValue;
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             if (curval > result) {
@@ -3060,7 +3661,15 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = char.MinValue;
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             if (curval > result) {
@@ -3091,7 +3700,16 @@ namespace ILNumerics.BuiltInFunctions  {
                             char * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            result = char.MinValue;
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                false
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -3143,13 +3761,22 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    result = char.MinValue;
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         if (curval > result) {
                                                 result = curval;
                                             
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -3178,10 +3805,18 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    result = char.MinValue;
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         if (curval > result) {
@@ -3232,7 +3867,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = char.MinValue;
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -3245,11 +3889,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = ( char )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = char.MinValue;
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         if (curval > result) {
@@ -3284,7 +3936,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = char.MinValue;
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -3306,10 +3967,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = char.MinValue;
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -3340,33 +4009,37 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<char> (retSystemArr, newDims);  
 		}
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static  ILLogicalArray max( ILArray<byte> A, ref  ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static  ILLogicalArray  max ( ILArray<byte> A, ref  ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I =  ILArray<double> .empty(0,0); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I =  ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return ( ILLogicalArray )A.Clone();
+                return new  ILLogicalArray (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             byte [] retSystemArr;
-            retSystemArr = new  byte [newLength];
+            retSystemArr = ILMemoryPool.Pool.New< byte >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -3409,7 +4082,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = byte.MinValue;
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             if (curval > result) {
@@ -3428,7 +4110,15 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = byte.MinValue;
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            false
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             if (curval > result) {
@@ -3459,7 +4149,16 @@ namespace ILNumerics.BuiltInFunctions  {
                             byte * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            result = byte.MinValue;
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                false
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -3511,13 +4210,22 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    result = byte.MinValue;
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         if (curval > result) {
                                                 result = curval;
                                             
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -3546,10 +4254,18 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    result = byte.MinValue;
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        false
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         if (curval > result) {
@@ -3600,7 +4316,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = byte.MinValue;
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -3613,11 +4338,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = ( byte )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = byte.MinValue;
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         if (curval > result) {
@@ -3652,7 +4385,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = byte.MinValue;
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -3674,10 +4416,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = byte.MinValue;
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        false
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -3708,33 +4458,37 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILLogicalArray (retSystemArr, newDims);  
 		}
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static  ILArray<fcomplex> max( ILArray<fcomplex> A, ref  ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static  ILArray<fcomplex>  max ( ILArray<fcomplex> A, ref  ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I =  ILArray<double> .empty(0,0); 
                 return  ILArray<fcomplex> .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I =  ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return ( ILArray<fcomplex> )A.Clone();
+                return new  ILArray<fcomplex> (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             fcomplex [] retSystemArr;
-            retSystemArr = new  fcomplex [newLength];
+            retSystemArr = ILMemoryPool.Pool.New< fcomplex >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -3777,7 +4531,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        curabsmaxval = float.MinValue; result = new fcomplex();
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            fcomplex.IsNaN(result)
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        curabsmaxval = fcomplex.Abs(result);
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             curabsval = fcomplex.Abs(curval);
@@ -3798,7 +4561,15 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        curabsmaxval = float.MinValue; result = new fcomplex();
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            fcomplex.IsNaN(result)
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        curabsmaxval = fcomplex.Abs(result);
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             curabsval = fcomplex.Abs(curval);
@@ -3831,7 +4602,16 @@ namespace ILNumerics.BuiltInFunctions  {
                             fcomplex * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            curabsmaxval = float.MinValue; result = new fcomplex();
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                fcomplex.IsNaN(result)
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            curabsmaxval = fcomplex.Abs(result);
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -3887,7 +4667,16 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    curabsmaxval = float.MinValue; result = new fcomplex();
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        fcomplex.IsNaN(result)
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    curabsmaxval = fcomplex.Abs(result);
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         curabsval = fcomplex.Abs(curval);
@@ -3895,7 +4684,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                                 curabsmaxval = curabsval;
                                                 result = curval;
                                             
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -3924,10 +4713,18 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    curabsmaxval = float.MinValue; result = new fcomplex();
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        fcomplex.IsNaN(result)
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    curabsmaxval = fcomplex.Abs(result);
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         curabsval = fcomplex.Abs(curval);
@@ -3980,7 +4777,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    curabsmaxval = float.MinValue; result = new fcomplex();
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        fcomplex.IsNaN(result)
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    curabsmaxval = fcomplex.Abs(result);
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         curabsval = fcomplex.Abs(curval);
@@ -3995,11 +4801,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = ( fcomplex )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    curabsmaxval = float.MinValue; result = new fcomplex();
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        fcomplex.IsNaN(result)
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    curabsmaxval = fcomplex.Abs(result);
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         curabsval = fcomplex.Abs(curval);
@@ -4036,7 +4850,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    curabsmaxval = float.MinValue; result = new fcomplex();
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        fcomplex.IsNaN(result)
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    curabsmaxval = fcomplex.Abs(result);
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         curabsval = fcomplex.Abs(curval);
@@ -4060,10 +4883,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    curabsmaxval = float.MinValue; result = new fcomplex();
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        fcomplex.IsNaN(result)
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    curabsmaxval = fcomplex.Abs(result);
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         curabsval = fcomplex.Abs(curval);
@@ -4096,33 +4927,37 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<fcomplex> (retSystemArr, newDims);  
 		}
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static  ILArray<float> max( ILArray<float> A, ref  ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static  ILArray<float>  max ( ILArray<float> A, ref  ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I =  ILArray<double> .empty(0,0); 
                 return  ILArray<float> .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I =  ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return ( ILArray<float> )A.Clone();
+                return new  ILArray<float> (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             float [] retSystemArr;
-            retSystemArr = new  float [newLength];
+            retSystemArr = ILMemoryPool.Pool.New< float >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -4165,7 +5000,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = float.MinValue;
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            float.IsNaN(result)
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             if (curval > result) {
@@ -4184,7 +5028,15 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        result = float.MinValue;
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            float.IsNaN(result)
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             if (curval > result) {
@@ -4215,7 +5067,16 @@ namespace ILNumerics.BuiltInFunctions  {
                             float * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            result = float.MinValue;
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                float.IsNaN(result)
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -4267,13 +5128,22 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    result = float.MinValue;
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        float.IsNaN(result)
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         if (curval > result) {
                                                 result = curval;
                                             
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -4302,10 +5172,18 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    result = float.MinValue;
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        float.IsNaN(result)
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         if (curval > result) {
@@ -4356,7 +5234,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = float.MinValue;
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        float.IsNaN(result)
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -4369,11 +5256,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = ( float )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    result = float.MinValue;
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        float.IsNaN(result)
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         if (curval > result) {
@@ -4408,7 +5303,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = float.MinValue;
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        float.IsNaN(result)
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -4430,10 +5334,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    result = float.MinValue;
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        float.IsNaN(result)
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         if (curval > result) {
@@ -4464,33 +5376,37 @@ namespace ILNumerics.BuiltInFunctions  {
             return new  ILArray<float> (retSystemArr, newDims);  
 		}
         /// <summary>
-        /// maximum
+        /// maximum along specified dimension
         /// </summary>
-        /// <param name="A">input array, N-dimensional</param>
+        /// <param name="A">n-dimensional input array</param>
         /// <param name="I">return value. If this is an instance of an ILArray 
         /// (f.e. 'empty'), on return I will hold the indices into leadDim of  
-        /// the maximum values. If, on entering the function, I is null, those indices 
+        /// the values found. If, on entering the function, I is null, those indices 
         /// will not be computed and I will be ignored.</param>
         /// <param name="leadDim">index of dimension to operate along</param>
-        /// <returns>ILArray of type double. If I was empty  having the dimension 'leadDim' 
-        /// reduced to 1 and holding maximum values </returns>
-        public static  ILArray<complex> max( ILArray<complex> A, ref  ILArray<double> I, int leadDim) {
+        /// <returns>ILArray of same type and size as A, except for dimension 
+        /// 'leadDim' which will be reduced to 1.</returns>
+        public static  ILArray<complex>  max ( ILArray<complex> A, ref  ILArray<double> I, int leadDim) {
 			if (A.IsEmpty) {
                 if (!object.Equals (I,null))
                     I =  ILArray<double> .empty(0,0); 
                 return  ILArray<complex> .empty(A.Dimensions); 
             }
+            if (A.IsScalar) {
+                if (!object.Equals(I,null))
+                    I =  ILArray<double> .zeros(1,1); 
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
-            if (leadDim == newDims.Length || inDim[leadDim] == 1)
+            if (leadDim >= newDims.Length || inDim[leadDim] == 1)
 				// scalar or sum over singleton -> return copy
-                return ( ILArray<complex> )A.Clone();
+                return new  ILArray<complex> (A);
 
 			int newLength;
 			newLength = inDim.NumberOfElements / newDims[leadDim];
 			newDims[leadDim] = 1;
             complex [] retSystemArr;
-            retSystemArr = new  complex [newLength];
+            retSystemArr = ILMemoryPool.Pool.New< complex >(newLength);
             int leadDimLen = inDim[leadDim];
 			int nrHigherDims = inDim.NumberOfElements / leadDimLen;
             #region HYCALPER GLOBAL_INIT
@@ -4533,7 +5449,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        curabsmaxval = double.MinValue; result = new complex(); 
+                                        result = *(tmpIn + *leadDimIdx);
+                                        #region HYCALPER PRELOOP #1
+                                        while (
+                                            complex.IsNaN(result)
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
+                                        }
+                                        #endregion HYCALPER PRELOOP #1
+                                        curabsmaxval = complex.Abs(result);
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = (*(tmpIn + *leadDimIdx));
                                             curabsval = complex.Abs(curval);
@@ -4554,7 +5479,15 @@ namespace ILNumerics.BuiltInFunctions  {
                                     while (secDimIdx <= secDimEnd) {
                                         tmpIn = pInArr + *secDimIdx++;
                                         leadDimIdx = leadDimStart;
-                                        curabsmaxval = double.MinValue; result = new complex(); 
+                                        #region HYCALPER PRELOOP #2
+                                        result = *(tmpIn + *leadDimIdx);
+                                        while (
+                                            complex.IsNaN(result)
+                                            && ++leadDimIdx <= leadDimEnd ) {
+                                            result = *(tmpIn + *leadDimIdx); 
+                                        }
+                                        #endregion HYCALPER PRELOOP #2
+                                        curabsmaxval = complex.Abs(result);
                                         while (leadDimIdx <= leadDimEnd) {
                                             curval = *(tmpIn + *leadDimIdx++);
                                             curabsval = complex.Abs(curval);
@@ -4587,7 +5520,16 @@ namespace ILNumerics.BuiltInFunctions  {
                             complex * tmpIn = pInArr;
                             int* leadDimIdx = leadDimStart;
                             int* leadDimEnd = leadDimStart + leadDimLen;
-                            curabsmaxval = double.MinValue; result = new complex(); 
+                            #region HYCALPER PRELOOP #3
+                            result = *(tmpIn + *leadDimIdx);
+                            while (
+                                complex.IsNaN(result)
+                                && ++leadDimIdx <= leadDimEnd ) {
+                                result = *(tmpIn + *leadDimIdx); 
+                                indices[0] += 1;
+                            }
+                            #endregion HYCALPER PRELOOP #3
+                            curabsmaxval = complex.Abs(result);
                             // start at first element
                             if (createIndices) {
                                 while (leadDimIdx < leadDimEnd) {
@@ -4643,7 +5585,16 @@ namespace ILNumerics.BuiltInFunctions  {
 							if (createIndices) {
                                 while (outCount < retSystemArr.Length) {
 								    leadDimIdx = leadDimStart;
-                                    curabsmaxval = double.MinValue; result = new complex(); 
+                                    #region HYCALPER PRELOOP #4
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        complex.IsNaN(result)
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #4
+                                    curabsmaxval = complex.Abs(result);
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx);
                                         curabsval = complex.Abs(curval);
@@ -4651,7 +5602,7 @@ namespace ILNumerics.BuiltInFunctions  {
                                                 curabsmaxval = curabsval;
                                                 result = curval;
                                             
-                                            *tmpInd = (double)(leadDimIdx - leadDimStart);
+                                            *tmpInd = ( double )(leadDimIdx - leadDimStart);
                                         }
                                         leadDimIdx++;
                                     }
@@ -4680,10 +5631,18 @@ namespace ILNumerics.BuiltInFunctions  {
 									    d++;
 								    }
 							    }
-                            } else {
+                            } else {  // no indices
                                 while (outCount < retSystemArr.Length) {
                                     leadDimIdx = leadDimStart;
-                                    curabsmaxval = double.MinValue; result = new complex(); 
+                                    #region HYCALPER PRELOOP #5
+                                    result = *(tmpIn + *leadDimIdx);
+                                    while (
+                                        complex.IsNaN(result)
+                                        && ++leadDimIdx <= leadDimEnd ) {
+                                        result = *(tmpIn + *leadDimIdx); 
+                                    }
+                                    #endregion HYCALPER PRELOOP #5
+                                    curabsmaxval = complex.Abs(result);
                                     while (leadDimIdx < leadDimEnd) {
                                         curval = *(tmpIn + *leadDimIdx++);
                                         curabsval = complex.Abs(curval);
@@ -4736,7 +5695,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    curabsmaxval = double.MinValue; result = new complex(); 
+                                    #region HYCALPER PRELOOP #6
+                                    result = *tmpIn; 
+                                    while (
+                                        complex.IsNaN(result)
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #6
+                                    curabsmaxval = complex.Abs(result);
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn;
                                         curabsval = complex.Abs(curval);
@@ -4751,11 +5719,19 @@ namespace ILNumerics.BuiltInFunctions  {
                                     *(tmpOut++) = ( complex )result;
                                     tmpInd++; 
                                 }
-                            } else {
+                            } else {   // no indices
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     lastElement = tmpIn + leadDimLen;
-                                    curabsmaxval = double.MinValue; result = new complex(); 
+                                    #region HYCALPER PRELOOP #7
+                                    result = *tmpIn; 
+                                    while (
+                                        complex.IsNaN(result)
+                                        && ++tmpIn < lastElement ) {
+                                        result = *tmpIn; 
+                                    }
+                                    #endregion HYCALPER PRELOOP #7
+                                    curabsmaxval = complex.Abs(result);
                                     while (tmpIn < lastElement) {
                                         curval = *tmpIn++;
                                         curabsval = complex.Abs(curval);
@@ -4792,7 +5768,16 @@ namespace ILNumerics.BuiltInFunctions  {
                                 double * tmpInd = pIndices;
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    curabsmaxval = double.MinValue; result = new complex(); 
+                                    #region HYCALPER PRELOOP #8
+                                    result = *tmpIn; 
+                                    while (
+                                        complex.IsNaN(result)
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                        *tmpInd += 1;
+                                    }
+                                    #endregion HYCALPER PRELOOP #8
+                                    curabsmaxval = complex.Abs(result);
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         curabsval = complex.Abs(curval);
@@ -4816,10 +5801,18 @@ namespace ILNumerics.BuiltInFunctions  {
                                     if (tmpIn > lastElementIn)
                                         tmpIn = pInArr + ((tmpIn - pInArr) - inLength);
                                 }
-                            } else {
+                            } else {  // no indices
                                 for (int h = nrHigherDims; h-- > 0; ) {
                                     leadEnd = tmpIn + leadDimLen * inc;
-                                    curabsmaxval = double.MinValue; result = new complex(); 
+                                    #region HYCALPER PRELOOP #9
+                                    result = *tmpIn; 
+                                    while (
+                                        complex.IsNaN(result)
+                                        && (tmpIn += inc) < leadEnd ) {
+                                        result = *tmpIn;
+                                    }
+                                    #endregion HYCALPER PRELOOP #9
+                                    curabsmaxval = complex.Abs(result);
                                     while (tmpIn < leadEnd) {
                                         curval = *tmpIn;
                                         curabsval = complex.Abs(curval);
@@ -4911,6 +5904,23 @@ namespace ILNumerics.BuiltInFunctions  {
     <type>
         <source locate="after">
             inArr2
+        </source>
+        <destination>double</destination>
+        <destination>byte</destination>
+        <destination>char</destination>
+        <destination>complex</destination>
+        <destination>fcomplex</destination>
+        <destination>float</destination>
+        <destination>Int16</destination>
+        <destination>Int32</destination>
+        <destination>Int64</destination>
+        <destination>UInt16</destination>
+        <destination>UInt32</destination>
+        <destination>UInt64</destination>
+    </type>
+    <type>
+        <source locate="after">
+            HCscalValT
         </source>
         <destination>double</destination>
         <destination>byte</destination>
@@ -5190,16 +6200,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<UInt64>  max ( ILArray<UInt64> A,  ILArray<UInt64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<UInt64> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<UInt64> (new UInt64[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<UInt64> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  UInt64 [] retArr = new  UInt64 [inDim.NumberOfElements];
@@ -5315,6 +6332,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<UInt64> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  UInt64 [] retArr = new  UInt64 [inDim.NumberOfElements];
@@ -5432,7 +6452,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     UInt64 [] retSystemArr;
                     UInt64 tmpValue1; 
@@ -5510,16 +6530,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<UInt32>  max ( ILArray<UInt32> A,  ILArray<UInt32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<UInt32> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<UInt32> (new UInt32[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<UInt32> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  UInt32 [] retArr = new  UInt32 [inDim.NumberOfElements];
@@ -5635,6 +6662,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<UInt32> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  UInt32 [] retArr = new  UInt32 [inDim.NumberOfElements];
@@ -5752,7 +6782,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     UInt32 [] retSystemArr;
                     UInt32 tmpValue1; 
@@ -5830,16 +6860,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<UInt16>  max ( ILArray<UInt16> A,  ILArray<UInt16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<UInt16> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<UInt16> (new UInt16[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<UInt16> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  UInt16 [] retArr = new  UInt16 [inDim.NumberOfElements];
@@ -5955,6 +6992,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<UInt16> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  UInt16 [] retArr = new  UInt16 [inDim.NumberOfElements];
@@ -6072,7 +7112,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     UInt16 [] retSystemArr;
                     UInt16 tmpValue1; 
@@ -6150,16 +7190,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<Int64>  max ( ILArray<Int64> A,  ILArray<Int64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<Int64> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<Int64> (new Int64[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<Int64> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  Int64 [] retArr = new  Int64 [inDim.NumberOfElements];
@@ -6275,6 +7322,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<Int64> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  Int64 [] retArr = new  Int64 [inDim.NumberOfElements];
@@ -6392,7 +7442,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     Int64 [] retSystemArr;
                     Int64 tmpValue1; 
@@ -6470,16 +7520,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<Int32>  max ( ILArray<Int32> A,  ILArray<Int32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<Int32> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<Int32> (new Int32[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<Int32> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  Int32 [] retArr = new  Int32 [inDim.NumberOfElements];
@@ -6595,6 +7652,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<Int32> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  Int32 [] retArr = new  Int32 [inDim.NumberOfElements];
@@ -6712,7 +7772,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     Int32 [] retSystemArr;
                     Int32 tmpValue1; 
@@ -6790,16 +7850,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<Int16>  max ( ILArray<Int16> A,  ILArray<Int16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<Int16> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<Int16> (new Int16[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<Int16> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  Int16 [] retArr = new  Int16 [inDim.NumberOfElements];
@@ -6915,6 +7982,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<Int16> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  Int16 [] retArr = new  Int16 [inDim.NumberOfElements];
@@ -7032,7 +8102,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     Int16 [] retSystemArr;
                     Int16 tmpValue1; 
@@ -7110,16 +8180,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<float>  max ( ILArray<float> A,  ILArray<float> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<float> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<float> (new float[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<float> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  float [] retArr = new  float [inDim.NumberOfElements];
@@ -7235,6 +8312,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<float> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  float [] retArr = new  float [inDim.NumberOfElements];
@@ -7352,7 +8432,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     float [] retSystemArr;
                     float tmpValue1; 
@@ -7430,16 +8510,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<fcomplex>  max ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<fcomplex> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<fcomplex> (new fcomplex[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<fcomplex> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  fcomplex [] retArr = new  fcomplex [inDim.NumberOfElements];
@@ -7555,6 +8642,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<fcomplex> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  fcomplex [] retArr = new  fcomplex [inDim.NumberOfElements];
@@ -7672,7 +8762,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     fcomplex [] retSystemArr;
                     fcomplex tmpValue1; 
@@ -7750,16 +8840,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<complex>  max ( ILArray<complex> A,  ILArray<complex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<complex> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<complex> (new complex[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<complex> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  complex [] retArr = new  complex [inDim.NumberOfElements];
@@ -7875,6 +8972,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<complex> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  complex [] retArr = new  complex [inDim.NumberOfElements];
@@ -7992,7 +9092,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     complex [] retSystemArr;
                     complex tmpValue1; 
@@ -8070,16 +9170,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<char>  max ( ILArray<char> A,  ILArray<char> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<char> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<char> (new char[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<char> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  char [] retArr = new  char [inDim.NumberOfElements];
@@ -8195,6 +9302,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<char> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  char [] retArr = new  char [inDim.NumberOfElements];
@@ -8312,7 +9422,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     char [] retSystemArr;
                     char tmpValue1; 
@@ -8390,16 +9500,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<byte>  max ( ILArray<byte> A,  ILArray<byte> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<byte> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<byte> (new byte[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<byte> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -8515,6 +9632,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<byte> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -8632,7 +9752,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     byte tmpValue1; 
@@ -8710,16 +9830,23 @@ namespace ILNumerics.BuiltInFunctions  {
         /// <param name="B">input 2</param>
         /// <returns> Array with elementwise sum of A and B </returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<double>  max ( ILArray<double> A,  ILArray<double> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<double> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILArray<double> (new double[1]{(A.GetValue(0) > B.GetValue(0))?A.GetValue(0):B.GetValue(0)});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<double> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  double [] retArr = new  double [inDim.NumberOfElements];
@@ -8835,6 +9962,9 @@ namespace ILNumerics.BuiltInFunctions  {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<double> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  double [] retArr = new  double [inDim.NumberOfElements];
@@ -8952,7 +10082,7 @@ namespace ILNumerics.BuiltInFunctions  {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     double [] retSystemArr;
                     double tmpValue1; 

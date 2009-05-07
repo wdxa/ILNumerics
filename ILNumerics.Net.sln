@@ -13,10 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		localtestrun.testrunconfig = localtestrun.testrunconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILAutoTestCaseGeneration", "ILAutoTestCaseGeneration\ILAutoTestCaseGeneration.csproj", "{089D7181-24D8-4A12-AB2F-2F395D35C3F6}"
+EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = ILNumerics.Net.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -62,6 +61,16 @@ Global
 		{535D7952-1EA0-4F49-966F-B01B56C24569}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{535D7952-1EA0-4F49-966F-B01B56C24569}.Release|Win32.ActiveCfg = Release|Win32
 		{535D7952-1EA0-4F49-966F-B01B56C24569}.Release|Win32.Build.0 = Release|Win32
+		{089D7181-24D8-4A12-AB2F-2F395D35C3F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{089D7181-24D8-4A12-AB2F-2F395D35C3F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{089D7181-24D8-4A12-AB2F-2F395D35C3F6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{089D7181-24D8-4A12-AB2F-2F395D35C3F6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{089D7181-24D8-4A12-AB2F-2F395D35C3F6}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{089D7181-24D8-4A12-AB2F-2F395D35C3F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{089D7181-24D8-4A12-AB2F-2F395D35C3F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{089D7181-24D8-4A12-AB2F-2F395D35C3F6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{089D7181-24D8-4A12-AB2F-2F395D35C3F6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{089D7181-24D8-4A12-AB2F-2F395D35C3F6}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

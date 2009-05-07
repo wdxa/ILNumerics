@@ -148,29 +148,30 @@ namespace ILNumerics {
         }
         
         /// <summary>
-        /// maximum of all elements in this array - if exists
+        /// Maximum of all elements in this array (if existing)
         /// </summary>
         /// <remarks>For reference types the original element will be returned. No copy will be made!
         /// <para>in order to be comparable, the inner type of this array must implement IComparable. If it does not, 
-        /// an exception will be thrown. </para>
-        /// <para>Important note: keep in mind, the element with the largest distance from the center will be returned. For 
-        /// all numeric types, this might be a <b>negative</b> value as well! </para> </remarks>
+        /// an exception will be thrown. Note: all numeric System types do implement IComparable.</para>
+        /// </remarks>
         /// <exception cref="ILArgumentTypeException"> if the inner type BaseT cannot be compared. Inner types 
-        /// must implement IComparable&lt;&gt; in order to compute the maximum.</exception>
+        /// must implement IComparable&lt;BaseT&gt; in order to compute the minimum.</exception>
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
         public BaseT MaxValue {
             get {
                 if (IsEmpty)
-                    return default(BaseT); 
+                    return default(BaseT);
+                if (IsScalar) 
+                    return GetValue(0);
                 if ((typeof(BaseT) is IComparable<BaseT>)) {
-                    BaseT curMax = default(BaseT); 
-                    for (int i = 0; i < m_dimensions.NumberOfElements; i++) {
+                    BaseT curMin = GetValue(0); 
+                    for (int i = 1; i < m_dimensions.NumberOfElements; i++) {
                         BaseT val = m_data[getBaseIndex(i)];
-                        if (((IComparable<BaseT>)val).CompareTo(curMax) > 0) 
-                            curMax = val;
+                        if (((IComparable<BaseT>)val).CompareTo(curMin) > 0) 
+                            curMin = val;
                     }
-                    return curMax; 
-#region HYCALPER LOOPSTART findMax
+                    return curMin; 
+#region HYCALPER LOOPSTART
 /*!HC:TYPELIST:
 <hycalper>
 <type>
@@ -191,38 +192,6 @@ namespace ILNumerics {
 </type>
 <type>
     <source locate="after">
-        negInf
-    </source>
-    <destination>float.NegativeInfinity</destination>
-    <destination>Int16.MinValue</destination>
-    <destination>Int32.MinValue</destination>
-    <destination>Int64.MinValue</destination>
-    <destination>UInt16.MinValue</destination>
-    <destination>UInt32.MinValue</destination>
-    <destination>UInt64.MinValue</destination>
-    <destination>Char.MinValue</destination>
-    <destination>Byte.MinValue</destination>
-    <destination>new complex(Double.NegativeInfinity,Double.NegativeInfinity)</destination>
-    <destination>new fcomplex(float.NegativeInfinity,float.NegativeInfinity)</destination>
-</type>
-<type>
-    <source locate="after">
-        posInf
-    </source>
-    <destination>float.NegativeInfinity</destination>
-    <destination>Int16.MinValue</destination>
-    <destination>Int32.MinValue</destination>
-    <destination>Int64.MinValue</destination>
-    <destination>UInt16.MinValue</destination>
-    <destination>UInt32.MinValue</destination>
-    <destination>UInt64.MinValue</destination>
-    <destination>Char.MinValue</destination>
-    <destination>Byte.MinValue</destination>
-    <destination>new complex(Double.NegativeInfinity,Double.NegativeInfinity)</destination>
-    <destination>new fcomplex(float.NegativeInfinity,float.NegativeInfinity)</destination>
-</type>
-<type>
-    <source locate="after">
         inArr1
     </source>
     <destination>float</destination>
@@ -238,326 +207,371 @@ namespace ILNumerics {
     <destination>fcomplex</destination>
 </type>
 <type>
-    <source locate="nextline">
-        nanreturn
+    <source locate="endregion">
+        skipNAN1
     </source>
-    <destination>if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  float.NaN;</destination>
-    <destination>return m_data[curMaxInd];</destination>
-    <destination>return m_data[curMaxInd];</destination>
-    <destination>return m_data[curMaxInd];</destination>
-    <destination>return m_data[curMaxInd];</destination>
-    <destination>return m_data[curMaxInd];</destination>
-    <destination>return m_data[curMaxInd];</destination>
-    <destination>return m_data[curMaxInd];</destination>
-    <destination>return m_data[curMaxInd];</destination>
-    <destination>if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  complex.NaN;</destination>
-    <destination>if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  fcomplex.NaN;</destination>
+    <destination><![CDATA[while (float.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)float.NaN;]]></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination><![CDATA[while (complex.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)complex.NaN;]]></destination>
+    <destination><![CDATA[while (fcomplex.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)fcomplex.NaN;]]></destination>
+</type>
+<type>
+    <source locate="nextline">
+        skipNAN2
+    </source>
+    <destination>if (float.IsNaN(curVal)) continue;</destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination>if (complex.IsNaN(curVal)) continue;</destination>
+    <destination>if (fcomplex.IsNaN(curVal)) continue;</destination>
 </type>
 </hycalper>
  */                 
                 } else if (this is /*!HC:inCls1*/ ILArray<double> ) {    
                     /*!HC:inArr1*/ double [] data = (/*!HC:inArr1*/ double [])(object) m_data; 
-                    /*!HC:inArr1*/ double curVal, curMax = /*!HC:negInf*/ Double.NegativeInfinity ; 
-                    int curMaxInd = -1; 
+                    /*!HC:inArr1*/ double curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    #region !HC:skipNAN1
+                    while (double.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)double.NaN;
+                    #endregion HYCALPER
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            /*!HC:skipNAN2*/
+                            if (double.IsNaN(curVal)) continue; 
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            /*!HC:skipNAN2*/
+                            if (double.IsNaN(curVal)) continue; 
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    /*!HC:nanreturn*/
-                    if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object) double.NaN;
+                    return (BaseT)(object)curMin;
 #endregion HYCALPER LOOPEND
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
                  
                 } else if (this is  ILArray<fcomplex> ) {    
                     fcomplex [] data = ( fcomplex [])(object) m_data; 
-                    fcomplex curVal, curMax =  new fcomplex(float.NegativeInfinity,float.NegativeInfinity) ; 
-                    int curMaxInd = -1; 
+                    fcomplex curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    while (fcomplex.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)fcomplex.NaN;
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            if (fcomplex.IsNaN(curVal)) continue;
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            if (fcomplex.IsNaN(curVal)) continue;
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  fcomplex.NaN;
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<complex> ) {    
                     complex [] data = ( complex [])(object) m_data; 
-                    complex curVal, curMax =  new complex(Double.NegativeInfinity,Double.NegativeInfinity) ; 
-                    int curMaxInd = -1; 
+                    complex curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    while (complex.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)complex.NaN;
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            if (complex.IsNaN(curVal)) continue;
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            if (complex.IsNaN(curVal)) continue;
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  complex.NaN;
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<byte> ) {    
                     byte [] data = ( byte [])(object) m_data; 
-                    byte curVal, curMax =  Byte.MinValue ; 
-                    int curMaxInd = -1; 
+                    byte curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<char> ) {    
                     char [] data = ( char [])(object) m_data; 
-                    char curVal, curMax =  Char.MinValue ; 
-                    int curMaxInd = -1; 
+                    char curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<UInt64> ) {    
                     UInt64 [] data = ( UInt64 [])(object) m_data; 
-                    UInt64 curVal, curMax =  UInt64.MinValue ; 
-                    int curMaxInd = -1; 
+                    UInt64 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<UInt32> ) {    
                     UInt32 [] data = ( UInt32 [])(object) m_data; 
-                    UInt32 curVal, curMax =  UInt32.MinValue ; 
-                    int curMaxInd = -1; 
+                    UInt32 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<UInt16> ) {    
                     UInt16 [] data = ( UInt16 [])(object) m_data; 
-                    UInt16 curVal, curMax =  UInt16.MinValue ; 
-                    int curMaxInd = -1; 
+                    UInt16 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<Int64> ) {    
                     Int64 [] data = ( Int64 [])(object) m_data; 
-                    Int64 curVal, curMax =  Int64.MinValue ; 
-                    int curMaxInd = -1; 
+                    Int64 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<Int32> ) {    
                     Int32 [] data = ( Int32 [])(object) m_data; 
-                    Int32 curVal, curMax =  Int32.MinValue ; 
-                    int curMaxInd = -1; 
+                    Int32 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<Int16> ) {    
                     Int16 [] data = ( Int16 [])(object) m_data; 
-                    Int16 curVal, curMax =  Int16.MinValue ; 
-                    int curMaxInd = -1; 
+                    Int16 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    return m_data[curMaxInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<float> ) {    
                     float [] data = ( float [])(object) m_data; 
-                    float curVal, curMax =  float.NegativeInfinity ; 
-                    int curMaxInd = -1; 
+                    float curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    while (float.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)float.NaN;
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = m_indexOffset.Map(i); 
+                            if (float.IsNaN(curVal)) continue;
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     } else {
-                        // solid storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        // physical storage
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
-                            if (curVal > curMax) { 
-                                curMax = curVal; 
-                                curMaxInd = i; 
+                            if (float.IsNaN(curVal)) continue;
+                            if (curVal > curMin) { 
+                                curMin = curVal; 
                             }
                         }
                     }
-                    if (curMaxInd >= 0) return m_data[curMaxInd]; else return (BaseT)(object)  float.NaN;
+                    return (BaseT)(object)curMin;
 
 #endregion HYCALPER AUTO GENERATED CODE
                 } else 
@@ -566,28 +580,30 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// Minimum of all elements in this array - if exists
+        /// Minimum of all elements in this array (if existing)
         /// </summary>
         /// <remarks>For reference types the original element will be returned. No copy will be made!
         /// <para>in order to be comparable, the inner type of this array must implement IComparable. If it does not, 
         /// an exception will be thrown. Note: all numeric System types do implement IComparable.</para>
         /// </remarks>
         /// <exception cref="ILArgumentTypeException"> if the inner type BaseT cannot be compared. Inner types 
-        /// must implement IComparable&lt;BaseT&gt; in order to compute the maximum.</exception>
+        /// must implement IComparable&lt;BaseT&gt; in order to compute the minimum.</exception>
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
         public BaseT MinValue {
             get {
                 if (IsEmpty)
-                    return default(BaseT); 
+                    return default(BaseT);
+                if (IsScalar) 
+                    return GetValue(0);
                 if ((typeof(BaseT) is IComparable<BaseT>)) {
-                    BaseT curMin = default(BaseT); 
-                    for (int i = 0; i < m_dimensions.NumberOfElements; i++) {
+                    BaseT curMin = GetValue(0); 
+                    for (int i = 1; i < m_dimensions.NumberOfElements; i++) {
                         BaseT val = m_data[getBaseIndex(i)];
                         if (((IComparable<BaseT>)val).CompareTo(curMin) < 0) 
                             curMin = val;
                     }
                     return curMin; 
-#region HYCALPER LOOPSTART findMin
+#region HYCALPER LOOPSTART
 /*!HC:TYPELIST:
 <hycalper>
 <type>
@@ -608,22 +624,6 @@ namespace ILNumerics {
 </type>
 <type>
     <source locate="after">
-        posInf
-    </source>
-    <destination>float.PositiveInfinity</destination>
-    <destination>Int16.MaxValue</destination>
-    <destination>Int32.MaxValue</destination>
-    <destination>Int64.MaxValue</destination>
-    <destination>UInt16.MaxValue</destination>
-    <destination>UInt32.MaxValue</destination>
-    <destination>UInt64.MaxValue</destination>
-    <destination>Char.MaxValue</destination>
-    <destination>Byte.MaxValue</destination>
-    <destination>new complex(Double.PositiveInfinity,Double.PositiveInfinity)</destination>
-    <destination>new fcomplex(float.PositiveInfinity,float.PositiveInfinity)</destination>
-</type>
-<type>
-    <source locate="after">
         inArr1
     </source>
     <destination>float</destination>
@@ -639,326 +639,371 @@ namespace ILNumerics {
     <destination>fcomplex</destination>
 </type>
 <type>
-    <source locate="nextline">
-        nanreturn
+    <source locate="endregion">
+        skipNAN1
     </source>
-    <destination>if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  float.NaN;</destination>
-    <destination>return m_data[curMinInd];</destination>
-    <destination>return m_data[curMinInd];</destination>
-    <destination>return m_data[curMinInd];</destination>
-    <destination>return m_data[curMinInd];</destination>
-    <destination>return m_data[curMinInd];</destination>
-    <destination>return m_data[curMinInd];</destination>
-    <destination>return m_data[curMinInd];</destination>
-    <destination>return m_data[curMinInd];</destination>
-    <destination>if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  complex.NaN;</destination>
-    <destination>if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  fcomplex.NaN;</destination>
+    <destination><![CDATA[while (float.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)float.NaN;]]></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination><![CDATA[while (complex.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)complex.NaN;]]></destination>
+    <destination><![CDATA[while (fcomplex.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)fcomplex.NaN;]]></destination>
+</type>
+<type>
+    <source locate="nextline">
+        skipNAN2
+    </source>
+    <destination>if (float.IsNaN(curVal)) continue;</destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination>if (complex.IsNaN(curVal)) continue;</destination>
+    <destination>if (fcomplex.IsNaN(curVal)) continue;</destination>
 </type>
 </hycalper>
  */                 
                 } else if (this is /*!HC:inCls1*/ ILArray<double> ) {    
                     /*!HC:inArr1*/ double [] data = (/*!HC:inArr1*/ double [])(object) m_data; 
-                    /*!HC:inArr1*/ double curVal, curMin = /*!HC:posInf*/ Double.PositiveInfinity ; 
-                    int curMinInd = -1; 
+                    /*!HC:inArr1*/ double curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    #region !HC:skipNAN1
+                    while (double.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)double.NaN;
+                    #endregion HYCALPER
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            /*!HC:skipNAN2*/
+                            if (double.IsNaN(curVal)) continue; 
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            /*!HC:skipNAN2*/
+                            if (double.IsNaN(curVal)) continue; 
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    /*!HC:nanreturn*/
-                    if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object) double.NaN;
+                    return (BaseT)(object)curMin;
 #endregion HYCALPER LOOPEND
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
                  
                 } else if (this is  ILArray<fcomplex> ) {    
                     fcomplex [] data = ( fcomplex [])(object) m_data; 
-                    fcomplex curVal, curMin =  new fcomplex(float.PositiveInfinity,float.PositiveInfinity) ; 
-                    int curMinInd = -1; 
+                    fcomplex curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    while (fcomplex.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)fcomplex.NaN;
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            if (fcomplex.IsNaN(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            if (fcomplex.IsNaN(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  fcomplex.NaN;
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<complex> ) {    
                     complex [] data = ( complex [])(object) m_data; 
-                    complex curVal, curMin =  new complex(Double.PositiveInfinity,Double.PositiveInfinity) ; 
-                    int curMinInd = -1; 
+                    complex curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    while (complex.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)complex.NaN;
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            if (complex.IsNaN(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            if (complex.IsNaN(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  complex.NaN;
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<byte> ) {    
                     byte [] data = ( byte [])(object) m_data; 
-                    byte curVal, curMin =  Byte.MaxValue ; 
-                    int curMinInd = -1; 
+                    byte curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<char> ) {    
                     char [] data = ( char [])(object) m_data; 
-                    char curVal, curMin =  Char.MaxValue ; 
-                    int curMinInd = -1; 
+                    char curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<UInt64> ) {    
                     UInt64 [] data = ( UInt64 [])(object) m_data; 
-                    UInt64 curVal, curMin =  UInt64.MaxValue ; 
-                    int curMinInd = -1; 
+                    UInt64 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<UInt32> ) {    
                     UInt32 [] data = ( UInt32 [])(object) m_data; 
-                    UInt32 curVal, curMin =  UInt32.MaxValue ; 
-                    int curMinInd = -1; 
+                    UInt32 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<UInt16> ) {    
                     UInt16 [] data = ( UInt16 [])(object) m_data; 
-                    UInt16 curVal, curMin =  UInt16.MaxValue ; 
-                    int curMinInd = -1; 
+                    UInt16 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<Int64> ) {    
                     Int64 [] data = ( Int64 [])(object) m_data; 
-                    Int64 curVal, curMin =  Int64.MaxValue ; 
-                    int curMinInd = -1; 
+                    Int64 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<Int32> ) {    
                     Int32 [] data = ( Int32 [])(object) m_data; 
-                    Int32 curVal, curMin =  Int32.MaxValue ; 
-                    int curMinInd = -1; 
+                    Int32 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<Int16> ) {    
                     Int16 [] data = ( Int16 [])(object) m_data; 
-                    Int16 curVal, curMin =  Int16.MaxValue ; 
-                    int curMinInd = -1; 
+                    Int16 curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    return m_data[curMinInd];
+                    return (BaseT)(object)curMin;
                  
                 } else if (this is  ILArray<float> ) {    
                     float [] data = ( float [])(object) m_data; 
-                    float curVal, curMin =  float.PositiveInfinity ; 
-                    int curMinInd = -1; 
+                    float curVal, curMin = data[getBaseIndex(0)]; 
+                    int i = 0;
+                    while (float.IsNaN(curMin) && ++i < m_dimensions.NumberOfElements) 
+                        curMin = data[getBaseIndex(i)]; 
+                    if (i == m_dimensions.NumberOfElements) return (BaseT)(object)float.NaN;
                     if (m_indexOffset != null) {
                         // Reference 
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[m_indexOffset.Map(i)]; 
+                            if (float.IsNaN(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = m_indexOffset.Map(i); 
                             }
                         }
                     } else {
                         // physical storage
-                        for (int i = 0; i < m_dimensions.NumberOfElements; i++) { 
+                        for (; i < m_dimensions.NumberOfElements; i++) { 
                             curVal = data[i]; 
+                            if (float.IsNaN(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
-                                curMinInd = i; 
                             }
                         }
                     }
-                    if (curMinInd >= 0) return m_data[curMinInd]; else return (BaseT)(object)  float.NaN;
+                    return (BaseT)(object)curMin;
 
 #endregion HYCALPER AUTO GENERATED CODE
                 } else 

@@ -3667,6 +3667,23 @@ namespace ILNumerics.BuiltInFunctions {
     </type>
     <type>
         <source locate="after">
+            HCscalValT
+        </source>
+        <destination>double</destination>
+        <destination>byte</destination>
+        <destination>char</destination>
+        <destination>complex</destination>
+        <destination>fcomplex</destination>
+        <destination>float</destination>
+        <destination>Int16</destination>
+        <destination>Int32</destination>
+        <destination>Int64</destination>
+        <destination>UInt16</destination>
+        <destination>UInt32</destination>
+        <destination>UInt64</destination>
+    </type>
+    <type>
+        <source locate="after">
             outCls
         </source>
         <destination><![CDATA[ILLogicalArray]]></destination>
@@ -3964,16 +3981,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<UInt64> A,  ILArray<UInt64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -4089,6 +4113,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -4206,7 +4233,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt64 tmpValue1; 
@@ -4284,16 +4311,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<UInt32> A,  ILArray<UInt32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -4409,6 +4443,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -4526,7 +4563,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt32 tmpValue1; 
@@ -4604,16 +4641,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<UInt16> A,  ILArray<UInt16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -4729,6 +4773,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -4846,7 +4893,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt16 tmpValue1; 
@@ -4924,16 +4971,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<Int64> A,  ILArray<Int64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -5049,6 +5103,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -5166,7 +5223,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int64 tmpValue1; 
@@ -5244,16 +5301,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<Int32> A,  ILArray<Int32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -5369,6 +5433,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -5486,7 +5553,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int32 tmpValue1; 
@@ -5564,16 +5631,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<Int16> A,  ILArray<Int16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -5689,6 +5763,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -5806,7 +5883,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int16 tmpValue1; 
@@ -5884,16 +5961,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<float> A,  ILArray<float> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -6009,6 +6093,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -6126,7 +6213,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     float tmpValue1; 
@@ -6204,16 +6291,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -6329,6 +6423,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -6446,7 +6543,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     fcomplex tmpValue1; 
@@ -6524,16 +6621,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<complex> A,  ILArray<complex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -6649,6 +6753,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -6766,7 +6873,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     complex tmpValue1; 
@@ -6844,16 +6951,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<char> A,  ILArray<char> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -6969,6 +7083,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -7086,7 +7203,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     char tmpValue1; 
@@ -7164,16 +7281,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<byte> A,  ILArray<byte> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -7289,6 +7413,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -7406,7 +7533,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     byte tmpValue1; 
@@ -7484,16 +7611,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for equal elements in A and B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  eq ( ILArray<double> A,  ILArray<double> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) == B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -7609,6 +7743,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -7726,7 +7863,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     double tmpValue1; 
@@ -7982,6 +8119,23 @@ namespace ILNumerics.BuiltInFunctions {
     <type>
         <source locate="after">
             inArr2
+        </source>
+        <destination>double</destination>
+        <destination>byte</destination>
+        <destination>char</destination>
+        <destination>complex</destination>
+        <destination>fcomplex</destination>
+        <destination>float</destination>
+        <destination>Int16</destination>
+        <destination>Int32</destination>
+        <destination>Int64</destination>
+        <destination>UInt16</destination>
+        <destination>UInt32</destination>
+        <destination>UInt64</destination>
+    </type>
+    <type>
+        <source locate="after">
+            HCscalValT
         </source>
         <destination>double</destination>
         <destination>byte</destination>
@@ -8295,16 +8449,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<UInt64> A,  ILArray<UInt64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -8420,6 +8581,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -8537,7 +8701,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt64 tmpValue1; 
@@ -8615,16 +8779,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<UInt32> A,  ILArray<UInt32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -8740,6 +8911,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -8857,7 +9031,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt32 tmpValue1; 
@@ -8935,16 +9109,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<UInt16> A,  ILArray<UInt16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -9060,6 +9241,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -9177,7 +9361,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt16 tmpValue1; 
@@ -9255,16 +9439,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<Int64> A,  ILArray<Int64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -9380,6 +9571,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -9497,7 +9691,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int64 tmpValue1; 
@@ -9575,16 +9769,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<Int32> A,  ILArray<Int32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -9700,6 +9901,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -9817,7 +10021,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int32 tmpValue1; 
@@ -9895,16 +10099,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<Int16> A,  ILArray<Int16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -10020,6 +10231,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -10137,7 +10351,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int16 tmpValue1; 
@@ -10215,16 +10429,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<float> A,  ILArray<float> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -10340,6 +10561,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -10457,7 +10681,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     float tmpValue1; 
@@ -10535,16 +10759,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -10660,6 +10891,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -10777,7 +11011,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     fcomplex tmpValue1; 
@@ -10855,16 +11089,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<complex> A,  ILArray<complex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -10980,6 +11221,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -11097,7 +11341,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     complex tmpValue1; 
@@ -11175,16 +11419,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<char> A,  ILArray<char> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -11300,6 +11551,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -11417,7 +11671,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     char tmpValue1; 
@@ -11495,16 +11749,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<byte> A,  ILArray<byte> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -11620,6 +11881,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -11737,7 +12001,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     byte tmpValue1; 
@@ -11815,16 +12079,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A not equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  neq ( ILArray<double> A,  ILArray<double> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) != B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -11940,6 +12211,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -12057,7 +12331,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     double tmpValue1; 
@@ -12190,6 +12464,23 @@ namespace ILNumerics.BuiltInFunctions {
     <type>
         <source locate="after">
             inArr2
+        </source>
+        <destination>double</destination>
+        <destination>byte</destination>
+        <destination>char</destination>
+        <destination>complex</destination>
+        <destination>fcomplex</destination>
+        <destination>float</destination>
+        <destination>Int16</destination>
+        <destination>Int32</destination>
+        <destination>Int64</destination>
+        <destination>UInt16</destination>
+        <destination>UInt32</destination>
+        <destination>UInt64</destination>
+    </type>
+    <type>
+        <source locate="after">
+            HCscalValT
         </source>
         <destination>double</destination>
         <destination>byte</destination>
@@ -12503,16 +12794,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<UInt64> A,  ILArray<UInt64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -12628,6 +12926,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -12745,7 +13046,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt64 tmpValue1; 
@@ -12823,16 +13124,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<UInt32> A,  ILArray<UInt32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -12948,6 +13256,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -13065,7 +13376,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt32 tmpValue1; 
@@ -13143,16 +13454,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<UInt16> A,  ILArray<UInt16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -13268,6 +13586,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -13385,7 +13706,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt16 tmpValue1; 
@@ -13463,16 +13784,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<Int64> A,  ILArray<Int64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -13588,6 +13916,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -13705,7 +14036,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int64 tmpValue1; 
@@ -13783,16 +14114,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<Int32> A,  ILArray<Int32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -13908,6 +14246,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -14025,7 +14366,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int32 tmpValue1; 
@@ -14103,16 +14444,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<Int16> A,  ILArray<Int16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -14228,6 +14576,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -14345,7 +14696,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int16 tmpValue1; 
@@ -14423,16 +14774,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<float> A,  ILArray<float> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -14548,6 +14906,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -14665,7 +15026,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     float tmpValue1; 
@@ -14743,16 +15104,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -14868,6 +15236,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -14985,7 +15356,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     fcomplex tmpValue1; 
@@ -15063,16 +15434,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<complex> A,  ILArray<complex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -15188,6 +15566,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -15305,7 +15686,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     complex tmpValue1; 
@@ -15383,16 +15764,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<char> A,  ILArray<char> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -15508,6 +15896,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -15625,7 +16016,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     char tmpValue1; 
@@ -15703,16 +16094,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<byte> A,  ILArray<byte> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -15828,6 +16226,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -15945,7 +16346,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     byte tmpValue1; 
@@ -16023,16 +16424,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  le ( ILArray<double> A,  ILArray<double> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) <= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -16148,6 +16556,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -16265,7 +16676,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     double tmpValue1; 
@@ -16398,6 +16809,23 @@ namespace ILNumerics.BuiltInFunctions {
     <type>
         <source locate="after">
             inArr2
+        </source>
+        <destination>double</destination>
+        <destination>byte</destination>
+        <destination>char</destination>
+        <destination>complex</destination>
+        <destination>fcomplex</destination>
+        <destination>float</destination>
+        <destination>Int16</destination>
+        <destination>Int32</destination>
+        <destination>Int64</destination>
+        <destination>UInt16</destination>
+        <destination>UInt32</destination>
+        <destination>UInt64</destination>
+    </type>
+    <type>
+        <source locate="after">
+            HCscalValT
         </source>
         <destination>double</destination>
         <destination>byte</destination>
@@ -16711,16 +17139,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<UInt64> A,  ILArray<UInt64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -16836,6 +17271,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -16953,7 +17391,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt64 tmpValue1; 
@@ -17031,16 +17469,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<UInt32> A,  ILArray<UInt32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -17156,6 +17601,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -17273,7 +17721,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt32 tmpValue1; 
@@ -17351,16 +17799,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<UInt16> A,  ILArray<UInt16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -17476,6 +17931,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -17593,7 +18051,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt16 tmpValue1; 
@@ -17671,16 +18129,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<Int64> A,  ILArray<Int64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -17796,6 +18261,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -17913,7 +18381,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int64 tmpValue1; 
@@ -17991,16 +18459,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<Int32> A,  ILArray<Int32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -18116,6 +18591,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -18233,7 +18711,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int32 tmpValue1; 
@@ -18311,16 +18789,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<Int16> A,  ILArray<Int16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -18436,6 +18921,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -18553,7 +19041,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int16 tmpValue1; 
@@ -18631,16 +19119,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<float> A,  ILArray<float> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -18756,6 +19251,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -18873,7 +19371,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     float tmpValue1; 
@@ -18951,16 +19449,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -19076,6 +19581,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -19193,7 +19701,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     fcomplex tmpValue1; 
@@ -19271,16 +19779,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<complex> A,  ILArray<complex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -19396,6 +19911,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -19513,7 +20031,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     complex tmpValue1; 
@@ -19591,16 +20109,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<char> A,  ILArray<char> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -19716,6 +20241,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -19833,7 +20361,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     char tmpValue1; 
@@ -19911,16 +20439,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<byte> A,  ILArray<byte> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -20036,6 +20571,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -20153,7 +20691,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     byte tmpValue1; 
@@ -20231,16 +20769,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater or equal corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  ge ( ILArray<double> A,  ILArray<double> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) >= B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -20356,6 +20901,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -20473,7 +21021,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     double tmpValue1; 
@@ -20606,6 +21154,23 @@ namespace ILNumerics.BuiltInFunctions {
     <type>
         <source locate="after">
             inArr2
+        </source>
+        <destination>double</destination>
+        <destination>byte</destination>
+        <destination>char</destination>
+        <destination>complex</destination>
+        <destination>fcomplex</destination>
+        <destination>float</destination>
+        <destination>Int16</destination>
+        <destination>Int32</destination>
+        <destination>Int64</destination>
+        <destination>UInt16</destination>
+        <destination>UInt32</destination>
+        <destination>UInt64</destination>
+    </type>
+    <type>
+        <source locate="after">
+            HCscalValT
         </source>
         <destination>double</destination>
         <destination>byte</destination>
@@ -20919,16 +21484,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<UInt64> A,  ILArray<UInt64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -21044,6 +21616,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -21161,7 +21736,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt64 tmpValue1; 
@@ -21239,16 +21814,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<UInt32> A,  ILArray<UInt32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -21364,6 +21946,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -21481,7 +22066,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt32 tmpValue1; 
@@ -21559,16 +22144,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<UInt16> A,  ILArray<UInt16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -21684,6 +22276,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -21801,7 +22396,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt16 tmpValue1; 
@@ -21879,16 +22474,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<Int64> A,  ILArray<Int64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -22004,6 +22606,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -22121,7 +22726,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int64 tmpValue1; 
@@ -22199,16 +22804,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<Int32> A,  ILArray<Int32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -22324,6 +22936,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -22441,7 +23056,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int32 tmpValue1; 
@@ -22519,16 +23134,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<Int16> A,  ILArray<Int16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -22644,6 +23266,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -22761,7 +23386,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int16 tmpValue1; 
@@ -22839,16 +23464,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<float> A,  ILArray<float> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -22964,6 +23596,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -23081,7 +23716,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     float tmpValue1; 
@@ -23159,16 +23794,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -23284,6 +23926,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -23401,7 +24046,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     fcomplex tmpValue1; 
@@ -23479,16 +24124,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<complex> A,  ILArray<complex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -23604,6 +24256,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -23721,7 +24376,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     complex tmpValue1; 
@@ -23799,16 +24454,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<char> A,  ILArray<char> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -23924,6 +24586,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -24041,7 +24706,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     char tmpValue1; 
@@ -24119,16 +24784,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<byte> A,  ILArray<byte> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -24244,6 +24916,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -24361,7 +25036,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     byte tmpValue1; 
@@ -24439,16 +25114,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing lower than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  lt ( ILArray<double> A,  ILArray<double> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) < B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -24564,6 +25246,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -24681,7 +25366,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     double tmpValue1; 
@@ -24814,6 +25499,23 @@ namespace ILNumerics.BuiltInFunctions {
     <type>
         <source locate="after">
             inArr2
+        </source>
+        <destination>double</destination>
+        <destination>byte</destination>
+        <destination>char</destination>
+        <destination>complex</destination>
+        <destination>fcomplex</destination>
+        <destination>float</destination>
+        <destination>Int16</destination>
+        <destination>Int32</destination>
+        <destination>Int64</destination>
+        <destination>UInt16</destination>
+        <destination>UInt32</destination>
+        <destination>UInt64</destination>
+    </type>
+    <type>
+        <source locate="after">
+            HCscalValT
         </source>
         <destination>double</destination>
         <destination>byte</destination>
@@ -25127,16 +25829,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<UInt64> A,  ILArray<UInt64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -25252,6 +25961,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -25369,7 +26081,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt64 tmpValue1; 
@@ -25447,16 +26159,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<UInt32> A,  ILArray<UInt32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -25572,6 +26291,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -25689,7 +26411,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt32 tmpValue1; 
@@ -25767,16 +26489,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<UInt16> A,  ILArray<UInt16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -25892,6 +26621,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -26009,7 +26741,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     UInt16 tmpValue1; 
@@ -26087,16 +26819,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<Int64> A,  ILArray<Int64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -26212,6 +26951,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -26329,7 +27071,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int64 tmpValue1; 
@@ -26407,16 +27149,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<Int32> A,  ILArray<Int32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -26532,6 +27281,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -26649,7 +27401,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int32 tmpValue1; 
@@ -26727,16 +27479,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<Int16> A,  ILArray<Int16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -26852,6 +27611,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -26969,7 +27731,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     Int16 tmpValue1; 
@@ -27047,16 +27809,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<float> A,  ILArray<float> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -27172,6 +27941,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -27289,7 +28061,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     float tmpValue1; 
@@ -27367,16 +28139,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -27492,6 +28271,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -27609,7 +28391,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     fcomplex tmpValue1; 
@@ -27687,16 +28469,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<complex> A,  ILArray<complex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -27812,6 +28601,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -27929,7 +28721,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     complex tmpValue1; 
@@ -28007,16 +28799,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<char> A,  ILArray<char> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -28132,6 +28931,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -28249,7 +29051,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     char tmpValue1; 
@@ -28327,16 +29129,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<byte> A,  ILArray<byte> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -28452,6 +29261,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -28569,7 +29381,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     byte tmpValue1; 
@@ -28647,16 +29459,23 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Logical array having '1' for elements in A beeing greater than corresponding elements in B, '0' else</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILLogicalArray  gt ( ILArray<double> A,  ILArray<double> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILLogicalArray .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                     return new ILLogicalArray (new byte[1]{(A.GetValue(0) > B.GetValue(0))? (byte)1: (byte)0});
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILLogicalArray .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -28772,6 +29591,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILLogicalArray .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
@@ -28889,7 +29711,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     double tmpValue1; 

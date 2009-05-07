@@ -236,10 +236,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices = /*!HC:inCls2*/ ILArray<double> .empty(0,0);
+                return /*!HC:outCls*/ ILArray<double> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             /*!HC:outCls*/ ILArray<double> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 
@@ -364,10 +374,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices =  ILArray<double> .empty(0,0);
+                return  ILArray<UInt64> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             ILArray<UInt64> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 
@@ -489,10 +509,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices =  ILArray<double> .empty(0,0);
+                return  ILArray<UInt32> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             ILArray<UInt32> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 
@@ -614,10 +644,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices =  ILArray<double> .empty(0,0);
+                return  ILArray<UInt16> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             ILArray<UInt16> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 
@@ -739,10 +779,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices =  ILArray<double> .empty(0,0);
+                return  ILArray<Int64> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             ILArray<Int64> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 
@@ -864,10 +914,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices =  ILArray<double> .empty(0,0);
+                return  ILArray<Int32> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             ILArray<Int32> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 
@@ -989,10 +1049,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices =  ILArray<double> .empty(0,0);
+                return  ILArray<Int16> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             ILArray<Int16> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 
@@ -1114,10 +1184,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices =  ILArray<double> .empty(0,0);
+                return  ILArray<float> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             ILArray<float> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 
@@ -1239,10 +1319,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices =  ILArray<double> .empty(0,0);
+                return  ILArray<fcomplex> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             ILArray<fcomplex> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 
@@ -1364,10 +1454,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices =  ILArray<double> .empty(0,0);
+                return  ILArray<complex> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             ILArray<complex> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 
@@ -1489,10 +1589,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices =  ILArray<double> .empty(0,0);
+                return  ILArray<char> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             ILArray<char> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 
@@ -1614,10 +1724,20 @@ namespace ILNumerics.BuiltInFunctions {
             if (dim < 0 || dim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("sort: invalid dimension argument");
             // early exit: scalar/ empty
-            Indices = ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray()); 
-            if (A.IsEmpty || A.IsScalar) {
+            if (A.IsEmpty) {
+                Indices =  ILArray<double> .empty(0,0);
+                return  ILArray<byte> .empty(0,0); 
+            }
+            if (A.IsScalar) {
+                Indices = 0;
                 return A.C; 
             }
+            ILArray<int> tmpDims = toint32(ones(A.Dimensions.NumberOfDimensions));
+            tmpDims[dim] = A.Dimensions[dim]; 
+            Indices = reshape(vector(0.0,A.Dimensions[dim]-1),tmpDims.m_data);
+            tmpDims = A.Dimensions.ToIntArray(); 
+            tmpDims[dim] = 1; 
+            Indices = repmat(Indices,tmpDims.C.m_data).C; 
             ILArray<byte> ret = A.C; 
             int inc = ret.Dimensions.SequentialIndexDistance(dim); 
             int dimLen = A.Dimensions[dim]; 

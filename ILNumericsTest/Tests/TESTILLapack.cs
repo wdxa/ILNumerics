@@ -33,6 +33,7 @@ namespace ILNumerics.Test {
             base.Run();
             Header();
             Test_Temp();
+            Test_PINV();
             Test_slashUpperTriag(); 
             Test_slashQRRankDeficient();
             Test_det(); 
@@ -76,7 +77,6 @@ namespace ILNumerics.Test {
             Test_LU_rawLapackForm(); 
             Test_LU_retLU(); 
             Test_LU_retLUP(); 
-            Test_PINV();
             Test_SVD();
             Test_CholNonPosDef(); 
             Test_CholPosDef(); 
@@ -142,7 +142,7 @@ namespace ILNumerics.Test {
                 ILArray<double> B = new double[] {1.0,2.0,3.0,4.0}; 
                 ILArray<double> x = ILMath.linsolve(A,B.T); 
                 ILArray<double> bTest = ILMath.multiply(A,x);
-                ILArray<double> err = ILMath.norm(bTest - B);
+                ILArray<double> err = ILMath.norm(bTest - B.T);
                 if (err > ILMath.MachineParameterDouble.eps) throw new Exception("invalid results!");
                 Success();
             } catch (Exception e) {
@@ -167,7 +167,7 @@ namespace ILNumerics.Test {
                 //[test: if A was not symm.,pos.def. linsolve returnes null]
                 System.Diagnostics.Debug.Assert(!Object.Equals(x,null)); 
                 ILArray<double> bTest = ILMath.multiply(A,x);
-                ILArray<double> err = ILMath.norm(bTest - B); 
+                ILArray<double> err = ILMath.norm(bTest - B.T); 
             } catch (Exception e) {
                 Error(errorCode,e.Message); 
             }
@@ -1196,7 +1196,15 @@ namespace ILNumerics.Test {
                 ResS = 0.0294117647;
                 if (ILMath.norm(ILMath.pinv(34.0) - ResS) > 1e-8)
                     throw new Exception("Invalid values detected!");
-                // TDOD! TEST for complex -> TODO!  
+                // test complex 
+                ILArray<fcomplex> fA = ILMath.tofcomplex(ILMath.ccomplex(ILMath.ones(10,20),ILMath.ones(10,20)*0.5f)); 
+                ILArray<fcomplex> fRes = ILMath.pinv(fA); 
+                if (ILMath.sumall(ILMath.multiply(fA,ILMath.multiply(fRes,fA))-fA > 2e-5) > 0.0) {
+                    throw new Exception("Invalid result: fcomplex a*res*a-a"); 
+                }
+                if (ILMath.sumall(ILMath.multiply(fRes,ILMath.multiply(fA,fRes))-fRes > 2e-5) > 0.0) {
+                    throw new Exception("Invalid result: fcomplex a*res*a-a"); 
+                }
                 Success("Test_PINV successfull"); 
             } catch (Exception e) {
                 Error("Test_PINV failed at errorCode " + errorCode + " due to: " + e.Message);

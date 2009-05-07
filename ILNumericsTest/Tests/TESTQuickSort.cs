@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections; 
 using System.Text;
 using ILNumerics.Test;
 using ILNumerics.Algorithms; 
@@ -33,6 +34,7 @@ namespace ILNumerics.Test {
         
         public override void Run() {
             base.Run();
+            Test_SortSpeed (1000000); 
             TestQuickSortDesc();
             TestQuickSortAsc(); 
             TestQuickSortDescIDX();
@@ -43,6 +45,57 @@ namespace ILNumerics.Test {
             TestQuickSort(ILMath.rand(1,10).m_data); 
         }
 
+        public class DescComparerDouble : IComparer {
+            public int Compare(object x, object y) {
+                return -1 * ((double)x).CompareTo((double)y); 
+            }
+        }
+
+        private void Test_SortSpeed(int length) {
+            try {
+                ILArray<double> ResILN = null, ResCLR = null, A = null; 
+                long durILN = 0, durCLR = 0; 
+                Misc.ILPerformer p = new ILNumerics.Misc.ILPerformer(); 
+                for (int i = 0; i < 10; i++) {
+                    A = ILMath.randn(length,1);
+                    p.Tic(); 
+                    ResILN = ILMath.sort(A); 
+                    p.Toc(); 
+                    durILN += p.Duration; 
+                    p.Tic(); 
+                    ResCLR = A.C; 
+                    Array.Sort(ResCLR.m_data); 
+                    p.Toc(); 
+                    durCLR += p.Duration; 
+                }
+                if (!ResCLR.Equals(ResILN)) 
+                    throw new Exception("invalid values!"); 
+                Info(String.Format("ILNumerics.Net sort {1} needed: {0}ms",durILN / 10,A.Dimensions.ToString())); 
+                Info(String.Format("CLR Array.Sort {1} needed: {0}ms",durCLR / 10,A.Dimensions.ToString())); 
+                // descending 
+                durCLR = 0; durILN = 0; 
+                IComparer comparer = new DescComparerDouble(); 
+                for (int i = 0; i < 10; i++) {
+                    A = ILMath.randn(length,1);
+                    p.Tic(); 
+                    ResILN = ILMath.sort(A,true); 
+                    p.Toc(); 
+                    durILN += p.Duration; 
+                    p.Tic(); 
+                    ResCLR = A.C; 
+                    Array.Sort(ResCLR.m_data,comparer); 
+                    p.Toc(); 
+                    durCLR += p.Duration; 
+                }
+                if (!ResCLR.Equals(ResILN)) 
+                    throw new Exception("invalid values!"); 
+ 
+                Info(String.Format("ILNumerics.Net sort {1} needed: {0}ms",durILN / 10,A.Dimensions.ToString())); 
+                Info(String.Format("CLR Array.Sort {1} needed: {0}ms",durCLR / 10,A.Dimensions.ToString())); 
+            } catch (Exception e) {
+                Error(0, e.Message); 
+            }
+        }
         private void TestQuickSortDescIDX() {
             try {
                 ILArray<double> A = ILMath.counter(5,4,3); 
@@ -52,7 +105,8 @@ namespace ILNumerics.Test {
                 ILArray<double> expect = A[":;3,2,1,0;:"]; 
                 if (!result.Equals(expect))
                     throw new Exception("invalid values"); 
-                if (!ind.Equals(ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray())[":;3,2,1,0;:"]))
+                expect = ILMath.repmat(new ILArray<double>(new double[]{3,2,1,0}),5,1,3); 
+                if (!ind.Equals(expect))
                     throw new Exception("invalid indices"); 
                 // test scalar 
                 A = 3.0; 
@@ -83,7 +137,9 @@ namespace ILNumerics.Test {
                 ILArray<double> expect = A[":;:;:"]; 
                 if (!result.Equals(expect))
                     throw new Exception("invalid values"); 
-                if (!ind.Equals(ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray())[":;:;:"]))
+                expect = new double[] {0, 1, 2, 3}; 
+                expect = ILMath.repmat(expect,5,1,3); 
+                if (!ind.Equals(expect))
                     throw new Exception("invalid indices"); 
                 // true sortable values... 
                 A = ILMath.counter(60.0,-1.0,5,4,3); 
@@ -91,7 +147,9 @@ namespace ILNumerics.Test {
                 expect = A[":;3,2,1,0;:"]; 
                 if (!result.Equals(expect))
                     throw new Exception("invalid values"); 
-                if (!ind.Equals(ILMath.counter(0.0,1.0,A.Dimensions.ToIntArray())[":;3,2,1,0;:"]))
+                expect = new double[] {3, 2, 1, 0}; 
+                expect = ILMath.repmat(expect,5,1,3); 
+                if (!ind.Equals(expect))
                     throw new Exception("invalid indices"); 
                 // test scalar 
                 A = 3.0; 

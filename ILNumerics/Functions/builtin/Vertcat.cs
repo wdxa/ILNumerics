@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using ILNumerics.Storage;
 using ILNumerics.Misc;
+using ILNumerics.Exceptions; 
 
 namespace ILNumerics.BuiltInFunctions {
     public partial class ILMath {
@@ -42,24 +43,17 @@ namespace ILNumerics.BuiltInFunctions {
         /// Vertical concatenation means concatenation along the first dimension.
         /// </remarks>
         public static ILArray<T> vertcat<T>(params ILArray<T>[] inArrays) {
-        	if (inArrays == null || inArrays.Length == 0) 
-        		throw new ILNumerics.Exceptions.ILArgumentException("vertcat: argument list cannot be null or empty!"); 
-          	if (inArrays.Length == 1)
-                return inArrays[0].R;
-            try {
-                ILArray<T> ret = (ILArray<T>)inArrays[0].Concat(inArrays[1], 0);
-                for (int i = 2; i < inArrays.Length; i++) {
-                    ret = ret.Concat(inArrays[i], 0);
-                }
-                return ret;
-            } catch (Exception e) {
-                if (e.InnerException is ArgumentException) {
-                    // TODO: implement exception handling!
-                    return null;
-                } else {
-                    throw new Exception("vertcat: all but the first dimension of all arrays must match!");
-                }
+            if (inArrays == null) 
+                throw new ILArgumentException("input argument must not be null!"); 
+            if (inArrays.Length == 0 || object.Equals(inArrays[0],null)) 
+                return ILArray<T>.empty(0,0); 
+            if (inArrays.Length == 1) 
+                return inArrays[0].C; 
+            ILArray<T> ret = (ILArray<T>)inArrays[0].Concat(inArrays[1], 0);
+            for (int i = 2; i < inArrays.Length; i++) {
+                ret = (ILArray<T>)ret.Concat(inArrays[i], 0);
             }
+            return ret;
         }
     }
 }

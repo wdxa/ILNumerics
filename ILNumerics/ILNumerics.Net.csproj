@@ -80,6 +80,7 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Utils.Zip, Version=1.6.3.18, Culture=neutral, PublicKeyToken=c551e179877da246, processorArchitecture=MSIL" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -164,6 +165,10 @@
     <Compile Include="Functions\builtin\imag.cs" />
     <Compile Include="Functions\builtin\ind2sub.cs" />
     <Compile Include="Functions\builtin\Invert.cs" />
+    <Compile Include="Functions\builtin\isequal.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\isequalwithequalnans.cs" />
     <Compile Include="Functions\builtin\isfinite.cs" />
     <Compile Include="Functions\builtin\isinf.cs">
       <SubType>Code</SubType>
@@ -316,7 +321,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Misc\ILSettings.cs" />
-    <Compile Include="Misc\ILTest.cs" />
     <Compile Include="Misc\MatFile.cs">
       <SubType>Code</SubType>
     </Compile>

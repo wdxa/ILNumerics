@@ -346,158 +346,14 @@ namespace ILNumerics {
         /// to the storage is not intended for public users. </remarks>
         internal BaseT[] m_data;
         /// <summary>
-        /// Give direct reference for this data array
+        /// Get reference of internal element storage array (CAUTION! Experts only!)
         /// </summary>
-        /// <remarks>This property is only used by C++ derivate (copy constructor)</remarks>
-        protected BaseT[] Data {
+        /// <remarks>Use this at your own risk and only if you have expert knowledge of ILArrays internals!</remarks>
+        public BaseT[] InternalArray4Experts {
             get {
                 return m_data; 
             }
-            set {
-                m_data = value; 
-            }
         }
-
-        #region public access wrapper shortcuts
-
-#if LINUX
-	/** 
-	  XXX The construct below does not work on linux
-	*/
-#else
-        ///// <summary>
-        ///// Subarray access for ILBaseArray. Get: Create referencing subarray, 
-        ///// Set: alter range of this ILBaseArray with new value elements.
-        ///// </summary>
-        ///// <paramref name="dims" value="Range specification for subarray elements"/>
-        //public virtual ILBaseArray<BaseT> this[String dims] {
-        //    get {
-        //        try {
-        //            return Subarray(new ILRange(m_dimensions, dims), 0);
-        //        } catch (Exception e) {
-        //            throw new ArgumentException("ILArray|Indexer[]: "
-        //                + "Invalid range specification", e);
-        //        }
-        //    }
-        //    set {
-        //        //if (value.IsEmpty) {
-        //        //    ILDimension newdim = null;
-        //        //    int dimIdx = -1; 
-        //        //    int[] indices = null; 
-        //        //    ExtractRemovalParameter(new string[1]{dims},out dimIdx,out indices, out newdim); 
-        //        //    Reshape(newdim);
-        //        //    Remove(dimIdx,indices);
-        //        //} else 
-        //            SetRange(new ILRange(m_dimensions, dims), value);
-        //    }
-        //}
-        ///// <summary>
-        ///// Subarray access for ILArray and dimension shift
-        ///// </summary>
-        ///// <paramref name="dims" value="dimension specification"/>
-        ///// <value>returns new ILArray as reference subarray to this ILBaseArray</value>
-        //public virtual ILBaseArray<BaseT> this[String dims, int shiftDims] {
-        //    get {
-        //    }
-        //}
-        ///// <summary>
-        ///// subarray access via double array indices
-        ///// </summary>
-        ///// <paramref name="dims" value="dimension specification"/>
-        ///// <value>alter values pointed to by elements of dims/ return 
-        ///// subarray of elements of this array referenced by dim.</value>
-        //public virtual ILBaseArray<BaseT> this[ILArray<double> dims] {
-        //    get {
-        //        try {
-        //            if (dims.IsEmpty)
-        //                return new ILArray<BaseT>.empty(); 
-        //            return Subarray(dims, 0);
-        //        } catch (Exception e) {
-        //            throw new ArgumentException("ILArray|Indexer[]: "
-        //                + "Invalid range specification", e);
-        //        }
-        //    }
-        //    set {
-        //        try {
-        //            SetRange(dims, value);
-        //        } catch (Exception e) {
-        //            throw new Exception("Error while setting values.", e);
-        //        }
-        //    }
-        //}
-        /////// <summary>
-        /////// Create subarray by index array and shift dimension 
-        /////// </summary>
-        /////// <paramref name="dims" value="dimension specification"/>
-        /////// <value>returns new ILArray as reference subarray to this ILBaseArray</value>
-        ////public virtual ILBaseArray<BaseT> this[ILArray<double> dims, int shiftDims] {
-        ////    get {
-        ////        try {
-        ////            if (dims.Length == 0)
-        ////                throw new ArgumentException("ILArray|Indexer[]: "
-        ////                                        + "Invalid subarray specification:"
-        ////                                        + " Length must be > 0.");
-        ////            return Subarray(dims, shiftDims);
-        ////        } catch (Exception e) {
-        ////            throw new ArgumentException("ILArray|Indexer[]: "
-        ////                + "Invalid range specification", e);
-        ////        }
-        ////    }
-        ////}
-        /////// <summary>
-        /////// create shifted version
-        /////// </summary>
-        /////// <param name="shift">dimensions specifier. </param>
-        /////// <returns>sifted version of this array. The inner type
-        /////// depends on the type and storage version of this array. </returns>
-        ////public virtual ILBaseArray<BaseT> this[int shift] { 
-        ////    get {
-        ////        try {
-        ////            return ShiftDimensions(shift);
-        ////        } catch (Exception e) {
-        ////            throw new ArgumentException("ILArray|Indexer[]: "
-        ////                + "Invalid range specification", e);
-        ////        }
-        ////    }
-        ////}
-        ///// <summary>
-        ///// Single element access
-        ///// </summary>
-        ///// <param name="dims">dimensions specifier. int array or comma seperated list.
-        ///// If this is a single int element only, this will be expected to be a dimensions
-        ///// shift an result in a shifted version to be created. If dims consist out of 
-        ///// at least 2 elements, the corresponding value will be returned. </param>
-        ///// <returns>element pointed to be by 'dims'</returns>
-        //public virtual BaseT this[params int[] dims] {
-        //    get {
-        //        try {
-        //            if (dims.Length == 0)
-        //                throw new ArgumentException("ILArray|Indexer[]: "
-        //                                        + "Invalid index specification:"
-        //                                        + " Length must be > 0.");
-        //            // interprete as index specification
-        //            return GetValue(dims);
-        //        } catch (Exception e) {
-        //            throw new ArgumentException("ILArray|Indexer[]: "
-        //                + "Invalid range specification", e);
-        //        }
-        //    }
-        //    set {
-        //        try {
-        //            if (dims.Length == 0)
-        //                throw new ArgumentException("ILArray|Indexer[]: "
-        //                                        + "Invalid index specification:"
-        //                                        + " Length must be > 0.");
-        //            SetValue(value, dims);
-        //        } catch (Exception e) {
-        //            throw new Exception("ILArray|Indexer[]: "
-        //                + "Invalid range specification", e);
-        //        }
-        //    }
-        //}
-
-#endif
-        #endregion
 
         #region subarray + range get / set
 		/// <summary>
@@ -574,55 +430,6 @@ namespace ILNumerics {
         public abstract void SetRange(ILRange range, ILBaseArray<BaseT> values);
         #endregion
         
-        /*
-        #region Concat, Repmat  - overriding ILBaseArray<BaseT>
-        /// <summary>
-        /// Concatenate this array 
-        /// </summary>
-        /// <param name="inArray">N-dimensional array</param>
-        /// <param name="leadDim">index of dimension to concatenate arrays along.
-        /// If leadDim is larger than the number of dimensions of one of the arrays
-        /// its value will be used in modulus</param>
-        /// <returns>array having the size of both input arrays layed behind each 
-        /// other along the leadDim's-dimension</returns>
-        /// <remarks>The array returned will be a 
-        /// <list type="bullet">
-        /// <item> reference storage, if inArray is the same as this (object references 
-        /// are the same) and ILArray.MinimumRefDimensions is less or equal 
-        /// the number of dimensions of the resulting storage, or a 
-        /// </item>
-        /// <item>physical storage else. 
-        /// </item></list>
-        /// There are only very few cases where it is possible to reference two arrays in the 
-        /// same reference storage. Not only the storages must point to the same underlying 
-        /// physical System.Array, but the ILIndexOffset must be suited in a special way. 
-        /// Therefore the restriction was made always to create a reference storage, if 
-        /// both storages are not the same.</remarks>
-        //public abstract ILBaseArray<BaseT> Concat(ILBaseArray<BaseT> inArray, int leadDim);
-        /// <summary>
-        /// Replicate this storage. Make large storage out of this
-        /// </summary>
-        /// <param name="dims">dimensions specifier. This may be a comma sep.
-        /// list or an array of integer values. If the number of elements in dim is 
-        /// less the number of dimensions in this array, the trailing dimensions will 
-        /// be set to 1 (singleton dimensions). On the other hand, if the number specified 
-        /// is larger then the number of dimension stored inside the storge the resulting 
-        /// storage will get its number of dimensions extended accordingly. </param>
-        /// <returns>large array beeing a multiple (dims) copy of this array along 
-        /// arbitrary dimensions. The type of storage will be the same as the type of this storage
-        /// </returns>
-        /// <remarks>The array returned will be a 
-        /// <list type="bullet">
-        /// <item> reference storage, if the number of dimensions resulting is more or equal 
-        /// to ILArray.MinimumRefDimensions, or a 
-        /// </item>
-        /// <item>physical storage else. 
-        /// </item></list>
-        /// </remarks>
-        //public abstract ILBaseArray<BaseT> Repmat(params int[] dims); 
-        #endregion
-        */
-
         /// <summary>
         ///  Serialize this ILArray into binary stream.
         /// </summary>

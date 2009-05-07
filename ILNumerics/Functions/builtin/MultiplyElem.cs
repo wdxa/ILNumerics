@@ -138,37 +138,54 @@ using ILNumerics.BuiltInFunctions;
     </type>
     <type>
         <source locate="after">
+            HCscalValT
+        </source>
+        <destination>double</destination>
+        <destination>double</destination>
+        <destination>double</destination>
+        <destination>complex</destination>
+        <destination>fcomplex</destination>
+        <destination>float</destination>
+        <destination>double</destination>
+        <destination>double</destination>
+        <destination>double</destination>
+        <destination>double</destination>
+        <destination>double</destination>
+        <destination>double</destination>
+    </type>
+    <type>
+        <source locate="after">
             outCast
         </source>
         <destination></destination>
-        <destination>(byte)</destination>
-        <destination>(char)</destination>
+        <destination>saturateByte</destination>
+        <destination>saturateChar</destination>
         <destination></destination>
         <destination></destination>
         <destination></destination>
-        <destination>(Int16)</destination>
-        <destination></destination>
-        <destination></destination>
-        <destination>(UInt16)</destination>
-        <destination></destination>
-        <destination></destination>
+        <destination>saturateInt16</destination>
+        <destination>saturateInt32</destination>
+        <destination>saturateInt64</destination>
+        <destination>saturateUInt16</destination>
+        <destination>saturateUInt32</destination>
+        <destination>saturateUInt64</destination>
     </type>
     <type>
         <source locate="after">
             HCoperation
         </source>
         <destination>*</destination>
+        <destination>* (double)</destination>
+        <destination>* (double)</destination>
         <destination>*</destination>
         <destination>*</destination>
         <destination>*</destination>
-        <destination>*</destination>
-        <destination>*</destination>
-        <destination>*</destination>
-        <destination>*</destination>
-        <destination>*</destination>
-        <destination>*</destination>
-        <destination>*</destination>
-        <destination>*</destination>
+        <destination>* (double)</destination>
+        <destination>* (double)</destination>
+        <destination>* (double)</destination>
+        <destination>* (double)</destination>
+        <destination>* (double)</destination>
+        <destination>* (double)</destination>
     </type>
     <type>
         <source locate="after">
@@ -238,22 +255,29 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<UInt64>  multiplyElem ( ILArray<UInt64> A,  ILArray<UInt64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<UInt64> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<UInt64> (new  UInt64 [1]{  (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<UInt64> (new  UInt64 [1]{ saturateUInt64 (A.GetValue(0)  * (double) B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<UInt64> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  UInt64 [] retArr = new  UInt64 [inDim.NumberOfElements];
                     UInt64 [] retArr = ILMemoryPool.Pool.New< UInt64 > (inDim.NumberOfElements);
-                    UInt64 scalarValue = A.GetValue(0); 
+                    double scalarValue = A.GetValue(0); 
                     UInt64 tmpValue2; 
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (B.IsReference) {
@@ -291,7 +315,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =   (scalarValue  * (*( tmpIn + *leadDimIdx++ )));
+                                                *tmpOut =  saturateUInt64 (scalarValue  * (double) (*( tmpIn + *leadDimIdx++ )));
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -319,7 +343,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =   (scalarValue  * (*(tmpIn + *leadDimIdx++)));
+                                                *tmpOut =  saturateUInt64 (scalarValue  * (double) (*(tmpIn + *leadDimIdx++)));
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -357,7 +381,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 UInt64 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) //HC03
                                     
-                                	*tmpOut++ =   (scalarValue  * (*tmpIn++));
+                                	*tmpOut++ =  saturateUInt64 (scalarValue  * (double) (*tmpIn++));
                             }       
                         }
                         #endregion
@@ -367,11 +391,14 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<UInt64> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  UInt64 [] retArr = new  UInt64 [inDim.NumberOfElements];
                     UInt64 [] retArr = ILMemoryPool.Pool.New< UInt64 > (inDim.NumberOfElements);
-                    UInt64 scalarValue = B.GetValue(0); 
+                    double scalarValue = B.GetValue(0); 
                     UInt64 tmpValue1;
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (A.IsReference) {
@@ -409,7 +436,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) { //HC04
                                                 
-                                                *tmpOut =   (*( tmpIn + *leadDimIdx++ )  * scalarValue);
+                                                *tmpOut =  saturateUInt64 (*( tmpIn + *leadDimIdx++ )  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -437,7 +464,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {   //HC05
                                                 
-                                                *tmpOut =   (*(tmpIn + *leadDimIdx++)  * scalarValue);
+                                                *tmpOut =  saturateUInt64 (*(tmpIn + *leadDimIdx++)  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -475,7 +502,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 UInt64 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) { //HC06
                                     
-                                    *tmpOut++ =   (*tmpIn++  * scalarValue);
+                                    *tmpOut++ =  saturateUInt64 (*tmpIn++  * (double) scalarValue);
                                 }
                             }
                         }
@@ -487,7 +514,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     UInt64 [] retSystemArr;
                     UInt64 tmpValue1; 
@@ -517,7 +544,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (!B.IsReference) {
                                     while (poutarr < outEnd) {  //HC07
                                         
-                                        *poutarr++ =   ( *(pInA1 + A.getBaseIndex(c++))  * (*pInA2++));
+                                        *poutarr++ =  saturateUInt64 ( *(pInA1 + A.getBaseIndex(c++))  * (double) (*pInA2++));
                                     }
                                 } else {
                                     // optimization for matrix 
@@ -530,7 +557,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             int        cLen = A.m_dimensions[1]; 
                                             while (poutarr < outEnd) {   //HC08
                                                
-                                                *poutarr++ =    ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) *  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
+                                                *poutarr++ =  saturateUInt64  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) * (double)  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
                                                 if (++r == rLen) {
                                                     r = 0; 
                                                     c++; 
@@ -540,7 +567,7 @@ namespace ILNumerics.BuiltInFunctions {
                                     } else {
                                          while (poutarr < outEnd) {  //HC09
                                              
-                                             *poutarr++ =   ( *(pInA1 + A.getBaseIndex(c)) *  (*(pInA2+B.getBaseIndex(c++))));
+                                             *poutarr++ =  saturateUInt64 ( *(pInA1 + A.getBaseIndex(c)) * (double)  (*(pInA2+B.getBaseIndex(c++))));
                                         }
                                    }
                                    // tmpValue1 = 0; tmpValue2 = 0; 
@@ -549,12 +576,12 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (B.IsReference) {
                                     while (poutarr < outEnd) {  //HC10
                                          
-                                        *poutarr++ =    ( *pInA1++  *  (*(pInA2 + B.getBaseIndex(c++))));
+                                        *poutarr++ =  saturateUInt64  ( *pInA1++  * (double)  (*(pInA2 + B.getBaseIndex(c++))));
                                     }
                                 } else {
                                     while (poutarr < outEnd) {  //HC11
                                          
-                                        *poutarr++ =   ( *pInA1++ /*HC:*/ *  (*pInA2++));
+                                        *poutarr++ =  saturateUInt64 ( *pInA1++ /*HC:*/ * (double)  (*pInA2++));
                                     }
                                 }
                             }
@@ -570,22 +597,29 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<UInt32>  multiplyElem ( ILArray<UInt32> A,  ILArray<UInt32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<UInt32> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<UInt32> (new  UInt32 [1]{  (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<UInt32> (new  UInt32 [1]{ saturateUInt32 (A.GetValue(0)  * (double) B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<UInt32> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  UInt32 [] retArr = new  UInt32 [inDim.NumberOfElements];
                     UInt32 [] retArr = ILMemoryPool.Pool.New< UInt32 > (inDim.NumberOfElements);
-                    UInt32 scalarValue = A.GetValue(0); 
+                    double scalarValue = A.GetValue(0); 
                     UInt32 tmpValue2; 
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (B.IsReference) {
@@ -623,7 +657,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =   (scalarValue  * (*( tmpIn + *leadDimIdx++ )));
+                                                *tmpOut =  saturateUInt32 (scalarValue  * (double) (*( tmpIn + *leadDimIdx++ )));
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -651,7 +685,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =   (scalarValue  * (*(tmpIn + *leadDimIdx++)));
+                                                *tmpOut =  saturateUInt32 (scalarValue  * (double) (*(tmpIn + *leadDimIdx++)));
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -689,7 +723,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 UInt32 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) //HC03
                                     
-                                	*tmpOut++ =   (scalarValue  * (*tmpIn++));
+                                	*tmpOut++ =  saturateUInt32 (scalarValue  * (double) (*tmpIn++));
                             }       
                         }
                         #endregion
@@ -699,11 +733,14 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<UInt32> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  UInt32 [] retArr = new  UInt32 [inDim.NumberOfElements];
                     UInt32 [] retArr = ILMemoryPool.Pool.New< UInt32 > (inDim.NumberOfElements);
-                    UInt32 scalarValue = B.GetValue(0); 
+                    double scalarValue = B.GetValue(0); 
                     UInt32 tmpValue1;
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (A.IsReference) {
@@ -741,7 +778,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) { //HC04
                                                 
-                                                *tmpOut =   (*( tmpIn + *leadDimIdx++ )  * scalarValue);
+                                                *tmpOut =  saturateUInt32 (*( tmpIn + *leadDimIdx++ )  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -769,7 +806,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {   //HC05
                                                 
-                                                *tmpOut =   (*(tmpIn + *leadDimIdx++)  * scalarValue);
+                                                *tmpOut =  saturateUInt32 (*(tmpIn + *leadDimIdx++)  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -807,7 +844,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 UInt32 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) { //HC06
                                     
-                                    *tmpOut++ =   (*tmpIn++  * scalarValue);
+                                    *tmpOut++ =  saturateUInt32 (*tmpIn++  * (double) scalarValue);
                                 }
                             }
                         }
@@ -819,7 +856,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     UInt32 [] retSystemArr;
                     UInt32 tmpValue1; 
@@ -849,7 +886,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (!B.IsReference) {
                                     while (poutarr < outEnd) {  //HC07
                                         
-                                        *poutarr++ =   ( *(pInA1 + A.getBaseIndex(c++))  * (*pInA2++));
+                                        *poutarr++ =  saturateUInt32 ( *(pInA1 + A.getBaseIndex(c++))  * (double) (*pInA2++));
                                     }
                                 } else {
                                     // optimization for matrix 
@@ -862,7 +899,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             int        cLen = A.m_dimensions[1]; 
                                             while (poutarr < outEnd) {   //HC08
                                                
-                                                *poutarr++ =    ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) *  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
+                                                *poutarr++ =  saturateUInt32  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) * (double)  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
                                                 if (++r == rLen) {
                                                     r = 0; 
                                                     c++; 
@@ -872,7 +909,7 @@ namespace ILNumerics.BuiltInFunctions {
                                     } else {
                                          while (poutarr < outEnd) {  //HC09
                                              
-                                             *poutarr++ =   ( *(pInA1 + A.getBaseIndex(c)) *  (*(pInA2+B.getBaseIndex(c++))));
+                                             *poutarr++ =  saturateUInt32 ( *(pInA1 + A.getBaseIndex(c)) * (double)  (*(pInA2+B.getBaseIndex(c++))));
                                         }
                                    }
                                    // tmpValue1 = 0; tmpValue2 = 0; 
@@ -881,12 +918,12 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (B.IsReference) {
                                     while (poutarr < outEnd) {  //HC10
                                          
-                                        *poutarr++ =    ( *pInA1++  *  (*(pInA2 + B.getBaseIndex(c++))));
+                                        *poutarr++ =  saturateUInt32  ( *pInA1++  * (double)  (*(pInA2 + B.getBaseIndex(c++))));
                                     }
                                 } else {
                                     while (poutarr < outEnd) {  //HC11
                                          
-                                        *poutarr++ =   ( *pInA1++ /*HC:*/ *  (*pInA2++));
+                                        *poutarr++ =  saturateUInt32 ( *pInA1++ /*HC:*/ * (double)  (*pInA2++));
                                     }
                                 }
                             }
@@ -902,22 +939,29 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<UInt16>  multiplyElem ( ILArray<UInt16> A,  ILArray<UInt16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<UInt16> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<UInt16> (new  UInt16 [1]{ (UInt16) (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<UInt16> (new  UInt16 [1]{ saturateUInt16 (A.GetValue(0)  * (double) B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<UInt16> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  UInt16 [] retArr = new  UInt16 [inDim.NumberOfElements];
                     UInt16 [] retArr = ILMemoryPool.Pool.New< UInt16 > (inDim.NumberOfElements);
-                    UInt16 scalarValue = A.GetValue(0); 
+                    double scalarValue = A.GetValue(0); 
                     UInt16 tmpValue2; 
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (B.IsReference) {
@@ -955,7 +999,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =  (UInt16) (scalarValue  * (*( tmpIn + *leadDimIdx++ )));
+                                                *tmpOut =  saturateUInt16 (scalarValue  * (double) (*( tmpIn + *leadDimIdx++ )));
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -983,7 +1027,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =  (UInt16) (scalarValue  * (*(tmpIn + *leadDimIdx++)));
+                                                *tmpOut =  saturateUInt16 (scalarValue  * (double) (*(tmpIn + *leadDimIdx++)));
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -1021,7 +1065,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 UInt16 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) //HC03
                                     
-                                	*tmpOut++ =  (UInt16) (scalarValue  * (*tmpIn++));
+                                	*tmpOut++ =  saturateUInt16 (scalarValue  * (double) (*tmpIn++));
                             }       
                         }
                         #endregion
@@ -1031,11 +1075,14 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<UInt16> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  UInt16 [] retArr = new  UInt16 [inDim.NumberOfElements];
                     UInt16 [] retArr = ILMemoryPool.Pool.New< UInt16 > (inDim.NumberOfElements);
-                    UInt16 scalarValue = B.GetValue(0); 
+                    double scalarValue = B.GetValue(0); 
                     UInt16 tmpValue1;
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (A.IsReference) {
@@ -1073,7 +1120,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) { //HC04
                                                 
-                                                *tmpOut =  (UInt16) (*( tmpIn + *leadDimIdx++ )  * scalarValue);
+                                                *tmpOut =  saturateUInt16 (*( tmpIn + *leadDimIdx++ )  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -1101,7 +1148,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {   //HC05
                                                 
-                                                *tmpOut =  (UInt16) (*(tmpIn + *leadDimIdx++)  * scalarValue);
+                                                *tmpOut =  saturateUInt16 (*(tmpIn + *leadDimIdx++)  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -1139,7 +1186,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 UInt16 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) { //HC06
                                     
-                                    *tmpOut++ =  (UInt16) (*tmpIn++  * scalarValue);
+                                    *tmpOut++ =  saturateUInt16 (*tmpIn++  * (double) scalarValue);
                                 }
                             }
                         }
@@ -1151,7 +1198,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     UInt16 [] retSystemArr;
                     UInt16 tmpValue1; 
@@ -1181,7 +1228,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (!B.IsReference) {
                                     while (poutarr < outEnd) {  //HC07
                                         
-                                        *poutarr++ =  (UInt16) ( *(pInA1 + A.getBaseIndex(c++))  * (*pInA2++));
+                                        *poutarr++ =  saturateUInt16 ( *(pInA1 + A.getBaseIndex(c++))  * (double) (*pInA2++));
                                     }
                                 } else {
                                     // optimization for matrix 
@@ -1194,7 +1241,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             int        cLen = A.m_dimensions[1]; 
                                             while (poutarr < outEnd) {   //HC08
                                                
-                                                *poutarr++ =  (UInt16)  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) *  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
+                                                *poutarr++ =  saturateUInt16  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) * (double)  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
                                                 if (++r == rLen) {
                                                     r = 0; 
                                                     c++; 
@@ -1204,7 +1251,7 @@ namespace ILNumerics.BuiltInFunctions {
                                     } else {
                                          while (poutarr < outEnd) {  //HC09
                                              
-                                             *poutarr++ =  (UInt16) ( *(pInA1 + A.getBaseIndex(c)) *  (*(pInA2+B.getBaseIndex(c++))));
+                                             *poutarr++ =  saturateUInt16 ( *(pInA1 + A.getBaseIndex(c)) * (double)  (*(pInA2+B.getBaseIndex(c++))));
                                         }
                                    }
                                    // tmpValue1 = 0; tmpValue2 = 0; 
@@ -1213,12 +1260,12 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (B.IsReference) {
                                     while (poutarr < outEnd) {  //HC10
                                          
-                                        *poutarr++ =  (UInt16)  ( *pInA1++  *  (*(pInA2 + B.getBaseIndex(c++))));
+                                        *poutarr++ =  saturateUInt16  ( *pInA1++  * (double)  (*(pInA2 + B.getBaseIndex(c++))));
                                     }
                                 } else {
                                     while (poutarr < outEnd) {  //HC11
                                          
-                                        *poutarr++ =  (UInt16) ( *pInA1++ /*HC:*/ *  (*pInA2++));
+                                        *poutarr++ =  saturateUInt16 ( *pInA1++ /*HC:*/ * (double)  (*pInA2++));
                                     }
                                 }
                             }
@@ -1234,22 +1281,29 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<Int64>  multiplyElem ( ILArray<Int64> A,  ILArray<Int64> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<Int64> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<Int64> (new  Int64 [1]{  (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<Int64> (new  Int64 [1]{ saturateInt64 (A.GetValue(0)  * (double) B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<Int64> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  Int64 [] retArr = new  Int64 [inDim.NumberOfElements];
                     Int64 [] retArr = ILMemoryPool.Pool.New< Int64 > (inDim.NumberOfElements);
-                    Int64 scalarValue = A.GetValue(0); 
+                    double scalarValue = A.GetValue(0); 
                     Int64 tmpValue2; 
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (B.IsReference) {
@@ -1287,7 +1341,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =   (scalarValue  * (*( tmpIn + *leadDimIdx++ )));
+                                                *tmpOut =  saturateInt64 (scalarValue  * (double) (*( tmpIn + *leadDimIdx++ )));
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -1315,7 +1369,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =   (scalarValue  * (*(tmpIn + *leadDimIdx++)));
+                                                *tmpOut =  saturateInt64 (scalarValue  * (double) (*(tmpIn + *leadDimIdx++)));
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -1353,7 +1407,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 Int64 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) //HC03
                                     
-                                	*tmpOut++ =   (scalarValue  * (*tmpIn++));
+                                	*tmpOut++ =  saturateInt64 (scalarValue  * (double) (*tmpIn++));
                             }       
                         }
                         #endregion
@@ -1363,11 +1417,14 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<Int64> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  Int64 [] retArr = new  Int64 [inDim.NumberOfElements];
                     Int64 [] retArr = ILMemoryPool.Pool.New< Int64 > (inDim.NumberOfElements);
-                    Int64 scalarValue = B.GetValue(0); 
+                    double scalarValue = B.GetValue(0); 
                     Int64 tmpValue1;
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (A.IsReference) {
@@ -1405,7 +1462,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) { //HC04
                                                 
-                                                *tmpOut =   (*( tmpIn + *leadDimIdx++ )  * scalarValue);
+                                                *tmpOut =  saturateInt64 (*( tmpIn + *leadDimIdx++ )  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -1433,7 +1490,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {   //HC05
                                                 
-                                                *tmpOut =   (*(tmpIn + *leadDimIdx++)  * scalarValue);
+                                                *tmpOut =  saturateInt64 (*(tmpIn + *leadDimIdx++)  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -1471,7 +1528,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 Int64 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) { //HC06
                                     
-                                    *tmpOut++ =   (*tmpIn++  * scalarValue);
+                                    *tmpOut++ =  saturateInt64 (*tmpIn++  * (double) scalarValue);
                                 }
                             }
                         }
@@ -1483,7 +1540,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     Int64 [] retSystemArr;
                     Int64 tmpValue1; 
@@ -1513,7 +1570,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (!B.IsReference) {
                                     while (poutarr < outEnd) {  //HC07
                                         
-                                        *poutarr++ =   ( *(pInA1 + A.getBaseIndex(c++))  * (*pInA2++));
+                                        *poutarr++ =  saturateInt64 ( *(pInA1 + A.getBaseIndex(c++))  * (double) (*pInA2++));
                                     }
                                 } else {
                                     // optimization for matrix 
@@ -1526,7 +1583,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             int        cLen = A.m_dimensions[1]; 
                                             while (poutarr < outEnd) {   //HC08
                                                
-                                                *poutarr++ =    ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) *  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
+                                                *poutarr++ =  saturateInt64  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) * (double)  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
                                                 if (++r == rLen) {
                                                     r = 0; 
                                                     c++; 
@@ -1536,7 +1593,7 @@ namespace ILNumerics.BuiltInFunctions {
                                     } else {
                                          while (poutarr < outEnd) {  //HC09
                                              
-                                             *poutarr++ =   ( *(pInA1 + A.getBaseIndex(c)) *  (*(pInA2+B.getBaseIndex(c++))));
+                                             *poutarr++ =  saturateInt64 ( *(pInA1 + A.getBaseIndex(c)) * (double)  (*(pInA2+B.getBaseIndex(c++))));
                                         }
                                    }
                                    // tmpValue1 = 0; tmpValue2 = 0; 
@@ -1545,12 +1602,12 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (B.IsReference) {
                                     while (poutarr < outEnd) {  //HC10
                                          
-                                        *poutarr++ =    ( *pInA1++  *  (*(pInA2 + B.getBaseIndex(c++))));
+                                        *poutarr++ =  saturateInt64  ( *pInA1++  * (double)  (*(pInA2 + B.getBaseIndex(c++))));
                                     }
                                 } else {
                                     while (poutarr < outEnd) {  //HC11
                                          
-                                        *poutarr++ =   ( *pInA1++ /*HC:*/ *  (*pInA2++));
+                                        *poutarr++ =  saturateInt64 ( *pInA1++ /*HC:*/ * (double)  (*pInA2++));
                                     }
                                 }
                             }
@@ -1566,22 +1623,29 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<Int32>  multiplyElem ( ILArray<Int32> A,  ILArray<Int32> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<Int32> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<Int32> (new  Int32 [1]{  (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<Int32> (new  Int32 [1]{ saturateInt32 (A.GetValue(0)  * (double) B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<Int32> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  Int32 [] retArr = new  Int32 [inDim.NumberOfElements];
                     Int32 [] retArr = ILMemoryPool.Pool.New< Int32 > (inDim.NumberOfElements);
-                    Int32 scalarValue = A.GetValue(0); 
+                    double scalarValue = A.GetValue(0); 
                     Int32 tmpValue2; 
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (B.IsReference) {
@@ -1619,7 +1683,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =   (scalarValue  * (*( tmpIn + *leadDimIdx++ )));
+                                                *tmpOut =  saturateInt32 (scalarValue  * (double) (*( tmpIn + *leadDimIdx++ )));
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -1647,7 +1711,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =   (scalarValue  * (*(tmpIn + *leadDimIdx++)));
+                                                *tmpOut =  saturateInt32 (scalarValue  * (double) (*(tmpIn + *leadDimIdx++)));
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -1685,7 +1749,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 Int32 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) //HC03
                                     
-                                	*tmpOut++ =   (scalarValue  * (*tmpIn++));
+                                	*tmpOut++ =  saturateInt32 (scalarValue  * (double) (*tmpIn++));
                             }       
                         }
                         #endregion
@@ -1695,11 +1759,14 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<Int32> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  Int32 [] retArr = new  Int32 [inDim.NumberOfElements];
                     Int32 [] retArr = ILMemoryPool.Pool.New< Int32 > (inDim.NumberOfElements);
-                    Int32 scalarValue = B.GetValue(0); 
+                    double scalarValue = B.GetValue(0); 
                     Int32 tmpValue1;
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (A.IsReference) {
@@ -1737,7 +1804,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) { //HC04
                                                 
-                                                *tmpOut =   (*( tmpIn + *leadDimIdx++ )  * scalarValue);
+                                                *tmpOut =  saturateInt32 (*( tmpIn + *leadDimIdx++ )  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -1765,7 +1832,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {   //HC05
                                                 
-                                                *tmpOut =   (*(tmpIn + *leadDimIdx++)  * scalarValue);
+                                                *tmpOut =  saturateInt32 (*(tmpIn + *leadDimIdx++)  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -1803,7 +1870,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 Int32 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) { //HC06
                                     
-                                    *tmpOut++ =   (*tmpIn++  * scalarValue);
+                                    *tmpOut++ =  saturateInt32 (*tmpIn++  * (double) scalarValue);
                                 }
                             }
                         }
@@ -1815,7 +1882,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     Int32 [] retSystemArr;
                     Int32 tmpValue1; 
@@ -1845,7 +1912,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (!B.IsReference) {
                                     while (poutarr < outEnd) {  //HC07
                                         
-                                        *poutarr++ =   ( *(pInA1 + A.getBaseIndex(c++))  * (*pInA2++));
+                                        *poutarr++ =  saturateInt32 ( *(pInA1 + A.getBaseIndex(c++))  * (double) (*pInA2++));
                                     }
                                 } else {
                                     // optimization for matrix 
@@ -1858,7 +1925,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             int        cLen = A.m_dimensions[1]; 
                                             while (poutarr < outEnd) {   //HC08
                                                
-                                                *poutarr++ =    ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) *  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
+                                                *poutarr++ =  saturateInt32  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) * (double)  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
                                                 if (++r == rLen) {
                                                     r = 0; 
                                                     c++; 
@@ -1868,7 +1935,7 @@ namespace ILNumerics.BuiltInFunctions {
                                     } else {
                                          while (poutarr < outEnd) {  //HC09
                                              
-                                             *poutarr++ =   ( *(pInA1 + A.getBaseIndex(c)) *  (*(pInA2+B.getBaseIndex(c++))));
+                                             *poutarr++ =  saturateInt32 ( *(pInA1 + A.getBaseIndex(c)) * (double)  (*(pInA2+B.getBaseIndex(c++))));
                                         }
                                    }
                                    // tmpValue1 = 0; tmpValue2 = 0; 
@@ -1877,12 +1944,12 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (B.IsReference) {
                                     while (poutarr < outEnd) {  //HC10
                                          
-                                        *poutarr++ =    ( *pInA1++  *  (*(pInA2 + B.getBaseIndex(c++))));
+                                        *poutarr++ =  saturateInt32  ( *pInA1++  * (double)  (*(pInA2 + B.getBaseIndex(c++))));
                                     }
                                 } else {
                                     while (poutarr < outEnd) {  //HC11
                                          
-                                        *poutarr++ =   ( *pInA1++ /*HC:*/ *  (*pInA2++));
+                                        *poutarr++ =  saturateInt32 ( *pInA1++ /*HC:*/ * (double)  (*pInA2++));
                                     }
                                 }
                             }
@@ -1898,22 +1965,29 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<Int16>  multiplyElem ( ILArray<Int16> A,  ILArray<Int16> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<Int16> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<Int16> (new  Int16 [1]{ (Int16) (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<Int16> (new  Int16 [1]{ saturateInt16 (A.GetValue(0)  * (double) B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<Int16> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  Int16 [] retArr = new  Int16 [inDim.NumberOfElements];
                     Int16 [] retArr = ILMemoryPool.Pool.New< Int16 > (inDim.NumberOfElements);
-                    Int16 scalarValue = A.GetValue(0); 
+                    double scalarValue = A.GetValue(0); 
                     Int16 tmpValue2; 
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (B.IsReference) {
@@ -1951,7 +2025,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =  (Int16) (scalarValue  * (*( tmpIn + *leadDimIdx++ )));
+                                                *tmpOut =  saturateInt16 (scalarValue  * (double) (*( tmpIn + *leadDimIdx++ )));
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -1979,7 +2053,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =  (Int16) (scalarValue  * (*(tmpIn + *leadDimIdx++)));
+                                                *tmpOut =  saturateInt16 (scalarValue  * (double) (*(tmpIn + *leadDimIdx++)));
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -2017,7 +2091,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 Int16 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) //HC03
                                     
-                                	*tmpOut++ =  (Int16) (scalarValue  * (*tmpIn++));
+                                	*tmpOut++ =  saturateInt16 (scalarValue  * (double) (*tmpIn++));
                             }       
                         }
                         #endregion
@@ -2027,11 +2101,14 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<Int16> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  Int16 [] retArr = new  Int16 [inDim.NumberOfElements];
                     Int16 [] retArr = ILMemoryPool.Pool.New< Int16 > (inDim.NumberOfElements);
-                    Int16 scalarValue = B.GetValue(0); 
+                    double scalarValue = B.GetValue(0); 
                     Int16 tmpValue1;
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (A.IsReference) {
@@ -2069,7 +2146,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) { //HC04
                                                 
-                                                *tmpOut =  (Int16) (*( tmpIn + *leadDimIdx++ )  * scalarValue);
+                                                *tmpOut =  saturateInt16 (*( tmpIn + *leadDimIdx++ )  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -2097,7 +2174,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {   //HC05
                                                 
-                                                *tmpOut =  (Int16) (*(tmpIn + *leadDimIdx++)  * scalarValue);
+                                                *tmpOut =  saturateInt16 (*(tmpIn + *leadDimIdx++)  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -2135,7 +2212,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 Int16 * tmpIn = pInArr;
                                 while (tmpOut < lastElement) { //HC06
                                     
-                                    *tmpOut++ =  (Int16) (*tmpIn++  * scalarValue);
+                                    *tmpOut++ =  saturateInt16 (*tmpIn++  * (double) scalarValue);
                                 }
                             }
                         }
@@ -2147,7 +2224,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     Int16 [] retSystemArr;
                     Int16 tmpValue1; 
@@ -2177,7 +2254,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (!B.IsReference) {
                                     while (poutarr < outEnd) {  //HC07
                                         
-                                        *poutarr++ =  (Int16) ( *(pInA1 + A.getBaseIndex(c++))  * (*pInA2++));
+                                        *poutarr++ =  saturateInt16 ( *(pInA1 + A.getBaseIndex(c++))  * (double) (*pInA2++));
                                     }
                                 } else {
                                     // optimization for matrix 
@@ -2190,7 +2267,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             int        cLen = A.m_dimensions[1]; 
                                             while (poutarr < outEnd) {   //HC08
                                                
-                                                *poutarr++ =  (Int16)  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) *  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
+                                                *poutarr++ =  saturateInt16  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) * (double)  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
                                                 if (++r == rLen) {
                                                     r = 0; 
                                                     c++; 
@@ -2200,7 +2277,7 @@ namespace ILNumerics.BuiltInFunctions {
                                     } else {
                                          while (poutarr < outEnd) {  //HC09
                                              
-                                             *poutarr++ =  (Int16) ( *(pInA1 + A.getBaseIndex(c)) *  (*(pInA2+B.getBaseIndex(c++))));
+                                             *poutarr++ =  saturateInt16 ( *(pInA1 + A.getBaseIndex(c)) * (double)  (*(pInA2+B.getBaseIndex(c++))));
                                         }
                                    }
                                    // tmpValue1 = 0; tmpValue2 = 0; 
@@ -2209,12 +2286,12 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (B.IsReference) {
                                     while (poutarr < outEnd) {  //HC10
                                          
-                                        *poutarr++ =  (Int16)  ( *pInA1++  *  (*(pInA2 + B.getBaseIndex(c++))));
+                                        *poutarr++ =  saturateInt16  ( *pInA1++  * (double)  (*(pInA2 + B.getBaseIndex(c++))));
                                     }
                                 } else {
                                     while (poutarr < outEnd) {  //HC11
                                          
-                                        *poutarr++ =  (Int16) ( *pInA1++ /*HC:*/ *  (*pInA2++));
+                                        *poutarr++ =  saturateInt16 ( *pInA1++ /*HC:*/ * (double)  (*pInA2++));
                                     }
                                 }
                             }
@@ -2230,17 +2307,24 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<float>  multiplyElem ( ILArray<float> A,  ILArray<float> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<float> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<float> (new  float [1]{  (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<float> (new  float [1]{  (A.GetValue(0)  * B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<float> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  float [] retArr = new  float [inDim.NumberOfElements];
@@ -2359,6 +2443,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<float> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  float [] retArr = new  float [inDim.NumberOfElements];
@@ -2479,7 +2566,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     float [] retSystemArr;
                     float tmpValue1; 
@@ -2562,17 +2649,24 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<fcomplex>  multiplyElem ( ILArray<fcomplex> A,  ILArray<fcomplex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<fcomplex> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<fcomplex> (new  fcomplex [1]{  (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<fcomplex> (new  fcomplex [1]{  (A.GetValue(0)  * B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<fcomplex> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  fcomplex [] retArr = new  fcomplex [inDim.NumberOfElements];
@@ -2691,6 +2785,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<fcomplex> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  fcomplex [] retArr = new  fcomplex [inDim.NumberOfElements];
@@ -2811,7 +2908,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     fcomplex [] retSystemArr;
                     fcomplex tmpValue1; 
@@ -2894,17 +2991,24 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<complex>  multiplyElem ( ILArray<complex> A,  ILArray<complex> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<complex> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<complex> (new  complex [1]{  (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<complex> (new  complex [1]{  (A.GetValue(0)  * B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<complex> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  complex [] retArr = new  complex [inDim.NumberOfElements];
@@ -3023,6 +3127,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<complex> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  complex [] retArr = new  complex [inDim.NumberOfElements];
@@ -3143,7 +3250,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     complex [] retSystemArr;
                     complex tmpValue1; 
@@ -3226,22 +3333,29 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<char>  multiplyElem ( ILArray<char> A,  ILArray<char> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<char> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<char> (new  char [1]{ (char) (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<char> (new  char [1]{ saturateChar (A.GetValue(0)  * (double) B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<char> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  char [] retArr = new  char [inDim.NumberOfElements];
                     char [] retArr = ILMemoryPool.Pool.New< char > (inDim.NumberOfElements);
-                    char scalarValue = A.GetValue(0); 
+                    double scalarValue = A.GetValue(0); 
                     char tmpValue2; 
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (B.IsReference) {
@@ -3279,7 +3393,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =  (char) (scalarValue  * (*( tmpIn + *leadDimIdx++ )));
+                                                *tmpOut =  saturateChar (scalarValue  * (double) (*( tmpIn + *leadDimIdx++ )));
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -3307,7 +3421,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =  (char) (scalarValue  * (*(tmpIn + *leadDimIdx++)));
+                                                *tmpOut =  saturateChar (scalarValue  * (double) (*(tmpIn + *leadDimIdx++)));
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -3345,7 +3459,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 char * tmpIn = pInArr;
                                 while (tmpOut < lastElement) //HC03
                                     
-                                	*tmpOut++ =  (char) (scalarValue  * (*tmpIn++));
+                                	*tmpOut++ =  saturateChar (scalarValue  * (double) (*tmpIn++));
                             }       
                         }
                         #endregion
@@ -3355,11 +3469,14 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<char> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  char [] retArr = new  char [inDim.NumberOfElements];
                     char [] retArr = ILMemoryPool.Pool.New< char > (inDim.NumberOfElements);
-                    char scalarValue = B.GetValue(0); 
+                    double scalarValue = B.GetValue(0); 
                     char tmpValue1;
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (A.IsReference) {
@@ -3397,7 +3514,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) { //HC04
                                                 
-                                                *tmpOut =  (char) (*( tmpIn + *leadDimIdx++ )  * scalarValue);
+                                                *tmpOut =  saturateChar (*( tmpIn + *leadDimIdx++ )  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -3425,7 +3542,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {   //HC05
                                                 
-                                                *tmpOut =  (char) (*(tmpIn + *leadDimIdx++)  * scalarValue);
+                                                *tmpOut =  saturateChar (*(tmpIn + *leadDimIdx++)  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -3463,7 +3580,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 char * tmpIn = pInArr;
                                 while (tmpOut < lastElement) { //HC06
                                     
-                                    *tmpOut++ =  (char) (*tmpIn++  * scalarValue);
+                                    *tmpOut++ =  saturateChar (*tmpIn++  * (double) scalarValue);
                                 }
                             }
                         }
@@ -3475,7 +3592,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     char [] retSystemArr;
                     char tmpValue1; 
@@ -3505,7 +3622,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (!B.IsReference) {
                                     while (poutarr < outEnd) {  //HC07
                                         
-                                        *poutarr++ =  (char) ( *(pInA1 + A.getBaseIndex(c++))  * (*pInA2++));
+                                        *poutarr++ =  saturateChar ( *(pInA1 + A.getBaseIndex(c++))  * (double) (*pInA2++));
                                     }
                                 } else {
                                     // optimization for matrix 
@@ -3518,7 +3635,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             int        cLen = A.m_dimensions[1]; 
                                             while (poutarr < outEnd) {   //HC08
                                                
-                                                *poutarr++ =  (char)  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) *  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
+                                                *poutarr++ =  saturateChar  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) * (double)  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
                                                 if (++r == rLen) {
                                                     r = 0; 
                                                     c++; 
@@ -3528,7 +3645,7 @@ namespace ILNumerics.BuiltInFunctions {
                                     } else {
                                          while (poutarr < outEnd) {  //HC09
                                              
-                                             *poutarr++ =  (char) ( *(pInA1 + A.getBaseIndex(c)) *  (*(pInA2+B.getBaseIndex(c++))));
+                                             *poutarr++ =  saturateChar ( *(pInA1 + A.getBaseIndex(c)) * (double)  (*(pInA2+B.getBaseIndex(c++))));
                                         }
                                    }
                                    // tmpValue1 = 0; tmpValue2 = 0; 
@@ -3537,12 +3654,12 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (B.IsReference) {
                                     while (poutarr < outEnd) {  //HC10
                                          
-                                        *poutarr++ =  (char)  ( *pInA1++  *  (*(pInA2 + B.getBaseIndex(c++))));
+                                        *poutarr++ =  saturateChar  ( *pInA1++  * (double)  (*(pInA2 + B.getBaseIndex(c++))));
                                     }
                                 } else {
                                     while (poutarr < outEnd) {  //HC11
                                          
-                                        *poutarr++ =  (char) ( *pInA1++ /*HC:*/ *  (*pInA2++));
+                                        *poutarr++ =  saturateChar ( *pInA1++ /*HC:*/ * (double)  (*pInA2++));
                                     }
                                 }
                             }
@@ -3558,22 +3675,29 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<byte>  multiplyElem ( ILArray<byte> A,  ILArray<byte> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<byte> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<byte> (new  byte [1]{ (byte) (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<byte> (new  byte [1]{ saturateByte (A.GetValue(0)  * (double) B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<byte> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
                     byte [] retArr = ILMemoryPool.Pool.New< byte > (inDim.NumberOfElements);
-                    byte scalarValue = A.GetValue(0); 
+                    double scalarValue = A.GetValue(0); 
                     byte tmpValue2; 
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (B.IsReference) {
@@ -3611,7 +3735,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =  (byte) (scalarValue  * (*( tmpIn + *leadDimIdx++ )));
+                                                *tmpOut =  saturateByte (scalarValue  * (double) (*( tmpIn + *leadDimIdx++ )));
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -3639,7 +3763,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {
                                                
-                                                *tmpOut =  (byte) (scalarValue  * (*(tmpIn + *leadDimIdx++)));
+                                                *tmpOut =  saturateByte (scalarValue  * (double) (*(tmpIn + *leadDimIdx++)));
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -3677,7 +3801,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 byte * tmpIn = pInArr;
                                 while (tmpOut < lastElement) //HC03
                                     
-                                	*tmpOut++ =  (byte) (scalarValue  * (*tmpIn++));
+                                	*tmpOut++ =  saturateByte (scalarValue  * (double) (*tmpIn++));
                             }       
                         }
                         #endregion
@@ -3687,11 +3811,14 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<byte> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  byte [] retArr = new  byte [inDim.NumberOfElements];
                     byte [] retArr = ILMemoryPool.Pool.New< byte > (inDim.NumberOfElements);
-                    byte scalarValue = B.GetValue(0); 
+                    double scalarValue = B.GetValue(0); 
                     byte tmpValue1;
                     int leadDim = 0,leadDimLen = inDim [0];
                     if (A.IsReference) {
@@ -3729,7 +3856,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) { //HC04
                                                 
-                                                *tmpOut =  (byte) (*( tmpIn + *leadDimIdx++ )  * scalarValue);
+                                                *tmpOut =  saturateByte (*( tmpIn + *leadDimIdx++ )  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                         }
@@ -3757,7 +3884,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             leadDimIdx = leadDimStart;
                                             while (leadDimIdx < leadDimEnd) {   //HC05
                                                 
-                                                *tmpOut =  (byte) (*(tmpIn + *leadDimIdx++)  * scalarValue);
+                                                *tmpOut =  saturateByte (*(tmpIn + *leadDimIdx++)  * (double) scalarValue);
                                                 tmpOut += incOut;
                                             }
                                             if (tmpOut > tmpOutEnd)
@@ -3795,7 +3922,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 byte * tmpIn = pInArr;
                                 while (tmpOut < lastElement) { //HC06
                                     
-                                    *tmpOut++ =  (byte) (*tmpIn++  * scalarValue);
+                                    *tmpOut++ =  saturateByte (*tmpIn++  * (double) scalarValue);
                                 }
                             }
                         }
@@ -3807,7 +3934,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     byte [] retSystemArr;
                     byte tmpValue1; 
@@ -3837,7 +3964,7 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (!B.IsReference) {
                                     while (poutarr < outEnd) {  //HC07
                                         
-                                        *poutarr++ =  (byte) ( *(pInA1 + A.getBaseIndex(c++))  * (*pInA2++));
+                                        *poutarr++ =  saturateByte ( *(pInA1 + A.getBaseIndex(c++))  * (double) (*pInA2++));
                                     }
                                 } else {
                                     // optimization for matrix 
@@ -3850,7 +3977,7 @@ namespace ILNumerics.BuiltInFunctions {
                                             int        cLen = A.m_dimensions[1]; 
                                             while (poutarr < outEnd) {   //HC08
                                                
-                                                *poutarr++ =  (byte)  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) *  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
+                                                *poutarr++ =  saturateByte  ( *(pInA1 + (*(pA1idx0 + r)) + (*(pA1idx1 + c))) * (double)  (*(pInA2+ (*(pA2idx0 + r)) + (*(pA2idx1 + c)))));
                                                 if (++r == rLen) {
                                                     r = 0; 
                                                     c++; 
@@ -3860,7 +3987,7 @@ namespace ILNumerics.BuiltInFunctions {
                                     } else {
                                          while (poutarr < outEnd) {  //HC09
                                              
-                                             *poutarr++ =  (byte) ( *(pInA1 + A.getBaseIndex(c)) *  (*(pInA2+B.getBaseIndex(c++))));
+                                             *poutarr++ =  saturateByte ( *(pInA1 + A.getBaseIndex(c)) * (double)  (*(pInA2+B.getBaseIndex(c++))));
                                         }
                                    }
                                    // tmpValue1 = 0; tmpValue2 = 0; 
@@ -3869,12 +3996,12 @@ namespace ILNumerics.BuiltInFunctions {
                                 if (B.IsReference) {
                                     while (poutarr < outEnd) {  //HC10
                                          
-                                        *poutarr++ =  (byte)  ( *pInA1++  *  (*(pInA2 + B.getBaseIndex(c++))));
+                                        *poutarr++ =  saturateByte  ( *pInA1++  * (double)  (*(pInA2 + B.getBaseIndex(c++))));
                                     }
                                 } else {
                                     while (poutarr < outEnd) {  //HC11
                                          
-                                        *poutarr++ =  (byte) ( *pInA1++ /*HC:*/ *  (*pInA2++));
+                                        *poutarr++ =  saturateByte ( *pInA1++ /*HC:*/ * (double)  (*pInA2++));
                                     }
                                 }
                             }
@@ -3890,17 +4017,24 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="B">input 2</param>
         /// <returns>Array with elementwise multiplication of A and B</returns>
         /// <remarks><para>On empty input - empty array will be returned.</para>
-        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the other arrays in this case.</para>
-        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.</para></remarks>
+        /// <para>A and / or B may be scalar. The scalar value will operate on all elements of the 
+        /// other array in this case.</para>
+        /// <para>If neither of A or B is scalar or empty, the dimensions of both arrays must match.
+        /// </para></remarks>
         public static  ILArray<double>  multiplyElem ( ILArray<double> A,  ILArray<double> B) {
-            if (A.IsEmpty || B.IsEmpty ) {
+            if (A.IsEmpty && B.IsEmpty ) {
+                if (!A.Dimensions.IsSameShape(B.Dimensions))
+                    throw new ILDimensionMismatchException(); 
                 return  ILArray<double> .empty(A.Dimensions); 
             }
             if (A.IsScalar) {
                 if (B.IsScalar) {
                    
-                    return new  ILArray<double> (new  double [1]{  (A.GetValue(0)  * B.GetValue(0))});
+                    return new  ILArray<double> (new  double [1]{  (A.GetValue(0)  * B.GetValue(0))}, A.Dimensions);
                 } else {
+                    if (B.IsEmpty) {
+                        return  ILArray<double> .empty(B.Dimensions); 
+                    }
                     #region scalar + array  
                     ILDimension inDim = B.Dimensions;
                     //  double [] retArr = new  double [inDim.NumberOfElements];
@@ -4019,6 +4153,9 @@ namespace ILNumerics.BuiltInFunctions {
                 }
             } else {
                 if (B.IsScalar) {
+                    if (A.IsEmpty) {
+                        return  ILArray<double> .empty(A.Dimensions);  
+                    }
                     #region array + scalar
                     ILDimension inDim = A.Dimensions;
                     //  double [] retArr = new  double [inDim.NumberOfElements];
@@ -4139,7 +4276,7 @@ namespace ILNumerics.BuiltInFunctions {
                 } else {
                     #region array + array
                     ILDimension inDim = A.Dimensions;
-                    if (!inDim.IsSameSize ( B.Dimensions ))
+                    if (!inDim.IsSameShape ( B.Dimensions ))
                         throw new ILDimensionMismatchException ();
                     double [] retSystemArr;
                     double tmpValue1; 

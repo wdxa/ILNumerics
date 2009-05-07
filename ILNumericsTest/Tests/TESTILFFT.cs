@@ -70,8 +70,8 @@ namespace ILNumerics.Test {
                 TEST_ILMath_fft_ADim.TEST_ALL();
                 TEST_ILMath_fft2_A.TEST_ALL();
                 TEST_ILMath_fft2_Amn.TEST_ALL();
-                TEST_ILMath_fftN_Amn.TEST_ALL(); 
-
+                TEST_ILMath_fftN_Amn.TEST_ALL();
+                Success(); 
             } catch (Exception e) {
                 Error("FFT Test failed: " + e.Message); 
             }   

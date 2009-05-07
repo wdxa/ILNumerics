@@ -1,0 +1,19 @@
+Changes in version 0.10.02
+===========================
+* scene graph implementation
+* ILCamera: new property: Position (X,Y,Z)
+
+Changes in version 0.10.02
+===========================
+* detaching events on disposals
+* ILRendererAtrribute: added CoordSystem 
+* ILRenderers are reused everywhere
+
+Changes in version: 0.10.01 
+===========================
+* ILAxisLabel -> ILLabel (in NS also)
+* AxisLabelAlign -> LabelAlign
+* legends implemented 
+
+Note: older changelog entries are found 
+in the file 'changelog_Core.txt'.

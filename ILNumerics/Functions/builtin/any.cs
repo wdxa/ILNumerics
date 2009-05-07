@@ -380,9 +380,9 @@ namespace ILNumerics.BuiltInFunctions  {
     <source locate="nextline">
         HCscalarOp
     </source>
-    <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0).iszero())?(byte)0:(byte)1},1,1);]]></destination>
-    <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0.0f)?(byte)0:(byte)1},1,1);]]></destination>
-    <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0).iszero())?(byte)1:(byte)0},1,1);]]></destination>
+    <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0).iszero() || complex.IsNaN(A.GetValue(0)))?(byte)0:(byte)1},1,1);]]></destination>
+    <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0.0f || float.IsNaN(A.GetValue(0)))?(byte)0:(byte)1},1,1);]]></destination>
+    <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0).iszero() || fcomplex.IsNaN(A.GetValue(0)))?(byte)1:(byte)0},1,1);]]></destination>
     <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);]]></destination>
     <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);]]></destination>
     <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);]]></destination>
@@ -391,7 +391,7 @@ namespace ILNumerics.BuiltInFunctions  {
     <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);]]></destination>
     <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);]]></destination>
     <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);]]></destination>
-    <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0.0)?(byte)0:(byte)1},1,1);]]></destination>
+    <destination><![CDATA[return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0.0 || double.IsNaN(A.GetValue(0)))?(byte)0:(byte)1},1,1);]]></destination>
 </type>
 <type>
     <source locate="nextline">
@@ -461,6 +461,23 @@ namespace ILNumerics.BuiltInFunctions  {
     <destination></destination>
     <destination></destination>
 </type>
+<type>
+    <source>
+        testNaN
+    </source>
+    <destination><![CDATA[if (complex.IsNaN(inVal)) continue; ]]></destination>  
+    <destination><![CDATA[if (float.IsNaN(inVal)) continue; ]]></destination>  
+    <destination><![CDATA[if (fcomplex.IsNaN(inVal)) continue; ]]></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination><![CDATA[if (double.IsNaN(inVal)) continue; ]]></destination>
+</type>
 </hycalper>
 */
 
@@ -472,12 +489,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<double> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0.0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0.0 || double.IsNaN(A.GetValue(0)))?(byte)0:(byte)1},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -517,8 +535,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0.0)?0:1;
+									while (leadDimIdx <= leadDimEnd) {
+                                        double inVal = *(tmpIn + *leadDimIdx++); 
+                                        if (double.IsNaN(inVal)) continue; 
+										 tmpCount +=  ( (inVal)   == 0.0)?0:1;
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -547,9 +568,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0.0)?0:1;
+									while (leadDimIdx < leadDimEnd){
+                                        double inVal = *(tmpIn + *leadDimIdx++); 
+                                        if (double.IsNaN(inVal)) continue; 
+										 tmpCount +=  ( (inVal)   == 0.0)?0:1;
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -587,7 +611,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)   == 0.0)?0:1;
+                                    double inVal = *(tmpIn++); 
+                                    if (double.IsNaN(inVal)) continue; 
+                                    tmpCount +=  ( (inVal)   == 0.0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -613,8 +639,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)   == 0.0)?0:1;
+                                    double inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    if (double.IsNaN(inVal)) continue; 
+                                    tmpCount +=  ( (inVal)   == 0.0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
@@ -635,12 +663,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<UInt64> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -680,8 +709,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx <= leadDimEnd) {
+                                        UInt64 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -710,9 +742,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx < leadDimEnd){
+                                        UInt64 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -750,7 +785,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)   == 0)?0:1;
+                                    UInt64 inVal = *(tmpIn++); 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -776,8 +813,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)   == 0)?0:1;
+                                    UInt64 inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
@@ -798,12 +837,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<UInt32> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -843,8 +883,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx <= leadDimEnd) {
+                                        UInt32 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -873,9 +916,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx < leadDimEnd){
+                                        UInt32 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -913,7 +959,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)   == 0)?0:1;
+                                    UInt32 inVal = *(tmpIn++); 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -939,8 +987,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)   == 0)?0:1;
+                                    UInt32 inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
@@ -961,12 +1011,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<UInt16> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -1006,8 +1057,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx <= leadDimEnd) {
+                                        UInt16 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -1036,9 +1090,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx < leadDimEnd){
+                                        UInt16 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -1076,7 +1133,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)   == 0)?0:1;
+                                    UInt16 inVal = *(tmpIn++); 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -1102,8 +1161,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)   == 0)?0:1;
+                                    UInt16 inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
@@ -1124,12 +1185,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<Int64> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -1169,8 +1231,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx <= leadDimEnd) {
+                                        Int64 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -1199,9 +1264,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx < leadDimEnd){
+                                        Int64 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -1239,7 +1307,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)   == 0)?0:1;
+                                    Int64 inVal = *(tmpIn++); 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -1265,8 +1335,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)   == 0)?0:1;
+                                    Int64 inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
@@ -1287,12 +1359,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<Int32> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -1332,8 +1405,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx <= leadDimEnd) {
+                                        Int32 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -1362,9 +1438,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx < leadDimEnd){
+                                        Int32 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -1402,7 +1481,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)   == 0)?0:1;
+                                    Int32 inVal = *(tmpIn++); 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -1428,8 +1509,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)   == 0)?0:1;
+                                    Int32 inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
@@ -1450,12 +1533,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<Int16> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -1495,8 +1579,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx <= leadDimEnd) {
+                                        Int16 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -1525,9 +1612,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx < leadDimEnd){
+                                        Int16 inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -1565,7 +1655,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)   == 0)?0:1;
+                                    Int16 inVal = *(tmpIn++); 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -1591,8 +1683,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)   == 0)?0:1;
+                                    Int16 inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
@@ -1613,12 +1707,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<char> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -1658,8 +1753,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx <= leadDimEnd) {
+                                        char inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -1688,9 +1786,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx < leadDimEnd){
+                                        char inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -1728,7 +1829,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)   == 0)?0:1;
+                                    char inVal = *(tmpIn++); 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -1754,8 +1857,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)   == 0)?0:1;
+                                    char inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
@@ -1776,12 +1881,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<byte> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0)?(byte)0:(byte)1},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -1821,8 +1927,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx <= leadDimEnd) {
+                                        byte inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -1851,9 +1960,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0)?0:1;
+									while (leadDimIdx < leadDimEnd){
+                                        byte inVal = *(tmpIn + *leadDimIdx++); 
+                                        
+										 tmpCount +=  ( (inVal)   == 0)?0:1;
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -1891,7 +2003,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)   == 0)?0:1;
+                                    byte inVal = *(tmpIn++); 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -1917,8 +2031,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)   == 0)?0:1;
+                                    byte inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    
+                                    tmpCount +=  ( (inVal)   == 0)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
@@ -1939,12 +2055,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<fcomplex> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0).iszero())?(byte)1:(byte)0},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0).iszero() || fcomplex.IsNaN(A.GetValue(0)))?(byte)1:(byte)0},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -1984,8 +2101,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))  .iszero())?0:1; 
+									while (leadDimIdx <= leadDimEnd) {
+                                        fcomplex inVal = *(tmpIn + *leadDimIdx++); 
+                                        if (fcomplex.IsNaN(inVal)) continue; 
+										 tmpCount +=  ( (inVal)  .iszero())?0:1; 
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -2014,9 +2134,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))  .iszero())?0:1; 
+									while (leadDimIdx < leadDimEnd){
+                                        fcomplex inVal = *(tmpIn + *leadDimIdx++); 
+                                        if (fcomplex.IsNaN(inVal)) continue; 
+										 tmpCount +=  ( (inVal)  .iszero())?0:1; 
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -2054,7 +2177,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)  .iszero())?0:1; 
+                                    fcomplex inVal = *(tmpIn++); 
+                                    if (fcomplex.IsNaN(inVal)) continue; 
+                                    tmpCount +=  ( (inVal)  .iszero())?0:1; 
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -2080,8 +2205,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)  .iszero())?0:1; 
+                                    fcomplex inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    if (fcomplex.IsNaN(inVal)) continue; 
+                                    tmpCount +=  ( (inVal)  .iszero())?0:1; 
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
@@ -2102,12 +2229,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<float> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0.0f)?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0) == 0.0f || float.IsNaN(A.GetValue(0)))?(byte)0:(byte)1},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -2147,8 +2275,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0.0f)?0:1;
+									while (leadDimIdx <= leadDimEnd) {
+                                        float inVal = *(tmpIn + *leadDimIdx++); 
+                                        if (float.IsNaN(inVal)) continue; 
+										 tmpCount +=  ( (inVal)   == 0.0f)?0:1;
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -2177,9 +2308,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))   == 0.0f)?0:1;
+									while (leadDimIdx < leadDimEnd){
+                                        float inVal = *(tmpIn + *leadDimIdx++); 
+                                        if (float.IsNaN(inVal)) continue; 
+										 tmpCount +=  ( (inVal)   == 0.0f)?0:1;
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -2217,7 +2351,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)   == 0.0f)?0:1;
+                                    float inVal = *(tmpIn++); 
+                                    if (float.IsNaN(inVal)) continue; 
+                                    tmpCount +=  ( (inVal)   == 0.0f)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -2243,8 +2379,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)   == 0.0f)?0:1;
+                                    float inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    if (float.IsNaN(inVal)) continue; 
+                                    tmpCount +=  ( (inVal)   == 0.0f)?0:1;
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
@@ -2265,12 +2403,13 @@ namespace ILNumerics.BuiltInFunctions  {
 		/// <param name="leadDim">index of dimension to operate along</param>
 		/// <returns><para>array of same size as A, having the 'leadDim's dimension reduced to 1, if any elements along that dimension are non-zero, '0' else. </para></returns>
         public static  ILLogicalArray  any ( ILArray<complex> A, int leadDim) {
-            if (A.IsEmpty) 
-                return  ILLogicalArray .empty(A.Dimensions); 
-            if (A.IsScalar)
-                return new ILLogicalArray (new byte [1]{(A.GetValue(0).iszero())?(byte)0:(byte)1},1,1);
             if (leadDim >= A.Dimensions.NumberOfDimensions)
                 throw new ILArgumentException("dimension parameter out of range!");
+            if (A.IsEmpty)       
+                return  ILLogicalArray .empty(A.Dimensions); 
+            if (A.IsScalar) {
+                return new ILLogicalArray (new byte [1]{(A.GetValue(0).iszero() || complex.IsNaN(A.GetValue(0)))?(byte)0:(byte)1},1,1);
+            }
             ILDimension inDim = A.Dimensions; 
 			int[] newDims = inDim.ToIntArray();
             int tmpCount = 0; 
@@ -2310,8 +2449,11 @@ namespace ILNumerics.BuiltInFunctions  {
 									tmpIn = pInArr + *secDimIdx++; 
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx <= leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))  .iszero())?0:1; 
+									while (leadDimIdx <= leadDimEnd) {
+                                        complex inVal = *(tmpIn + *leadDimIdx++); 
+                                        if (complex.IsNaN(inVal)) continue; 
+										 tmpCount +=  ( (inVal)  .iszero())?0:1; 
+									}
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                     tmpOut++;
 								}
@@ -2340,9 +2482,12 @@ namespace ILNumerics.BuiltInFunctions  {
 								while (posCounter-->0) {
 									leadDimIdx = leadDimStart;
                                     
-									while (leadDimIdx < leadDimEnd)
-										 tmpCount +=  ( (*(tmpIn + *leadDimIdx++))  .iszero())?0:1; 
+									while (leadDimIdx < leadDimEnd){
+                                        complex inVal = *(tmpIn + *leadDimIdx++); 
+                                        if (complex.IsNaN(inVal)) continue; 
+										 tmpCount +=  ( (inVal)  .iszero())?0:1; 
                                     *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
+                                    }
                                     tmpOut += incOut;
                                     if (tmpOut > lastElementOut)
                                         tmpOut -= (retDblArr.Length - 1);
@@ -2380,7 +2525,9 @@ namespace ILNumerics.BuiltInFunctions  {
 								lastElement = tmpIn + leadDimLen;
                                 
                                 while (tmpIn < lastElement) {
-                                    tmpCount +=  ( (*tmpIn++)  .iszero())?0:1; 
+                                    complex inVal = *(tmpIn++); 
+                                    if (complex.IsNaN(inVal)) continue; 
+                                    tmpCount +=  ( (inVal)  .iszero())?0:1; 
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut++;
@@ -2406,8 +2553,10 @@ namespace ILNumerics.BuiltInFunctions  {
 								leadEnd = tmpIn + leadDimLen * inc;
                                 
                                 while (tmpIn < leadEnd) {
-                                    tmpCount +=  ( (*tmpIn)  .iszero())?0:1; 
+                                    complex inVal = *(tmpIn); 
                                     tmpIn += inc; 
+                                    if (complex.IsNaN(inVal)) continue; 
+                                    tmpCount +=  ( (inVal)  .iszero())?0:1; 
                                 }
                                 *tmpOut = (tmpCount == 0)? (byte)0:(byte)1; tmpCount = 0; 
                                 tmpOut  += inc;
