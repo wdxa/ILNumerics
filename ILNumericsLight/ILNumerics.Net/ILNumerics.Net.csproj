@@ -77,6 +77,7 @@
     <Compile Include="Functions\builtin\conj.cs" />
     <Compile Include="Functions\builtin\convert.cs" />
     <Compile Include="Functions\builtin\atan2.cs" />
+    <Compile Include="Functions\builtin\pchip.cs" />
     <Compile Include="Functions\builtin\quadl.cs" />
     <Compile Include="Functions\builtin\stablesort.cs" />
     <Compile Include="Functions\builtin\unique.cs" />
