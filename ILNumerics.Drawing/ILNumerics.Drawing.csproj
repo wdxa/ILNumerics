@@ -234,7 +234,6 @@
     <None Include="Resources\close.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Resources\Diamond25x25.png" />
     <None Include="Resources\TriangleUp25x25.png" />
     <None Include="Resources\Circle25x25.png" />
