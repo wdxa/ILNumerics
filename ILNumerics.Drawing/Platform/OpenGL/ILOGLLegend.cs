@@ -51,11 +51,11 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// </summary>
         /// <param name="g">if not null, rendering into that graphics object</param>
         /// <param name="area">area to draw the content into, if g is null, this will be ignored also</param>
-        public override void Draw(Graphics g, System.Drawing.Rectangle area) {
+        public override void Draw(ILRenderProperties p, System.Drawing.Rectangle area) {
             if (!m_visible) return; 
             // handle drawing to bitmap 
-            if (g != null) {
-                base.Draw(g, area);
+            if (p.Graphics != null) {
+                base.Draw(p, area);
                 return; 
             }
             // draw to OpenGL context
@@ -138,7 +138,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 sampleRect.Height = rend.Label.Size.Height; 
                 labelRect.Height = sampleRect.Height; 
                 try {
-                    rend.DrawToLegend(null,sampleRect,labelRect); 
+                    rend.DrawToLegend(p,sampleRect,labelRect); 
                 } catch (Exception) {}
                 sampleRect.Y = sampleRect.Bottom + m_padding.Top; 
                 labelRect.Y = sampleRect.Y;

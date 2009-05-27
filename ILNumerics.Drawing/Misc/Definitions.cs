@@ -402,6 +402,130 @@ namespace ILNumerics.Drawing {
                 }
             }
         }
+        public static bool operator == (ILPoint3Df p1, ILPoint3Df p2) {
+            return (p1.X == p2.X && 
+                    p1.Y == p2.Y && 
+                    p1.Z == p2.Z); 
+        }
+        public static bool operator != (ILPoint3Df p1, ILPoint3Df p2) {
+            return (p1.X != p2.X || 
+                    p1.Y != p2.Y ||
+                    p1.Z != p2.Z);  
+        }
+        public static ILPoint3Df operator + (ILPoint3Df p1, ILPoint3Df p2) {
+            ILPoint3Df ret = new ILPoint3Df(); 
+            ret.X = p1.X + p2.X; 
+            ret.Y = p1.Y + p2.Y; 
+            ret.Z = p1.Z + p2.Z; 
+            return ret; 
+        }
+        public static ILPoint3Df operator - (ILPoint3Df p1, ILPoint3Df p2) {
+            ILPoint3Df ret = new ILPoint3Df(); 
+            ret.X = p1.X - p2.X; 
+            ret.Y = p1.Y - p2.Y; 
+            ret.Z = p1.Z - p2.Z; 
+            return ret; 
+        }
+        public static ILPoint3Df operator * (ILPoint3Df p1, float factor) {
+            ILPoint3Df ret = new ILPoint3Df(); 
+            ret.X = p1.X * factor; 
+            ret.Y = p1.Y * factor; 
+            ret.Z = p1.Z * factor; 
+            return ret; 
+        }
+        public static ILPoint3Df operator / (ILPoint3Df p1, float factor) {
+            ILPoint3Df ret = new ILPoint3Df(); 
+            ret.X = p1.X / factor; 
+            ret.Y = p1.Y / factor; 
+            ret.Z = p1.Z / factor; 
+            return ret; 
+        }
+        public static readonly ILPoint3Df Empty = new ILPoint3Df(float.NaN,float.NaN,float.NaN); 
+        public bool IsEmtpy () {
+            return float.IsNaN(X) || float.IsNaN(Y) || float.IsNaN(Z); 
+        }
+
+        /// <summary>
+        /// cross product
+        /// </summary>
+        /// <param name="a">vector 1</param>
+        /// <param name="b">vector 2</param>
+        /// <returns>normalized cross product between a x b</returns>
+        public static ILPoint3Df cross(ILPoint3Df a, ILPoint3Df b) {
+            return new ILPoint3Df(
+                a.Y * b.Z - a.Z * b.Y,
+                a.Z * b.X - a.X * b.Z,
+                a.X * b.Y - a.Y * b.X);     
+        }
+        /// <summary>
+        /// normalized cross product
+        /// </summary>
+        /// <param name="a">vector 1</param>
+        /// <param name="b">vector 2</param>
+        /// <returns>normalized cross product: a x b</returns>
+        public static ILPoint3Df crossN(ILPoint3Df a, ILPoint3Df b) {
+            ILPoint3Df ret = new ILPoint3Df(
+                a.Y * b.Z - a.Z * b.Y,
+                a.Z * b.X - a.X * b.Z,
+                a.X * b.Y - a.Y * b.X); 
+            float len = (float)Math.Sqrt(ret.X * ret.X + ret.Z * ret.Z + ret.Y * ret.Y); 
+            if (len != 0)
+                return (ret / len); 
+            return ret; 
+        }
+        public static ILPoint3Df MaxValue {
+            get { return new ILPoint3Df(float.MaxValue,float.MaxValue,float.MaxValue); }
+        }
+        public static ILPoint3Df MinValue {
+            get { return new ILPoint3Df(float.MinValue,float.MinValue,float.MinValue); }
+        }
+        public static ILPoint3Df Min(ILPoint3Df val1, ILPoint3Df val2) {
+            ILPoint3Df ret = val1; 
+            if (val2.X < val1.X) ret.X = val2.X; 
+            if (val2.Y < val1.Y) ret.Y = val2.Y; 
+            if (val2.Z < val1.Z) ret.Z = val2.Z; 
+            return ret; 
+        }
+        public static ILPoint3Df Min(ILPoint3Df val1, ILPoint3Df val2, ref bool changed) {
+            ILPoint3Df ret = val1; 
+            if (val2.X < val1.X) { 
+                ret.X = val2.X; 
+                changed = true; 
+            }
+            if (val2.Y < val1.Y) { 
+                ret.Y = val2.Y; 
+                changed = true; 
+            } 
+            if (val2.Z < val1.Z) { 
+                ret.Z = val2.Z; 
+                changed = true; 
+            }
+            return ret; 
+        }
+        public static ILPoint3Df Max(ILPoint3Df val1, ILPoint3Df val2) {
+            ILPoint3Df ret = val1; 
+            if (val2.X > val1.X) ret.X = val2.X; 
+            if (val2.Y > val1.Y) ret.Y = val2.Y; 
+            if (val2.Z > val1.Z) ret.Z = val2.Z; 
+            return ret; 
+        }
+        public static ILPoint3Df Max(ILPoint3Df val1, ILPoint3Df val2, ref bool changed) {
+            ILPoint3Df ret = val1;  
+            if (val2.X > val1.X) { 
+                ret.X = val2.X; 
+                changed = true; 
+            }
+            if (val2.Y > val1.Y) {
+                ret.Y = val2.Y; 
+                changed = true; 
+            }
+            if (val2.Z > val1.Z) {
+                ret.Z = val2.Z; 
+                changed = true; 
+            }
+            return ret; 
+        }
+
     }
     /// <summary>
     /// double precision 3D point definition
@@ -461,6 +585,7 @@ namespace ILNumerics.Drawing {
         ContourSlice,
         Scatter,
         Scatter3,
+        SceneGraph,
         Errorbar,
         Stem,
         Stairs,

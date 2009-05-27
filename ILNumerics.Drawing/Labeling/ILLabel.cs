@@ -98,13 +98,13 @@ namespace ILNumerics.Drawing.Labeling {
         /// <summary>
         /// draws the whole rendering queue
         /// </summary>
-        public override void Draw(Graphics g) {
+        public override void Draw(ILRenderProperties p) {
             if (m_expression != m_cachedExpression) 
                 interprete(m_expression); 
-            m_renderer.Begin(g);
+            m_renderer.Begin(p);
             offsetAlignment(m_size,ref m_position);
             m_renderer.Draw(m_renderQueue,m_position,m_orientation,m_color); 
-            m_renderer.End(); 
+            m_renderer.End(p); 
         }
 
         #endregion

@@ -27,6 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing; 
+using ILNumerics.Drawing.Interfaces;
+using ILNumerics.Drawing.Shapes;
 
 namespace ILNumerics.Drawing.Marker {
     
@@ -60,7 +62,7 @@ namespace ILNumerics.Drawing.Marker {
         #endregion
 
         #region public interface 
-        internal override void Draw(ILMarker marker, float[] vertices, int vertCount) {
+        internal override void Draw(ILRenderProperties p, ILMarker marker, C4bV3f[] vertices, int startID, int vertCount) {
             // dummy. Nothing to do! 
         }
         #endregion

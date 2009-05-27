@@ -32,6 +32,7 @@ using ILNumerics.Drawing.Controls;
 using ILNumerics.Exceptions; 
 using ILNumerics.Drawing.Marker;
 using ILNumerics.Drawing.Interfaces; 
+using ILNumerics.Drawing.Shapes; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
@@ -40,12 +41,24 @@ namespace ILNumerics.Drawing.Graphs {
     public abstract class ILPlot2DGraph : ILGraph, IILLegendRenderer {
 
         #region attributes
+        protected C4bV3f[] m_vertices; 
+        protected int m_vertexCount; 
         protected ILLineProperties m_properties; 
-        protected ILMarker m_marker; 
-        protected ILArray<float> m_xData;
+        protected ILMarker m_marker;
+        int m_autoLimitsUpdateCount = 0;
+        int m_updateCount = 0; 
+        protected int m_startID;
+
         #endregion
 
         #region properties
+        /// <summary>
+        /// number of subsequent updates ('Queue') before limits get recalculated. Default: 0 (recalculate on every update)
+        /// </summary>
+        public int AutoLimitsUpdateCount {
+            get { return m_autoLimitsUpdateCount; }
+            set { m_autoLimitsUpdateCount = value; }
+        } 
         /// <summary>
         /// Get properties of lines
         /// </summary>
@@ -55,12 +68,40 @@ namespace ILNumerics.Drawing.Graphs {
             }
         }
         /// <summary>
-        /// Get properties of markers (not yet implemented)
+        /// Get properties of markers
         /// </summary>
         public ILMarker Marker {
             get {
                 return m_marker; 
             }
+        }
+        /// <summary>
+        /// access to internal vertex array
+        /// </summary>
+        /// <remarks><para>after altering vertex data, one must call 
+        /// Invalidate() to signal those changes.</para></remarks>
+        public C4bV3f[] Vertices {
+            get {
+                return m_vertices; 
+            }
+        }
+        /// <summary>
+        /// Invalidate the graph after vertex data have been changed.
+        /// </summary>
+        public void Invalidate() {
+            updateClipping();  
+            OnChanged("Data"); 
+        }
+        /// <summary>
+        /// draws a small example of the visual output 
+        /// </summary>
+        /// <param name="g">graphics object, if this is null, drawing into current GL context</param>
+        /// <param name="sampleArea">area to draw the line + marker into</param>
+        /// <param name="labelArea">area to draw corresponding label into</param>
+        /// <remarks>derived classes implement this for current device contexts</remarks>
+        public virtual void DrawToLegend(ILRenderProperties p, Rectangle sampleArea, Rectangle labelArea) {
+            //if (g == null) throw new ILArgumentException ("ILGraph: DrawIntoLegend: invalid graphics object (null)"); 
+            //throw new NotImplementedException ("ILGraph cannot draw to bitmap yet!"); 
         }
         #endregion
 
@@ -72,16 +113,34 @@ namespace ILNumerics.Drawing.Graphs {
         /// <param name="clippingContainer">hosting panels clipping data</param>
         public ILPlot2DGraph (ILPanel panel, ILBaseArray sourceArray,
                               ILClippingData clippingContainer) 
-            : base (panel,sourceArray,clippingContainer) {
-            if (!sourceArray.IsVector)
-                throw new ILArgumentException ("Plot2D: supplied data must be a real vector!"); 
-            m_xData = ILMath.tosingle(ILMath.counter(0.0,1.0,sourceArray.Length,1));
+            : base (panel,clippingContainer) {
+            if (object.Equals(sourceArray,null) || !sourceArray.IsVector || !sourceArray.IsNumeric) 
+                throw new ILArgumentException ("Plot2D: supplied data must be numeric (real valued) vector!");
+            int pos = 0; 
+            ILArray<float> data; 
+            C4bV3f vert = new C4bV3f(); 
+            if (sourceArray is ILArray<float>) {
+                data = (ILArray<float>)sourceArray; 
+            } else {
+                data = ILMath.tosingle(sourceArray); 
+            }
+            m_vertices = new C4bV3f[data.Length+1]; 
+            m_vertexCount = m_vertices.Length; 
+            m_autoFitContent = true; 
+            m_updateCount = 0; 
+            m_startID = 0; 
             m_properties = new ILLineProperties(); 
+            m_properties.Color = Color.DarkBlue; 
             m_properties.Changed += new EventHandler(m_properties_Changed);
+            foreach (float val in data.Values) {
+                vert.Position = new ILPoint3Df(pos,val,0); 
+                vert.Color = Color.Red; 
+                m_vertices[pos++] = vert; 
+            }
             m_marker = new ILMarker(panel); 
             m_marker.Changed += new EventHandler(m_properties_Changed);
             m_graphType = GraphType.Plot2D; 
-            updateClipping(); 
+            m_localClipping.Set(new ILPoint3Df(0,data.MinValue,0),new ILPoint3Df(data.Length-1,data.MaxValue,0));
         }
         /// <summary>
         /// [internal] constructor - do not use this! Use ILPanel.Graphs.Add...() instead!
@@ -91,35 +150,77 @@ namespace ILNumerics.Drawing.Graphs {
         /// <param name="clippingContainer">hosting panels clipping data</param>
         public ILPlot2DGraph (ILPanel panel, ILBaseArray XData, ILBaseArray YData,
                               ILClippingData clippingContainer) 
-            : base (panel,YData,clippingContainer) {
+            : base (panel,clippingContainer) {
             if (!XData.IsVector)
                 throw new ILArgumentException ("Plot2D: supplied data must be a real vector!"); 
             if (!YData.IsVector)
                 throw new ILArgumentException ("Plot2D: XData and YData must be real vectors!"); 
             if (YData.Length != XData.Length) 
                 throw new ILArgumentException ("Plot2D: XData and YData must have the same length!"); 
-            m_xData = ILMath.tosingle(XData);
+            int pos = 0; 
+            ILArray<float> dataX, dataY; 
+            C4bV3f vert = new C4bV3f(); 
+            if (XData is ILArray<float>) {
+                dataX = (ILArray<float>)XData; 
+            } else {
+                dataX = ILMath.tosingle(XData); 
+            }
+            if (YData is ILArray<float>) {
+                dataY = (ILArray<float>)YData; 
+            } else {
+                dataY = ILMath.tosingle(YData); 
+            }
+            m_vertices = new C4bV3f[dataX.Length + 1]; 
+            m_vertexCount = m_vertices.Length; 
+            m_startID = m_vertexCount-1;
+            m_updateCount = 0; 
             m_properties = new ILLineProperties(); 
+            m_properties.Color = Color.DarkBlue; 
+            m_autoFitContent = true; 
             m_properties.Changed += new EventHandler(m_properties_Changed);
+            foreach (float val in dataX.Values) {
+                vert.Position = new ILPoint3Df(val,dataY.GetValue(pos),0); 
+                vert.Color = m_properties.Color; 
+                m_vertices[pos++] = vert; 
+            }
             m_marker = new ILMarker(panel);
             m_marker.Changed += new EventHandler(m_marker_Changed);
             m_graphType = GraphType.Plot2D;
             updateClipping();
         }
-        /// <summary>
-        /// draws a small example of the visual output 
-        /// </summary>
-        /// <param name="g">graphics object, if this is null, drawing into current GL context</param>
-        /// <param name="sampleArea">area to draw the line + marker into</param>
-        /// <param name="labelArea">area to draw corresponding label into</param>
-        /// <remarks>derived classes implement this for current device contexts</remarks>
-        public virtual void DrawToLegend(System.Drawing.Graphics g, Rectangle sampleArea, Rectangle labelArea) {
-            //if (g == null) throw new ILArgumentException ("ILGraph: DrawIntoLegend: invalid graphics object (null)"); 
-            //throw new NotImplementedException ("ILGraph cannot draw to bitmap yet!"); 
+        public void Queue(IILVertexDefinition vertex) {
+            if (m_startID == 0) {
+                SetVertex(m_vertexCount-1,vertex); 
+                m_startID = 1; 
+            } else {
+                SetVertex(m_startID,vertex);
+                m_vertices[0] = m_vertices[m_vertexCount-1]; 
+                m_startID++;
+            }
+            if (m_startID == m_vertexCount-1) {
+                m_startID = 0; 
+            }
+            if (m_updateCount++ < m_autoLimitsUpdateCount) {
+                bool signal = false; 
+                m_localClipping.Update(vertex.Position,vertex.Position); 
+            } else {
+                m_updateCount = 0; 
+                Invalidate();
+            }
         }
+
         #endregion
 
         #region private helper 
+        public void SetVertex(int vertexID,IILVertexDefinition vertex) {
+            C4bV3f curVert = m_vertices[vertexID]; 
+            if (vertex.StoresColor) {
+                curVert.Color = vertex.Color; 
+            }
+            curVert.Position = vertex.Position; 
+            m_vertices[vertexID] = curVert; 
+        }
+
         /// <summary>
         /// called, if a property for markers have changed
         /// </summary>
@@ -131,9 +232,14 @@ namespace ILNumerics.Drawing.Graphs {
             m_isReady = false; 
         }
         private void updateClipping() {
-            m_localClipping.Update (
-                new ILPoint3Df(m_xData.MinValue,m_sourceArray.MinValue,0.0f),
-                new ILPoint3Df(m_xData.MaxValue,m_sourceArray.MaxValue,0.0f)); 
+            ILPoint3Df max = ILPoint3Df.MinValue; 
+            ILPoint3Df min = ILPoint3Df.MaxValue;
+            for (int i = 0; i < m_vertexCount; i++) {
+                C4bV3f vert = m_vertices[i]; 
+                max = ILPoint3Df.Max(vert.Position,max); 
+                min = ILPoint3Df.Min(vert.Position,min); 
+            }
+            m_localClipping.Set ( min, max ); 
         }
         /// <summary>
         /// called, if a property for lines have changed

@@ -101,7 +101,7 @@ namespace ILNumerics.Drawing.Controls {
             if (Trace.IndentLevel > 0) 
                 Trace.TraceInformation("{0} - ILSubfigure.ctor() - panel created {1}",DateTime.Now,m_panel.GraphicDeviceType);
             m_colorbar = new ILColorBar(m_panel.Colormap); 
-            m_colorbar.RegisterRangeSource(m_panel.Graphs.Clipping);
+            m_colorbar.RegisterRangeSource(m_panel.Graphs.Limits);
             m_panel.ColormapChanged += new EventHandler(m_panel_ColormapChanged);
             m_title = new ILBorderFitLabel();
             m_panel.Graphs.CollectionChanged += new ILGraphCollectionChangedEvent(Graphs_CollectionChanged);

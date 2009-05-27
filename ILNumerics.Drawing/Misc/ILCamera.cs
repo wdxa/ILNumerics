@@ -52,7 +52,7 @@ namespace ILNumerics.Drawing {
         #region attributes 
         private bool m_suspended = false;
         private float m_distance = 1.0f; 
-        private float m_phi = (float)(Math.PI / 2.0); 
+        private float m_phi = 0; 
         private float m_rho = 0.0f; 
         /// <summary>
         /// Offset angle for 2nd cached triangular phi value (needed for surface plots)
@@ -61,7 +61,7 @@ namespace ILNumerics.Drawing {
         /// <summary>
         /// cachced triangular phi value with offset (needed for surface plots)
         /// </summary>
-        internal float CosPhiShift; 
+        internal float CosPhiShift;                
         /// <summary>
         /// cachced triangular phi value with offset (needed for surface plots)
         /// </summary>
@@ -191,6 +191,32 @@ namespace ILNumerics.Drawing {
                 return Math.Abs(SinPhi) < 1e-5 && Math.Abs(SinRho) < 1e-5; 
             }
         }
+        /// <summary>
+        /// gets the camera position in cartesian coordinates or sets it
+        /// </summary>
+        /// <remarks>Keep in mind, the angle for phi points towards negative Y axis!</remarks>
+        public ILPoint3Df Position {
+            get {
+                ILPoint3Df ret = new ILPoint3Df(); 
+                ret.X = m_distance * SinPhi * SinRho; 
+                ret.Y = m_distance * -CosPhi * SinRho; 
+                ret.Z = m_distance * CosRho; 
+                return ret; 
+            }
+            set {
+                m_distance = (float)Math.Sqrt(value.X * value.X + value.Y * value.Y + value.Z * value.Z);
+                m_rho = (float)Math.Atan2(value.Z,Math.Sqrt(value.X * value.X + value.Y * value.Y)); 
+                m_phi = (float)Math.Atan2(value.Y, value.X); 
+                computeQuadrant();
+                CosPhi = (float)Math.Cos(m_phi); 
+                SinPhi = (float)Math.Sin(m_phi);
+                SinPhiShift = (float)Math.Sin(m_phi + Offset); 
+                CosPhiShift = (float)Math.Cos(m_phi + Offset); 
+                CosRho = (float)Math.Cos(m_rho); 
+                SinRho = (float)Math.Sin(m_rho); 
+                OnChange(); 
+            }
+        }
         #endregion 
 
         #region constructors
@@ -198,6 +224,7 @@ namespace ILNumerics.Drawing {
             m_rho = vport.m_rho; 
             m_phi = vport.m_phi; 
             m_distance = vport.m_distance; 
+            updateCachedVars();
             computeQuadrant();
         }
         /// <summary>
@@ -205,11 +232,13 @@ namespace ILNumerics.Drawing {
         /// </summary>
         public ILCamera () {
             m_quadrant = CameraQuadrant.TopLeftFront; 
+            updateCachedVars(); 
         }
         public ILCamera (float Phi, float Rho, float Distance) {
             m_rho = Rho; 
             m_phi = Phi; 
             m_distance = Distance; 
+            updateCachedVars();
             computeQuadrant();
         }
         #endregion
@@ -313,6 +342,14 @@ namespace ILNumerics.Drawing {
                     }
                 }
             }
+        }
+        private void updateCachedVars () {
+            CosPhi = (float)Math.Cos(m_phi); 
+            SinPhi = (float)Math.Sin(m_phi);
+            SinPhiShift = (float)Math.Sin(m_phi + Offset); 
+            CosPhiShift = (float)Math.Cos(m_phi + Offset); 
+            CosRho = (float)Math.Cos(m_rho); 
+            SinRho = (float)Math.Sin(m_rho); 
         }
         #endregion
     }

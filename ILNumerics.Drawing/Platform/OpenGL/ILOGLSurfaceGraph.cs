@@ -251,8 +251,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL
         /// <summary>
         /// Draw the graph
         /// </summary>
-        public override void Draw() {
-            base.Draw(); 
+        public override void Draw(ILRenderProperties p) {
             GL.BlendFunc (BlendingFactorSrc.SrcAlpha,
                           BlendingFactorDest.OneMinusSrcAlpha);            
             ILLineProperties wireprops = m_wireLines;
@@ -420,7 +419,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL
                 m_isReady = false; 
             }
         }
-        public override void DrawToLegend(Graphics graphics, Rectangle sampleRect, Rectangle labelRect) {
+        public override void DrawToLegend(ILRenderProperties p, Rectangle sampleRect, Rectangle labelRect) {
             if (m_filled) {
                 // draw inner filled area
                 GL.ShadeModel(ShadingModel.Smooth); 

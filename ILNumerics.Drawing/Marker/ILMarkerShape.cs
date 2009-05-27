@@ -30,6 +30,7 @@ using System.Drawing;
 using ILNumerics.Drawing.Interfaces; 
 using ILNumerics.Drawing.Labeling; 
 using ILNumerics.Drawing.Controls; 
+using ILNumerics.Drawing.Shapes; 
 
 
 namespace ILNumerics.Drawing.Marker {
@@ -59,7 +60,7 @@ namespace ILNumerics.Drawing.Marker {
 
 
         #region public interface 
-        internal abstract void Draw(ILMarker marker, float[] vertices, int vertCount);
+        internal abstract void Draw(ILRenderProperties p, ILMarker marker, C4bV3f[] vertices, int startID, int vertCount);
         #endregion
     }
 }

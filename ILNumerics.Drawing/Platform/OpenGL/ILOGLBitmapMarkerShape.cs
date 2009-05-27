@@ -31,6 +31,7 @@ using ILNumerics.Drawing.Marker;
 using ILNumerics.Drawing.Controls; 
 using OpenTK.Graphics; 
 using ILNumerics.Drawing.Labeling; 
+using ILNumerics.Drawing.Shapes; 
 
 
 namespace ILNumerics.Drawing.Platform.OpenGL {
@@ -42,7 +43,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         #endregion
 
         #region public interface
-        internal override void Draw(ILMarker marker, float[] vertices, int vertCount) {
+        internal override void Draw(ILRenderProperties p, ILMarker marker, C4bV3f[] vertices, int startID, int vertCount) {
             if (vertCount == 0 && vertCount != -1) return; 
             string texKey = Hash();                
             ILTextureData texData; 
@@ -76,8 +77,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 // this is slow! Todo: replace by point sprites! 
                 GL.Begin(BeginMode.Quads); 
                 for (int i = 0; i < vertCount; i++) {
-                    w = vertices[i*2]; 
-                    h = vertices[i*2+1];           
+                    w = vertices[i].Position.X; 
+                    h = vertices[i].Position.Y;           
                     if (m_panel.ClipViewData && (w < clip.m_xMin || w > clip.m_xMax || h < clip.m_yMin || h > clip.m_yMax)) 
                         continue; 
                     w -= s05x;             
@@ -99,8 +100,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 // draw all markers using quads. 
                 // this is slow! Todo: replace by point sprites! 
                 GL.Begin(BeginMode.Quads); 
-                    w = vertices[0] - m_bitmap.Width / 2; 
-                    h = vertices[1] - m_bitmap.Height / 2;           
+                    w = vertices[0].XPosition - m_bitmap.Width / 2; 
+                    h = vertices[0].YPosition - m_bitmap.Height / 2;           
                     GL.TexCoord2(rectF.Left,rectF.Top);              
                     GL.Vertex2(w,h);                                        // ul
                     GL.TexCoord2(rectF.Left,rectF.Bottom);                 

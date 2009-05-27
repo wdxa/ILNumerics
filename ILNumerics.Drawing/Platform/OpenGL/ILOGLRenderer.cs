@@ -37,7 +37,7 @@ using ILNumerics.Drawing.Labeling;
 
 namespace ILNumerics.Drawing.Platform.OpenGL {
     /// <summary>
-    /// Basic OpenGL implementation for IILRenderer
+    /// OpenGL text renderer in screen coords
     /// </summary>
     [ILRenderer(GraphicDeviceType.OpenGL,"Outline","OpenGL cached, outlined textures",true,CoordSystem.Screen)] 
     public class ILOGLRenderer : IILRenderer {
@@ -95,7 +95,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             get { return false; }
         }
 
-        public void Begin(System.Drawing.Graphics g) {
+        public void Begin(ILRenderProperties p) {
             if (GraphicsContext.CurrentContext == null)
                 throw new GraphicsContextException("No GraphicsContext is current in the calling thread.");
 
@@ -121,9 +121,32 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Disable(EnableCap.DepthTest);
+            if (p.Clipping) {
+                GL.Disable(EnableCap.ClipPlane0); 
+                GL.Disable(EnableCap.ClipPlane1); 
+                GL.Disable(EnableCap.ClipPlane2); 
+                GL.Disable(EnableCap.ClipPlane3); 
+                GL.Disable(EnableCap.ClipPlane4); 
+                GL.Disable(EnableCap.ClipPlane5); 
+            }
         }
-
-        public void End() {
+        
+        public void Begin (ILRenderProperties p, ref double[] modelview) {
+            if (modelview == null || modelview.Length < 16) {
+                modelview = new double[16]; 
+            }
+            GL.GetDouble(GetPName.ModelviewMatrix,modelview);
+            Begin(p); 
+        }
+        public void End(ILRenderProperties p) {
+            if (p.Clipping) {
+                GL.Enable(EnableCap.ClipPlane0); 
+                GL.Enable(EnableCap.ClipPlane1); 
+                GL.Enable(EnableCap.ClipPlane2); 
+                GL.Enable(EnableCap.ClipPlane3); 
+                GL.Enable(EnableCap.ClipPlane4); 
+                GL.Enable(EnableCap.ClipPlane5); 
+            }
             GL.PopAttrib();
             GL.MatrixMode(MatrixMode.Modelview);
             GL.PopMatrix();

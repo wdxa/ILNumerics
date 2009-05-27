@@ -95,7 +95,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             get { return false; }
         }
 
-        public void Begin(System.Drawing.Graphics g) {
+        public void Begin(ILRenderProperties p) {
             if (GraphicsContext.CurrentContext == null)
                 throw new GraphicsContextException("No GraphicsContext is current in the calling thread.");
 
@@ -106,8 +106,15 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Disable(EnableCap.DepthTest);
         }
+        public void Begin (ILRenderProperties p, ref double[] modelview) {
+            if (modelview == null || modelview.Length < 12) {
+                modelview = new double[16]; 
+            }
+            GL.GetDouble(GetPName.ModelviewMatrix,modelview);
+            Begin(p); 
+        }
 
-        public void End() {
+        public void End(ILRenderProperties p) {
             GL.PopAttrib();
         }
         #endregion
@@ -154,10 +161,10 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// <param name="queue">render queue</param>
         /// <param name="x1">x1-position</param>
         /// <param name="y1">y1-position</param>
-        /// <param name="z1">z1-position (not used)</param>
+        /// <param name="z1">z1-position</param>
         /// <param name="x2">x2-position</param>
         /// <param name="y2">y2-position</param>
-        /// <param name="z2">z2-position (not used)</param>
+        /// <param name="z2">z2-position</param>
         /// <param name="color">base color for items not containing individual colors</param>
         /// <remarks><para>The render queue must contain only keys for already cached items!</para>
         /// <para>The color parameter serves as a global color definition. It may be overwritten 
@@ -176,6 +183,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             int lineHeight = 0; 
             m_textureManager.Reset(); 
             GL.Color3(color); 
+            
             foreach (ILRenderQueueItem item in queue) {
                 // special symbols & control sequences 
                 switch (item.Key) {
@@ -202,14 +210,14 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     GL.Begin(BeginMode.Quads); 
                     RectangleF rectF = textData.TextureRectangle; 
                     GL.TexCoord2(rectF.Left,rectF.Bottom);   
-                    GL.Vertex2(x*xm + x1,(y + textData.Height + item.Offset.Y-1)*ym+y1);      // ul
+                    GL.Vertex3(x*xm + x1,(y + textData.Height + item.Offset.Y-1)*ym+y1,z1);      // ul
                     GL.TexCoord2(rectF.Left,rectF.Top); 
-                    GL.Vertex2(x*xm + x1,(y+ item.Offset.Y)*ym+y1);                    // bl
+                    GL.Vertex3(x*xm + x1,(y+ item.Offset.Y)*ym+y1,z1);                    // bl
                     x += textData.Width-1; 
                     GL.TexCoord2(rectF.Right,rectF.Top); 
-                    GL.Vertex2(x*xm + x1,(y+ item.Offset.Y)*ym+y1);                    // br
+                    GL.Vertex3(x*xm + x1,(y+ item.Offset.Y)*ym+y1,z1);                    // br
                     GL.TexCoord2(rectF.Right,rectF.Bottom); 
-                    GL.Vertex2(x*xm + x1,(y + textData.Height+ item.Offset.Y-1)*ym+y1);      // tr
+                    GL.Vertex3(x*xm + x1,(y + textData.Height+ item.Offset.Y-1)*ym+y1,z1);      // tr
                     if (textData.Height > lineHeight)
                         lineHeight = textData.Height; 
                     GL.End(); 
@@ -250,5 +258,6 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         }
 
         #endregion
+
     }
 }

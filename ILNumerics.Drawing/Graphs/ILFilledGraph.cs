@@ -41,7 +41,8 @@ namespace ILNumerics.Drawing.Graphs {
         #region attributes / properties 
         protected float[] m_xCoords; 
         protected float[] m_yCoords; 
-        protected ILArray<float> m_colors; 
+        protected ILArray<float> m_colors;
+        protected ILArray<float> m_sourceArray; 
         protected int m_Vertcount;
         protected int m_rows, m_cols;  
         protected bool m_vertexReady, m_indexReady;
@@ -98,7 +99,16 @@ namespace ILNumerics.Drawing.Graphs {
                 OnChanged("Filled"); 
             }
         }
-
+        /// <summary>
+        ///  get a reference to the internal data array
+        /// </summary>
+        /// <remarks>modifications to the array returned will 
+        /// <b>not</b> alter the data the graph is based on.</remarks>
+        public ILBaseArray Data {
+            get {
+                return m_sourceArray.CreateReference(); 
+            }
+        }
         #endregion
 
         #region constructor
@@ -113,12 +123,13 @@ namespace ILNumerics.Drawing.Graphs {
         /// <param name="clippingContainer">gloabal limits of panel</param>
         public ILFilledGraph (ILPanel panel, ILBaseArray X, ILBaseArray Y,
                               ILBaseArray Z, ILBaseArray C, ILClippingData clippingContainer) 
-                : base (panel, Z, clippingContainer) {
+                : base (panel, clippingContainer) {
             #region argument checking
             if (Z == null || !Z.IsMatrix) 
                 throw new ILArgumentException ("ILFilledGraph: Z must be matrix!"); 
             if (!Z.IsNumeric) 
                 throw new ILArgumentException ("ILFilledGraph: Z must be numeric!"); 
+            m_sourceArray = ILMath.tosingle(Z); 
             m_rows = m_sourceArray.Dimensions[0]; 
             m_cols = m_sourceArray.Dimensions[1]; 
             ILArray<float> tmp; 
@@ -583,7 +594,7 @@ namespace ILNumerics.Drawing.Graphs {
         /// <remarks>This function is called by the enclosing panel, f.e. when rotation
         /// occours, which makes a reconfiguration neccessary. It internally calls CreateVertices() 
         /// and CreateIndices().</remarks>
-        protected override void Configure() {
+        public override void Configure() {
             m_isReady = false; 
             if (!m_vertexReady) CreateVertices(); 
             if (!m_indexReady) CreateIndices(); 

@@ -44,9 +44,7 @@ namespace ILNumerics.Drawing.Controls {
     /// Basic abstract base class for GL dependent display.
     /// </summary>
     /// <remarks>This control is the main plot control of ILNumerics.Net.</remarks>
-    public abstract class ILPanel : Control,IILCreationFactory {
-
-        public float tempParameter; 
+    public abstract class ILPanel : Control {
 
         #region attributes 
         protected ILRendererManager m_textRendererManager; 
@@ -59,6 +57,7 @@ namespace ILNumerics.Drawing.Controls {
         protected bool m_active = false; 
         protected bool m_drawHidden = true; 
         protected bool m_ready = false; 
+        private bool m_isStartingUp = true; 
         protected ILCamera m_camera;
         protected ILCamera m_defaultView; 
         protected InteractiveModes m_selectingMode = InteractiveModes.Rotating; 
@@ -70,7 +69,6 @@ namespace ILNumerics.Drawing.Controls {
         protected ILLegend m_legend; 
         protected GraphicDeviceType m_graphicsDevice; 
         protected ILLineProperties m_selectionRectangle; 
-        protected bool m_clipOutsideUnitCube = false; 
         protected bool m_fillBackground = true; 
         protected const float pi05 = (float) Math.PI / 2; 
         protected const float pi2 = (float) Math.PI * 2; 
@@ -78,6 +76,8 @@ namespace ILNumerics.Drawing.Controls {
         protected const float pi4 = (float) Math.PI / 4; 
         protected const float pi8 = (float) Math.PI / 8; 
         protected ILLayoutData m_layoutData = new ILLayoutData(); 
+        protected ILLightCollection m_lights = new ILLightCollection(); 
+        protected ILRenderProperties m_renderProperties; 
 
         internal float m_cubeWidth;  // used to propagate view size to matrices in derived classes
         internal float m_cubeHeight; 
@@ -85,7 +85,12 @@ namespace ILNumerics.Drawing.Controls {
         #endregion
 
         #region properties
-        
+        /// <summary>
+        /// Access collection of lights for configuration
+        /// </summary>
+        public ILLightCollection Lights {
+            get { return m_lights; }
+        }
         /// <summary>
         /// Legend for panel's graphs
         /// </summary>
@@ -251,10 +256,10 @@ namespace ILNumerics.Drawing.Controls {
         /// deactivated for 3D plots by default.</para></remarks>
         public bool ClipViewData {
             get {
-                return m_clipOutsideUnitCube; 
+                return m_renderProperties.Clipping; 
             }
             set {
-                m_clipOutsideUnitCube = value; 
+                m_renderProperties.Clipping = value; 
             }
         }
         /// <summary>
@@ -268,7 +273,6 @@ namespace ILNumerics.Drawing.Controls {
                 return m_textRendererManager; 
             }
         }
-
         /// <summary>
         /// actual width (X-direction) of the scene before (!) rotating. Including axis, ticks - without labels. 
         /// </summary>
@@ -303,7 +307,6 @@ namespace ILNumerics.Drawing.Controls {
                 return ret; 
             } 
         }
-
         /// <summary>
         /// Get or set default camera position for reset of the scene
         /// </summary>
@@ -321,11 +324,9 @@ namespace ILNumerics.Drawing.Controls {
                 m_defaultView = value; 
             }
         }
-
         #endregion
 
         #region constructors
-
         protected ILPanel(GraphicDeviceType graphicsDevice) : base () {
 #if TRACE 
             Trace.TraceInformation("{0},{1} ILPanel.ctor()",DateTime.Now, Environment.TickCount); 
@@ -342,13 +343,14 @@ namespace ILNumerics.Drawing.Controls {
             m_selectionRectangle.Width = 1; 
             m_selectionRectangle.Style = LineStyle.Solid; 
             m_selectionRectangle.Changed += new EventHandler(m_selectionRectangle_Changed);
+            m_renderProperties = new ILRenderProperties (); 
             m_textRendererManager = new ILRendererManager(this); 
             m_clippingView = new ILClippingData();
-            m_camera = new ILCamera(0.0f,0.0f,5.0f);
-            m_defaultView = new ILCamera(0.0f,0.0f,5.0f); 
+            m_camera = new ILCamera((float)Math.PI*3/2*0,0.0f,5.0f);
+            m_defaultView = new ILCamera(m_camera); 
             m_layoutData = new ILLayoutData(m_camera);
             m_camera.Changed += new EventHandler(m_camera_Change);
-            m_clippingView.Changed += new ILClippingDataChangedEvent(m_clippingView_Changed);
+            m_clippingView.Changed += new ILClippingDataChangedEvent(m_viewLimits_Changed);
             m_colormap = new ILColormap();
             m_colormap.Changed += new EventHandler(m_colormap_Changed);
             Padding = new Padding(5); 
@@ -479,7 +481,8 @@ namespace ILNumerics.Drawing.Controls {
             IILCreationFactory graphFact = GetCreationFactory(); 
             m_graphs = new ILGraphCollection(graphFact);
             m_graphs.CollectionChanged += new ILGraphCollectionChangedEvent(m_graphs_OnCollectionChanged);
-            m_graphs.Clipping.Changed += new ILClippingDataChangedEvent(m_clippingData_Changed);
+            m_graphs.Limits.Changed += new ILClippingDataChangedEvent(m_dataLimits_Changed);
+            m_graphs.GraphChanged += new ILGraphChangedEvent(m_graphs_GraphChanged);
             m_axes = new ILAxisCollection(m_clippingView,graphFact); 
             if (GraphicsDeviceCreated!= null) {
                 GraphicsDeviceCreated(this,null);
@@ -490,6 +493,7 @@ namespace ILNumerics.Drawing.Controls {
             Trace.TraceInformation("{0},{1} ILPanel.OnGraphicsDeviceCreated() end",DateTime.Now, Environment.TickCount); 
 #endif
         }
+
         protected virtual void OnColormapChanged() {
             if (ColormapChanged != null) 
                 ColormapChanged(this,null); 
@@ -574,7 +578,7 @@ namespace ILNumerics.Drawing.Controls {
             if (m_isMoving == false && (m_selectingMode == InteractiveModes.ZoomRectangle 
                 || m_selectingMode == InteractiveModes.Rotating)) {
                 // determine new center coords
-                ILPoint3Df center = Screen2World2D(e.X,e.Y,0.5f);
+                ILPoint3Df center = Screen2World2D(e.X,e.Y,Limits.CenterF.Z);
                 if (e.Button == System.Windows.Forms.MouseButtons.Left) {
                     Zoom(center,0.8f); 
                 }
@@ -615,17 +619,13 @@ namespace ILNumerics.Drawing.Controls {
 //                return; 
 //            }
             try {
-                if (!m_ready) {
 #if TRACE 
                     Trace.TraceInformation("{0},{1} ILPanel.OnPaint(): started (re-)configure",DateTime.Now, Environment.TickCount); 
                     Trace.Indent(); 
 #endif
                     Configure();
 #if TRACE 
-                    Trace.Unindent(); 
-#endif
-                }
-#if TRACE 
+                Trace.Unindent(); 
                 Trace.TraceInformation("{0},{1} ILPanel.OnPaint(): rendering started",DateTime.Now, Environment.TickCount); 
                 Trace.Indent();
                 Trace.TraceInformation(String.Format("this: {1}, ClipRectangle: {0}, Graphics.ClipBounds: L:{2} T:{3} W:{4} H:{5}"
@@ -636,12 +636,16 @@ namespace ILNumerics.Drawing.Controls {
                     ,e.Graphics.VisibleClipBounds.Width
                     ,e.Graphics.VisibleClipBounds.Height)); 
 #endif
-                RenderScene(e.Graphics);
+                m_renderProperties.Graphics = e.Graphics; 
+                RenderScene(m_renderProperties);
 #if TRACE 
                 Trace.Unindent(); 
                 Trace.TraceInformation("{0},{1} ILPanel.OnPaint(): rendering ended",DateTime.Now, Environment.TickCount); 
 #endif
-
+                if (m_isStartingUp) {
+                    Invalidate();
+                    m_isStartingUp = false;
+                }
             } catch (Exception exc) {
 #if TRACE 
                 Trace.TraceWarning("{0},{1} ILPanel.OnPaint(): rendering failed. reason: {2}",DateTime.Now, Environment.TickCount,exc.ToString()); 
@@ -668,6 +672,14 @@ namespace ILNumerics.Drawing.Controls {
             Invalidate(); 
         }
 
+        void m_graphs_GraphChanged(object sender, ILGraphChangedEventArgs args) {
+            ILGraph graph = sender as ILGraph; 
+            if (graph != null) {
+                if (graph.AutoFitContent) {
+                    ResetView(false); 
+                }
+            }
+        }
         protected void m_graphs_OnCollectionChanged(object sender, ILGraphCollectionChangedEventArgs args) {
             switch (args.Reason) {
                 case GraphCollectionChangeReason.Added:
@@ -744,16 +756,19 @@ namespace ILNumerics.Drawing.Controls {
                     break;
                 case GraphCollectionChangeReason.Deleted:
                     break;
+                case GraphCollectionChangeReason.Changed:
+
+                    break; 
                 default:
                     break;
             }
         }
-        protected void m_clippingView_Changed(object sender, ClippingChangedEventArgs e) {
+        protected void m_viewLimits_Changed(object sender, ClippingChangedEventArgs e) {
             OnViewLimitsChanged(e); 
             Invalidate();
         }
-        protected void m_clippingData_Changed(object sender, ClippingChangedEventArgs e) {
-            ResetView(false);
+        protected void m_dataLimits_Changed(object sender, ClippingChangedEventArgs e) {
+            //ResetView(false);
             OnDataLimitsChanged(e);  
         }
         protected void m_colormap_Changed(object sender, EventArgs e) {
@@ -806,9 +821,9 @@ namespace ILNumerics.Drawing.Controls {
         
         protected abstract void UpdateMatrices();
 
-        protected virtual void RenderScene(Graphics g) {
+        protected virtual void RenderScene(ILRenderProperties p) {
             if (!DesignMode) {
-                computeLayoutData(g);
+                computeLayoutData(p);
             }
         }
         /// <summary>
@@ -817,18 +832,21 @@ namespace ILNumerics.Drawing.Controls {
         /// <remarks>derived types should init all devices here</remarks>
         protected virtual void Initialize() {}
 
-        protected virtual void ResetView() {
+        public virtual void ResetView() {
             ResetView(true);
         }
 
-        protected virtual void ResetView (bool resetRotation) {
+        public virtual void ResetView(bool resetRotation) {
             if (m_defaultView != null && resetRotation) {
                 m_camera.Phi = m_defaultView.Phi; 
                 m_camera.Rho = m_defaultView.Rho;
                 m_camera.Distance = m_defaultView.Distance; 
                 //UpdateMatrices(); 
             }
-            m_clippingView.CopyFrom(m_graphs.Clipping);
+            m_clippingView.EventingSuspend(); 
+            m_clippingView.CopyFrom(m_graphs.Limits); 
+            m_clippingView.Update(m_clippingView.CenterF,1.11f); 
+            m_clippingView.EventingResume(); 
         }
 
         protected virtual void Zoom(ILPoint3Df center, float offset) {
@@ -1171,6 +1189,7 @@ namespace ILNumerics.Drawing.Controls {
         /// <remarks>the actual transform is carried out in the derived specialized class,
         /// where the current transformation matrices are known</remarks>
         public abstract Point Transform(ILPoint3Df worldPoint); 
+        public abstract Point Transform(ILPoint3Df center, double[] modelview); 
 
         /// <summary>
         /// Draws content of this subfigure into predefined bitmap
@@ -1239,32 +1258,36 @@ namespace ILNumerics.Drawing.Controls {
             return ret; 
         }
 
-        internal void computeLayoutData (Graphics gr) {
+        internal void computeLayoutData (ILRenderProperties p) {
             // compute size of viewport/ projection 
             float xSize, ySize;
             GetTransformedSize(out xSize, out ySize);   // returns world coords: cube + ticks
-
+            
             // add label's size to increase margin
-            Size ticksSize = m_axes.MeasureMaxTickLabelSize(gr); 
+            Size ticksSize = m_axes.MeasureMaxTickLabelSize(p.Graphics); 
             Size xLabelSize = m_axes.XAxis.Label.Size;  
             Size yLabelSize = m_axes.YAxis.Label.Size;
-            int padX = m_axes[0].LabeledTicks.Padding + m_axes[0].Label.Padding * 2; 
-            int padY = m_axes[1].LabeledTicks.Padding + m_axes[1].Label.Padding * 2; 
-            int padZ = m_axes[2].LabeledTicks.Padding + m_axes[2].Label.Padding * 2; 
-            m_cubeMargin = xLabelSize.Height + padX; 
-            int yHeight = yLabelSize.Height + padY; 
-            int zHeight =  m_axes.ZAxis.Label.Size.Height + padZ; 
-            if (m_cubeMargin < yHeight) 
-                m_cubeMargin = yHeight; 
-            ticksSize.Width += m_cubeMargin; 
-            ticksSize.Height += m_cubeMargin; 
-            // include Z-Axis, if showing
-            if (m_axes[2].Visible && m_camera.SinRho > 1e-5) {
+            int padX, padY; 
+            if (m_axes.XAxis.Visible) {
+                padX = m_axes[0].LabeledTicks.Padding + m_axes[0].Label.Padding * 2;
+                m_cubeMargin = xLabelSize.Height + padX; 
+            
+            }
+            if (m_axes.YAxis.Visible) {
+                padY = m_axes[1].LabeledTicks.Padding + m_axes[1].Label.Padding * 2; 
+                int yHeight = yLabelSize.Height + padY; 
+                if (m_cubeMargin < yHeight) 
+                    m_cubeMargin = yHeight; 
+            }
+            if (m_axes.ZAxis.Visible && m_camera.SinRho > 1e-5) {
+                int padZ = m_axes[2].LabeledTicks.Padding + m_axes[2].Label.Padding * 2; 
+                int zHeight =  m_axes.ZAxis.Label.Size.Height + padZ; 
                 if (m_cubeMargin < zHeight) {
-                    ticksSize.Width += (zHeight - m_cubeMargin);
-                    ticksSize.Height += (zHeight - m_cubeMargin);
+                    m_cubeMargin = zHeight;
                 }
             }
+            ticksSize.Width += m_cubeMargin; 
+            ticksSize.Height += m_cubeMargin; 
             //m_cubeWidth = 1.0f / (xSize * ((ClientSize.Width-2) - 2 * ticksSize.Width) / (ClientSize.Width-2));
             //m_cubeHeight = 1.0f / (ySize * ((ClientSize.Height-2) - 2 * ticksSize.Height) / (ClientSize.Height-2));
             m_cubeWidth = ((xSize * (ClientSize.Width-2)) / ((ClientSize.Width-2) - 2 * ticksSize.Width));
@@ -1370,7 +1393,7 @@ namespace ILNumerics.Drawing.Controls {
             ILTickCollection ticks = axis.LabeledTicks; 
             Size tickSize = ticks.Size, labelSize = label.Size; 
             label.Orientation = TextOrientation.Vertical;
-            label.m_position.X = ticks.m_lineStart.X - tickSize.Width - labelSize.Height; 
+            label.m_position.X = ticks.m_lineStart.X - tickSize.Width - labelSize.Height - label.Padding * 2; 
             switch (label.Alignment) {
                 case LabelAlign.Center:
                     label.m_position.Y = (ticks.m_lineStart.Y + ticks.m_lineEnd.X ) / 2;
@@ -1680,21 +1703,6 @@ namespace ILNumerics.Drawing.Controls {
                     break;
             }
         }
-        ///// <summary>
-        ///// write part of current call stack info to current trace listener
-        ///// </summary>
-        ///// <param name="frameCount">number of frames to print (without the frame for the method)</param>
-        //private void traceOutFrames(int frameCount) {
-        //    StringBuilder sb = new StringBuilder(); 
-        //    StackFrame[] frames = new StackTrace().GetFrames(); 
-        //    for (int i = 1; i < frameCount + 1 && i < frames.Length; i++) {
-        //        sb.Append("called from: "); 
-        //        sb.Append(frames[1].GetMethod().ReflectedType.Name); 
-        //        sb.Append("." + frames[i].GetMethod().Name); 
-        //        sb.Append(" -- ");
-        //    } 
-        //    Trace.TraceInformation(sb.ToString()); 
-        //}
 
         #endregion
 
@@ -1741,35 +1749,13 @@ namespace ILNumerics.Drawing.Controls {
                     return ret; 
             }
         }
-        /// <summary>
-        /// Create Axis (device dependent)
-        /// </summary>
-        /// <param name="name">specfies axis name (X,Y,ZAxis)</param>
-        /// <param name="clippingView">the global clipping view object for the axis</param>
-        /// <param name="parameters">user defined parameters (implementation dependent)</param>
-        /// <returns>ILAXis object</returns>
-        /// <remarks>Since this is an abstract method, it is not called directly but by only from derived classes.</remarks>
-        public abstract ILAxis CreateAxis(AxisNames name, ILClippingData clippingView, params object[] parameters); 
-
-        /// <summary>
-        /// Create specific graph (device dependent)
-        /// </summary>
-        /// <param name="data">numeric data to be visualized, any numeric type is accepted</param>
-        /// <param name="type">type of graph to be created</param>
-        /// <param name="additionalParams">user defined parameter, depend on concrete device type</param>
-        /// <returns>Concrete ILGraph object</returns>
-        /// <remarks>Since this is an abstract method, it is not called directly but by only from derived classes.</remarks>
-        public abstract ILGraph CreateGraph(ILBaseArray data, GraphType type, params object[] additionalParams); 
 
         /// <summary>
         /// Create GL dependend graph factory 
         /// </summary>
         /// <returns>ILGraphFactory,will be used for creating all graphs</returns>
         /// <remarks>derived types may return GL dependend factory</remarks>
-        public virtual IILCreationFactory GetCreationFactory() {
-            return this;
-        }
-
+        public abstract IILCreationFactory GetCreationFactory(); 
         #endregion
     }
 }

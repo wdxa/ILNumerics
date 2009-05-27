@@ -98,11 +98,11 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             base.Dispose();
         }
 
-        public override void PrepareMeshes(Graphics g) {
+        public override void PrepareMeshes(ILRenderProperties p) {
             return; 
         }
 
-        public override void PrepareLabels(Graphics g) {
+        public override void PrepareLabels(ILRenderProperties p) {
             return; 
         }
 

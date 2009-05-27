@@ -49,7 +49,7 @@ namespace ILNumerics.Drawing.Collections {
         #endregion
 
         #region  attributes / properties
-
+        private int m_optimizeCounter; 
         private ILAxis[] m_axes; 
         private Size m_maximumSize; 
         /// <summary>
@@ -139,6 +139,29 @@ namespace ILNumerics.Drawing.Collections {
                 m_axes[2].Visible = value; 
             }
         }
+        /// <summary>
+        /// set visibility of axis lines simultaneously
+        /// </summary>
+        public bool LinesVisible {
+            set {
+                m_axes[0].NearLines.Visible = value;
+                m_axes[1].NearLines.Visible = value;
+                m_axes[2].NearLines.Visible = value;
+                m_axes[0].FarLines.Visible = value;
+                m_axes[1].FarLines.Visible = value;
+                m_axes[2].FarLines.Visible = value;
+            }
+        }
+        /// <summary>
+        /// set visibility of all axis grid lines simultaneously
+        /// </summary>
+        public bool GridVisible {
+            set {
+                m_axes[0].Grid.Visible = value;
+                m_axes[1].Grid.Visible = value;
+                m_axes[2].Grid.Visible = value;
+             }
+        }
 
         #endregion
 
@@ -163,7 +186,7 @@ namespace ILNumerics.Drawing.Collections {
 
         }
         public void Invalidate() {
-            m_maximumSize = Size.Empty; 
+            //m_maximumSize = Size.Empty; 
             m_axes[0].Invalidate(); 
             m_axes[1].Invalidate(); 
             m_axes[2].Invalidate();
@@ -188,15 +211,29 @@ namespace ILNumerics.Drawing.Collections {
             }
         }
         internal Size MeasureMaxTickLabelSize(Graphics gr) {
-            m_maximumSize = Size.Empty; 
+            Size max = m_maximumSize; 
             for (int i = 0; i < m_axes.Length; i++) {
-                Size tmp = m_axes[i].LabeledTicks.Size; 
-                if (tmp.Height > m_maximumSize.Height) {
-                    m_maximumSize.Height = tmp.Height; 
+                if (m_axes[i].Visible) {
+                    Size tmp = m_axes[i].LabeledTicks.Size; 
+                    if (tmp.Height > max.Height) {
+                        max.Height = tmp.Height; 
+                    }
+                    if (tmp.Width > max.Width) {
+                        max.Width = tmp.Width; 
+                    }
                 }
-                if (tmp.Width > m_maximumSize.Width) {
-                    m_maximumSize.Width = tmp.Width; 
-                }
+            }
+            if (max.Width > m_maximumSize.Width || max.Height > m_maximumSize.Height) {
+                m_maximumSize = max; 
+                m_optimizeCounter = 0; 
+                return max; 
+            } else if (max.Width < m_maximumSize.Width 
+                || max.Height < m_maximumSize.Height) {
+                if (++m_optimizeCounter > 10) {
+                    m_maximumSize = max; 
+                    m_optimizeCounter = 0; 
+                    return max; 
+                } 
             }
             return m_maximumSize;
         }

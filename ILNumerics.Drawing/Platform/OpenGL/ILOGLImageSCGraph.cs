@@ -143,7 +143,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// <summary>
         /// Draws the graph into existing context
         /// </summary>
-        public override void Draw() {
+        public override void Draw(ILRenderProperties p) {
             if (m_panel.Camera.Rho > Math.PI/2) return; 
             if (!m_isReady)
                 Configure(); 
@@ -230,7 +230,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 m_isReady = false; 
             }
         }
-        public override void DrawToLegend(Graphics graphics, Rectangle sampleRect, Rectangle labelRect) {
+        public override void DrawToLegend(ILRenderProperties p, Rectangle sampleRect, Rectangle labelRect) {
             if (m_filled) {
                 // draw inner filled area
                 GL.ShadeModel(ShadingModel.Smooth); 

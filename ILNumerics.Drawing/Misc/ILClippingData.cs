@@ -38,6 +38,12 @@ namespace ILNumerics.Drawing {
         /// fires if the data range have changed
         /// </summary>
         public event ILClippingDataChangedEvent Changed; 
+        protected void OnChange() {
+            if (m_eventingActive && Changed != null) {
+                Changed ( this, new ClippingChangedEventArgs(this)); 
+                m_isDirty = false; 
+            }
+        }
         #endregion
 
         #region attributes 
@@ -48,6 +54,7 @@ namespace ILNumerics.Drawing {
         internal float m_xMax = float.MinValue; 
         internal float m_yMax = float.MinValue; 
         internal float m_zMax = float.MinValue; 
+        internal bool m_isDirty; 
         #endregion
 
         #region properties 
@@ -59,9 +66,10 @@ namespace ILNumerics.Drawing {
                 return m_xMin; 
             }
             set {
-                m_xMin = value;
-                if (m_eventingActive && Changed != null) 
-                    Changed(this,new ClippingChangedEventArgs(this)); 
+                if (m_xMin != value) {
+                    m_xMin = value;
+                    OnChange();
+                }
             }
         }
         /// <summary>
@@ -72,9 +80,10 @@ namespace ILNumerics.Drawing {
                 return m_yMin; 
             }
             set {
-                m_yMin = value;
-                if (m_eventingActive && Changed != null) 
-                    Changed(this,new ClippingChangedEventArgs(this)); 
+                if (m_yMin != value) {
+                    m_yMin = value;
+                    OnChange();
+                }
             }
         }
         /// <summary>
@@ -85,9 +94,10 @@ namespace ILNumerics.Drawing {
                 return m_zMin; 
             }
             set {
-                m_zMin = value;
-                if (m_eventingActive && Changed != null) 
-                    Changed(this,new ClippingChangedEventArgs(this)); 
+                if (m_zMin != value) {
+                    m_zMin = value;
+                    OnChange(); 
+                }
             }
         }
         /// <summary>
@@ -98,9 +108,10 @@ namespace ILNumerics.Drawing {
                 return m_xMax; 
             }
             set {
-                m_xMax = value;
-                if (m_eventingActive && Changed != null) 
-                    Changed(this,new ClippingChangedEventArgs(this)); 
+                if (m_xMax != value) {
+                    m_xMax = value;
+                    OnChange(); 
+                }
             }
         }
         /// <summary>
@@ -111,9 +122,10 @@ namespace ILNumerics.Drawing {
                 return m_yMax; 
             }
             set {
-                m_yMax = value;
-                if (m_eventingActive && Changed != null) 
-                    Changed(this,new ClippingChangedEventArgs(this)); 
+                if (m_yMax != value) {
+                    m_yMax = value;
+                    OnChange(); 
+                }
             }
         }
         /// <summary>
@@ -124,9 +136,10 @@ namespace ILNumerics.Drawing {
                 return m_zMax; 
             }
             set {
-                m_zMax = value;
-                if (m_eventingActive && Changed != null) 
-                    Changed(this,new ClippingChangedEventArgs(this)); 
+                if (m_zMax != value) {
+                    m_zMax = value;
+                    OnChange(); 
+                }
             }
         }
         /// <summary>
@@ -181,6 +194,14 @@ namespace ILNumerics.Drawing {
                 return (ZMax - ZMin);
             }
         }
+        /// <summary>
+        /// marks the limits as altered, without having fired a changed event yet
+        /// </summary>
+        public bool IsDirty {
+            get {
+                return m_isDirty; 
+            }
+        }
         #endregion
 
         #region public interface
@@ -189,51 +210,51 @@ namespace ILNumerics.Drawing {
         /// </summary>
         public void EventingSuspend() {
             m_eventingActive = false;
+            m_isDirty = false; 
         }
         /// <summary>
         /// Resume previously suspended eventing. Start sending events again.
         /// </summary>
         public void EventingResume() {
             m_eventingActive = true;
-            if (Changed != null)
-                Changed(this,new ClippingChangedEventArgs(this));
+            if (m_isDirty && Changed != null) {
+                OnChange();  
+            }
         }
         /// <summary>
         /// update ranges for this object with union of both ranges. 
         /// </summary>
         /// <param name="clipData">clipping ranges to create union with</param>
         public void Update (ILClippingData clipData) {
-            bool fire = false; 
-            if (clipData.XMin < XMin) { fire = true; m_xMin = clipData.XMin; }
-            if (clipData.YMin < YMin) { fire = true; m_yMin = clipData.YMin; }
-            if (clipData.ZMin < ZMin) { fire = true; m_zMin = clipData.ZMin; }
-            if (clipData.XMax > XMax) { fire = true; m_xMax = clipData.XMax; }
-            if (clipData.YMax > YMax) { fire = true; m_yMax = clipData.YMax; }
-            if (clipData.ZMax > ZMax) { fire = true; m_zMax = clipData.ZMax; }
-            if (fire && m_eventingActive && Changed != null) 
-                Changed(this,new ClippingChangedEventArgs(this)); 
-        }
+            if (clipData.XMin < XMin) { m_isDirty = true; m_xMin = clipData.XMin; }
+            if (clipData.YMin < YMin) { m_isDirty = true; m_yMin = clipData.YMin; }
+            if (clipData.ZMin < ZMin) { m_isDirty = true; m_zMin = clipData.ZMin; }
+            if (clipData.XMax > XMax) { m_isDirty = true; m_xMax = clipData.XMax; }
+            if (clipData.YMax > YMax) { m_isDirty = true; m_yMax = clipData.YMax; }
+            if (clipData.ZMax > ZMax) { m_isDirty = true; m_zMax = clipData.ZMax; }
+            if (m_isDirty && m_eventingActive && Changed != null) 
+                OnChange(); 
+            }
         /// <summary>
         /// update ranges for this object with point coords for specific axes
         /// </summary>
         /// <param name="point">point with coords to update ranges with</param>
         /// <param name="updateBitFlags">bitflag combination to specify axis to be recognized: 1,2,4 -> x,y,z</param>
         public void Update (ILPoint3Df point, int updateBitFlags) {
-            bool fire = false; 
             if ((updateBitFlags & 1) != 0) {
-                if (point.X < XMin) { fire = true; m_xMin = point.X; }
-                if (point.X > XMax) { fire = true; m_xMax = point.X; }
+                if (point.X < XMin) { m_isDirty = true; m_xMin = point.X; }
+                if (point.X > XMax) { m_isDirty = true; m_xMax = point.X; }
             }
             if ((updateBitFlags & 2) != 0) {
-                if (point.Y < YMin) { fire = true; m_yMin = point.Y; }
-                if (point.Y > YMax) { fire = true; m_yMax = point.Y; }
+                if (point.Y < YMin) { m_isDirty = true; m_yMin = point.Y; }
+                if (point.Y > YMax) { m_isDirty = true; m_yMax = point.Y; }
             }
             if ((updateBitFlags & 4) != 0) {
-                if (point.Z < ZMin) { fire = true; m_zMin = point.Z; }
-                if (point.Z > ZMax) { fire = true; m_zMax = point.Z; }
+                if (point.Z < ZMin) { m_isDirty = true; m_zMin = point.Z; }
+                if (point.Z > ZMax) { m_isDirty = true; m_zMax = point.Z; }
             }
-            if (fire && m_eventingActive && Changed != null) 
-                Changed(this,new ClippingChangedEventArgs(this)); 
+            if (m_isDirty && m_eventingActive && Changed != null) 
+                OnChange(); 
         }
         /// <summary>
         /// update clipping data for this object with union of this and rectangle specified
@@ -248,6 +269,7 @@ namespace ILNumerics.Drawing {
             Update(rbCorner,7);
         }
         public void Update (ILPoint3Df center, float zoomFactor) {
+            if (zoomFactor == 1.0f && center == CenterF) return; 
             float s = WidthF * zoomFactor / 2; 
             m_xMin = center.X - s; 
             m_xMax = center.X + s; 
@@ -256,9 +278,10 @@ namespace ILNumerics.Drawing {
             m_yMax = center.Y + s; 
             s = DepthF * zoomFactor / 2; 
             m_zMin = center.Z - s; 
-            m_zMax = center.Z + s; 
+            m_zMax = center.Z + s;
+            m_isDirty = true; 
             if (m_eventingActive && Changed != null) 
-                Changed(this,new ClippingChangedEventArgs(this)); 
+                OnChange();  
         }
         /// <summary>
         /// Set clipping limits to volume inside the box specified 
@@ -272,8 +295,9 @@ namespace ILNumerics.Drawing {
             m_yMax = Math.Max(lunCorner.Y,rbfCorner.Y); 
             m_zMin = Math.Min(lunCorner.Z,rbfCorner.Z); 
             m_zMax = Math.Max(lunCorner.Z,rbfCorner.Z); 
+            m_isDirty = true; 
             if (m_eventingActive && Changed != null) 
-                Changed(this,new ClippingChangedEventArgs(this)); 
+                OnChange(); 
         }
         /// <summary>
         /// reset this clipping range to initial (all empty)
@@ -285,8 +309,9 @@ namespace ILNumerics.Drawing {
             m_xMax = float.MinValue; 
             m_yMax = float.MinValue;  
             m_zMax = float.MinValue; 
+            m_isDirty = true; 
             if (m_eventingActive && Changed != null) 
-                Changed(this,new ClippingChangedEventArgs(this)); 
+                OnChange();  
 
         }
         /// <summary>
@@ -300,8 +325,9 @@ namespace ILNumerics.Drawing {
             m_xMax = m_clippingData.XMax;
             m_yMax = m_clippingData.YMax;
             m_zMax = m_clippingData.ZMax;
+            m_isDirty = true; 
             if (m_eventingActive && Changed != null) 
-                Changed(this,new ClippingChangedEventArgs(this)); 
+                OnChange();  
         }
         /// <summary>
         /// stretch clipping region to unit cube [0 1][0 1][0 1] 
@@ -359,6 +385,58 @@ namespace ILNumerics.Drawing {
             ret.Z = (z + 0.5f) * (m_zMax-m_zMin) + m_zMin; 
             return ret; 
         }
+        /// <summary>
+        /// Ensure that this clipping data has valid length for all dimensions  [deprecated]
+        /// </summary>
+        /// <remarks>If the length of the clipping cube is infinity for any dimension, 
+        /// that dimension is set to a range of -0.5...0.5.
+        /// <para>This function is to be called by custom graphs which create their 
+        /// size <b>relative</b> to the size of the clipping container. Those 
+        /// graphs will need a valid container size and may call this function in the 
+        /// constructor.</para></remarks>
+        /// <returns>true if the length in any dimension had to be corrected (set to 1.0), false otherwise.</returns>
+        private bool EnsureValidSize() {
+            bool change = false; 
+            if (float.IsInfinity(WidthF)) {
+                change = true;
+                m_xMin = -0.5f;
+                m_xMax = 0.5f;
+            }
+            if (float.IsInfinity(HeightF)) {
+                change = true;
+                m_yMin = -0.5f;
+                m_yMax = 0.5f; 
+            }
+            if (float.IsInfinity(DepthF)) {
+                change = true;
+                m_zMin = -0.5f;
+                m_zMax = 0.5f;
+            }
+            if (change && m_eventingActive && Changed != null) {
+                OnChange(); 
+            }
+            return change; 
+        }
+        #endregion
+
+        #region operator overloads 
+        public static bool operator == (ILClippingData limit1, ILClippingData limit2) {
+            return (limit1.m_xMax == limit2.m_xMax && 
+                    limit1.m_yMax == limit2.m_yMax && 
+                    limit1.m_zMax == limit2.m_zMax && 
+                    limit1.m_xMin == limit2.m_xMin && 
+                    limit1.m_yMin == limit2.m_yMin && 
+                    limit1.m_zMin == limit2.m_zMin); 
+        }
+        public static bool operator != (ILClippingData limit1, ILClippingData limit2) {
+            return (limit1.m_xMax != limit2.m_xMax || 
+                    limit1.m_yMax != limit2.m_yMax ||
+                    limit1.m_zMax != limit2.m_zMax || 
+                    limit1.m_xMin != limit2.m_xMin || 
+                    limit1.m_yMin != limit2.m_yMin || 
+                    limit1.m_zMin != limit2.m_zMin); 
+        }
+
         #endregion
 
     }

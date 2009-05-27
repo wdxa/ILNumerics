@@ -173,9 +173,9 @@ namespace ILNumerics.Drawing.Misc {
         /// parameter is null on input, the legend will be output into current GL device context (if any).</param>
         /// <param name="area">rectangle area defines region to draw legend contents into.</param>
         /// <remarks>The case bitmap == null is handled by derived class implementations.</remarks>
-        public virtual void Draw(Graphics graphics, Rectangle area) {
+        public virtual void Draw(ILRenderProperties p, Rectangle area) {
             if (m_panel == null || m_panel.Graphs == null) return; 
-            if (graphics == null) {
+            if (p.Graphics == null) {
                 throw new ILArgumentException("ILLegend:Draw: unexpected parameter (bitmap) is null. This should be handled in derived classes!"); 
             }
             // draw bg + border 
@@ -185,14 +185,14 @@ namespace ILNumerics.Drawing.Misc {
             p2 = new PointF(m_size.Width-offsX,offsX); 
             Pen pen = new Pen(m_border.Color,m_border.Width); 
             // todo: implement dash styles 
-            graphics.Clear(m_bgColor); 
-            graphics.DrawLine(pen,p1,p2); 
+            p.Graphics.Clear(m_bgColor); 
+            p.Graphics.DrawLine(pen,p1,p2); 
             p1.X = p2.X; p1.Y = m_size.Height - offsX; 
-            graphics.DrawLine(pen,p2,p1); 
+            p.Graphics.DrawLine(pen,p2,p1); 
             p2.X = offsX; p2.Y = p1.Y; 
-            graphics.DrawLine(pen,p1,p2);
+            p.Graphics.DrawLine(pen,p1,p2);
             p1.X = offsX; p1.Y = offsX; 
-            graphics.DrawLine(pen,p2,p1); 
+            p.Graphics.DrawLine(pen,p2,p1); 
             List<IILLegendRenderer> providers = new List<IILLegendRenderer>(10); 
             foreach (ILGraph graph in m_panel.Graphs) {
                 if (graph is IILLegendRenderer) {

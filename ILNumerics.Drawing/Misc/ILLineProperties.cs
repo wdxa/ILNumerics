@@ -169,6 +169,12 @@ namespace ILNumerics.Drawing {
         }
         #endregion 
 
+        #region public properties 
+        public ILLineProperties Clone() {
+            return (ILLineProperties) this.MemberwiseClone(); 
+        }
+        #endregion 
+
         #region constructors
         /// <summary>
         /// create default properties for graphs

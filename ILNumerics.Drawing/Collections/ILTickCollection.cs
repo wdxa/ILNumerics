@@ -291,7 +291,7 @@ namespace ILNumerics.Drawing.Collections {
         /// <param name="ticks"></param>
         /// <remarks>This will fire a Change event.</remarks>
         public void Replace (List<float> ticks) {
-            m_ticks.Clear(); 
+            Clear(); 
             Size tmpSize = Size.Empty; 
             foreach (float tick in ticks) {
                 Add(tick); 
@@ -317,7 +317,8 @@ namespace ILNumerics.Drawing.Collections {
             if (m_size.Height < queue.Size.Height)
                 m_size.Height = queue.Size.Height; 
             if (m_size.Width < queue.Size.Width) 
-                m_size.Width = queue.Size.Width;   
+                m_size.Width = queue.Size.Width; 
+            //m_tickMode = TickMode.Manual; 
         }
         /// <summary>
         /// Add a labeled tick to the ticks collection
@@ -335,14 +336,14 @@ namespace ILNumerics.Drawing.Collections {
         /// of the content will be returned as if the orientation was straight horizontally.</remarks>
         public override Size Size {
             get {
-                if (m_tickMode == TickMode.Auto && m_ticks.Count == 0) {
-                    // first time: no labels have been added? -> assume maximum 
-                    // size determined by precision
-                    Graphics g = Graphics.FromImage(new Bitmap(1,1));
-                    string measString = String.Format(".-e08" + new String('0',m_precision)); 
-                    return g.MeasureString(measString,m_font).ToSize(); 
-               } else
-                    return m_size; 
+               // if (m_tickMode == TickMode.Auto && m_ticks.Count == 0) {
+               //     // first time: no labels have been added? -> assume maximum 
+               //     // size determined by precision
+               //     Graphics g = Graphics.FromImage(new Bitmap(1,1));
+               //     string measString = String.Format(".-e08" + new String('0',m_precision)); 
+               //     m_size = g.MeasureString(measString,m_font).ToSize(); 
+               //}
+               return m_size; 
             }
         }
         /// <summary>
@@ -393,7 +394,7 @@ namespace ILNumerics.Drawing.Collections {
                 // else: no ticks could be found at all -> fallback: show only center
                 tickCount = 1; 
             } 
-            m_ticks.Clear();
+            Clear();
             float relevExp = (float)Math.Round(Math.Log10((max - min)));
             if (!float.IsNaN(relevExp) && !float.IsInfinity(relevExp)) { 
                 float multRound; 
@@ -457,8 +458,8 @@ namespace ILNumerics.Drawing.Collections {
             return ret; 
         }
 
-        public void  Draw(Graphics g, float min, float max) {
-            m_renderer.Begin(g); 
+        public void  Draw(ILRenderProperties p, float min, float max) {
+            m_renderer.Begin(p); 
             float clipRange = max - min; 
             ILPoint3Df mult = new ILPoint3Df(
                         ((float)(m_lineEnd.X - m_lineStart.X) / clipRange),
@@ -466,6 +467,9 @@ namespace ILNumerics.Drawing.Collections {
                         0);
             float tmp;
             Point point = new Point(0,0); 
+            Point oldMidPoint = new Point(int.MinValue,int.MinValue); 
+            Point newMidPoint = new Point(int.MinValue,int.MinValue);
+            Point oldHSize = new Point(), newHSize = new Point(); 
             foreach (LabeledTick lt in m_ticks) {
                 if (lt.Queue.Count > 0
                     && lt.Position >= min 
@@ -474,10 +478,20 @@ namespace ILNumerics.Drawing.Collections {
                     point.X = (int)(m_lineStart.X + mult.X * tmp);
                     point.Y = (int)(m_lineStart.Y + mult.Y * tmp);
                     offsetAlignment(lt.Queue.Size, ref point); 
-                    m_renderer.Draw(lt.Queue,point,m_orientation,m_color); 
+                    newHSize.X = (int)(lt.Queue.Size.Width / 2.0f); 
+                    newHSize.Y = (int)(lt.Queue.Size.Height / 2.0f);
+                    newMidPoint.X = point.X + newHSize.X; 
+                    newMidPoint.Y = point.Y + newHSize.Y; 
+                    if (m_tickMode != TickMode.Auto || 
+                        ( Math.Abs(newMidPoint.X + newHSize.X - oldMidPoint.X - oldHSize.X) > m_padding || 
+                          Math.Abs(newMidPoint.Y + newHSize.Y - oldMidPoint.Y - oldHSize.Y) > m_padding)) {
+                            m_renderer.Draw(lt.Queue,point,m_orientation,m_color); 
+                            oldMidPoint = newMidPoint; 
+                            oldHSize = newHSize; 
+                    } 
                 }
             } 
-            m_renderer.End(); 
+            m_renderer.End(p); 
         }
         #endregion
 

@@ -46,7 +46,7 @@
     <DocumentationFile>..\bin\ILNumerics.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ILNumerics.Net, Version=1.4.1.1, Culture=neutral, PublicKeyToken=e89b04a2605d95ed, processorArchitecture=MSIL" />
+    <Reference Include="ILNumerics.Net, Version=1.4.3.18530, Culture=neutral, PublicKeyToken=e89b04a2605d95ed, processorArchitecture=MSIL" />
     <Reference Include="OpenTK, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -57,11 +57,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\ILLightCollection.cs" />
     <Compile Include="Collections\ILTickCollection.cs" />
     <Compile Include="Controls\ILSubfigure.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Graphs\ILPolygon.cs" />
+    <Compile Include="Graphs\ILBarGraph2D.cs" />
+    <Compile Include="Graphs\ILSceneGraph.cs" />
+    <Compile Include="Graphs\ILSceneGraphNode.cs" />
+    <Compile Include="Labeling\ILShapeLabel.cs" />
     <Compile Include="Interfaces\IILLegendRenderer.cs" />
     <Compile Include="Interfaces\IILTextInterpreter.cs" />
     <Compile Include="Labeling\ILHashCreator.cs" />
@@ -69,6 +73,7 @@
     <Compile Include="Labeling\ILRenderQueue.cs" />
     <Compile Include="Labeling\ILSimpleInterpreter.cs" />
     <Compile Include="Labeling\ILSimpleTexInterpreter.cs" />
+    <Compile Include="Lighting\ILLight.cs" />
     <Compile Include="Marker\ILBitmapMarkerShape.cs" />
     <Compile Include="Marker\ILMarkerShapeProxy.cs" />
     <Compile Include="Marker\ILStyledMarkerShape.cs" />
@@ -81,9 +86,11 @@
     <Compile Include="Graphs\ILPlot2DGraph.cs" />
     <Compile Include="Graphs\ILFilledGraph.cs" />
     <Compile Include="Misc\ILCamera.cs" />
+    <Compile Include="Misc\ILColorEnumerator.cs" />
     <Compile Include="Misc\ILColormap.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Misc\ILGraphComparer.cs" />
     <Compile Include="Misc\ILLegend.cs" />
     <Compile Include="Misc\ILLineProperties.cs" />
     <Compile Include="Marker\ILMarker.cs" />
@@ -91,12 +98,17 @@
     <Compile Include="Platform\OpenGL\ILOGLBitmapMarkerShape.cs" />
     <Compile Include="Platform\OpenGL\ILOGLImageSCGraph.cs" />
     <Compile Include="Platform\OpenGL\ILOGLLegend.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLLinesRendererC4bV3f.cs" />
     <Compile Include="Platform\OpenGL\ILOGLRenderer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Platform\OpenGL\ILOGLStyledMarkerShape.cs" />
     <Compile Include="Platform\OpenGL\ILOGLSurfaceGraph.cs" />
     <Compile Include="Platform\OpenGL\ILOGLTextureStorage.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLVertexRendererC4bV3f.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Platform\OpenGL\ILOGLVertexRendererC4fN3fV3f.cs" />
     <Compile Include="Platform\OpenGL\ILOGLWorldRenderer.cs" />
     <Compile Include="Platform\OpenGL\ILOGLXAxis.cs">
       <SubType>Code</SubType>
@@ -106,6 +118,7 @@
     </Compile>
     <Compile Include="Platform\OpenGL\ILOGLZAxis.cs" />
     <Compile Include="Graphs\ILSurfaceGraph.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLPointsRendererC4bV3f.cs" />
     <Compile Include="Resources\Images.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -167,6 +180,35 @@
     <Compile Include="Labeling\ILTextureStorage.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Shapes\ILBorderedShape.cs" />
+    <Compile Include="Shapes\ILCompositeShape.cs" />
+    <Compile Include="Misc\ILRenderProperties.cs" />
+    <Compile Include="Shapes\ILLine.cs" />
+    <Compile Include="Shapes\ILLines.cs" />
+    <Compile Include="Shapes\ILLitBox.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shapes\ILLitCompositeShape.cs" />
+    <Compile Include="Shapes\ILLitQuads.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shapes\ILLitSphere.cs" />
+    <Compile Include="Shapes\ILLitTriangles.cs" />
+    <Compile Include="Shapes\ILPoints.cs" />
+    <Compile Include="Shapes\ILPolygon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shapes\ILQuad.cs" />
+    <Compile Include="Shapes\ILQuads.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shapes\ILShape.cs" />
+    <Compile Include="Shapes\ILTriangle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shapes\ILTriangles.cs" />
+    <Compile Include="Shapes\ILVertexRenderer.cs" />
+    <Compile Include="Shapes\VertexDefinitions.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +234,7 @@
     <None Include="Resources\close.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Resources\Diamond25x25.png" />
     <None Include="Resources\TriangleUp25x25.png" />
     <None Include="Resources\Circle25x25.png" />

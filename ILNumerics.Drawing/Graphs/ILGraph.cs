@@ -36,9 +36,9 @@ using ILNumerics.Drawing.Interfaces;
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
-    /// graph for drawings into ILPanel - this is not intended for direct instantiating!
+    /// graph for drawings into ILPanel
     /// </summary>
-    /// <remarks>Use the ILGraphCollection returned from ILSubfigure.Graphs member and its Add function to create new graphs.</remarks>
+    /// <remarks>Use the ILGraphCollection returned from ILPanel.Graphs and its Add... functions to create new graphs.</remarks>
     public abstract class ILGraph : IDisposable {
 
         #region events 
@@ -53,12 +53,12 @@ namespace ILNumerics.Drawing.Graphs {
 
         #region members / properties
         protected bool m_isReady; 
-        protected ILArray<float> m_sourceArray; 
         protected ILClippingData m_localClipping; 
         protected ILClippingData m_globalClipping; 
         protected GraphType m_graphType; 
         protected ILPanel m_panel; 
         protected ILLabel m_label; 
+        protected bool m_autoFitContent;
 
         /// <summary>
         ///  retrieve reference of the label for the graph
@@ -68,16 +68,6 @@ namespace ILNumerics.Drawing.Graphs {
                 return m_label; 
             }
         }        
-        /// <summary>
-        ///  get a reference to the internal data array
-        /// </summary>
-        /// <remarks>modifications to the array returned will 
-        /// <b>not</b> alter the data the graph is based on.</remarks>
-        public ILBaseArray Data {
-            get {
-                return m_sourceArray.CreateReference(); 
-            }
-        }
         public ILClippingData Limits {
             get { 
                 return m_localClipping;
@@ -95,39 +85,55 @@ namespace ILNumerics.Drawing.Graphs {
             }
         }
         /// <summary>
-        /// The containing panel
+        /// The hosting panel
         /// </summary>
         public ILPanel Panel {
             get {
                 return m_panel; 
             }
         }
+        /// <summary>
+        /// true: data updates will cause the viewing cube to fit the data
+        /// </summary>
+        public bool AutoFitContent {
+            get { return m_autoFitContent; }
+            set { m_autoFitContent = value; }
+        } 
         #endregion
 
         #region constructors
         
-        internal ILGraph(ILPanel panel, ILBaseArray sourceArray, ILClippingData clippingContainer) {
-            if (object.Equals(sourceArray,null))
-                throw new ILArgumentException("CreateGraph: source array must not be null!");
-            if (!sourceArray.IsNumeric) 
-                throw new ILArgumentException("CreateGraph: source array must be numeric!");
+        internal ILGraph(ILPanel panel, ILClippingData clippingContainer) {
             m_panel = panel; 
-            m_localClipping = new ILClippingData();  
+            m_localClipping = new ILClippingData();
+            m_localClipping.Changed += new ILClippingDataChangedEvent(m_localClipping_Changed);
             m_globalClipping = clippingContainer;
             m_globalClipping.Changed += new ILClippingDataChangedEvent(m_globalClipping_Changed);
             // store incoming data arrays as ILArray<float>
             //m_sourceArray = sourceArray.CreateReference();
-            m_sourceArray = BuiltInFunctions.ILMath.tosingle(sourceArray); 
             m_label = new ILLabel(m_panel);
             m_label.Color = Color.White; 
             m_label.Changed += new EventHandler(m_label_Changed);
+            m_autoFitContent = true; 
             m_isReady = false;
         }
+
 
         #endregion 
 
         #region event handler 
-
+        
+        protected virtual void m_localClipping_Changed(object sender, ClippingChangedEventArgs e) {
+            // update global clipping if local clipping have changed
+            if (AutoFitContent) {
+                // .. fit to panel
+                m_globalClipping.Set(e.ClippingData.Min, e.ClippingData.Max);
+                m_panel.ResetView(false);
+            } else {
+                // only make areas outside current view cube visible
+                m_globalClipping.Update(e.ClippingData);
+            }
+        }
         protected virtual void m_globalClipping_Changed(object sender, ClippingChangedEventArgs e) {
             // override this event in derived class, if neccessary
         }
@@ -138,15 +144,24 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region abstract / interface member
-
-        protected abstract void Configure();
+        /// <summary>
+        /// configures all parameters + cache, called before drawing
+        /// </summary>
+        public abstract void Configure();
+        /// <summary>
+        /// if called, the graph will execute Configure() right before next draw
+        /// </summary>
         public virtual void Invalidate() {
             m_isReady = false; 
         }
-        public virtual void Draw() {
-            if (!m_isReady)
-                Configure(); 
-        }
+        /// <summary>
+        /// draws the graph into the panel
+        /// </summary>
+        /// <param name="p">extended drawing properties</param>
+        public abstract void Draw(ILRenderProperties p); 
+        /// <summary>
+        /// clear ressources of the graph
+        /// </summary>
         public virtual void Dispose() {
             m_globalClipping.Changed -= new ILClippingDataChangedEvent(m_globalClipping_Changed); 
             if (m_label != null) {
@@ -155,5 +170,6 @@ namespace ILNumerics.Drawing.Graphs {
             }
         }
         #endregion
+
     }
 }

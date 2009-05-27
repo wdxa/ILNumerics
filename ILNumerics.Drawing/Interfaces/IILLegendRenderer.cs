@@ -34,10 +34,10 @@ namespace ILNumerics.Drawing.Interfaces {
         /// <summary>
         /// draws a small example of the visual output 
         /// </summary>
-        /// <param name="g">graphics object, if this is null, drawing into current GL context</param>
+        /// <param name="p">extended render properties</param>
         /// <param name="sampleArea">area to draw the line + marker into</param>
         /// <param name="labelArea">area to draw corresponding label into</param>
-        void DrawToLegend(Graphics g, Rectangle sampleArea, Rectangle labelArea); 
+        void DrawToLegend(ILRenderProperties p, Rectangle sampleArea, Rectangle labelArea); 
         /// <summary>
         /// Read access to label element
         /// </summary>

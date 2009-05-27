@@ -73,6 +73,9 @@ namespace ILNumerics.Drawing.Labeling {
         /// </summary>
         public virtual Size Size {
             get {
+                if (m_cachedExpression != m_expression) {
+                    interprete(m_expression); 
+                }
                 return m_size; 
             }
         }
@@ -159,8 +162,8 @@ namespace ILNumerics.Drawing.Labeling {
             }
             set {
                 if (value != m_expression) {
-                    // clean up, interpret & cache
-                    interprete(value); 
+                    m_expression = value; 
+                    // (clean up, interpret & cache: when drawing)
                     OnChanged(); 
                 }
             }
@@ -213,12 +216,12 @@ namespace ILNumerics.Drawing.Labeling {
         /// <summary>
         /// draws the whole rendering queue
         /// </summary>
-        public virtual void Draw(Graphics g) {
+        public virtual void Draw(ILRenderProperties p) {
             if (m_expression != m_cachedExpression) 
                 interprete(m_expression); 
-            m_renderer.Begin(g);
+            m_renderer.Begin(p);
             m_renderer.Draw(m_renderQueue,offsetAlignment(m_renderQueue.Size),m_orientation,m_color); 
-            m_renderer.End(); 
+            m_renderer.End(p); 
         }
 
 #endregion
@@ -284,7 +287,6 @@ namespace ILNumerics.Drawing.Labeling {
             m_renderQueue = 
                 m_interpreter.Transform(expression,m_font,m_color,m_renderer);
             m_size = m_renderQueue.Size; 
-            m_expression = expression; 
             m_cachedExpression = expression; 
         }
 

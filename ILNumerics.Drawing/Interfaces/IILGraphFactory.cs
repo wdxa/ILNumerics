@@ -27,6 +27,8 @@ using System;
 using ILNumerics.Drawing.Internal; 
 using ILNumerics.Drawing.Graphs;
 using ILNumerics.Drawing.Controls; 
+using System.Collections.Generic; 
+using ILNumerics.Drawing.Shapes; 
 
 namespace ILNumerics.Drawing.Interfaces {
     /// <summary>
@@ -51,5 +53,17 @@ namespace ILNumerics.Drawing.Interfaces {
         /// <param name="additionalParams">additional parameter</param>
         /// <returns>newly created graph instance</returns>
         ILGraph CreateGraph(ILBaseArray data, GraphType graphType, params object[] additionalParams);
+        /// <summary>
+        /// create a new device dependant scene graph for hosting ILPrimitives
+        /// </summary>
+        /// <returns>scene graph</returns>
+        ILSceneGraph CreateSceneGraph();
+
+        /// <summary>
+        /// create vertex renderer for rendering arbitrary vertices. 
+        /// </summary>
+        /// <param name="type">underlying vertex type (value type)</param>
+        /// <returns>vertex renderer</returns>
+        ILVertexRenderer CreateVertexRenderer(Type vertexType, ILShape shape);
     }
 }

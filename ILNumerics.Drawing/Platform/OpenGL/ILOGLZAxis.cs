@@ -57,7 +57,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// </summary>
         /// <param name="g">graphics object (ignored)</param>
         /// <param name="background">true: draw lines in the back only, false: draw foreground lines</param>
-        protected override void iDrawAxis(Graphics g, bool background) {
+        protected override void iDrawAxis(ILRenderProperties p, bool background) {
             // create vertex data: main axis and ticks 
             if (!m_visible) return;  
             int count = 8; float tickLen;

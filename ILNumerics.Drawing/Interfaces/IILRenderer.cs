@@ -68,8 +68,13 @@ namespace ILNumerics.Drawing.Interfaces {
         /// <summary>
         /// begins drawing, to be called before Draw()!
         /// </summary>
-        /// <param name="g">graphics object (from OnPaint event)</param>
-        void Begin (Graphics g); 
+        /// <param name="p">extended render properties</param>
+        void Begin (ILRenderProperties p); 
+        /// <summary>
+        /// begins drawing & queries current model view matrix also
+        /// </summary>
+        /// <param name="p">extended render properties</param>
+        void Begin (ILRenderProperties p, ref double[] modelview); 
         /// <summary>
         /// Draw the text (screen coords) 
         /// </summary>
@@ -103,7 +108,7 @@ namespace ILNumerics.Drawing.Interfaces {
         /// <summary>
         /// finalizes the drawing (must prepare it again before drawing!)
         /// </summary>
-        void End(); 
+        void End(ILRenderProperties p); 
         /// <summary>
         /// Cache single item into the renderer cache. 
         /// </summary>

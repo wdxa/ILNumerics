@@ -229,13 +229,13 @@ namespace ILNumerics.Drawing {
             m_clipping = clippingView; 
             m_axisType = AxisType.Linear;
             m_nearLines = new ILLineProperties(); 
-            m_nearLines.Color = Color.Gray; 
+            m_nearLines.Color = Color.DarkBlue; 
             m_nearLines.Width = 1; 
             m_nearLines.Antialiasing = true; 
             m_nearLines.Changed +=new EventHandler(m_grid_Changed);
             m_farLines = new ILLineProperties(); 
-            m_farLines.Color = Color.Gray; 
-            m_farLines.Width = 2; 
+            m_farLines.Color = Color.DarkBlue; 
+            m_farLines.Width = 1; 
             m_farLines.Antialiasing = true; 
             m_farLines.Changed +=new EventHandler(m_grid_Changed);
             m_label = new ILLabel(panel);
@@ -254,7 +254,7 @@ namespace ILNumerics.Drawing {
         /// <param name="background">true: draw background only, false: draw foreground only</param>
         /// <param name="camera">current camera paremeter, may needed to determine which axis are front/back</param>
         /// <remarks>This function is called in the general rendering algorithm. I.e. <b>before</b> the surface buffers has been swapped.</remarks>
-        protected abstract void iDrawAxis(Graphics g, bool background); 
+        protected abstract void iDrawAxis(ILRenderProperties p, bool background); 
         /// <summary>
         /// do the drawing of axis' label 
         /// </summary>
@@ -262,13 +262,14 @@ namespace ILNumerics.Drawing {
         /// graphics devices (like D3D) may block rendering surface exclusively.</param>
         /// <remarks>When this function is called, depends on the DrawAfterBufferSwaped setting 
         /// of the current TextRenderer.</remarks>
-        protected virtual void iDrawLabel(Graphics g) {
-            m_label.Draw(g);
+        protected virtual void iDrawLabel(ILRenderProperties p) {
+            if (m_visible)
+                m_label.Draw(p);
         }
 
-        protected virtual void iDrawTickLabels(Graphics g) {
+        protected virtual void iDrawTickLabels(ILRenderProperties p) {
             if (m_visible)
-                m_labeledTicks.Draw(g,m_clipping.Min[Index],m_clipping.Max[Index]); 
+                m_labeledTicks.Draw(p,m_clipping.Min[Index],m_clipping.Max[Index]); 
         }
         /// <summary>
         /// Do all rendering for the grid of the axis
@@ -280,42 +281,42 @@ namespace ILNumerics.Drawing {
         /// draw this axis in the back (behind the graphs)
         /// </summary>
         /// <remarks>This method is used internally. There should be no need to call it directly.</remarks>
-        public virtual void RenderState1(Graphics g) {
+        public virtual void RenderState1(ILRenderProperties p) {
             if (m_invalidated) 
-                Configure(g); 
+                Configure(p); 
             if (!m_labeledTicks.Renderer.DrawAfterBufferSwapped)
-                iDrawTickLabels(g); 
+                iDrawTickLabels(p); 
             if (!m_label.Renderer.DrawAfterBufferSwapped) 
-                iDrawLabel(g); 
-            iDrawAxis(g,true); 
+                iDrawLabel(p); 
+            iDrawAxis(p,true); 
         } 
         /// <summary>
         /// Do rendering of foreground (before the graphs)
         /// </summary>
         /// <param name="g"></param>
-        public virtual void RenderState2(Graphics g) {
+        public virtual void RenderState2(ILRenderProperties p) {
             if (m_invalidated) 
-                Configure(g); 
-            iDrawAxis(g,false); 
+                Configure(p); 
+            iDrawAxis(p,false); 
         }
         /// <summary>
         /// do rendering after the buffers have been swapped
         /// </summary>
         /// <param name="g"></param>
-        public virtual void RenderState3(Graphics g) {
+        public virtual void RenderState3(ILRenderProperties p) {
             if (m_labeledTicks.Renderer.DrawAfterBufferSwapped)
-                iDrawTickLabels(g); 
+                iDrawTickLabels(p); 
             if (m_label.Renderer.DrawAfterBufferSwapped) 
-                iDrawLabel(g); 
+                iDrawLabel(p); 
         }
  
         /// <summary>
         /// update axis (recalculate number &amp; position of labels in auto mode, recreate vertices)
         /// </summary>
         /// <remarks>This method is used internally. There should be no need to call it directly.</remarks>
-        internal virtual void Configure(Graphics g) {
+        internal virtual void Configure(ILRenderProperties p) {
             if (m_labeledTicks.Mode == TickMode.Auto) {
-                int tickCount = GetOptimalTickNumber(g); 
+                int tickCount = GetOptimalTickNumber(p); 
                 if (m_labelProvider != null) {
                     string format = String.Format("g{0}",m_labeledTicks.Precision); 
                     m_labeledTicks.Replace(
@@ -324,18 +325,18 @@ namespace ILNumerics.Drawing {
                     m_labeledTicks.CreateAuto(m_clipping.Min[Index],m_clipping.Max[Index],tickCount);
                 }
             }
-            PrepareMeshes(g); 
-            PrepareLabels(g); 
+            PrepareMeshes(p); 
+            PrepareLabels(p); 
             m_invalidated = false; 
         }
         /// <summary>
         /// recreate vertices
         /// </summary>
-        public abstract void PrepareMeshes(Graphics g);
+        public abstract void PrepareMeshes(ILRenderProperties p);
         /// <summary>
         /// recreate labels
         /// </summary>
-        public virtual void PrepareLabels(Graphics g) {
+        public virtual void PrepareLabels(ILRenderProperties p) {
             // prepare textrenderer
         }
 
@@ -343,7 +344,7 @@ namespace ILNumerics.Drawing {
         /// number of ticks optimally fitting on screen 
         /// </summary>
         /// <returns>optimal number of ticks for this axis</returns>
-        internal int GetOptimalTickNumber(Graphics g) {
+        internal int GetOptimalTickNumber(ILRenderProperties p) {
             System.Diagnostics.Debug.Assert(m_labeledTicks.Mode == TickMode.Auto); 
             SizeF rect = m_labeledTicks.Size; 
             Point s = new Point(),e = new Point();

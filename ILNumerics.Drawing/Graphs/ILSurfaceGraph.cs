@@ -134,7 +134,7 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region IILLegendRenderer
-        public abstract void DrawToLegend(Graphics graphics, Rectangle sampleRect, Rectangle labelRect); 
+        public abstract void DrawToLegend(ILRenderProperties p, Rectangle sampleRect, Rectangle labelRect); 
         #endregion
     }
 }
