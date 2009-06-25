@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;RENDERER_DRAW_NORMALS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -46,7 +46,7 @@
     <DocumentationFile>..\bin\ILNumerics.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ILNumerics.Net, Version=1.4.3.18530, Culture=neutral, PublicKeyToken=e89b04a2605d95ed, processorArchitecture=MSIL" />
+    <Reference Include="ILNumerics.Net, Version=1.4.3.31673, Culture=neutral, PublicKeyToken=e89b04a2605d95ed, processorArchitecture=MSIL" />
     <Reference Include="OpenTK, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -65,6 +65,7 @@
     <Compile Include="Graphs\ILBarGraph2D.cs" />
     <Compile Include="Graphs\ILSceneGraph.cs" />
     <Compile Include="Graphs\ILSceneGraphNode.cs" />
+    <Compile Include="Interfaces\IILVertexDefinition.cs" />
     <Compile Include="Labeling\ILShapeLabel.cs" />
     <Compile Include="Interfaces\IILLegendRenderer.cs" />
     <Compile Include="Interfaces\IILTextInterpreter.cs" />
@@ -98,7 +99,9 @@
     <Compile Include="Platform\OpenGL\ILOGLBitmapMarkerShape.cs" />
     <Compile Include="Platform\OpenGL\ILOGLImageSCGraph.cs" />
     <Compile Include="Platform\OpenGL\ILOGLLegend.cs" />
-    <Compile Include="Platform\OpenGL\ILOGLLinesRendererC4bV3f.cs" />
+    <Compile Include="Platform\OpenGL\ILOGLLineRendererC4bV3f.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Platform\OpenGL\ILOGLRenderer.cs">
       <SubType>Code</SubType>
     </Compile>

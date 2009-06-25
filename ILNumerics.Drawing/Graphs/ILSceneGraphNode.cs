@@ -38,8 +38,7 @@ namespace ILNumerics.Drawing.Graphs {
     /// the graph. 
     /// </summary>
     public abstract class ILSceneGraphNode : 
-                ICollection<ILSceneGraphNode>, IEnumerable<ILSceneGraphNode>, 
-                IEnumerable {
+                ICollection<ILSceneGraphNode>, IEnumerable<ILSceneGraphNode>, IEnumerable {
         
         #region attributes 
         protected ILSceneGraphNode m_parent; 
@@ -53,25 +52,28 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region eventing 
+        /// <summary>
+        /// fires when the size of the cube tigthly enclosing the shape has changed
+        /// </summary>
         public event EventHandler SizeChanged;
         protected virtual void OnSizeChanged() {
             if (SizeChanged != null)
                 SizeChanged(this, new EventArgs());
         }
+        /// <summary>
+        /// fires when the (size)cache of the node was invalidated
+        /// </summary>
         public event EventHandler Invalidated;
         protected virtual void OnInvalidated() {
             if (Invalidated != null)
                 Invalidated(this, new EventArgs());
         }
-        public event EventHandler Changed;
-        protected virtual void OnChanged(object sender, EventArgs args) {
-            if (Changed != null)
-                Changed(this, new EventArgs());
-        }
         #endregion
 
         #region properties
-
+        /// <summary>
+        /// reference to the scene graph node this node is a child of
+        /// </summary>
         public ILSceneGraphNode Parent {
             get {
                 return m_parent; 
@@ -80,6 +82,10 @@ namespace ILNumerics.Drawing.Graphs {
                 m_parent = value; 
             }
         }
+        /// <summary>
+        /// the minimum coordinate of a cube tightly enclosing the shape
+        /// </summary>
+        /// <returns></returns>
         public virtual ILPoint3Df PositionMin() {
             if (m_positionMin.IsEmtpy()) {
                 m_positionMin = ILPoint3Df.MaxValue; 
@@ -89,6 +95,10 @@ namespace ILNumerics.Drawing.Graphs {
             } 
             return m_positionMin;
         }
+        /// <summary>
+        /// the maximum coordinate of a cube tightly enclosing the shape
+        /// </summary>
+        /// <returns></returns>
         public virtual ILPoint3Df PositionMax () {
             if (m_positionMax.IsEmtpy()) {
                 m_positionMax = ILPoint3Df.MinValue; 
@@ -98,6 +108,9 @@ namespace ILNumerics.Drawing.Graphs {
             }
             return m_positionMax; 
         }
+        /// <summary>
+        /// current center according to shapes vertices 
+        /// </summary>
         public virtual ILPoint3Df Center {
             get {
                 if (m_center.IsEmtpy()) {
@@ -117,6 +130,10 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region constructor
+        /// <summary>
+        /// construct a new scene graph node 
+        /// </summary>
+        /// <param name="panel">the hosting panel</param>
         public ILSceneGraphNode (ILPanel panel) {
             m_centers = new ILArray<float>(0,3); 
             m_panel = panel; 
@@ -128,6 +145,10 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region public interface 
+        /// <summary>
+        /// invalidate nodes cache, may or may not for childs also
+        /// </summary>
+        /// <param name="invalidChilds">true: clear the size cache for all childs also</param>
         public void Invalidate(bool invalidChilds) {
             m_center = ILPoint3Df.Empty;
             m_positionMin = ILPoint3Df.Empty;
@@ -142,10 +163,15 @@ namespace ILNumerics.Drawing.Graphs {
             }
             m_invalidated = true;
         }
-
+        /// <summary>
+        /// Invalidate nodes cache, recompute size spanned by this node on next redraw
+        /// </summary>
         public void Invalidate() {
             Invalidate(true);
         }
+        /// <summary>
+        /// recompute the size spanned by this node, may fires Changed() event
+        /// </summary>
         public virtual void Configure() {
             if (m_invalidated) {
                 bool sizechanged = false; 
@@ -161,6 +187,10 @@ namespace ILNumerics.Drawing.Graphs {
                     OnSizeChanged(); 
             }
         }
+        /// <summary>
+        /// draw a childs contained by this node
+        /// </summary>
+        /// <param name="props">extended rendering properties</param>
         public virtual void Draw(ILRenderProperties props) { 
             if (m_childs != null && m_childs.Count > 0) {
                 ILArray<int> indices = Computation.GetSortedIndices(
@@ -199,16 +229,25 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region ICollection<ILSceneGraphNode> Member
-
+        /// <summary>
+        /// add a single node to the end of child collection
+        /// </summary>
+        /// <param name="item"></param>
         public virtual void Add(ILSceneGraphNode item) {
             m_childs.Add(item);
             item.Parent = this; 
         }
-
+        /// <summary>
+        /// wipe all nodes from the collection 
+        /// </summary>
         public virtual void Clear() {
             m_childs.Clear(); 
         }
-
+        /// <summary>
+        /// Determine, if this collection contains a specific node item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public bool Contains(ILSceneGraphNode item) {
             return m_childs.Contains(item); 
         }
@@ -216,15 +255,23 @@ namespace ILNumerics.Drawing.Graphs {
         public void CopyTo(ILSceneGraphNode[] array, int arrayIndex) {
             m_childs.CopyTo(array,arrayIndex); 
         }
-
+        /// <summary>
+        /// Number of childs this node contains
+        /// </summary>
         public int Count {
             get { return m_childs.Count;  }
         }
-
+        /// <summary>
+        /// determine if this collection is readonly, always returns false
+        /// </summary>
         public bool IsReadOnly {
             get { return false; }
         }
-
+        /// <summary>
+        /// remove a single child node from the collection
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public virtual bool Remove(ILSceneGraphNode item) {
             return m_childs.Remove(item); 
         }
@@ -232,7 +279,10 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region IEnumerable<ILSceneGraphNode> Member
-
+        /// <summary>
+        /// Create &amp; returns a typed enumerator
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<ILSceneGraphNode> GetEnumerator() {
             return m_childs.GetEnumerator(); 
         }
@@ -240,7 +290,10 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region IEnumerable Member
-
+        /// <summary>
+        /// Create and return untyped enumerator
+        /// </summary>
+        /// <returns></returns>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
             foreach (ILSceneGraphNode node in m_childs) {
                 yield return node; 
@@ -270,7 +323,6 @@ namespace ILNumerics.Drawing.Graphs {
         }
     }
 
-    
     }
 
 }

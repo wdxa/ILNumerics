@@ -30,26 +30,6 @@ using System.Drawing;
 using System.Runtime.InteropServices; 
 using ILNumerics.Drawing.Interfaces;
 
-namespace ILNumerics.Drawing.Interfaces {
-
-    public interface IILVertexDefinition {
-        bool StoresAlpha { get; }
-        bool StoresColor { get; }
-        bool StoresNormals { get; }
-        byte Alpha { get; set; }
-        Color Color { get; set; }
-        ILPoint3Df Position { get; set; }
-        ILPoint3Df Normal { get; set; }
-        float XPosition { get; set; }
-        float YPosition { get; set; } 
-        float ZPosition { get; set; }
-        /// <summary>
-        /// size of single vertex in bytes
-        /// </summary>
-        int VertexSize { get; }
-    }
-
-}
 namespace ILNumerics.Drawing.Shapes { 
 
     [StructLayout(LayoutKind.Sequential)]

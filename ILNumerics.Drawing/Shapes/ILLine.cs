@@ -49,8 +49,8 @@ namespace ILNumerics.Drawing.Shapes {
         public int AutoLimitsUpdateCount {
             get { return m_autoLimitsUpdateCount; }
             set { m_autoLimitsUpdateCount = value; }
-        } 
-        int m_startID; 
+        }
+        int m_oldestVertexID; 
         #endregion
 
         #region properties
@@ -58,8 +58,8 @@ namespace ILNumerics.Drawing.Shapes {
             get { return m_properties; }
             set { m_properties = value; }
         } 
-        internal int StartID {
-            get { return m_startID; }
+        internal int OldestVertexID {
+            get { return m_oldestVertexID; }
         }
         #endregion
 
@@ -68,12 +68,12 @@ namespace ILNumerics.Drawing.Shapes {
             : this (panel,2) { }
 
         public ILLine (ILPanel panel, int numVertices) 
-            : base (panel,numVertices+1) {
+            : base (panel,numVertices) {
             if (numVertices < 2) 
                 throw new ILArgumentException("line must have at least 2 points!"); 
             m_fillColor = Color.Black; 
-            m_border.Visible = false; 
-            m_startID = 0;  
+            m_border.Visible = false;
+            m_oldestVertexID = 0;  
             m_properties = new ILLineProperties(); 
             m_properties.Changed += new EventHandler(m_properties_Changed);
             m_autoLimitsUpdateCount = numVertices; 
@@ -98,16 +98,9 @@ namespace ILNumerics.Drawing.Shapes {
             }
         }
         public void Queue(IILVertexDefinition vertex) {
-            if (m_startID == 0) {
-                SetVertex(m_vertCount-1,vertex); 
-                m_startID = 1; 
-            } else {
-                SetVertex(m_startID,vertex);
-                m_vertices[0] = m_vertices[m_vertCount-1]; 
-                m_startID++;
-            }
-            if (m_startID == m_vertCount-1) {
-                m_startID = 0; 
+            SetVertex(m_oldestVertexID++, vertex);
+            if (m_oldestVertexID >= m_vertCount) {
+                m_oldestVertexID = 0; 
             }
             if (m_updateCount++ < m_autoLimitsUpdateCount) {
                 bool signal = false;

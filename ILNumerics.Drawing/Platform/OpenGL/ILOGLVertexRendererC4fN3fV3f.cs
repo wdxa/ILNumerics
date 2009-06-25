@@ -117,11 +117,11 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 }
                 GL.DrawElements(m_primitiveType, indices.Length,DrawElementsType.UnsignedInt, (IntPtr)pIndices);
                 //IntPtr pObj = Glu.NewQuadric();
-                //GL.MatrixMode(MatrixMode.Modelview); 
-                //GL.PushMatrix(); 
-                //GL.Translate(cShape.Vertices[0].Position.X,cShape.Vertices[0].Position.Y,cShape.Vertices[0].Position.Z); 
-                //Glu.QuadricDrawStyle(pObj,QuadricDrawStyle.Fill); 
-                //Glu.Sphere(pObj,2,20,10); 
+                //GL.MatrixMode(MatrixMode.Modelview);
+                //GL.PushMatrix();
+                //GL.Translate(cShape.Vertices[0].Position.X, cShape.Vertices[0].Position.Y, cShape.Vertices[0].Position.Z);
+                //Glu.QuadricDrawStyle(pObj, QuadricDrawStyle.Fill);
+                //Glu.Sphere(pObj, 2, 20, 10);
                 //GL.PopMatrix(); 
             }
             // draw border 

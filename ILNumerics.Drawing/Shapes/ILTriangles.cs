@@ -58,7 +58,7 @@ namespace ILNumerics.Drawing.Shapes {
         public ILTriangles (ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z) 
             : base (panel,3, X,Y,Z) { }
         public ILTriangles (ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping) 
-            : base (panel, 3,X,Y,Z) { }
+            : base (panel, 3,X,Y,Z,mapping) { }
         #endregion
 
     }

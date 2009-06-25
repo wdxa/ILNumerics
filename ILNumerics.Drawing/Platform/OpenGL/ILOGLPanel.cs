@@ -264,45 +264,6 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 if (m_camera.SinRho > 1e-5)
                     m_axes.ZAxis.RenderState1(p);
 
-                #region lighting  
-                if (m_mustReconfigureLight) {       
-                    m_mustReconfigureLight = false; 
-                    if (m_lights.Enabled) {
-                        float[] tmpF = new float[4]; tmpF[3] = 1.0f; 
-                        // lighting should be enabled selectively on individual
-                        // shapes! For general drawing states, lighting is disabled
-                        //GL.Enable(EnableCap.Lighting);
-                        GL.MatrixMode(MatrixMode.Modelview); 
-                        GL.PushMatrix(); GL.LoadIdentity(); 
-                        foreach (ILLight light in m_lights) {
-                            EnableCap lightID = EnableCap.Light0 + light.Index;  
-                            if (!light.Enabled) {
-                                GL.Disable(lightID); 
-                                continue; 
-                            }
-                            GL.Enable(lightID); 
-                            tmpF[0] = light.Position.X; 
-                            tmpF[1] = light.Position.Y; 
-                            tmpF[2] = light.Position.Z; 
-                            GL.Lightv((LightName)lightID,LightParameter.Position,tmpF);
-                            tmpF[0] = (float)light.Ambient.R / 255; 
-                            tmpF[1] = (float)light.Ambient.G / 255;
-                            tmpF[2] = (float)light.Ambient.B / 255; 
-                            GL.Lightv((LightName)lightID,LightParameter.Ambient,tmpF); 
-                            tmpF[0] = (float)light.Specular.R / 255; 
-                            tmpF[1] = (float)light.Specular.G / 255;
-                            tmpF[2] = (float)light.Specular.B / 255; 
-                            GL.Lightv((LightName)lightID,LightParameter.Specular,tmpF); 
-                            tmpF[0] = (float)light.Diffuse.R / 255; 
-                            tmpF[1] = (float)light.Diffuse.G / 255; 
-                            tmpF[2] = (float)light.Diffuse.B / 255; 
-                            GL.Lightv((LightName)lightID,LightParameter.Diffuse,tmpF); 
-                        }
-                        GL.PopMatrix(); 
-                    }
-                }
-                #endregion
-
                 #region enable clipping planes
                 if (m_renderProperties.Clipping) {
                     unsafe { fixed (double* pClip = m_clipplanes) {
@@ -327,6 +288,40 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 GL.Translate(ab.X, ab.Y, ab.Z);
                 ab = m_clippingView.ScaleToUnitCube();
                 GL.Scale(ab.X, ab.Y, ab.Z); //Identity; //RotationZ(m_cameraPhi); 
+
+                #region lighting
+                if (m_mustReconfigureLight) {
+                    m_mustReconfigureLight = false;
+                    if (m_lights.Enabled) {
+                        float[] tmpF = new float[4]; tmpF[3] = 1.0f;
+                        foreach (ILLight light in m_lights) {
+                            EnableCap lightID = EnableCap.Light0 + light.Index;
+                            if (!light.Enabled) {
+                                GL.Disable(lightID);
+                                continue;
+                            }
+                            GL.Enable(lightID);
+                            tmpF[0] = light.Position.X;
+                            tmpF[1] = light.Position.Y;
+                            tmpF[2] = light.Position.Z;
+                            GL.Lightv((LightName)lightID, LightParameter.Position, tmpF);
+                            tmpF[0] = (float)light.Ambient.R / 255;
+                            tmpF[1] = (float)light.Ambient.G / 255;
+                            tmpF[2] = (float)light.Ambient.B / 255;
+                            GL.Lightv((LightName)lightID, LightParameter.Ambient, tmpF);
+                            tmpF[0] = (float)light.Specular.R / 255;
+                            tmpF[1] = (float)light.Specular.G / 255;
+                            tmpF[2] = (float)light.Specular.B / 255;
+                            GL.Lightv((LightName)lightID, LightParameter.Specular, tmpF);
+                            tmpF[0] = (float)light.Diffuse.R / 255;
+                            tmpF[1] = (float)light.Diffuse.G / 255;
+                            tmpF[2] = (float)light.Diffuse.B / 255;
+                            GL.Lightv((LightName)lightID, LightParameter.Diffuse, tmpF);
+                        }
+                    }
+                }
+                #endregion
+
 
                 // Easy sorting - this expects a few graphs in the collection only.
                 // For situations, where a large number of graphs need to be sorted here, 
@@ -612,7 +607,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 } else if (shape is ILPolygon) {
                     ret = new ILOGLVertexRendererC4bV3f(BeginMode.Polygon); 
                 } else if (shape is ILLine) {
-                    ret = new ILOGLLineRendererC4bV3f(); 
+                    ret = new ILOGLLineRendererC4bV3f(shape.VertexCount); 
                     ret.CloseLines = false; 
                 } else if (shape is ILTriangle) {
                     ret = new ILOGLVertexRendererC4bV3f(BeginMode.Triangles); 
@@ -634,10 +629,13 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     ret.UseLight = true; 
                 } else if (shape is ILLitBox) {
                     ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Quads); 
-                    ret.UseLight = true; 
+                    ret.UseLight = true;
                 } else if (shape is ILLitSphere) {
-                    ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Quads); 
-                    ret.UseLight = true; 
+                    ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Quads);
+                    ret.UseLight = true;
+                } else if (shape is ILLitTriangles) {
+                    ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Triangles);
+                    ret.UseLight = true;
                 } else {
                     throw new NotSupportedException("Shape of type " + shape.GetType().Name + " is not supported for vertex type " + vertexType.Name + "!"); 
                 }
