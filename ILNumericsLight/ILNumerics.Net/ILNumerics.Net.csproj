@@ -8,7 +8,7 @@
     <ProjectGuid>{3B112BB0-9E2E-4F4C-8F12-D790ECC97B67}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ILNumerics.Net</RootNamespace>
+    <RootNamespace>ILNumerics</RootNamespace>
     <AssemblyName>ILNumericsLight</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -177,26 +177,30 @@
     <Compile Include="Misc\ILRand.cs" />
     <Compile Include="Misc\ILRange.cs" />
     <Compile Include="Misc\ILTest.cs" />
+    <Compile Include="Native\FFT\ILManagedFFT.cs" />
     <Compile Include="Native\FFT\IILFFT.cs" />
     <Compile Include="Native\FFT\ILACMLFFT.cs" />
     <Compile Include="Native\FFT\ILFFTW3FFT.cs" />
     <Compile Include="Native\FFT\ILMKLFFT.cs" />
+    <Compile Include="Native\lapack\ILManagedLapack.cs" />
     <Compile Include="Native\lapack\IILLapack.cs" />
     <Compile Include="Native\lapack\ILACML4_1.cs" />
     <Compile Include="Native\lapack\ILLapackGeneric.cs" />
     <Compile Include="Native\lapack\ILLapackGenLinux.cs" />
     <Compile Include="Native\lapack\ILLapackMKL10.0C.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\NamespaceSummaries.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\App.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -19,15 +19,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
-using ILNumerics.Storage;
-using ILNumerics.Misc;
 using ILNumerics.Native;
-using ILNumerics.Exceptions;
-using ILNumerics.BuiltInFunctions; 
-using System.IO; 
 
 namespace ILNumerics.BuiltInFunctions {
 
@@ -35,6 +27,7 @@ namespace ILNumerics.BuiltInFunctions {
     /// Main math class. provides all explicit static math functions 
     /// </summary>
     public partial class ILMath {
+
 		/// <summary>
 		/// concrete interface wrapper class providing the native LAPACK functions
 		/// </summary>
@@ -44,68 +37,100 @@ namespace ILNumerics.BuiltInFunctions {
 		/// If the current processor does not support those calls or is not recognizable
 		/// by ILNumerics.Net, a generic - not optimized - version of native LAPACK code will
 		/// be used than.</remarks>
+        /// 
         public static IILLapack Lapack;
 
         /// <summary>
         /// platform specific FFT implementation, <b>internally</b> used to compute fft 
         /// </summary>
-        public static IILFFT FFT; 
-        
+        public static IILFFT FFT;
+
         /// <summary>
         /// main math class providing static builtin functions
         /// </summary>
         static ILMath() {
             #region initialize proc specific interfaces
-            ILCPUID cpuid; 
-            ILArray<double> A = new double[]{1.0,-1.0}, B = new double[]{1.0, 2.0};
-            switch (Environment.OSVersion.Platform) {
-                case PlatformID.Unix:
-                    Lapack = new ILLapackGenLinux(); 
-                    FFT = new ILFFTW3FFT(); 
-                    break; 
-                default: 
-                    if (Lapack == null) {
-                        cpuid = new ILCPUID(); 
-                        switch (cpuid.vendor) {
-                            case "AuthenticAMD":
-                                //Lapack = new ILACMLWrapper();
-                                try {
-                                    Lapack = new ILACML4_1(); 
-                                    FFT = new ILACMLFFT(); 
-                                    multiply(A.T,B); 
-                                } catch (Exception) {
-                                    FFT = new ILMKLFFT();
-                                    try {
-                                        Lapack = new ILLapackMKL10_0();
-                                        multiply(A.T,B); 
-                                    } catch (Exception) {
-                                        Lapack = new ILLapackGeneric(); 
-                                    }
-                                }
-                                break; 
-                            case "GenuineIntel":
-                                FFT = new ILMKLFFT(); 
-                                try {
-                                    Lapack = new ILLapackMKL10_0();
-                                    multiply(A.T,B); 
-                                } catch (Exception) {
-                                    Lapack = new ILLapackGeneric(); 
-                                }
-                                break; 
-                            default:
-                                Lapack = new ILLapackGeneric(); 
-                                FFT = new ILMKLFFT(); 
-                                break;
-                        }
-                    }
-                    break; 
+
+            switch (Settings.ConfigFile.NativeMathLibrary)
+            {
+                case "off":
+                    Lapack = new ILManagedLapack();
+                    FFT = new ILManagedFFT();
+                    break;
+
+                case "unix":
+                case "linux":
+                    Lapack = new ILLapackGenLinux();
+                    FFT = new ILFFTW3FFT();
+                    break;
+
+                case "win32_amd":
+                    Lapack = new ILACML4_1();
+                    FFT = new ILACMLFFT();
+                    break;
+
+                case "win32_intel":
+                    FFT = new ILMKLFFT();
+                    Lapack = new ILLapackMKL10_0();
+                    break;
+
+                default:
+                    autoDetectOSAndCPU();
+                    break;
             }
             #endregion 
             #region initialize machine parameter infos 
             macharD(ref m_machparDouble.ibeta, ref m_machparDouble.it,ref m_machparDouble.irnd,ref m_machparDouble.ngrd,ref m_machparDouble.machep,ref m_machparDouble.negep,ref m_machparDouble.iexp,ref m_machparDouble.minexp,ref m_machparDouble.maxexp,ref m_machparDouble.eps,ref m_machparDouble.epsneg,ref m_machparDouble.xmin,ref m_machparDouble.xmax); 
             macharF(ref m_machparFloat.ibeta, ref m_machparFloat.it,ref m_machparFloat.irnd,ref m_machparFloat.ngrd,ref m_machparFloat.machep,ref m_machparFloat.negep,ref m_machparFloat.iexp,ref m_machparFloat.minexp,ref m_machparFloat.maxexp,ref m_machparFloat.eps,ref m_machparFloat.epsneg,ref m_machparFloat.xmin,ref m_machparFloat.xmax); 
             #endregion
+        }
+        /// <summary>Used by ILMath constructor</summary>
+        private static void autoDetectOSAndCPU()
+        {
+            ILCPUID cpuid; 
+            ILArray<double> A = new double[]{1.0,-1.0}, B = new double[]{1.0, 2.0};
+            switch (Environment.OSVersion.Platform)
+            {
+                case PlatformID.Unix:
+                    Lapack = new ILLapackGenLinux(); 
+                    FFT = new ILFFTW3FFT(); 
+                    break; 
 
+                default: 
+                    cpuid = new ILCPUID(); 
+                    switch (cpuid.vendor)
+                    {
+                        case "AuthenticAMD":
+                            try {
+                                Lapack = new ILACML4_1(); 
+                                FFT = new ILACMLFFT(); 
+                                multiply(A.T,B); 
+                            } catch (Exception) {
+                                FFT = new ILMKLFFT();
+                                try {
+                                    Lapack = new ILLapackMKL10_0();
+                                    multiply(A.T,B); 
+                                } catch (Exception) {
+                                    Lapack = new ILLapackGeneric(); 
+                                }
+                            }
+                            break; 
+                        case "GenuineIntel":
+                            FFT = new ILMKLFFT(); 
+                            try {
+                                Lapack = new ILLapackMKL10_0();
+                                multiply(A.T,B); 
+                            } catch (Exception) {
+                                Lapack = new ILLapackGeneric(); 
+                            }
+                            break; 
+                        default:
+                            Lapack = new ILLapackGeneric();
+                            FFT = new ILManagedFFT();
+                            break;
+                    }
+                    break;
+            }
         }
 		/// <summary>
 		/// Minimal size of dimensions, expensive operations will be carried out by native LAPACK libs. 
