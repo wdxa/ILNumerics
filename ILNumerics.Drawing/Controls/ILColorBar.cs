@@ -101,7 +101,7 @@ namespace ILNumerics.Drawing.Controls {
         /// <param name="clipping">clipping data object</param>
         /// <returns>true, if the source was registered successfully</returns>
         public bool RegisterRangeSource(ILClippingData clipping) {
-            if (clipping == null) return false; 
+            if (object.Equals(clipping,null)) return false; 
             clipping.Changed += new ILClippingDataChangedEvent(clipping_Changed); 
             return true; 
         }
