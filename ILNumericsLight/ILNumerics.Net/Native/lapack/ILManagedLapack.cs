@@ -841,7 +841,49 @@ namespace ILNumerics.Native {
         /// <param name="info">success info</param>
         public void dgetrs(char trans, int N, int NRHS, double[] A, int LDA, int[] IPIV, double[] B, int LDB, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dgetrs. Is lapack_gen.dll on the PATH?");
+            // -> Check for unimplemented features:
+
+            if ((trans != 'n' && trans != 'N'))
+                throw new NotImplementedException("ILManagedLapack.dgetrs. Is lapack_gen.dll on the PATH?");
+
+            // -> Input checking
+
+            info = 0;
+            if (N < 0) { info = -2; return; }
+            if (NRHS * N != B.Length) { info = -3; return; }
+            if (A.Length != N * N) { info = -4; return; }
+            if (LDA < 1 || LDA > A.Length) { info = -5; return; }
+            if (IPIV.Length != N) { info = -6; return; }
+            if (LDB < 1 || LDB > B.Length) { info = -8; return; }
+
+            // -> Initializations
+
+            double[] BSwap = new double[B.Length];
+            B.CopyTo(BSwap, 0);
+
+            // -> Permute B using IPIV
+
+            for (int idx = 0; idx < N; idx++)
+                if (idx + 1 != IPIV[idx])
+                    for (int jdx = 0; jdx < NRHS; jdx++)
+                        B[jdx * LDB + idx] = BSwap[IPIV[idx] - 1 + jdx * LDB];
+
+            // -> For each column in B
+            for (int idx = 0; idx < NRHS; idx++)
+            {
+                // -> Perform forward substitution, Ly = b
+                for (int jdx = 0; jdx < N; jdx++)
+                    for (int kdx = jdx + 1; kdx < N; kdx++)
+                        B[idx * LDB + kdx] -= A[jdx * LDA + kdx] * B[idx * LDB + jdx];
+
+                // -> Perform backward substitution, Ux = y
+                for (int jdx = N - 1; jdx >= 0; jdx--)
+                {
+                    B[idx * LDB + jdx] /= A[jdx * LDA + jdx];
+                    for (int kdx = jdx - 1; kdx >= 0; kdx--)
+                        B[idx * LDB + kdx] -= A[jdx * LDA + kdx] * B[idx * LDB + jdx];
+                }
+            }
         }
         /// <summary>
         /// solve system of linear equations by triangular matrices
