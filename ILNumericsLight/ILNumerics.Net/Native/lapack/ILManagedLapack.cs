@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using ILNumerics.Exceptions;
 
 namespace ILNumerics.Native {
     /// <summary>
@@ -66,25 +67,44 @@ namespace ILNumerics.Native {
         /// continous array of size MxN</remarks>
         public void dgemm(char TransA, char TransB, int M, int N, int K, double alpha, IntPtr A, int lda, IntPtr B, int ldb, double beta, double[] C, int ldc)
         {
-            // ->Operation to perform:
+            //-> Operation to perform:
 
-            // A: MxK
-            // B: KxN
-            // C: MxN
+            // C = (alpha*A) x B + (beta*C), where
+            // A is MxK, B is KxN, and C is MxN
 
-            // C = (alpha*A) x B + (beta*C)
+            //-> Check for unimplemented features:
 
-            // ->TODO: In order to simplify things, I'm assuming the following to always be true:
+            if ((TransA != 'n' && TransA != 'N') ||
+                (TransB != 'n' && TransB != 'N'))
+            {
+                throw new NotImplementedException("ILManagedLapack.dgemm. Is lapack_gen.dll on the PATH?");
+            }
+            
+            unsafe
+            {
+                //-> Input Checking
+                if (C.Length != (M * N))
+                    throw new ILArgumentSizeException("C must be MxN.");
 
-            //TransA = "n";
-            //TransB = "n";
-            //lda = M; // number of rows in A
-            //ldb = K; // number of rows in B
-            //ldc = M; // number of rows in C
+                double[] aA = new double[M * K];
+                double* pA = (double*)A.ToPointer();
+                double* pB = (double*)B.ToPointer();
 
+                //-> store alpha * A in aA (don't want to modify A)
+                for (int i = 0; i < aA.Length; i++)
+                    aA[i] = alpha * pA[i];
 
+                //-> store beta * C in C
+                if (beta != 1)
+                    for (int i = 0; i < C.Length; i++)
+                        C[i] *= beta;
 
-            throw new NotImplementedException("ILManagedLapack.dgemm. Is lapack_gen.dll on the PATH?");
+                //-> Matrix Multiply of A and B, added to C
+                for (int i = 0; i < M; i++)
+                    for (int j = 0; j < N; j++)
+                        for (int k = 0; k < K; k++)
+                            C[j * ldc + i] += aA[k * lda + i] * pB[j * ldb + k];
+            }
         }
 
         /// <summary>
@@ -571,7 +591,67 @@ namespace ILNumerics.Native {
         /// </summary>
         public void dgetrf(int M, int N, double[] A, int LDA, int[] IPIV, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dgetrf. Is lapack_gen.dll on the PATH?");
+            // -> Input checking
+
+            info = 0;
+            if (M < 0) { info = -1; return; }
+            if (N < 0) { info = -2; return; }
+            if (A.Length != M * N) { info = -3; return; }
+            if (LDA < 1 || LDA > A.Length) { info = -4; return; }
+            if (IPIV.Length != Math.Min(M, N)) { info = -5; return; }
+
+            // -> Initializations
+
+            for (int i = 0; i < IPIV.Length; i++)
+                IPIV[i] = i+1;
+
+            // -> For each pivot...
+            for (int idx = 0; idx < IPIV.Length; idx++)
+            {
+                int pivIdx = LDA * idx + idx;
+
+                // -> Find row that would have the greatest pivot, 
+                //    then swap with the current pivot row
+
+                int maxIdx = idx;
+                for (int i = idx + 1; i < M; i++)
+                    if (Math.Abs(A[LDA * idx + i]) > Math.Abs(A[pivIdx]))
+                        maxIdx = i;
+
+                if (maxIdx != pivIdx)
+                { // swap row maxIdx with pivot row
+
+                    int tmpForPiv = IPIV[idx];
+                    IPIV[idx] = IPIV[maxIdx];
+                    IPIV[maxIdx] = tmpForPiv;
+
+                    double tmpForSwap;
+                    for (int i = 0; i < N; i++)
+                    {
+                        tmpForSwap = A[idx + LDA * i];
+                        A[idx + LDA * i] = A[maxIdx + LDA * i];
+                        A[maxIdx + LDA * i] = tmpForSwap;
+                    }
+                }
+
+                // -> If Pivot is zero, then all below it are zero. Skip.
+                if (A[pivIdx] == 0)
+                { 
+                    info = idx + 1;
+                    continue;
+                }
+
+                // -> For each row under the pivot...
+                for (int jdx = idx + 1; jdx < M; jdx++)
+                {
+                    // Find L values
+                    A[jdx + LDA * idx] = A[jdx + LDA * idx] / A[pivIdx];
+
+                    // Find U values
+                    for (int kdx = idx + 1; kdx < N; kdx++)
+                        A[jdx + LDA * kdx] = A[jdx + LDA * kdx] - A[jdx + LDA * idx] * A[idx + LDA * kdx];
+                }
+            }
         }
         /// <summary>
         /// LU factorization of general matrix
