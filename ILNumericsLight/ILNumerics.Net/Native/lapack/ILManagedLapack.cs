@@ -106,33 +106,6 @@ namespace ILNumerics.Native {
                             C[j * ldc + i] += aA[k * lda + i] * pB[j * ldb + k];
             }
         }
-
-        /// <summary>
-        /// Wrapper implementiation for ATLAS GeneralMatrixMultiply
-        /// </summary>
-        /// <param name="TransA">Transposition state for matrix A: one of the constants in enum CBlas_Transpose</param>
-        /// <param name="TransB">Transposition state for matrix B: one of the constants in enum CBlas_Transpose</param>
-        /// <param name="M">Number of rows in A</param>
-        /// <param name="N">Number of columns in B</param>
-        /// <param name="K">Number of columns in A and number of rows in B</param>
-        /// <param name="alpha">multiplicationi factor for A</param>
-        /// <param name="A">pointer to array A</param>
-        /// <param name="lda">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix A</param>
-        /// <param name="B">pointer to array B</param>
-        /// <param name="ldb">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix B</param>
-        /// <param name="beta">multiplication faktor for matrix B</param>
-        /// <param name="C">pointer to predefined array C of neccessary length</param>
-        /// <param name="ldc">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix C</param>
-        /// <remarks>All parameters except C are readonly. Only elements of matrix C will be altered. C must be a predefined 
-        /// continous array of size MxN</remarks>
-        public void sgemm(char TransA, char TransB, int M, int N, int K, float alpha, IntPtr A, int lda, IntPtr B, int ldb, float beta, float[] C, int ldc)
-        {
-            throw new NotImplementedException("ILManagedLapack.sgemm. Is lapack_gen.dll on the PATH?");
-        }
-
         /// <summary>
         /// Wrapper implementiation for ATLAS GeneralMatrixMultiply
         /// </summary>
@@ -523,13 +496,6 @@ namespace ILNumerics.Native {
         /// <summary>
         /// cholesky factorization 
         /// </summary>
-        public void spotrf(char uplo, int n, float[] A, int lda, ref int info)
-        {
-            throw new NotImplementedException("ILManagedLapack.spotrf. Is lapack_gen.dll on the PATH?");
-        }
-        /// <summary>
-        /// cholesky factorization 
-        /// </summary>
         public void zpotrf(char uplo, int n, complex[] A, int lda, ref int info)
         {
             throw new NotImplementedException("ILManagedLapack.zpotrf. Is lapack_gen.dll on the PATH?");
@@ -543,13 +509,6 @@ namespace ILNumerics.Native {
         public void dpotri(char uplo, int n, double[] A, int lda, ref int info)
         {
             throw new NotImplementedException("ILManagedLapack.dpotri. Is lapack_gen.dll on the PATH?");
-        }
-        /// <summary>
-        /// matrix inverse via cholesky factorization (?potrf)
-        /// </summary>
-        public void spotri(char uplo, int n, float[] A, int lda, ref int info)
-        {
-            throw new NotImplementedException("ILManagedLapack.spotri. Is lapack_gen.dll on the PATH?");
         }
         /// <summary>
         /// matrix inverse via cholesky factorization (?potrf)
@@ -568,13 +527,6 @@ namespace ILNumerics.Native {
         public void dpotrs(char uplo, int n, int nrhs, double[] A, int lda, double[] B, int ldb, ref int info)
         {
             throw new NotImplementedException("ILManagedLapack.dpotrs. Is lapack_gen.dll on the PATH?");
-        }
-        /// <summary>
-        /// solve equation system via cholesky factorization (?potrs)
-        /// </summary>
-        public void spotrs(char uplo, int n, int nrhs, float[] A, int lda, float[] B, int ldb, ref int info)
-        {
-            throw new NotImplementedException("ILManagedLapack.spotrs. Is lapack_gen.dll on the PATH?");
         }
         /// <summary>
         /// solve equation system via cholesky factorization (?potrs)
@@ -652,13 +604,6 @@ namespace ILNumerics.Native {
                         A[jdx + LDA * kdx] = A[jdx + LDA * kdx] - A[jdx + LDA * idx] * A[idx + LDA * kdx];
                 }
             }
-        }
-        /// <summary>
-        /// LU factorization of general matrix
-        /// </summary>
-        public void sgetrf(int M, int N, float[] A, int LDA, int[] IPIV, ref int info)
-        {
-            throw new NotImplementedException("ILManagedLapack.sgetrf. Is lapack_gen.dll on the PATH?");
         }
         /// <summary>
         /// LU factorization of general matrix
@@ -745,13 +690,6 @@ namespace ILNumerics.Native {
         {
             throw new NotImplementedException("ILManagedLapack.dormgr. Is lapack_gen.dll on the PATH?");
         }
-        /// <summary>
-        /// multipliation for general matrix with QR decomposition factor
-        /// </summary>
-        public void sormqr(char side, char trans, int m, int n, int k, float[] A, int lda, float[] tau, float[] C, int LDC, ref int info)
-        {
-            throw new NotImplementedException("ILManagedLapack.sormgr. Is lapack_gen.dll on the PATH?");
-        }
 
         #endregion 
         
@@ -772,40 +710,6 @@ namespace ILNumerics.Native {
         public void dtrtrs(char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info)
         {
             throw new NotImplementedException("ILManagedLapack.dtrtrs. Is lapack_gen.dll on the PATH?");
-        }
-        /// <summary>
-        /// Solve triangular system of linear equations (forward-/ backward substitution)
-        /// </summary>
-        /// <param name="uplo">'U': A is upper triangular, 'L': A is lower triangular</param>
-        /// <param name="transA">'N':  A * X = B  (No transpose); 'T':  A**T * X = B  (Transpose), 'T':  A**T * X = B  (Transpose)</param>
-        /// <param name="diag">'N' arbitrary diagonal elements, 'U' unit diagonal</param>
-        /// <param name="N">order of A</param>
-        /// <param name="nrhs">number of right hand sides - columns of matrix B</param>
-        /// <param name="A">square matrix A</param>
-        /// <param name="LDA">spacing between columns for A</param>
-        /// <param name="B">(input/output) on input: right hand side, on output: solution x </param>
-        /// <param name="LDB">spacing between columns for B</param>
-        /// <param name="info">(output) 0: success; &lt; 0: illigal argument, &gt; 0: A is sinular having a zero on the i-th diagonal element. No solution will be computed than. </param>
-        public void strtrs(char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info)
-        {
-            throw new NotImplementedException("ILManagedLapack.strtrs. Is lapack_gen.dll on the PATH?");            
-        }
-        /// <summary>
-        /// Solve triangular system of linear equations (forward-/ backward substitution)
-        /// </summary>
-        /// <param name="uplo">'U': A is upper triangular, 'L': A is lower triangular</param>
-        /// <param name="transA">'N':  A * X = B  (No transpose); 'T':  A**T * X = B  (Transpose), 'T':  A**T * X = B  (Transpose)</param>
-        /// <param name="diag">'N' arbitrary diagonal elements, 'U' unit diagonal</param>
-        /// <param name="N">order of A</param>
-        /// <param name="nrhs">number of right hand sides - columns of matrix B</param>
-        /// <param name="A">square matrix A</param>
-        /// <param name="LDA">spacing between columns for A</param>
-        /// <param name="B">(input/output) on input: right hand side, on output: solution x </param>
-        /// <param name="LDB">spacing between columns for B</param>
-        /// <param name="info">(output) 0: success; &lt; 0: illigal argument, &gt; 0: A is sinular having a zero on the i-th diagonal element. No solution will be computed than. </param>
-        public void ctrtrs(char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info)
-        {
-            throw new NotImplementedException("ILManagedLapack.ctrtrs. Is lapack_gen.dll on the PATH?");
         }
         /// <summary>
         /// Solve triangular system of linear equations (forward-/ backward substitution)
@@ -897,22 +801,6 @@ namespace ILNumerics.Native {
         /// <param name="B">matrix B</param>
         /// <param name="LDB">spacing between columns: B</param>
         /// <param name="info">success info</param>
-        public void sgetrs(char trans, int N, int NRHS, float[] A, int LDA, int[] IPIV, float[] B, int LDB, ref int info)
-        {
-            throw new NotImplementedException("ILManagedLapack.sgetrs. Is lapack_gen.dll on the PATH?");
-        }
-        /// <summary>
-        /// solve system of linear equations by triangular matrices
-        /// </summary>
-        /// <param name="trans">transpose before work?</param>
-        /// <param name="N">number rows</param>
-        /// <param name="NRHS">number right hand sides</param>
-        /// <param name="A">matrix A</param>
-        /// <param name="LDA">spacing between columns: A</param>
-        /// <param name="IPIV">pivoting indices</param>
-        /// <param name="B">matrix B</param>
-        /// <param name="LDB">spacing between columns: B</param>
-        /// <param name="info">success info</param>
         public void zgetrs(char trans, int N, int NRHS, complex[] A, int LDA, int[] IPIV, complex[] B, int LDB, ref int info)
         {
             throw new NotImplementedException("ILManagedLapack.zgetrs. Is lapack_gen.dll on the PATH?");
@@ -946,10 +834,6 @@ namespace ILNumerics.Native {
         {
             throw new NotImplementedException("ILManagedLapack.dgeevx. Is lapack_gen.dll on the PATH?");
         }
-        public void sgeevx(char balance, char jobvl, char jobvr, char sense, int n, float[] A, int lda, float[] wr, float[] wi, float[] vl, int ldvl, float[] vr, int ldvr, ref int ilo, ref int ihi, float[] scale, ref float abnrm, float[] rconde, float[] rcondv, ref int info)
-        {
-            throw new NotImplementedException("ILManagedLapack.sgeevx. Is lapack_gen.dll on the PATH?");
-        }
         public void zgeevx(char balance, char jobvl, char jobvr, char sense, int n, complex[] A, int lda, complex[] w, complex[] vl, int ldvl, complex[] vr, int ldvr, ref int ilo, ref int ihi, double[] scale, ref double abnrm, double[] rconde, double[] rcondv, ref int info)
         {
             throw new NotImplementedException("ILManagedLapack.zgeevx. Is lapack_gen.dll on the PATH?");
@@ -961,10 +845,6 @@ namespace ILNumerics.Native {
         {
             throw new NotImplementedException("ILManagedLapack.dsyevr. Is lapack_gen.dll on the PATH?");
         }
-        public void ssyevr(char jobz, char range, char uplo, int n, float[] A, int lda, float vl, float vu, int il, int iu, float abstol, ref int m, float[] w, float[] z, int ldz, int[] isuppz, ref int info)
-        {
-            throw new NotImplementedException("ILManagedLapack.ssyevr. Is lapack_gen.dll on the PATH?");
-        }
         public void zheevr(char jobz, char range, char uplo, int n, complex[] A, int lda, double vl, double vu, int il, int iu, double abstol, ref int m, double[] w, complex[] z, int ldz, int[] isuppz, ref int info)
         {
             throw new NotImplementedException("ILManagedLapack.zheevr. Is lapack_gen.dll on the PATH?");
@@ -975,10 +855,6 @@ namespace ILNumerics.Native {
         public void dsygv(int itype, char jobz, char uplo, int n, double[] A, int lda, double[] B, int ldb, double[] w, ref int info)
         {
             throw new NotImplementedException("ILManagedLapack.dsygv. Is lapack_gen.dll on the PATH?");
-        }
-        public void ssygv(int itype, char jobz, char uplo, int n, float[] A, int lda, float[] B, int ldb, float[] w, ref int info)
-        {
-            throw new NotImplementedException("ILManagedLapack.ssygv. Is lapack_gen.dll on the PATH?");
         }
         public void zhegv(int itype, char jobz, char uplo, int n, complex[] A, int lda, complex[] B, int ldb, double[] w, ref int info)
         {

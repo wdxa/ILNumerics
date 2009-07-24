@@ -1,10 +1,3 @@
-//////////////////////////////////////////////////////////////////
-//                                                              //
-//  This is an auto - manipulated source file.                  //
-//  Edits inside regions of HYCALPER AUTO GENERATED CODE        //
-//  will be lost and overwritten on the next build!             //
-//                                                              //
-//////////////////////////////////////////////////////////////////
 #region LGPL License
 /*    
     This file is part of ILNumerics.Net Core Module.
@@ -74,10 +67,7 @@ namespace ILNumerics.Native {
         /// distance between first elements of each row for row based orientation for matrix C</param>
         /// <remarks>All parameters except C are readonly. Only elements of matrix C will be altered. C must be a predefined 
         /// continous array of size MxN</remarks>
-        void /*!HC:dllfunc*/ dgemm (char TransA, char TransB, int M, int N, int K,
-            /*!HC:inArr1*/ double alpha, /*!HC:inArr1*/ IntPtr A, int lda,
-            IntPtr B, int ldb,
-            /*!HC:inArr1*/ double beta, /*!HC:inArr1*/ double [] C, int ldc);
+        void dgemm (char TransA, char TransB, int M, int N, int K, double alpha, IntPtr A, int lda, IntPtr B, int ldb, double beta, double [] C, int ldc);
 
         /// <summary>
         /// Wrapper implementiation for ATLAS GeneralMatrixMultiply
@@ -100,36 +90,7 @@ namespace ILNumerics.Native {
         /// distance between first elements of each row for row based orientation for matrix C</param>
         /// <remarks>All parameters except C are readonly. Only elements of matrix C will be altered. C must be a predefined 
         /// continous array of size MxN</remarks>
-        void  sgemm (char TransA, char TransB, int M, int N, int K,
-            float alpha,  IntPtr A, int lda,
-            IntPtr B, int ldb,
-            float beta,  float [] C, int ldc);
-
-        /// <summary>
-        /// Wrapper implementiation for ATLAS GeneralMatrixMultiply
-        /// </summary>
-        /// <param name="TransA">Transposition state for matrix A: one of the constants in enum CBlas_Transpose</param>
-        /// <param name="TransB">Transposition state for matrix B: one of the constants in enum CBlas_Transpose</param>
-        /// <param name="M">Number of rows in A</param>
-        /// <param name="N">Number of columns in B</param>
-        /// <param name="K">Number of columns in A and number of rows in B</param>
-        /// <param name="alpha">multiplicationi factor for A</param>
-        /// <param name="A">pointer to array A</param>
-        /// <param name="lda">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix A</param>
-        /// <param name="B">pointer to array B</param>
-        /// <param name="ldb">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix B</param>
-        /// <param name="beta">multiplication faktor for matrix B</param>
-        /// <param name="C">pointer to predefined array C of neccessary length</param>
-        /// <param name="ldc">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix C</param>
-        /// <remarks>All parameters except C are readonly. Only elements of matrix C will be altered. C must be a predefined 
-        /// continous array of size MxN</remarks>
-        void  zgemm (char TransA, char TransB, int M, int N, int K,
-            complex alpha,  IntPtr A, int lda,
-            IntPtr B, int ldb,
-            complex beta,  complex [] C, int ldc);
+        void  zgemm (char TransA, char TransB, int M, int N, int K, complex alpha,  IntPtr A, int lda, IntPtr B, int ldb, complex beta, complex [] C, int ldc);
 
 #endregion 
 
@@ -223,12 +184,7 @@ namespace ILNumerics.Native {
         ///digits which subtract like the Cray X-MP, Cray Y-MP, Cray C-90, or
         ///Cray-2. It could conceivably fail on hexadecimal or decimal machines
         ///without guard digits, but we know of none.</remarks>
-        void /*!HC:dllfunc*/ dgesdd (char jobz, int m, int n,
-            /*!HC:inArr1*/ double [] a, int lda, /*!HC:outArrS*/ double [] s,
-            /*!HC:outArrU*/ double [] u, int ldu, /*!HC:outArrV*/ double [] vt,
-                   int ldvt, //double [] work, int lwork, 
-                   // int [] iwork,
-                   ref int info);
+        void dgesdd (char jobz, int m, int n, double [] a, int lda, double [] s, double [] u, int ldu, double [] vt, int ldvt, ref int info);
        
         /// <summary>
         /// singular value decomposition, new version, more memory needed
@@ -319,12 +275,7 @@ namespace ILNumerics.Native {
         ///digits which subtract like the Cray X-MP, Cray Y-MP, Cray C-90, or
         ///Cray-2. It could conceivably fail on hexadecimal or decimal machines
         ///without guard digits, but we know of none.</remarks>
-        void  zgesdd (char jobz, int m, int n,
-            complex [] a, int lda,  double [] s,
-            complex [] u, int ldu,  complex [] vt,
-                   int ldvt, //double [] work, int lwork, 
-                   // int [] iwork,
-                   ref int info);
+        void  zgesdd (char jobz, int m, int n, complex [] a, int lda,  double [] s, complex [] u, int ldu,  complex [] vt, int ldvt, ref int info);
 
 #endregion 
 
@@ -403,9 +354,7 @@ namespace ILNumerics.Native {
         ///digits which subtract like the Cray X-MP, Cray Y-MP, Cray C-90, or
         ///Cray-2. It could conceivably fail on hexadecimal or decimal machines
         ///without guard digits, but we know of none.</remarks>
-        void /*!HC:dllfunc*/ dgesvd (char jobz, int m, int n, /*!HC:inArr1*/ double [] a, int lda,
-            /*!HC:outArrS*/ double [] s, /*!HC:outArrU*/ double [] u, int ldu, 
-            /*!HC:outArrV*/ double [] vt, int ldvt, ref int info);
+        void dgesvd (char jobz, int m, int n, double [] a, int lda, double [] s, double [] u, int ldu, double [] vt, int ldvt, ref int info);
        
         /// <summary>
         /// singular value decomposition, older version, less memory needed 
@@ -481,21 +430,15 @@ namespace ILNumerics.Native {
         ///digits which subtract like the Cray X-MP, Cray Y-MP, Cray C-90, or
         ///Cray-2. It could conceivably fail on hexadecimal or decimal machines
         ///without guard digits, but we know of none.</remarks>
-        void  zgesvd (char jobz, int m, int n,  complex [] a, int lda,
-            double [] s,  complex [] u, int ldu, 
-            complex [] vt, int ldvt, ref int info);
+        void  zgesvd (char jobz, int m, int n,  complex [] a, int lda, double [] s,  complex [] u, int ldu, complex [] vt, int ldvt, ref int info);
+
         #endregion 
         
         #region ?POTRF - cholesky factorization
         /// <summary>
         /// cholesky factorization 
         /// </summary>
-        void /*!HC:dllfunc*/ dpotrf (char uplo, int n, /*!HC:inArr1*/ double [] A, int lda, ref int info);
-        /// <summary>
-        /// cholesky factorization 
-        /// </summary>
-        void  spotrf (char uplo, int n,  float [] A, int lda, ref int info);
-       
+        void dpotrf (char uplo, int n, double [] A, int lda, ref int info);
         /// <summary>
         /// cholesky factorization 
         /// </summary>
@@ -506,16 +449,11 @@ namespace ILNumerics.Native {
         /// <summary>
         /// matrix inverse via cholesky factorization (?potrf)
         /// </summary>
-        void /*!HC:dllfunc*/ dpotri (char uplo, int n, /*!HC:inArr1*/ double [] A, int lda,ref int info);
+        void dpotri (char uplo, int n, double [] A, int lda, ref int info);
         /// <summary>
         /// matrix inverse via cholesky factorization (?potrf)
         /// </summary>
-        void  spotri (char uplo, int n,  float [] A, int lda,ref int info);
-       
-        /// <summary>
-        /// matrix inverse via cholesky factorization (?potrf)
-        /// </summary>
-        void  zpotri (char uplo, int n,  complex [] A, int lda,ref int info);
+        void  zpotri (char uplo, int n, complex [] A, int lda,ref int info);
 
 #endregion 
 
@@ -527,10 +465,6 @@ namespace ILNumerics.Native {
         /// <summary>
         /// solve equation system via cholesky factorization (?potrs)
         /// </summary>
-        void  spotrs (char uplo, int n, int nrhs, float [] A, int lda, float [] B, int ldb, ref int info);
-        /// <summary>
-        /// solve equation system via cholesky factorization (?potrs)
-        /// </summary>
         void  zpotrs (char uplo, int n, int nrhs, complex [] A, int lda, complex [] B, int ldb, ref int info);
 #endregion
 
@@ -538,12 +472,7 @@ namespace ILNumerics.Native {
         /// <summary>
         /// LU factorization of general matrix
         /// </summary>
-        void /*!HC:dllfunc*/ dgetrf (int M, int N, /*!HC:inArr1*/ double [] A, int LDA, int [] IPIV, ref int info);
-        /// <summary>
-        /// LU factorization of general matrix
-        /// </summary>
-        void  sgetrf (int M, int N,  float [] A, int LDA, int [] IPIV, ref int info);
-
+        void  dgetrf (int M, int N, double [] A, int LDA, int [] IPIV, ref int info);
         /// <summary>
         /// LU factorization of general matrix
         /// </summary>
@@ -554,8 +483,7 @@ namespace ILNumerics.Native {
         /// <summary>
         /// inverse of a matrix via LU factorization
         /// </summary>
-        void /*!HC:dllfunc*/ dgetri (int N, /*!HC:inArr1*/ double [] A, int LDA, int [] IPIV, ref int info);
-       
+        void dgetri (int N, double [] A, int LDA, int [] IPIV, ref int info);
         /// <summary>
         /// inverse of a matrix via LU factorization
         /// </summary>
@@ -566,8 +494,7 @@ namespace ILNumerics.Native {
         /// <summary>
         /// QR factor extraction
         /// </summary>
-        void /*!HC:dllfunc*/ dorgqr (int M, int N, int K, /*!HC:inArr1*/ double [] A, int lda, /*!HC:inArr1*/ double [] tau, ref int info);
-        
+        void dorgqr (int M, int N, int K, double [] A, int lda, double [] tau, ref int info);
         /// <summary>
         /// QR factor extraction
         /// </summary>
@@ -578,11 +505,11 @@ namespace ILNumerics.Native {
         /// <summary>
         /// QR factorization
         /// </summary>
-        void /*!HC:dllfunc*/ dgeqrf (int M, int N, /*!HC:inArr1*/ double [] A, int lda, /*!HC:inArr1*/ double [] tau, ref int info);
+        void dgeqrf (int M, int N, double [] A, int lda, double [] tau, ref int info);
         /// <summary>
         /// QR factorization
         /// </summary>
-        void  zgeqrf (int M, int N,  complex [] A, int lda,  complex [] tau, ref int info);
+        void  zgeqrf (int M, int N, complex [] A, int lda, complex [] tau, ref int info);
         #endregion 
 
         #region GEQP3
@@ -600,11 +527,7 @@ namespace ILNumerics.Native {
         /// <summary>
         /// multipliation for general matrix with QR decomposition factor
         /// </summary>
-        void /*!HC:dllfunc*/ dormqr (char side, char trans, int m, int n, int k, /*!HC:inArr1*/ double [] A, int lda, /*!HC:inArr1*/ double [] tau, /*!HC:inArr1*/ double [] C, int LDC, ref int info);
-        /// <summary>
-        /// multipliation for general matrix with QR decomposition factor
-        /// </summary>
-        void  sormqr (char side, char trans, int m, int n, int k,  float [] A, int lda,  float [] tau,  float [] C, int LDC, ref int info);
+        void dormqr (char side, char trans, int m, int n, int k, double [] A, int lda, double [] tau, double [] C, int LDC, ref int info);
 
         #endregion 
         
@@ -623,34 +546,6 @@ namespace ILNumerics.Native {
         /// <param name="LDB">spacing between columns for B</param>
         /// <param name="info">(output) 0: success; &lt; 0: illigal argument, &gt; 0: A is sinular having a zero on the i-th diagonal element. No solution will be computed than. </param>
         void dtrtrs (char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info); 
-        /// <summary>
-        /// Solve triangular system of linear equations (forward-/ backward substitution)
-        /// </summary>
-        /// <param name="uplo">'U': A is upper triangular, 'L': A is lower triangular</param>
-        /// <param name="transA">'N':  A * X = B  (No transpose); 'T':  A**T * X = B  (Transpose), 'T':  A**T * X = B  (Transpose)</param>
-        /// <param name="diag">'N' arbitrary diagonal elements, 'U' unit diagonal</param>
-        /// <param name="N">order of A</param>
-        /// <param name="nrhs">number of right hand sides - columns of matrix B</param>
-        /// <param name="A">square matrix A</param>
-        /// <param name="LDA">spacing between columns for A</param>
-        /// <param name="B">(input/output) on input: right hand side, on output: solution x </param>
-        /// <param name="LDB">spacing between columns for B</param>
-        /// <param name="info">(output) 0: success; &lt; 0: illigal argument, &gt; 0: A is sinular having a zero on the i-th diagonal element. No solution will be computed than. </param>
-        void strtrs (char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info); 
-        /// <summary>
-        /// Solve triangular system of linear equations (forward-/ backward substitution)
-        /// </summary>
-        /// <param name="uplo">'U': A is upper triangular, 'L': A is lower triangular</param>
-        /// <param name="transA">'N':  A * X = B  (No transpose); 'T':  A**T * X = B  (Transpose), 'T':  A**T * X = B  (Transpose)</param>
-        /// <param name="diag">'N' arbitrary diagonal elements, 'U' unit diagonal</param>
-        /// <param name="N">order of A</param>
-        /// <param name="nrhs">number of right hand sides - columns of matrix B</param>
-        /// <param name="A">square matrix A</param>
-        /// <param name="LDA">spacing between columns for A</param>
-        /// <param name="B">(input/output) on input: right hand side, on output: solution x </param>
-        /// <param name="LDB">spacing between columns for B</param>
-        /// <param name="info">(output) 0: success; &lt; 0: illigal argument, &gt; 0: A is sinular having a zero on the i-th diagonal element. No solution will be computed than. </param>
-        void ctrtrs (char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info); 
         /// <summary>
         /// Solve triangular system of linear equations (forward-/ backward substitution)
         /// </summary>
@@ -693,19 +588,6 @@ namespace ILNumerics.Native {
         /// <param name="B">matrix B</param>
         /// <param name="LDB">spacing between columns: B</param>
         /// <param name="info">success info</param>
-        void sgetrs (char trans, int N, int NRHS, float [] A, int LDA, int [] IPIV, float [] B, int LDB, ref int info);
-        /// <summary>
-        /// solve system of linear equations by triangular matrices
-        /// </summary>
-        /// <param name="trans">transpose before work?</param>
-        /// <param name="N">number rows</param>
-        /// <param name="NRHS">number right hand sides</param>
-        /// <param name="A">matrix A</param>
-        /// <param name="LDA">spacing between columns: A</param>
-        /// <param name="IPIV">pivoting indices</param>
-        /// <param name="B">matrix B</param>
-        /// <param name="LDB">spacing between columns: B</param>
-        /// <param name="info">success info</param>
         void zgetrs (char trans, int N, int NRHS, complex [] A, int LDA, int [] IPIV, complex [] B, int LDB, ref int info); 
         #endregion 
 
@@ -721,19 +603,16 @@ namespace ILNumerics.Native {
 
         #region ?GEEVX - eigenvectors & -values, nonsymmetric A 
         void dgeevx (char balance, char jobvl, char jobvr, char sense, int n, double[] A, int lda, double[] wr, double[] wi, double[] vl, int ldvl, double[] vr, int ldvr, ref int ilo, ref int ihi, double[] scale, ref double abnrm, double[] rconde, double[] rcondv, ref int info); 
-        void sgeevx (char balance, char jobvl, char jobvr, char sense, int n, float[] A, int lda, float[] wr, float[] wi, float[] vl, int ldvl, float[] vr, int ldvr, ref int ilo, ref int ihi, float[] scale, ref float abnrm, float[] rconde, float[] rcondv, ref int info); 
         void zgeevx (char balance, char jobvl, char jobvr, char sense, int n, complex[] A, int lda, complex[] w, complex[] vl, int ldvl, complex[] vr, int ldvr, ref int ilo, ref int ihi, double[] scale, ref double abnrm, double[] rconde, double[] rcondv, ref int info);
         #endregion 
 
         #region ?GEEVR - eigenvectors & -values, symmetric/hermitian A 
         void dsyevr (char jobz, char range, char uplo, int n, double  [] A, int lda, double vl, double vu, int il, int iu, double abstol, ref int m, double[] w, double  [] z, int ldz, int[] isuppz, ref int info); 
-        void ssyevr (char jobz, char range, char uplo, int n, float   [] A, int lda, float  vl, float  vu, int il, int iu, float  abstol, ref int m, float [] w, float   [] z, int ldz, int[] isuppz, ref int info); 
         void zheevr (char jobz, char range, char uplo, int n, complex [] A, int lda, double vl, double vu, int il, int iu, double abstol, ref int m, double[] w, complex [] z, int ldz, int[] isuppz, ref int info); 
         #endregion 
         
         #region ?SYGV - eigenvectors & -values, symmetric/hermitian A and B, pos.def.B 
         void dsygv (int itype, char jobz, char uplo, int n, double  [] A, int lda, double  [] B, int ldb, double [] w, ref int info); 
-        void ssygv (int itype, char jobz, char uplo, int n, float   [] A, int lda, float   [] B, int ldb, float  [] w, ref int info);
         void zhegv (int itype, char jobz, char uplo, int n, complex [] A, int lda, complex [] B, int ldb, double [] w, ref int info); 
         #endregion 
 

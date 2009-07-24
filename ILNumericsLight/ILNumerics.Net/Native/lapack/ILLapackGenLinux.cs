@@ -48,134 +48,94 @@ namespace ILNumerics.Native  {
         ///////////////////////////   DOUBLE LAPACK /////////////////////////////////
         [DllImport("liblapack.so", EntryPoint = "dgemm_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dgemm(ref char TransA, ref char TransB, ref int M,ref int N, ref int K, ref  double alpha, IntPtr A, ref int lda, IntPtr B, ref int ldb, ref double beta, double[] C, ref int ldc);
-        [DllImport("liblapack.so", EntryPoint = "sgemm_"),SuppressUnmanagedCodeSecurity]
-		private static extern void lapack_sgemm(ref char TransA, ref char TransB, ref int M,ref int N, ref int K, ref float alpha, IntPtr A,ref int lda, IntPtr B, ref int ldb, ref float beta,float[] C, ref int ldc);
         [DllImport("liblapack.so", EntryPoint = "zgemm_"),SuppressUnmanagedCodeSecurity]
 		private static extern void lapack_zgemm(ref char TransA, ref char TransB, ref int M, ref int N, ref int K, ref complex alpha, IntPtr A, ref int lda, IntPtr B, ref int ldb, ref complex beta,[In,Out] complex [] C, ref int ldc);
 
         [DllImport("liblapack.so", EntryPoint = "dgesdd_"),SuppressUnmanagedCodeSecurity]
 		private static extern void lapack_dgesdd(ref char jobz, ref int m, ref int n,double[] a, ref int lda, double[] s,double[] u, ref int ldu, double[] vt,ref int ldvt, double[] work, ref int lwork,int[] iwork, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "sgesdd_"),SuppressUnmanagedCodeSecurity]
-		private static extern void lapack_sgesdd(ref char jobz, ref int m, ref int n,float[] a, ref int lda, float[] s,float[] u, ref int ldu, float[] vt, ref int ldvt, float[] work, ref int lwork,int[] iwork, ref int info);
         [DllImport("liblapack.so", EntryPoint = "zgesdd_"),SuppressUnmanagedCodeSecurity]
 		private static extern void lapack_zgesdd(ref char jobz, ref int m, ref int n,[In, Out] complex[] a, ref int lda, double[] s,[In, Out] complex[] u, ref int ldu, [In, Out] complex[] vt,ref int ldvt, [In, Out] complex[] work, ref int lwork,[In,Out] double[] rwork, int[] iwork, ref int info);
 
         [DllImport("liblapack.so", EntryPoint = "dgesvd_"),SuppressUnmanagedCodeSecurity]
 		private static extern void lapack_dgesvd(ref char jobu, ref  char jobvt, ref int m, ref int n,double[] a, ref int lda, double[] s,double[] u, ref int ldu, double[] vt,ref int ldvt, double[] work, ref int lwork,int[] iwork,ref int info);
-        [DllImport("liblapack.so", EntryPoint = "sgesvd_"),SuppressUnmanagedCodeSecurity]
-		private static extern void lapack_sgesvd(ref char jobu, ref  char jobvt, ref int m, ref int n, float[] a, ref int lda, float[] s,float[] u, ref int ldu, float[] vt,ref int ldvt, float[] work, ref int lwork,int[] iwork, ref int info);
         [DllImport("liblapack.so", EntryPoint = "zgesvd_"),SuppressUnmanagedCodeSecurity]
 		private static extern void lapack_zgesvd(ref char jobu, ref  char jobvt, ref int m, ref int n,[In, Out] complex[] a, ref int lda, double[] s,[In, Out] complex[] u, ref int ldu, [In, Out] complex[] vt,ref int ldvt, [In, Out]  complex[] work, ref int lwork,int[] iwork,ref int info);
 
         [DllImport("liblapack.so", EntryPoint = "dpotrf_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dpotrf (ref char uplo, ref int n, double [] A, ref int lda, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "spotrf_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_spotrf (ref char uplo, ref int n, float [] A, ref int lda, ref int info);
         [DllImport("liblapack.so", EntryPoint = "zpotrf_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zpotrf (ref char uplo, ref int n, [In,Out] complex [] A, ref int lda, ref int info);
         
         [DllImport("liblapack.so", EntryPoint = "dpotri_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dpotri (ref char uplo,ref  int n, double [] A, ref int lda, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "spotri_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_spotri (ref char uplo, ref int n, float [] A, ref int lda, ref int info);
         [DllImport("liblapack.so", EntryPoint = "zpotri_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zpotri (ref char uplo, ref int n, [In,Out] complex [] A, ref int lda,ref int info);
 
         [DllImport("liblapack.so", EntryPoint = "dpotrs_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dpotrs (ref char uplo,ref  int n, ref int NRHS, double [] A, ref int lda, double[] B, ref int ldb, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "spotrs_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_spotrs (ref char uplo,ref  int n, ref int NRHS, float [] A, ref int lda, float[] B, ref int ldb, ref int info);
         [DllImport("liblapack.so", EntryPoint = "zpotrs_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zpotrs (ref char uplo,ref  int n, ref int NRHS, [In,Out] complex [] A, ref int lda, [In,Out] complex[] B, ref int ldb, ref int info);
 
         [DllImport("liblapack.so", EntryPoint = "dgetrf_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dgetrf (ref int M, ref int N, double [] A, ref int LDA, int[] IPIV, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "sgetrf_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_sgetrf (ref int M, ref int N, float[] A, ref int LDA, int [] IPIV, ref int info);
         [DllImport("liblapack.so", EntryPoint = "zgetrf_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zgetrf (ref int M, ref int N, [In,Out] complex [] A, ref int LDA, int [] IPIV, ref int info);
 
         [DllImport("liblapack.so", EntryPoint = "dgetri_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dgetri (ref int N, double[] A,ref  int LDA, int[] IPIV, double[] work, ref int lwork, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "sgetri_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_sgetri (ref int N, float [] A, ref int LDA, int [] IPIV, float[] work, ref int lwork, ref int info);
         [DllImport("liblapack.so", EntryPoint = "zgetri_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zgetri (ref int N, [In,Out] complex [] A, ref int LDA, int [] IPIV, [In,Out] complex[] work, ref int lwork, ref int info);
 
         [DllImport("liblapack.so", EntryPoint = "dgeqrf_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dgeqrf (ref int M, ref int N, double [] A, ref int lda, double [] tau, double[] work, ref int lwork, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "sgeqrf_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_sgeqrf (ref int M, ref int N, float [] A, ref int lda, float [] tau, float[] work, ref int lwork,  ref int info);
         [DllImport("liblapack.so", EntryPoint = "zgeqrf_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zgeqrf (ref int M, ref int N, [In,Out] complex [] A, ref int lda, [In,Out] complex [] tau, [In,Out] complex[] work, ref int lwork,  ref int info);
 
         [DllImport("liblapack.so", EntryPoint = "dgeqp3_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dgeqp3 (ref int M, ref int N, double [] A, ref int LDA, int [] JPVT, double [] tau, double [] work, ref int lwork, ref int info );
-        [DllImport("liblapack.so", EntryPoint = "sgeqp3_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_sgeqp3 (ref int M, ref int N, float [] A, ref int LDA, int [] JPVT, float [] tau, float [] work, ref int lwork, ref int info );
         [DllImport("liblapack.so", EntryPoint = "zgeqp3_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zgeqp3 (ref int M, ref int N, [In,Out] complex [] A, ref int LDA, [In,Out] int [] JPVT, [In,Out] complex [] tau, [In,Out] complex [] work, ref int lwork, [In,Out] double [] rwork, ref int info );
 
         [DllImport("liblapack.so", EntryPoint = "dormqr_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dormqr (ref char side, ref char trans, ref int m, ref int n, ref int k, double[] A, int lda, double[] tau, double[] C, ref int ldc, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "sormqr_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_sormqr (ref char side, ref char trans, ref int m, ref int n, ref int k, float [] A, ref int lda, float [] tau , float [] C, ref int ldc, ref int info);
         
         [DllImport("liblapack.so", EntryPoint = "dorgqr_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dorgqr (ref int m, ref int n, ref int k, double[] A,ref int lda, double[] tau, double[] work, ref int lwork, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "sorgqr_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_sorgqr (ref int m, ref int n, ref int k, float [] A, ref int lda, float [] tau , float[] work, ref int lwork,  ref int info);
         [DllImport("liblapack.so", EntryPoint = "zungqr_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zungqr (ref int m, ref int n, ref int k, [In,Out] complex[] A,ref int lda, [In,Out] complex[] tau, [In,Out] complex[] work, ref int lwork, ref int info);
         
         [DllImport("liblapack.so", EntryPoint = "dtrtrs_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dtrtrs (ref char uplo, ref char transA, ref char diag, ref int N, ref int nrhs, IntPtr A, ref int LDA, IntPtr B, ref int LDB, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "strtrs_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_strtrs (ref char uplo, ref char transA, ref char diag, ref int N, ref int nrhs, IntPtr A, ref int LDA, IntPtr B, ref int LDB, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "ctrtrs_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_ctrtrs (ref char uplo, ref char transA, ref char diag, ref int N, ref int nrhs, IntPtr A, ref int LDA, IntPtr B, ref int LDB, ref int info);
         [DllImport("liblapack.so", EntryPoint = "ztrtrs_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_ztrtrs (ref char uplo, ref char transA, ref char diag, ref int N, ref int nrhs, IntPtr A, ref int LDA, IntPtr B, ref int LDB, ref int info);
         
         [DllImport("liblapack.so", EntryPoint = "dgetrs_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dgetrs(ref char trans, ref int N, ref int NRHS, double[] A, ref int LDA, int[] IPIV, double[] B, ref int LDB, ref int info);
-        [DllImport("liblapack.so", EntryPoint = "sgetrs_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_sgetrs(ref char trans, ref int N, ref int NRHS, float[] A, ref int LDA, int[] IPIV, float[] B, ref int LDB, ref int info);
         [DllImport("liblapack.so", EntryPoint = "zgetrs_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zgetrs(ref char trans, ref int N, ref int NRHS, [In,Out] complex[] A, ref int LDA, int[] IPIV, [In,Out] complex[] B, ref int LDB, ref int info);
 
         [DllImport("liblapack.so", EntryPoint = "dgelsd_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dgelsd (ref int m,ref int n,ref int nrhs, double[] A,ref int lda, double[] B,ref int ldb, double[] S, ref double RCond, ref int rank, double[] work,ref int lwork, int[] iwork, ref int info); 
-        [DllImport("liblapack.so", EntryPoint = "sgelsd_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_sgelsd (ref int m,ref int n,ref int nrhs, float[] A,ref int lda, float[] B,ref int ldb, float[] S, ref float RCond, ref int rank, float[] work,ref int lwork, int[] iwork, ref int info); 
         [DllImport("liblapack.so", EntryPoint = "zgelsd_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zgelsd (ref int m,ref int n,ref int nrhs, [In,Out] complex[] A,ref int lda, [In,Out] complex[] B,ref int ldb, double[] S, ref double RCond, ref int rank, [In,Out]  complex[] work,ref int lwork, double[] rwork, int[] iwork, ref int info); 
         
         [DllImport("liblapack.so", EntryPoint = "dgelsy_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dgelsy (ref int m,ref int n,ref int nrhs, double[] A,ref int lda, double[] B,ref int ldb, int[] JPVT0, ref double RCond, ref int rank, double[] work, ref int lwork, ref int info); 
         [DllImport("liblapack.so", EntryPoint = "dgelsy_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_sgelsy (ref int m,ref int n,ref int nrhs, float[] A,ref int lda, float[] B,ref int ldb, int[] JPVT0, ref float RCond, ref int rank, float[] work,ref int lwork, ref int info); 
-        [DllImport("liblapack.so", EntryPoint = "dgelsy_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_zgelsy (ref int m,ref int n,ref int nrhs, [In,Out] complex[] A,ref int lda, [In,Out] complex[] B,ref int ldb, int[] JPVT0, ref double RCond, ref int rank, [In,Out]  complex[] work, ref int lwork, double[] rwork, ref int info); 
+        private static extern void lapack_zgelsy (ref int m,ref int n,ref int nrhs, [In,Out] complex[] A, ref int lda, [In,Out] complex[] B,ref int ldb, int[] JPVT0, ref double RCond, ref int rank, [In,Out]  complex[] work, ref int lwork, double[] rwork, ref int info); 
         
         [DllImport("liblapack.so", EntryPoint = "dgeevx_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dgeevx (ref char balance, ref char jobvl, ref char jobvr, ref char sense, ref int n,            double[] A, ref int lda,          double[] wr, double[] wi, double[] vl, ref int ldvl,            double[] vr, ref int ldvr, ref int ilo, ref int ihi, double[] scale, ref double abnrm, double[] rconde, double[] rcondv, double[] work, ref int lwork, int [] iwork, ref int info); 
-        [DllImport("liblapack.so", EntryPoint = "sgeevx_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_sgeevx (ref char balance, ref char jobvl, ref char jobvr, ref char sense, ref int n,             float[] A, ref int lda,             float[] wr, float[] wi, float[] vl, ref int ldvl,             float[] vr, ref int ldvr, ref int ilo, ref int ihi, float[]  scale, ref float  abnrm, float[]  rconde, float[]  rcondv, float [] work, ref int lwork, int [] iwork, ref int info); 
         [DllImport("liblapack.so", EntryPoint = "zgeevx_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zgeevx (ref char balance, ref char jobvl, ref char jobvr, ref char sense, ref int n, [In,Out]  complex[] A, ref int lda, [In,Out] complex[]  w,   [In,Out] complex[] vl, ref int ldvl, [In,Out]  complex[] vr, ref int ldvr, ref int ilo, ref int ihi, double[] scale, ref double abnrm, double[] rconde, double[] rcondv, [In,Out] complex[] work, ref int lwork, double[] rwork, ref int info);
 
         [DllImport("liblapack.so", EntryPoint = "dsyevr_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dsyevr (ref char jobz, ref char range, ref char uplo, ref int n,          double  [] A, ref int lda, ref double vl, ref double vu, ref int il, ref int iu, ref double abstol, ref int m, double[] w,          double  [] z, ref int ldz, int[] isuppz, double[] work, ref int lwork, int[] iwork, ref int liwork, ref int info); 
-        [DllImport("liblapack.so", EntryPoint = "ssyevr_"),SuppressUnmanagedCodeSecurity]                                                                                                                                                                                                                                         
-        private static extern void lapack_ssyevr (ref char jobz, ref char range, ref char uplo, ref int n,          float   [] A, ref int lda, ref float  vl, ref float  vu, ref int il, ref int iu, ref float  abstol, ref int m, float [] w,          float   [] z, ref int ldz, int[] isuppz, float [] work, ref int lwork, int[] iwork, ref int liwork, ref int info); 
         [DllImport("liblapack.so", EntryPoint = "zheevr_"),SuppressUnmanagedCodeSecurity]                                                                                                                                                                                                                                         
         private static extern void lapack_zheevr (ref char jobz, ref char range, ref char uplo, ref int n, [In,Out] complex [] A, ref int lda, ref double vl, ref double vu, ref int il, ref int iu, ref double abstol, ref int m, double[] w, [In,Out] complex [] z, ref int ldz, int[] isuppz, [In,Out] complex[] work, ref int lwork, double[] rwork, ref int lrwork, int[] iwork, ref int liwork, ref int info);
 
         [DllImport("liblapack.so", EntryPoint = "dsygv_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_dsygv (ref int itype, ref char jobz, ref char uplo, ref int n, double  [] A, ref int lda, double  [] B, ref int ldb, double [] w, double [] work, ref int lwork, ref int info); 
-        [DllImport("liblapack.so", EntryPoint = "ssygv_"),SuppressUnmanagedCodeSecurity]
-        private static extern void lapack_ssygv (ref int itype, ref char jobz, ref char uplo, ref int n, float   [] A, ref int lda, float   [] B, ref int ldb, float [] w,  float  [] work, ref int lwork, ref int info); 
         [DllImport("liblapack.so", EntryPoint = "zhegv_"),SuppressUnmanagedCodeSecurity]
         private static extern void lapack_zhegv (ref int itype, ref char jobz, ref char uplo, ref int n, [In,Out] complex [] A, ref int lda, [In,Out] complex  [] B, ref int ldb, double [] w, [In,Out]  complex[] work , ref int lwork, double[] rwork, ref int info); 
 
@@ -232,169 +192,55 @@ namespace ILNumerics.Native  {
         /// distance between first elements of each row for row based orientation for matrix C</param>
         /// <remarks>All parameters except C are readonly. Only elements of matrix C will be altered. C must be a predefined 
         /// continous double array of size MxN</remarks>
-        public void sgemm(char TransA, char TransB, int M, int N, int K, float alpha, IntPtr A, int lda, IntPtr B, int ldb, float beta, float[] C, int ldc) {
-            lapack_sgemm(ref TransA, ref TransB, ref M, ref  N, ref  K, ref  alpha, A, ref lda, B, ref ldb, ref  beta, C, ref  ldc);
-        }
-        /// <summary>
-        /// Implement wrapper for ATLAS GeneralMatrixMultiply
-        /// </summary>
-        /// <param name="TransA">Transposition state for matrix A: one of the constants in enum CBlas_Transpose</param>
-        /// <param name="TransB">Transposition state for matrix B: one of the constants in enum CBlas_Transpose</param>
-        /// <param name="M">Number of rows in A</param>
-        /// <param name="N">Number of columns in B</param>
-        /// <param name="K">Number of columns in A and number of rows in B</param>
-        /// <param name="alpha">multiplicationi factor for A</param>
-        /// <param name="A">pointer to double array A</param>
-        /// <param name="lda">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix B</param>
-        /// <param name="B">pointer to double array B</param>
-        /// <param name="ldb">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix A</param>
-        /// <param name="beta">multiplication faktor for matrix B</param>
-        /// <param name="C">pointer to predefined double array C of neccessary length</param>
-        /// <param name="ldc">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix C</param>
-        /// <remarks>All parameters except C are readonly. Only elements of matrix C will be altered. C must be a predefined 
-        /// continous double array of size MxN</remarks>
         public void zgemm(char TransA, char TransB, int M, int N, int K, complex alpha, IntPtr A, int lda, IntPtr B, int ldb, complex beta, complex[] C, int ldc) {
             lapack_zgemm(ref TransA, ref TransB, ref M, ref  N, ref  K, ref  alpha, A, ref lda, B, ref ldb, ref  beta, C, ref  ldc);
         }
 
-        #region HYCALPER LOOPSTART GESDD
-        /*!HC:TYPELIST:
-<hycalper>
-<type>
-    <source locate="after">
-        inArr1
-    </source>
-</type>
-<type>
-    <source locate="after">
-        outArrS
-    </source>
-</type>
-<type>
-    <source locate="after">
-        outArrU
-    </source>
-</type>
-<type>
-    <source locate="after">
-        dllfunc
-    </source>
-</type>
-<type>
-    <source locate="after">
-        dllQuotefunc
-    </source>
-</type>
-<type>
-    <source locate="after">
-        dll1func
-    </source>
-</type>
-<type>
-    <source locate="after">
-        dll2func
-    </source>
-</type>
-</hycalper>
-*/
-        public void /*!HC:dllfunc*/ dgesdd (char jobz, int m, int n, /*!HC:inArr1*/ double [] a, int lda, /*!HC:outArrS*/ double [] s, /*!HC:outArrU*/ double [] u, int ldu, /*!HC:outArrU*/ double [] vt, int ldvt, ref int info) {
+        public void dgesdd (char jobz, int m, int n, double [] a, int lda, double [] s, double [] u, int ldu, double [] vt, int ldvt, ref int info) {
             try {
-                /*!HC:inArr1*/ double [] work = new /*!HC:inArr1*/ double [1] { (/*!HC:inArr1*/ double )0.0 };
+                double [] work = new double [1] { ( double )0.0 };
                 int lwork = -1;
                 int[] iwork = new int[((m < n) ? m : n) * 8];
-                /*!HC:dll1func*/ lapack_dgesdd (ref jobz, ref m, ref n, a, ref lda, s, u, ref ldu, vt, ref ldvt, work, ref lwork, iwork, ref info);
+                lapack_dgesdd (ref jobz, ref m, ref n, a, ref lda, s, u, ref ldu, vt, ref ldvt, work, ref lwork, iwork, ref info);
                 if (work[0] != 0) {
-                    work = new /*!HC:inArr1*/ double [(int)work[0]];
+                    work = new double [(int)work[0]];
                     lwork = work.Length;
-                    /*!HC:dll1func*/ lapack_dgesdd (ref jobz, ref m, ref n, a, ref lda, s, u, ref ldu, vt, ref ldvt, work, ref lwork, iwork, ref info);
+                    lapack_dgesdd (ref jobz, ref m, ref n, a, ref lda, s, u, ref ldu, vt, ref ldvt, work, ref lwork, iwork, ref info);
                 }
             } catch (Exception e) {
                 if (e is OutOfMemoryException) {
-                    /*!HC:dll2func*/ dgesvd (jobz, m, n, a, lda, s, u, ldu, vt, ldvt, ref info); 
+                    dgesvd (jobz, m, n, a, lda, s, u, ldu, vt, ldvt, ref info); 
                 }
-                throw new ILException("Unable to do " + /*!HC:dllQuotefunc*/ "dgesdd"  + ".", e); 
+                throw new ILException("Unable to do " + "dgesdd"  + ".", e); 
             }
         }
-        #endregion HYCALPER LOOPEND GESDD
-#region HYCALPER AUTO GENERATED CODE
-// DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
 
-#endregion HYCALPER AUTO GENERATED CODE
-
-        #region HYCALPER LOOPSTART Complex_SDD
-/*!HC:TYPELIST:
-<hycalper>
-<type>
-    <source locate="after">
-        inArr1
-    </source>
-</type>
-<type>
-    <source locate="after">
-        outArrS
-    </source>
-</type>
-<type>
-    <source locate="after">
-        outArrU
-    </source>
-</type>
-<type>
-    <source locate="after">
-        dllfunc
-    </source>
-</type>
-<type>
-    <source locate="after">
-        dllQuotefunc
-    </source>
-</type>
-<type>
-    <source locate="after">
-        dll1func
-    </source>
-</type>
-<type>
-    <source locate="after">
-        dll2func
-    </source>
-</type>
-</hycalper>
-*/
-        public void /*!HC:dllfunc*/ zgesdd (char jobz, int m, int n, /*!HC:inArr1*/ complex [] a, int lda,/*!HC:outArrS*/  double [] s, /*!HC:outArrU*/ complex [] u, int ldu,/*!HC:outArrU*/ complex [] vt, int ldvt, ref int info)
+        public void zgesdd (char jobz, int m, int n, complex [] a, int lda, double [] s, complex [] u, int ldu, complex [] vt, int ldvt, ref int info)
         {
             try {
-                /*!HC:inArr1*/ complex [] work = new /*!HC:inArr1*/ complex [1] { ( /*!HC:inArr1*/ complex )0.0 };
-                /*!HC:outArrS*/ double [] rwork; 
+                complex [] work = new complex [1] { ( complex )0.0 };
+                double [] rwork; 
                 int minMN = (m < n) ? m : n;
                 if (jobz == 'N') {
-                    rwork = new /*!HC:outArrS*/ double [minMN * 7];  
+                    rwork = new double [minMN * 7];  
                 } else {
-                    rwork = new /*!HC:outArrS*/ double [5 * minMN * minMN + 5 * minMN];  
+                    rwork = new double [5 * minMN * minMN + 5 * minMN];  
                 }
                 int lwork = -1;
                 int[] iwork = new int[minMN * 8];
-                /*!HC:dll1func*/ lapack_zgesdd (ref jobz, ref m, ref n, a, ref lda, s, u, ref ldu, vt, ref ldvt, work, ref lwork, rwork, iwork, ref info);
+                lapack_zgesdd (ref jobz, ref m, ref n, a, ref lda, s, u, ref ldu, vt, ref ldvt, work, ref lwork, rwork, iwork, ref info);
                 if (work[0] != 0) {
-                    work = new /*!HC:inArr1*/ complex [(int)work[0].real];
+                    work = new complex [(int)work[0].real];
                     lwork = work.Length;
-                    /*!HC:dll1func*/ lapack_zgesdd (ref jobz, ref m, ref n, a, ref lda, s, u, ref ldu, vt, ref ldvt, work, ref lwork,rwork, iwork, ref info);
+                    lapack_zgesdd (ref jobz, ref m, ref n, a, ref lda, s, u, ref ldu, vt, ref ldvt, work, ref lwork,rwork, iwork, ref info);
                 }
             } catch (Exception e) {
                 if (e is OutOfMemoryException) {
-                    /*!HC:dll2func*/ zgesvd (jobz, m, n, a, lda, s, u, ldu, vt, ldvt, ref info); 
+                    zgesvd (jobz, m, n, a, lda, s, u, ldu, vt, ldvt, ref info); 
                 }
                 throw new ILException("Unable to do " +  "zgesdd"  + ".", e); 
             }
         }
-        #endregion HYCALPER LOOPEND COMPLEX_SDD
-#region HYCALPER AUTO GENERATED CODE
-// DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
-
-#endregion HYCALPER AUTO GENERATED CODE
 
         #region HYCALPER LOOPSTART GESVD
         /*!HC:TYPELIST:
@@ -513,9 +359,6 @@ namespace ILNumerics.Native  {
         public void dpotrf(char uplo, int n, double[] A, int lda, ref int info) {
             lapack_dpotrf(ref uplo, ref n, A, ref lda, ref info);
         }
-        public void spotrf(char uplo, int n, float[] A, int lda, ref int info) {
-            lapack_spotrf(ref uplo, ref n, A, ref lda, ref info);
-        }
         public void zpotrf(char uplo, int n, complex[] A, int lda, ref int info) {
             lapack_zpotrf(ref uplo, ref n, A, ref lda, ref info);
         }
@@ -524,9 +367,6 @@ namespace ILNumerics.Native  {
         public void dpotri(char uplo, int n, double[] A, int lda, ref int info) {
             lapack_dpotri(ref uplo, ref n, A, ref lda, ref info);
         }
-        public void spotri(char uplo, int n, float[] A, int lda, ref int info) {
-            lapack_spotri(ref uplo, ref n, A, ref lda, ref info);
-        }
         public void zpotri(char uplo, int n, complex[] A, int lda, ref int info) {
             lapack_zpotri(ref uplo, ref n, A, ref lda, ref info);
         }
@@ -534,9 +374,6 @@ namespace ILNumerics.Native  {
 
         public void dgetrf(int M, int N, double[] A, int LDA, int[] IPIV, ref int info) {
             lapack_dgetrf(ref M, ref N, A, ref LDA, IPIV, ref info);
-        }
-        public void sgetrf(int M, int N, float[] A, int LDA, int[] IPIV, ref int info) {
-            lapack_sgetrf(ref M, ref N, A, ref LDA, IPIV, ref info);
         }
         public void zgetrf(int M, int N, complex[] A, int LDA, int[] IPIV, ref int info) {
             lapack_zgetrf(ref M, ref N, A, ref LDA, IPIV, ref info);
@@ -679,9 +516,6 @@ namespace ILNumerics.Native  {
 #endregion HYCALPER AUTO GENERATED CODE
 
         public void dormqr(char side, char trans, int m, int n, int k, double[] A, int lda, double[] tau, double[] C, int LDC, ref int info) {
-            throw new Exception("The method or operation is not implemented.");
-        }
-        public void sormqr(char side, char trans, int m, int n, int k, float[] A, int lda, float[] tau, float[] C, int LDC, ref int info) {
             throw new Exception("The method or operation is not implemented.");
         }
 
@@ -829,12 +663,6 @@ namespace ILNumerics.Native  {
         public void dtrtrs(char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info) {
             lapack_dtrtrs(ref uplo, ref transA, ref diag, ref N, ref nrhs, A, ref LDA, B, ref LDB, ref info); 
         }
-        public void strtrs(char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info) {
-            lapack_strtrs(ref uplo, ref transA, ref diag, ref N, ref nrhs, A, ref LDA, B, ref LDB, ref info); 
-        }
-        public void ctrtrs(char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info) {
-            lapack_ctrtrs(ref uplo, ref transA, ref diag, ref N, ref nrhs, A, ref LDA, B, ref LDB, ref info); 
-        }
         public void ztrtrs(char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info) {
             lapack_ztrtrs(ref uplo, ref transA, ref diag, ref N, ref nrhs, A, ref LDA, B, ref LDB, ref info); 
         }
@@ -842,11 +670,6 @@ namespace ILNumerics.Native  {
         public void dgetrs(char trans, int N, int NRHS, double[] A, int LDA, int[] IPIV, double[] B, int LDB, ref int info) {
             lapack_dgetrs(ref trans,ref N,ref NRHS, A, ref LDA, IPIV, B, ref LDB, ref info);     
         }
-
-        public void sgetrs(char trans, int N, int NRHS, float[] A, int LDA, int[] IPIV, float[] B, int LDB, ref int info) {
-            lapack_sgetrs(ref trans,ref N,ref NRHS, A, ref LDA, IPIV, B, ref LDB, ref info);     
-        }
-
         public void zgetrs(char trans, int N, int NRHS, complex[] A, int LDA, int[] IPIV, complex[] B, int LDB, ref int info) {
             lapack_zgetrs(ref trans,ref N,ref NRHS, A, ref LDA, IPIV, B, ref LDB, ref info);
         }
@@ -854,11 +677,6 @@ namespace ILNumerics.Native  {
         public void dpotrs(char uplo, int n, int nrhs, double[] A, int lda, double[] B, int ldb, ref int info) {
             lapack_dpotrs(ref uplo, ref n, ref nrhs, A, ref lda, B, ref ldb, ref info); 
         }
-
-        public void spotrs(char uplo, int n, int nrhs, float[] A, int lda, float[] B, int ldb, ref int info) {
-            lapack_spotrs(ref uplo, ref n, ref nrhs, A, ref lda, B, ref ldb, ref info); 
-        }
-
         public void zpotrs(char uplo, int n, int nrhs, complex[] A, int lda, complex[] B, int ldb, ref int info) {
             lapack_zpotrs(ref uplo, ref n, ref nrhs, A, ref lda, B, ref ldb, ref info); 
         }
@@ -1035,17 +853,6 @@ namespace ILNumerics.Native  {
             work = new double[lwork]; 
             lapack_dgeevx(ref balance, ref jobvl, ref jobvr, ref sense, ref n, A, ref lda, wr, wi, vl, ref ldvl, vr, ref ldvr, ref ilo, ref ihi, scale, ref abnrm, rconde, rcondv, work, ref lwork, iwork, ref info);
         }
-        public void sgeevx(char balance, char jobvl, char jobvr, char sense, int n, float[] A, int lda, float[] wr, float[] wi, float[] vl, int ldvl, float[] vr, int ldvr, ref int ilo, ref int ihi, float[] scale, ref float abnrm, float[] rconde, float[] rcondv, ref int info) {
-            float [] work = new float[1]; 
-            int lwork = -1;
-            int [] iwork = new int[2 * n - 2];
-            lapack_sgeevx(ref balance, ref jobvl, ref jobvr, ref sense, ref n, A, ref lda, wr, wi, vl, ref ldvl, vr, ref ldvr, ref ilo, ref ihi, scale, ref abnrm, rconde, rcondv, work, ref lwork, iwork, ref info);
-            if (info != 0) 
-                throw new ILArgumentException("error in lapack call: ?geevx. (" + info + ")");
-            lwork = (int)work[0]; 
-            work = new float[lwork]; 
-            lapack_sgeevx(ref balance, ref jobvl, ref jobvr, ref sense, ref n, A, ref lda, wr, wi, vl, ref ldvl, vr, ref ldvr, ref ilo, ref ihi, scale, ref abnrm, rconde, rcondv, work, ref lwork, iwork, ref info);
-        }
         public void zgeevx(char balance, char jobvl, char jobvr, char sense, int n, complex[] A, int lda, complex[] w, complex[] vl, int ldvl, complex[] vr, int ldvr, ref int ilo, ref int ihi, double[] scale, ref double abnrm, double[] rconde, double[] rcondv, ref int info) {
             complex [] work = new complex[1]; 
             int lwork = -1;
@@ -1073,20 +880,6 @@ namespace ILNumerics.Native  {
             liwork = (int) iwork[0]; 
             iwork = new int[liwork]; 
             lapack_dsyevr(ref jobz,ref range,ref uplo,ref n, A,ref lda, ref vl, ref vu, ref il, ref iu, ref abstol,ref m, w,z,ref ldz,isuppz, work,ref lwork,iwork,ref liwork,ref info);
-        }
-        public void ssyevr(char jobz, char range, char uplo, int n, float[] A, int lda, float vl, float vu, int il, int iu, float abstol, ref int m, float[] w, float[] z, int ldz, int[] isuppz, ref int info) {
-            float [] work = new float[1]; 
-            int lwork = -1, liwork = -1; 
-            int [] iwork = new int[1]; 
-            lapack_ssyevr(ref jobz,ref range,ref uplo,ref n, A,ref lda, ref vl, ref vu, ref il, ref iu, ref abstol,ref m, w,z,ref ldz,isuppz, work,ref lwork,iwork,ref liwork,ref info);
-            if (info != 0) {
-                throw new ILArgumentException("?syevr: error returned from lapack: " + info);
-            }
-            lwork = (int)work[0]; 
-            work = new float[lwork];
-            liwork = (int) iwork[0]; 
-            iwork = new int[liwork]; 
-            lapack_ssyevr(ref jobz,ref range,ref uplo,ref n, A,ref lda, ref vl, ref vu, ref il, ref iu, ref abstol,ref m, w,z,ref ldz,isuppz, work,ref lwork,iwork,ref liwork,ref info);
         }
         public void zheevr(char jobz, char range, char uplo, int n, complex[] A, int lda, double vl, double vu, int il, int iu, double abstol, ref int m, double[] w, complex[] z, int ldz, int[] isuppz, ref int info) {
             complex[] work = new complex[1]; 
@@ -1118,18 +911,6 @@ namespace ILNumerics.Native  {
             lwork = (int) work[0]; 
             work = ILMemoryPool.Pool.New<double>(lwork); 
             lapack_dsygv (ref itype,ref jobz,ref uplo,ref n, A,ref lda, B,ref ldb, w, work, ref lwork, ref info); 
-            ILMemoryPool.Pool.RegisterObject(work); 
-        }        
-        public void ssygv (int itype, char jobz, char uplo, int n, float   [] A, int lda, float   [] B, int ldb, float  [] w, ref int info) {
-            // query workspace 
-            int lwork = -1; 
-            float [] work = new float[1] {0.0f}; 
-            lapack_ssygv (ref itype,ref jobz,ref uplo,ref n, A,ref lda, B,ref ldb, w, work, ref lwork, ref info); 
-            if (info != 0 || work[0] <= 0.0) return; 
-            // create temporary array(s)
-            lwork = (int) work[0]; 
-            work = ILMemoryPool.Pool.New<float>(lwork); 
-            lapack_ssygv (ref itype,ref jobz,ref uplo,ref n, A,ref lda, B,ref ldb, w, work, ref lwork, ref info); 
             ILMemoryPool.Pool.RegisterObject(work); 
         }
         public void zhegv (int itype, char jobz, char uplo, int n, complex [] A, int lda, complex [] B, int ldb, double [] w, ref int info) { 
