@@ -79,7 +79,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 for (int i = 0; i < vertCount; i++) {
                     w = vertices[i].Position.X; 
                     h = vertices[i].Position.Y;           
-                    if (m_panel.ClipViewData && (w < clip.m_xMin || w > clip.m_xMax || h < clip.m_yMin || h > clip.m_yMax)) 
+                    if (m_panel.ClipViewData && (w < clip.XMin || w > clip.XMax || h < clip.YMin || h > clip.YMax)) 
                         continue; 
                     w -= s05x;             
                     h -= s05y; 

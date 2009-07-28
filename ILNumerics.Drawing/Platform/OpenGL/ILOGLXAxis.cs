@@ -130,8 +130,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     GL.Disable(EnableCap.LineStipple); 
                     GL.Begin(BeginMode.Lines);
                     foreach (LabeledTick tick in m_labeledTicks) {
-                        if (tick.Position >= m_clipping.m_xMin 
-                            && tick.Position <= m_clipping.m_xMax) {
+                        if (tick.Position >= m_clipping.XMin 
+                            && tick.Position <= m_clipping.XMax) {
                             x = tick.Position * scale + offse; 
                             z = 0.5f; 
                             GL.Vertex3(x,y,z); 
@@ -170,8 +170,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             scale = m_clipping.ScaleToUnitCube().X; 
             offset = m_clipping.CenterToUnitCube().X; 
             foreach (LabeledTick tick in m_labeledTicks) {
-                if (tick.Position > m_clipping.m_xMin 
-                    && tick.Position < m_clipping.m_xMax) {
+                if (tick.Position > m_clipping.XMin 
+                    && tick.Position < m_clipping.XMax) {
                     x = tick.Position * scale + offset; 
                     z = 0.5f; 
                     GL.Vertex3(x,y,z); 

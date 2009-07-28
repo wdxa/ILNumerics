@@ -1,4 +1,4 @@
-Changes in version 1.4.02
+Changes in version 1.4.03
 ===========================
 * sort: return indices rel. to dim length
 * repmat: simplified interface (no 'rows' parameter)

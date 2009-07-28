@@ -69,12 +69,12 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                                  ILClippingData clippingContainer) 
              : base(panel,X,Y,Z,C, clippingContainer) { 
             m_panel = panel; 
-            m_localClipping.m_zMax = 0; 
-            m_localClipping.m_zMin = 0; 
-            m_localClipping.m_xMax = (float)m_cols+0.5f;
-            m_localClipping.m_xMin = -0.5f; 
-            m_localClipping.m_yMax = (float)m_rows+0.5f; 
-            m_localClipping.m_yMin = -0.5f; 
+            m_localClipping.ZMax = 0; 
+            m_localClipping.ZMin = 0; 
+            m_localClipping.XMax = (float)m_cols+0.5f;
+            m_localClipping.XMin = -0.5f; 
+            m_localClipping.YMax = (float)m_rows+0.5f; 
+            m_localClipping.YMin = -0.5f; 
         }
         #endregion 
 
@@ -149,9 +149,9 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 Configure(); 
             float zPos = m_zPosition; 
             if (zPos == float.PositiveInfinity) {
-                zPos = m_panel.Limits.m_zMax;
+                zPos = m_panel.Limits.ZMax;
             } else if (zPos == float.NegativeInfinity) {
-                zPos = m_panel.Limits.m_zMin;
+                zPos = m_panel.Limits.ZMin;
             }
             GL.Translate(0.0f, 0.0f, zPos); 
             GL.Enable(EnableCap.Blend); 

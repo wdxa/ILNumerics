@@ -151,8 +151,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 GL.Disable(EnableCap.LineStipple); 
                 GL.Begin(BeginMode.Lines);
                 foreach (LabeledTick tick in m_labeledTicks) {
-                    if (tick.Position >= m_clipping.m_zMin 
-                        && tick.Position <= m_clipping.m_zMax) {
+                    if (tick.Position >= m_clipping.ZMin 
+                        && tick.Position <= m_clipping.ZMax) {
                         z = tick.Position * scale + offse; 
                         GL.Vertex3(x,y,z); 
                         x += tickLen; 
@@ -215,8 +215,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
 	        }
             #endregion
             foreach (LabeledTick tick in m_labeledTicks) {
-                if (tick.Position >= m_clipping.m_zMin 
-                    && tick.Position <= m_clipping.m_zMax) {
+                if (tick.Position >= m_clipping.ZMin 
+                    && tick.Position <= m_clipping.ZMax) {
                     z = tick.Position * scale + offset; 
                     GL.Vertex3(x1,y1,z); 
                     GL.Vertex3(x2,y2,z);

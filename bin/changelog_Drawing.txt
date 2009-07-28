@@ -1,7 +1,25 @@
-Changes in version 0.10.02
+Changes in version 0.12.03
 ===========================
-* scene graph implementation
+bugfix on zero-height planes (surf)
++ added ILClippingData: AllowZeroVolume
++ moved m_* attributes of ILClippingData to private
++ zero planes get _middle_ color from colormap
++ fixed colorbar accordingly
+
+Changes in version 0.12.02
+===========================
+* bugfix: ILColorBar.RegisterRangeSource improved parameter checking
+
+Changes in version 0.12.01
+===========================
+* complete scene graph implementation
+* support for transparency (sorting of graphs)
+* more cleaner eventing / signaling model
+* scene graph partial invalidation/ reconfiguration
+* light for scene objects 
+* dynamic graphs 
 * ILCamera: new property: Position (X,Y,Z)
+* ... (just too much to count)
 
 Changes in version 0.10.02
 ===========================

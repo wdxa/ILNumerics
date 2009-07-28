@@ -41,20 +41,21 @@ namespace ILNumerics.Drawing {
         protected void OnChange() {
             if (m_eventingActive && Changed != null) {
                 Changed ( this, new ClippingChangedEventArgs(this)); 
-                m_isDirty = false; 
             }
+            m_isDirty = false; 
         }
         #endregion
 
         #region attributes 
         private bool m_eventingActive = true;
-        internal float m_xMin = float.MaxValue; 
-        internal float m_yMin = float.MaxValue; 
-        internal float m_zMin = float.MaxValue; 
-        internal float m_xMax = float.MinValue; 
-        internal float m_yMax = float.MinValue; 
-        internal float m_zMax = float.MinValue; 
-        internal bool m_isDirty; 
+        private float m_xMin = float.MaxValue;
+        private float m_yMin = float.MaxValue;
+        private float m_zMin = float.MaxValue;
+        private float m_xMax = float.MinValue;
+        private float m_yMax = float.MinValue;
+        private float m_zMax = float.MinValue;
+        private bool m_isDirty = false;
+        private bool m_allowZeroVolume = true; 
         #endregion
 
         #region properties 
@@ -67,8 +68,11 @@ namespace ILNumerics.Drawing {
             }
             set {
                 if (m_xMin != value) {
+                    m_isDirty = true; 
                     m_xMin = value;
-                    OnChange();
+                    if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    if (m_eventingActive && Changed != null)
+                        OnChange();
                 }
             }
         }
@@ -81,8 +85,11 @@ namespace ILNumerics.Drawing {
             }
             set {
                 if (m_yMin != value) {
+                    m_isDirty = true; 
                     m_yMin = value;
-                    OnChange();
+                    if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    if (m_eventingActive && Changed != null)
+                        OnChange();
                 }
             }
         }
@@ -95,8 +102,11 @@ namespace ILNumerics.Drawing {
             }
             set {
                 if (m_zMin != value) {
+                    m_isDirty = true;
                     m_zMin = value;
-                    OnChange(); 
+                    if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    if (m_eventingActive && Changed != null)
+                        OnChange(); 
                 }
             }
         }
@@ -109,8 +119,11 @@ namespace ILNumerics.Drawing {
             }
             set {
                 if (m_xMax != value) {
+                    m_isDirty = true; 
                     m_xMax = value;
-                    OnChange(); 
+                    if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    if (m_eventingActive && Changed != null)
+                        OnChange(); 
                 }
             }
         }
@@ -123,8 +136,11 @@ namespace ILNumerics.Drawing {
             }
             set {
                 if (m_yMax != value) {
+                    m_isDirty = true; 
                     m_yMax = value;
-                    OnChange(); 
+                    if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    if (m_eventingActive && Changed != null)
+                        OnChange(); 
                 }
             }
         }
@@ -137,8 +153,11 @@ namespace ILNumerics.Drawing {
             }
             set {
                 if (m_zMax != value) {
+                    m_isDirty = true; 
                     m_zMax = value;
-                    OnChange(); 
+                    if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    if (m_eventingActive && Changed != null)
+                        OnChange(); 
                 }
             }
         }
@@ -202,6 +221,18 @@ namespace ILNumerics.Drawing {
                 return m_isDirty; 
             }
         }
+        /// <summary>
+        /// true: this clipping data always ensures a non-zero volume
+        /// </summary>
+        /// <remarks>'NonZeroVolumne' means, non of Depth,Width nor Heigth are allowed to be zero. If some edge of the cube is set to zero, the class expands this edge by 1 in each direction.</remarks>
+        public bool AllowZeroVolume {
+            get {
+                return m_allowZeroVolume;
+            }
+            set {
+                m_allowZeroVolume = value;
+            }
+        }
         #endregion
 
         #region public interface
@@ -218,8 +249,15 @@ namespace ILNumerics.Drawing {
         public void EventingResume() {
             m_eventingActive = true;
             if (m_isDirty && Changed != null) {
-                OnChange();  
+                OnChange();
             }
+        }
+        /// <summary>
+        /// enable eventing without sending pending events
+        /// </summary>
+        public void EventingStart() {
+            m_eventingActive = true;
+            m_isDirty = false; 
         }
         /// <summary>
         /// update ranges for this object with union of both ranges. 
@@ -232,6 +270,7 @@ namespace ILNumerics.Drawing {
             if (clipData.XMax > XMax) { m_isDirty = true; m_xMax = clipData.XMax; }
             if (clipData.YMax > YMax) { m_isDirty = true; m_yMax = clipData.YMax; }
             if (clipData.ZMax > ZMax) { m_isDirty = true; m_zMax = clipData.ZMax; }
+            if (!m_allowZeroVolume) ensureVolumeNotZero();
             if (m_isDirty && m_eventingActive && Changed != null) 
                 OnChange(); 
             }
@@ -253,6 +292,7 @@ namespace ILNumerics.Drawing {
                 if (point.Z < ZMin) { m_isDirty = true; m_zMin = point.Z; }
                 if (point.Z > ZMax) { m_isDirty = true; m_zMax = point.Z; }
             }
+            if (!m_allowZeroVolume) ensureVolumeNotZero();
             if (m_isDirty && m_eventingActive && Changed != null) 
                 OnChange(); 
         }
@@ -270,6 +310,7 @@ namespace ILNumerics.Drawing {
         }
         public void Update (ILPoint3Df center, float zoomFactor) {
             if (zoomFactor == 1.0f && center == CenterF) return; 
+            m_isDirty = true; 
             float s = WidthF * zoomFactor / 2; 
             m_xMin = center.X - s; 
             m_xMax = center.X + s; 
@@ -279,7 +320,7 @@ namespace ILNumerics.Drawing {
             s = DepthF * zoomFactor / 2; 
             m_zMin = center.Z - s; 
             m_zMax = center.Z + s;
-            m_isDirty = true; 
+            if (!m_allowZeroVolume) ensureVolumeNotZero();
             if (m_eventingActive && Changed != null) 
                 OnChange();  
         }
@@ -289,13 +330,14 @@ namespace ILNumerics.Drawing {
         /// <param name="lunCorner">left-upper-near corner of the volume box</param>
         /// <param name="rbfCorner">right-bottom-far corner of the volume box</param>
         public void Set(ILPoint3Df lunCorner, ILPoint3Df rbfCorner) {
+            m_isDirty = true; 
             m_xMin = Math.Min(lunCorner.X,rbfCorner.X); 
             m_xMax = Math.Max(lunCorner.X,rbfCorner.X); 
             m_yMin = Math.Min(lunCorner.Y,rbfCorner.Y); 
             m_yMax = Math.Max(lunCorner.Y,rbfCorner.Y); 
             m_zMin = Math.Min(lunCorner.Z,rbfCorner.Z); 
-            m_zMax = Math.Max(lunCorner.Z,rbfCorner.Z); 
-            m_isDirty = true; 
+            m_zMax = Math.Max(lunCorner.Z,rbfCorner.Z);
+            if (!m_allowZeroVolume) ensureVolumeNotZero();
             if (m_eventingActive && Changed != null) 
                 OnChange(); 
         }
@@ -312,7 +354,6 @@ namespace ILNumerics.Drawing {
             m_isDirty = true; 
             if (m_eventingActive && Changed != null) 
                 OnChange();  
-
         }
         /// <summary>
         /// copy this from other clipping data
@@ -325,6 +366,7 @@ namespace ILNumerics.Drawing {
             m_xMax = m_clippingData.XMax;
             m_yMax = m_clippingData.YMax;
             m_zMax = m_clippingData.ZMax;
+            if (!m_allowZeroVolume) ensureVolumeNotZero();
             m_isDirty = true; 
             if (m_eventingActive && Changed != null) 
                 OnChange();  
@@ -382,9 +424,13 @@ namespace ILNumerics.Drawing {
             ILPoint3Df ret; 
             ret.X = (x + 0.5f) * (m_xMax-m_xMin) + m_xMin; 
             ret.Y = (y + 0.5f) * (m_yMax-m_yMin) + m_yMin; 
-            ret.Z = (z + 0.5f) * (m_zMax-m_zMin) + m_zMin; 
-            return ret; 
+            ret.Z = (z + 0.5f) * (m_zMax-m_zMin) + m_zMin;
+            if (!m_allowZeroVolume) ensureVolumeNotZero();
+            return ret;
         }
+        #endregion
+
+        #region private helper
         /// <summary>
         /// Ensure that this clipping data has valid length for all dimensions  [deprecated]
         /// </summary>
@@ -416,6 +462,24 @@ namespace ILNumerics.Drawing {
                 OnChange(); 
             }
             return change; 
+        }
+
+        private void ensureVolumeNotZero() {
+            if (HeightF == 0) {
+                m_isDirty = true;
+                m_yMin = m_yMin - 1f;
+                m_yMax = m_yMin + 2f;
+            }
+            if (WidthF == 0) {
+                m_isDirty = true;
+                m_xMin = m_xMin - 1f;
+                m_xMax = m_xMin + 2f;
+            }
+            if (DepthF == 0) {
+                m_isDirty = true;
+                m_zMin = m_zMin - 1f;
+                m_zMax = m_zMin + 2f;
+            }
         }
         #endregion
 

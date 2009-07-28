@@ -142,11 +142,7 @@ namespace ILNumerics.Drawing.Collections {
         public ILSurfaceGraph AddSurfGraph(ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray C) {
             ILSurfaceGraph ret; 
             ret = (ILSurfaceGraph)m_graphFact.CreateGraph(Z,GraphType.Surf,X,Y,C);
-            m_clippingData.EventingSuspend(); 
             m_clippingData.Update(ret.Limits);
-            m_clippingData.ZMax += ret.Limits.DepthF * 0.05f; 
-            m_clippingData.ZMin -= ret.Limits.DepthF * 0.05f; 
-            m_clippingData.EventingResume(); 
             Add(ret);
             ret.Changed += new ILGraphChangedEvent(GraphChanged);
             // trigger change event

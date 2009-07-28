@@ -87,11 +87,15 @@ namespace ILNumerics.Drawing.Platform.OpenGL
             float minZ = m_globalClipping.ZMin, minC = (m_colors == null)? 0.0f : m_colors.MinValue; 
             float maxZ = m_globalClipping.ZMax; 
             bool useColorArray = !object.Equals(m_colors,null); 
-            float a; 
-            if (useColorArray) 
+            float a;
+            if (useColorArray)
                 a = colormap.Length / (m_colors.MaxValue - minC);
-            else 
-                a = colormap.Length / (maxZ - minZ);
+            else {
+                if (maxZ - minZ != 0.0f)
+                    a = colormap.Length / (maxZ - minZ);
+                else
+                    a = 0.0f;
+            }
             int curVertPos = 0, curVecPos = 0; 
             if (m_shading == ShadingStyles.Interpolate) {
                 #region shading interpolate
@@ -101,9 +105,15 @@ namespace ILNumerics.Drawing.Platform.OpenGL
                         val = m_sourceArray.GetValue(r,c);
                         // set color values 
                         if (useColorArray)
-                            colormap.Map((m_colors.GetValue(curVecPos) - minC) * a, m_vertices,ref curVertPos); 
-                        else 
-                            colormap.Map((val - minZ) * a, m_vertices,ref curVertPos);
+                            colormap.Map((m_colors.GetValue(curVecPos) - minC) * a, m_vertices, ref curVertPos);
+                        else {
+                            if (a != 0) {
+                                colormap.Map((val - minZ) * a, m_vertices, ref curVertPos);
+                            } else {
+                                // plane: minz == maxz
+                                colormap.Map(colormap.Length / 2, m_vertices, ref curVertPos);
+                            }
+                        }
                         m_vertices[curVertPos++] = m_opacity;
                         curVertPos += 3; 
                         m_vertices[curVertPos++] = m_xCoords[curVecPos]; 

@@ -125,6 +125,7 @@ namespace ILNumerics.Drawing.Graphs {
                               ILBaseArray Z, ILBaseArray C, ILClippingData clippingContainer) 
                 : base (panel, clippingContainer) {
             #region argument checking
+            m_localClipping.EventingSuspend(); 
             if (Z == null || !Z.IsMatrix) 
                 throw new ILArgumentException ("ILFilledGraph: Z must be matrix!"); 
             if (!Z.IsNumeric) 
@@ -140,15 +141,15 @@ namespace ILNumerics.Drawing.Graphs {
                 if (X.Dimensions.IsSameSize(Z.Dimensions)) {
                     tmp = ILMath.tosingle(X); 
                     tmp.ExportValues(ref m_xCoords); 
-                    m_localClipping.m_xMax = tmp.MaxValue; 
-                    m_localClipping.m_xMin = tmp.MinValue; 
+                    m_localClipping.XMax = tmp.MaxValue; 
+                    m_localClipping.XMin = tmp.MinValue; 
                 } else {
                     throw new ILArgumentException ("ILFilledGraph: X must be of same size than Z!"); 
                 }
             } else {
                 ILMath.tosingle(ILMath.repmat(ILMath.counter(0.0,1.0,1,m_cols),m_rows,1)).ExportValues(ref m_xCoords); 
-                m_localClipping.m_xMin = 0; 
-                m_localClipping.m_xMax = m_cols-1; 
+                m_localClipping.XMin = 0; 
+                m_localClipping.XMax = m_cols-1; 
             }
             if (!object.Equals(Y,null) && !Y.IsEmpty) {
                 if (!Y.IsMatrix || !Y.IsNumeric) {
@@ -157,23 +158,23 @@ namespace ILNumerics.Drawing.Graphs {
                 if (Y.Dimensions.IsSameSize(Z.Dimensions)) {
                     tmp = ILMath.tosingle(Y); 
                     tmp.ExportValues(ref m_yCoords); 
-                    m_localClipping.m_yMax = tmp.MaxValue; 
-                    m_localClipping.m_yMin = tmp.MinValue; 
+                    m_localClipping.YMax = tmp.MaxValue; 
+                    m_localClipping.YMin = tmp.MinValue; 
                 } else {
                     throw new ILArgumentException ("ILFilledGraph: Y must be same size than Z!"); 
                 }
             } else {
                 ILMath.tosingle(ILMath.repmat(ILMath.counter(0.0,1.0,m_rows,1),1,m_cols)).ExportValues(ref m_yCoords); 
-                m_localClipping.m_yMax = m_rows-1; 
-                m_localClipping.m_yMin = 0; 
+                m_localClipping.YMax = m_rows-1; 
+                m_localClipping.YMin = 0; 
             }
             if (object.Equals(C,null) || C.IsEmpty) {
                 m_colors = null; 
             } else {
                 m_colors = ILMath.tosingle(C);
             }  
-            m_localClipping.m_zMax = m_sourceArray.MaxValue; 
-            m_localClipping.m_zMin = m_sourceArray.MinValue; 
+            m_localClipping.ZMax = m_sourceArray.MaxValue; 
+            m_localClipping.ZMin = m_sourceArray.MinValue; 
             #endregion
             m_Vertcount = m_rows * m_cols; 
             m_vertexReady = false;
@@ -183,6 +184,7 @@ namespace ILNumerics.Drawing.Graphs {
             m_wireLines = new ILLineProperties();
             m_wireLines.Changed += new EventHandler(m_wireLines_Changed);
             m_filled = true; 
+            m_localClipping.EventingResume(); 
         }
         #endregion
 

@@ -346,6 +346,7 @@ namespace ILNumerics.Drawing.Controls {
             m_renderProperties = new ILRenderProperties (); 
             m_textRendererManager = new ILRendererManager(this); 
             m_clippingView = new ILClippingData();
+            m_clippingView.AllowZeroVolume = false; 
             m_camera = new ILCamera((float)Math.PI*3/2*0,0.0f,5.0f);
             m_defaultView = new ILCamera(m_camera); 
             m_layoutData = new ILLayoutData(m_camera);

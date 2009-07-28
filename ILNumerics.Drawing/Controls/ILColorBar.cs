@@ -109,6 +109,10 @@ namespace ILNumerics.Drawing.Controls {
         private void clipping_Changed(object sender, ClippingChangedEventArgs e) {
             m_minValue = e.ClippingData.ZMin; 
             m_maxValue = e.ClippingData.ZMax;
+            if (m_minValue == m_maxValue) {
+                m_minValue -= 1f; 
+                m_maxValue += 1f;
+            }
         }
         /// <summary>
         /// update range for color bar, supply color provider
@@ -143,7 +147,7 @@ namespace ILNumerics.Drawing.Controls {
         }
 
         protected override void OnPaint(PaintEventArgs e) {
-            if (!Visible || (m_minValue == m_maxValue)) return;
+            if (!Visible) return; // || (m_minValue == m_maxValue)) return;
             base.OnPaint(e);
             // draw border 
             Brush br = new SolidBrush(ForeColor) ;
