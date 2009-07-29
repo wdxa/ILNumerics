@@ -491,7 +491,62 @@ namespace ILNumerics.Native {
         /// </summary>
         public void dpotrf(char uplo, int n, double[] A, int lda, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dpotrf. Is lapack_gen.dll on the PATH?");
+            // -> Input checking
+
+            info = 0;
+            if (uplo != 'U' && uplo != 'L' && uplo != 'u' && uplo != 'l') { info = -1; return; }
+            if (n*n != A.Length) { info = -2; return; }
+            if (lda < 1 || lda > A.Length) { info = -4; return; }
+
+            // -> Initializations
+
+            double sum;
+
+            // -> For each pivot...
+            for (int idx = 0; idx < n; idx++)
+            {
+                // -> Set diagonal of L
+
+                sum = 0;
+                for (int kdx = 0; kdx < idx; kdx++)
+                    sum += A[kdx * lda + idx] * A[kdx * lda + idx];
+
+                sum = A[idx + lda * idx] - sum;
+
+                if (sum < 0)
+                {
+                    info = idx+1;
+                    return;
+                }
+
+                A[idx + lda * idx] = Math.Sqrt(sum);
+
+                // -> Zero out upper triangle region
+                for (int jdx = 0; jdx < idx; jdx++)
+                    A[idx * lda + jdx] = 0;
+
+                // -> Compute L's under pivots
+                for (int jdx = idx + 1; jdx < n; jdx++)
+                {
+                    sum = 0;
+                    for (int kdx = 0; kdx < idx; kdx++)
+                        sum = A[jdx + lda * kdx] * A[idx + lda * kdx];
+
+                    A[jdx + idx * lda] = (A[jdx + idx * lda] - sum) / A[idx + lda * idx];
+                }
+            }
+
+            // -> Get U from L, U = L'
+            if (uplo == 'U' || uplo == 'u')
+            {
+                double[] U = new double[A.Length];
+
+                for (int i = 0; i < n; i++) // transpose
+                    for (int j = 0; j < n; j++)
+                        U[i + j * lda] = A[j + i * lda];
+
+                U.CopyTo(A, 0);
+            }
         }
         /// <summary>
         /// cholesky factorization 
@@ -526,7 +581,49 @@ namespace ILNumerics.Native {
         /// </summary>
         public void dpotrs(char uplo, int n, int nrhs, double[] A, int lda, double[] B, int ldb, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dpotrs. Is lapack_gen.dll on the PATH?");
+            // -> Input checking
+
+            info = 0;
+            if (n < 0) { info = -2; return; }
+            if (nrhs * n != B.Length) { info = -3; return; }
+            if (A.Length != n * n) { info = -4; return; }
+            if (lda < 1 || lda > A.Length) { info = -5; return; }
+            if (ldb < 1 || ldb > B.Length) { info = -7; return; }
+
+            // -> Initializations
+
+            double[] L, U, T;
+            T = new double[A.Length];
+
+            for (int i = 0; i < n; i++) // transpose
+                for (int j = 0; j < n; j++)
+                    T[i + j * lda] = A[j + i * lda];
+
+            // -> Find L and U
+
+            if      (uplo == 'L' || uplo == 'l') { L = A; U = T; }
+            else if (uplo == 'U' || uplo == 'u') { L = T; U = A; }
+            else { info = -1; return; }
+
+            // -> For each column in B
+            for (int idx = 0; idx < nrhs; idx++)
+            {
+                // -> Perform forward substitution, Ly = b
+                for (int jdx = 0; jdx < n; jdx++)
+                {
+                    B[idx * ldb + jdx] /= L[jdx * lda + jdx];
+                    for (int kdx = jdx + 1; kdx < n; kdx++)
+                        B[idx * ldb + kdx] -= L[jdx * lda + kdx] * B[idx * ldb + jdx];
+                }
+
+                // -> Perform backward substitution, Ux = y
+                for (int jdx = n - 1; jdx >= 0; jdx--)
+                {
+                    B[idx * ldb + jdx] /= U[jdx * lda + jdx];
+                    for (int kdx = jdx - 1; kdx >= 0; kdx--)
+                        B[idx * ldb + kdx] -= U[jdx * lda + kdx] * B[idx * ldb + jdx];
+                }
+            }
         }
         /// <summary>
         /// solve equation system via cholesky factorization (?potrs)
