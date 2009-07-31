@@ -1,3 +1,7 @@
+Changes in version 0.12.04
+===========================
+* removed AutoFitContent from graphs - caused confusion
+
 Changes in version 0.12.03
 ===========================
 bugfix on zero-height planes (surf)

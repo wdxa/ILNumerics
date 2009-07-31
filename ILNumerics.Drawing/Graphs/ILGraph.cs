@@ -58,7 +58,6 @@ namespace ILNumerics.Drawing.Graphs {
         protected GraphType m_graphType; 
         protected ILPanel m_panel; 
         protected ILLabel m_label; 
-        protected bool m_autoFitContent;
 
         /// <summary>
         ///  retrieve reference of the label for the graph
@@ -92,13 +91,6 @@ namespace ILNumerics.Drawing.Graphs {
                 return m_panel; 
             }
         }
-        /// <summary>
-        /// true: data updates will cause the viewing cube to fit the data
-        /// </summary>
-        public bool AutoFitContent {
-            get { return m_autoFitContent; }
-            set { m_autoFitContent = value; }
-        } 
         #endregion
 
         #region constructors
@@ -114,7 +106,6 @@ namespace ILNumerics.Drawing.Graphs {
             m_label = new ILLabel(m_panel);
             m_label.Color = Color.White; 
             m_label.Changed += new EventHandler(m_label_Changed);
-            m_autoFitContent = true; 
             m_isReady = false;
         }
 
@@ -124,15 +115,15 @@ namespace ILNumerics.Drawing.Graphs {
         #region event handler 
         
         protected virtual void m_localClipping_Changed(object sender, ClippingChangedEventArgs e) {
-            // update global clipping if local clipping have changed
-            if (AutoFitContent) {
-                // .. fit to panel
-                m_globalClipping.Set(e.ClippingData.Min, e.ClippingData.Max);
-                m_panel.ResetView(false);
-            } else {
-                // only make areas outside current view cube visible
-                m_globalClipping.Update(e.ClippingData);
-            }
+            //// update global clipping if local clipping have changed
+            //if (AutoFitContent) {
+            //    // .. fit to panel
+            //    m_globalClipping.Set(e.ClippingData.Min, e.ClippingData.Max);
+            //    m_panel.ResetView(false);
+            //} else {
+            //    // only make areas outside current view cube visible
+            //    m_globalClipping.Update(e.ClippingData);
+            //}
         }
         protected virtual void m_globalClipping_Changed(object sender, ClippingChangedEventArgs e) {
             // override this event in derived class, if neccessary

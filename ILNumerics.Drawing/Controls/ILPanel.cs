@@ -674,12 +674,7 @@ namespace ILNumerics.Drawing.Controls {
         }
 
         void m_graphs_GraphChanged(object sender, ILGraphChangedEventArgs args) {
-            ILGraph graph = sender as ILGraph; 
-            if (graph != null) {
-                if (graph.AutoFitContent) {
-                    ResetView(false); 
-                }
-            }
+            ResetView(false); 
         }
         protected void m_graphs_OnCollectionChanged(object sender, ILGraphCollectionChangedEventArgs args) {
             switch (args.Reason) {

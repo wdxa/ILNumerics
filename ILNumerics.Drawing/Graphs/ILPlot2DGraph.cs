@@ -126,7 +126,6 @@ namespace ILNumerics.Drawing.Graphs {
             }
             m_vertices = new C4bV3f[data.Length+1]; 
             m_vertexCount = m_vertices.Length; 
-            m_autoFitContent = true; 
             m_updateCount = 0; 
             m_startID = 0; 
             m_properties = new ILLineProperties(); 
@@ -176,7 +175,6 @@ namespace ILNumerics.Drawing.Graphs {
             m_updateCount = 0; 
             m_properties = new ILLineProperties(); 
             m_properties.Color = Color.DarkBlue; 
-            m_autoFitContent = true; 
             m_properties.Changed += new EventHandler(m_properties_Changed);
             foreach (float val in dataX.Values) {
                 vert.Position = new ILPoint3Df(val,dataY.GetValue(pos),0); 
