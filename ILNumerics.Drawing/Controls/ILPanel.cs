@@ -70,6 +70,7 @@ namespace ILNumerics.Drawing.Controls {
         protected GraphicDeviceType m_graphicsDevice; 
         protected ILLineProperties m_selectionRectangle; 
         protected bool m_fillBackground = true; 
+        private bool m_autoZoomContent = true; 
         protected const float pi05 = (float) Math.PI / 2; 
         protected const float pi2 = (float) Math.PI * 2; 
         protected const float pi32 = (float) Math.PI / 2 * 3; 
@@ -322,6 +323,17 @@ namespace ILNumerics.Drawing.Controls {
             }
             set {
                 m_defaultView = value; 
+            }
+        }
+        /// <summary>
+        /// true: on graph size changes, view cube will adapt automatically
+        /// </summary>
+        public bool AutoZoomContent {
+            get {
+                return m_autoZoomContent; 
+            }
+            set {
+                m_autoZoomContent = value;
             }
         }
         #endregion
@@ -764,7 +776,8 @@ namespace ILNumerics.Drawing.Controls {
             Invalidate();
         }
         protected void m_dataLimits_Changed(object sender, ClippingChangedEventArgs e) {
-            //ResetView(false);
+            if (m_autoZoomContent) 
+                ResetView(false); 
             OnDataLimitsChanged(e);  
         }
         protected void m_colormap_Changed(object sender, EventArgs e) {

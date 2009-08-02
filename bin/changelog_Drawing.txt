@@ -1,6 +1,7 @@
 Changes in version 0.12.04
 ===========================
 * removed AutoFitContent from graphs - caused confusion
+* added AutoZoomContent to ILPanel as replacement
 
 Changes in version 0.12.03
 ===========================
