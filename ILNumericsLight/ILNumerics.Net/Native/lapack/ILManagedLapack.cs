@@ -502,51 +502,81 @@ namespace ILNumerics.Native {
 
             double sum;
 
-            // -> For each pivot...
-            for (int idx = 0; idx < n; idx++)
-            {
-                // -> Set diagonal of L
+            // -> What are we working with, L or U?
 
-                sum = 0;
-                for (int kdx = 0; kdx < idx; kdx++)
-                    sum += A[kdx * lda + idx] * A[kdx * lda + idx];
-
-                sum = A[idx + lda * idx] - sum;
-
-                if (sum < 0)
-                {
-                    info = idx+1;
-                    return;
-                }
-
-                A[idx + lda * idx] = Math.Sqrt(sum);
-
-                // -> Zero out upper triangle region
-                for (int jdx = 0; jdx < idx; jdx++)
-                    A[idx * lda + jdx] = 0;
-
-                // -> Compute L's under pivots
-                for (int jdx = idx + 1; jdx < n; jdx++)
-                {
-                    sum = 0;
-                    for (int kdx = 0; kdx < idx; kdx++)
-                        sum = A[jdx + lda * kdx] * A[idx + lda * kdx];
-
-                    A[jdx + idx * lda] = (A[jdx + idx * lda] - sum) / A[idx + lda * idx];
-                }
-            }
-
-            // -> Get U from L, U = L'
             if (uplo == 'U' || uplo == 'u')
             {
-                double[] U = new double[A.Length];
+                // -> For each pivot...
+                for (int idx = 0; idx < n; idx++)
+                {
+                    // -> Set diagonal of U
 
-                for (int i = 0; i < n; i++) // transpose
-                    for (int j = 0; j < n; j++)
-                        U[i + j * lda] = A[j + i * lda];
+                    sum = 0;
+                    for (int kdx = 0; kdx < idx; kdx++)
+                        sum += A[idx * lda + kdx] * A[idx * lda + kdx];
 
-                U.CopyTo(A, 0);
+                    sum = A[idx + lda * idx] - sum;
+
+                    if (sum < 0)
+                    {
+                        info = idx + 1;
+                        return;
+                    }
+
+                    A[idx + lda * idx] = Math.Sqrt(sum);
+
+                    // -> Zero out lower triangle region
+                    for (int jdx = idx+1; jdx < n; jdx++)
+                        A[idx * lda + jdx] = 0;
+
+                    // -> Compute U's above pivots
+                    for (int jdx = idx + 1; jdx < n; jdx++)
+                    {
+                        sum = 0;
+                        for (int kdx = 0; kdx < idx; kdx++)
+                            sum = A[kdx + lda * jdx] * A[kdx + lda * idx];
+
+                        A[idx + jdx * lda] = (A[idx + jdx * lda] - sum) / A[idx + lda * idx];
+                    }
+                }
             }
+            else
+            {
+                // -> For each pivot...
+                for (int idx = 0; idx < n; idx++)
+                {
+                    // -> Set diagonal of L
+
+                    sum = 0;
+                    for (int kdx = 0; kdx < idx; kdx++)
+                        sum += A[kdx * lda + idx] * A[kdx * lda + idx];
+
+                    sum = A[idx + lda * idx] - sum;
+
+                    if (sum < 0)
+                    {
+                        info = idx + 1;
+                        return;
+                    }
+
+                    A[idx + lda * idx] = Math.Sqrt(sum);
+
+                    // -> Zero out upper triangle region
+                    for (int jdx = 0; jdx < idx; jdx++)
+                        A[idx * lda + jdx] = 0;
+
+                    // -> Compute L's below pivots
+                    for (int jdx = idx + 1; jdx < n; jdx++)
+                    {
+                        sum = 0;
+                        for (int kdx = 0; kdx < idx; kdx++)
+                            sum = A[jdx + lda * kdx] * A[idx + lda * kdx];
+
+                        A[jdx + idx * lda] = (A[jdx + idx * lda] - sum) / A[idx + lda * idx];
+                    }
+                }
+            }
+
         }
         /// <summary>
         /// cholesky factorization 
