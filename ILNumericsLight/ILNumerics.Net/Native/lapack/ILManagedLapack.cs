@@ -20,6 +20,7 @@
 
 using System;
 using ILNumerics.Exceptions;
+using ILNumerics.BuiltInFunctions;
 
 namespace ILNumerics.Native {
     /// <summary>
@@ -41,7 +42,13 @@ namespace ILNumerics.Native {
     /// available in the internet: <see href="http://www.netlib.org/lapack">www.netlib.org</see>.</para>
     /// </remarks>
     public class ILManagedLapack : IILLapack {
-        
+
+        private void underConstructionError(string routineName)
+        {
+            throw new NotImplementedException("ILManagedLapack." + routineName + 
+                ". You may need to use a native version of LAPACK instead.");
+        }
+
         #region ?GEMM
 
         /// <summary>
@@ -77,7 +84,7 @@ namespace ILNumerics.Native {
             if ((TransA != 'n' && TransA != 'N') ||
                 (TransB != 'n' && TransB != 'N'))
             {
-                throw new NotImplementedException("ILManagedLapack.dgemm. Is lapack_gen.dll on the PATH?");
+                underConstructionError("dgemm");
             }
             
             unsafe
@@ -129,7 +136,7 @@ namespace ILNumerics.Native {
         /// continous array of size MxN</remarks>
         public void zgemm(char TransA, char TransB, int M, int N, int K, complex alpha, IntPtr A, int lda, IntPtr B, int ldb, complex beta, complex[] C, int ldc)
         {
-            throw new NotImplementedException("ILManagedLapack.zgemm. Is lapack_gen.dll on the PATH?");
+            throw new NotImplementedException("zgemm");
         }
 
 #endregion 
@@ -226,7 +233,7 @@ namespace ILNumerics.Native {
         ///without guard digits, but we know of none.</remarks>
         public void dgesdd(char jobz, int m, int n, double[] a, int lda, double[] s, double[] u, int ldu, double[] vt, int ldvt, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dgesdd. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dgesdd");
         }
        
         /// <summary>
@@ -320,7 +327,7 @@ namespace ILNumerics.Native {
         ///without guard digits, but we know of none.</remarks>
         public void zgesdd(char jobz, int m, int n, complex[] a, int lda, double[] s, complex[] u, int ldu, complex[] vt, int ldvt, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zgesdd. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zgesdd");
         }
 
 #endregion 
@@ -402,7 +409,7 @@ namespace ILNumerics.Native {
         ///without guard digits, but we know of none.</remarks>
         public void dgesvd(char jobz, int m, int n, double[] a, int lda, double[] s, double[] u, int ldu, double[] vt, int ldvt, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dgesvd. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dgesvd");
         }
        
         /// <summary>
@@ -481,7 +488,7 @@ namespace ILNumerics.Native {
         ///without guard digits, but we know of none.</remarks>
         public void zgesvd(char jobz, int m, int n, complex[] a, int lda, double[] s, complex[] u, int ldu, complex[] vt, int ldvt, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zgesvd. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zgesvd");
         }
         #endregion 
         
@@ -583,7 +590,7 @@ namespace ILNumerics.Native {
         /// </summary>
         public void zpotrf(char uplo, int n, complex[] A, int lda, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zpotrf. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zpotrf");
         }
 #endregion 
 
@@ -593,14 +600,14 @@ namespace ILNumerics.Native {
         /// </summary>
         public void dpotri(char uplo, int n, double[] A, int lda, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dpotri. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dpotri");
         }
         /// <summary>
         /// matrix inverse via cholesky factorization (?potrf)
         /// </summary>
         public void zpotri(char uplo, int n, complex[] A, int lda, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zpotri. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zpotri");
         }
 
 #endregion 
@@ -660,7 +667,7 @@ namespace ILNumerics.Native {
         /// </summary>
         public void zpotrs(char uplo, int n, int nrhs, complex[] A, int lda, complex[] B, int ldb, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zpotrs. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zpotrs");
         }
 #endregion
 
@@ -737,7 +744,7 @@ namespace ILNumerics.Native {
         /// </summary>
         public void zgetrf(int M, int N, complex[] A, int LDA, int[] IPIV, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zgetrf. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zgetrf");
         }
         #endregion 
         
@@ -747,14 +754,14 @@ namespace ILNumerics.Native {
         /// </summary>
         public void dgetri(int N, double[] A, int LDA, int[] IPIV, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dgetri. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dgetri");
         }
         /// <summary>
         /// inverse of a matrix via LU factorization
         /// </summary>
         public void zgetri(int N, complex[] A, int LDA, int[] IPIV, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zgetri. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zgetri");
         }
         #endregion 
 
@@ -764,14 +771,14 @@ namespace ILNumerics.Native {
         /// </summary>
         public void dorgqr(int M, int N, int K, double[] A, int lda, double[] tau, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dorggr. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dorgqr");
         }
         /// <summary>
         /// QR factor extraction
         /// </summary>
         public void zungqr(int M, int N, int K, complex[] A, int lda, complex[] tau, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zunggr. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zungqr");
         }
         #endregion
 
@@ -781,14 +788,14 @@ namespace ILNumerics.Native {
         /// </summary>
         public void dgeqrf(int M, int N, double[] A, int lda, double[] tau, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.gegrf. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dgeqrf");
         }
         /// <summary>
         /// QR factorization
         /// </summary>
         public void zgeqrf(int M, int N, complex[] A, int lda, complex[] tau, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zgegrf. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zgeqrf");
         }
         #endregion 
 
@@ -798,14 +805,14 @@ namespace ILNumerics.Native {
         /// </summary>
         public void dgeqp3(int M, int N, double[] A, int LDA, int[] JPVT, double[] tau, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dgegp3. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dgeqp3");
         }
         /// <summary>
         /// QR factorisation with column pivoting
         /// </summary>
         public void zgeqp3(int M, int N, complex[] A, int LDA, int[] JPVT, complex[] tau, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zgegp3. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zgeqp3");
         }
         #endregion
 
@@ -815,7 +822,7 @@ namespace ILNumerics.Native {
         /// </summary>
         public void dormqr(char side, char trans, int m, int n, int k, double[] A, int lda, double[] tau, double[] C, int LDC, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dormgr. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dormqr");
         }
 
         #endregion 
@@ -836,7 +843,7 @@ namespace ILNumerics.Native {
         /// <param name="info">(output) 0: success; &lt; 0: illigal argument, &gt; 0: A is sinular having a zero on the i-th diagonal element. No solution will be computed than. </param>
         public void dtrtrs(char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dtrtrs. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dtrtrs");
         }
         /// <summary>
         /// Solve triangular system of linear equations (forward-/ backward substitution)
@@ -853,7 +860,7 @@ namespace ILNumerics.Native {
         /// <param name="info">(output) 0: success; &lt; 0: illigal argument, &gt; 0: A is sinular having a zero on the i-th diagonal element. No solution will be computed than. </param>
         public void ztrtrs(char uplo, char transA, char diag, int N, int nrhs, IntPtr A, int LDA, IntPtr B, int LDB, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.ztrtrs. Is lapack_gen.dll on the PATH?");
+            underConstructionError("ztrtrs");
         }
         #endregion
 
@@ -875,7 +882,7 @@ namespace ILNumerics.Native {
             // -> Check for unimplemented features:
 
             if ((trans != 'n' && trans != 'N'))
-                throw new NotImplementedException("ILManagedLapack.dgetrs. Is lapack_gen.dll on the PATH?");
+                underConstructionError("dgetrs");
 
             // -> Input checking
 
@@ -930,62 +937,135 @@ namespace ILNumerics.Native {
         /// <param name="info">success info</param>
         public void zgetrs(char trans, int N, int NRHS, complex[] A, int LDA, int[] IPIV, complex[] B, int LDB, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zgetrs. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zgetrs");
         }
         #endregion 
 
         #region ?GELSD - least square solution, SVD - divide & conquer
         public void dgelsd(int m, int n, int nrhs, double[] A, int lda, double[] B, int ldb, double[] S, double RCond, ref int rank, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dgelsd. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dgelsd");
         }
         public void zgelsd(int m, int n, int nrhs, complex[] A, int lda, complex[] B, int ldb, double[] S, double RCond, ref int rank, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zgelsd. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zgelsd");
         }
         #endregion 
 
         #region ?GELSY - least square solution, QRP
         public void dgelsy(int m, int n, int nrhs, double[] A, int lda, double[] B, int ldb, int[] JPVT0, double RCond, ref int rank, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dgelsy. Is lapack_gen.dll on the PATH?");
+            throw new NotImplementedException("dgelsy");
         }
         public void zgelsy(int m, int n, int nrhs, complex[] A, int lda, complex[] B, int ldb, int[] JPVT0, double RCond, ref int rank, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zgelsy. Is lapack_gen.dll on the PATH?");
+            throw new NotImplementedException("zgelsy");
         }
         #endregion 
 
-        #region ?GEEVX - eigenvectors & -values, nonsymmetric A 
+        #region ?GEEVX - eigenvectors & -values, nonsymmetric A
+
         public void dgeevx(char balance, char jobvl, char jobvr, char sense, int n, double[] A, int lda, double[] wr, double[] wi, double[] vl, int ldvl, double[] vr, int ldvr, ref int ilo, ref int ihi, double[] scale, ref double abnrm, double[] rconde, double[] rcondv, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dgeevx. Is lapack_gen.dll on the PATH?");
+            // Inputs of concern: n, A, lda
+            // Outputs of concern: wr, wi, info
+
+            // -> Check for unimplemented features:
+
+            // Not computing eigenvectors (just the values), 
+            // and not computing reciprocal condition numbers
+
+            if ((jobvl != 'N' && jobvl != 'n') || (sense != 'N' && sense != 'n'))
+                underConstructionError("dgeevx");
+
+            // Must be a 3x3 matrix. This is a huge restriction, but
+            // otherwise implementing deegvx would be very difficult.
+
+            // Think of it this way -- maybe taking n<3 as special cases
+            // could really speed up the canonical algorithm?
+
+            if (n != 3)
+                underConstructionError("dgeevx");
+
+            // -> Input checking
+
+            info = 0;
+            if (n * n != A.Length) { info = -5; return; }
+
+            // -> Express det(A-yI) as polynomial:
+            //    a(yyy) + b (yy) + c(y) + d
+
+            double ra = -1;
+            double rb = A[8] + A[0] + A[4];
+            double rc = -A[0] * A[8] - A[4] * A[8] - A[0] * A[4] + A[7] * A[5] + A[3] * A[1] + A[6] * A[2];
+            double rd = A[0] * A[4] * A[8] - A[0] * A[7] * A[5] - A[3] * A[1] * A[8] + A[3] * A[7] * A[2] + A[6] * A[1] * A[5] - A[6] * A[2] * A[4];
+
+            // -> Store as complex to allow for complex operations
+
+            complex a = new complex(ra, 0);
+            complex b = new complex(rb, 0);
+            complex c = new complex(rc, 0);
+            complex d = new complex(rd, 0);
+            complex i = new complex(0, 1);
+
+            complex tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8;
+
+            // -> Solve roots of cubic polynomial
+
+            ILArray<complex> w = new ILArray<complex>(n);
+
+            tmp1 = 2 * b.Pow(3) - 9 * a * b * c + 27 * a.Pow(2) * d;
+            tmp2 = (tmp1.Pow(2) - 4 * (b.Pow(2) - 3 * a * c).Pow(3)).Sqrt();
+            tmp3 = -1 / (3 * a);
+            tmp4 = -b / (3 * a);
+            tmp5 = (1 + i * Math.Sqrt(3)) / (6 * a);
+            tmp6 = (1 - i * Math.Sqrt(3)) / (6 * a);
+            tmp7 = ((tmp1 + tmp2) / 2).Pow(1.0 / 3.0);
+            tmp8 = ((tmp1 - tmp2) / 2).Pow(1.0 / 3.0);
+
+            w[0] = tmp4 + tmp3 * tmp7 + tmp3 * tmp8;
+            w[1] = tmp4 + tmp5 * tmp7 + tmp6 * tmp8;
+            w[2] = tmp4 + tmp6 * tmp7 + tmp5 * tmp8;
+
+            // -> Sort eigenvalues in descending order of absolute values
+
+            ILArray<double> wIdx = new ILArray<double>(n);
+            ILMath.sort(ILMath.abs(w), out wIdx, 0, true);
+
+            // Store in output arrays
+            for (int idx = 0; idx < n; idx++)
+            {
+                wr[idx] = ((complex)w[wIdx[idx]]).real;
+                wi[idx] = ((complex)w[wIdx[idx]]).imag;
+            }
         }
+
         public void zgeevx(char balance, char jobvl, char jobvr, char sense, int n, complex[] A, int lda, complex[] w, complex[] vl, int ldvl, complex[] vr, int ldvr, ref int ilo, ref int ihi, double[] scale, ref double abnrm, double[] rconde, double[] rcondv, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zgeevx. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zgeevx");
         }
+
         #endregion 
 
         #region ?GEEVR - eigenvectors & -values, symmetric/hermitian A 
         public void dsyevr(char jobz, char range, char uplo, int n, double[] A, int lda, double vl, double vu, int il, int iu, double abstol, ref int m, double[] w, double[] z, int ldz, int[] isuppz, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dsyevr. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dgsyevr");
         }
         public void zheevr(char jobz, char range, char uplo, int n, complex[] A, int lda, double vl, double vu, int il, int iu, double abstol, ref int m, double[] w, complex[] z, int ldz, int[] isuppz, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zheevr. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zheevr");
         }
         #endregion 
         
         #region ?SYGV - eigenvectors & -values, symmetric/hermitian A and B, pos.def.B 
         public void dsygv(int itype, char jobz, char uplo, int n, double[] A, int lda, double[] B, int ldb, double[] w, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.dsygv. Is lapack_gen.dll on the PATH?");
+            underConstructionError("dsygv");
         }
         public void zhegv(int itype, char jobz, char uplo, int n, complex[] A, int lda, complex[] B, int ldb, double[] w, ref int info)
         {
-            throw new NotImplementedException("ILManagedLapack.zhegv. Is lapack_gen.dll on the PATH?");
+            underConstructionError("zhegv");
         }
         #endregion 
 
