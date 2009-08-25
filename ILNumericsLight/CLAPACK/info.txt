@@ -1,0 +1,1 @@
+This is a modified version of CLAPACK. See copying.txt in .\LAPACK and .\Notice.txt in F2C. The original version can be downloaded from http://www.netlib.org/clapack/. This version has been modified to run under the .NET Platform, and was made for use with ILNumerics.NET.

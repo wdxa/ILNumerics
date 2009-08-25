@@ -26,11 +26,12 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>WIN32 RELEASE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -166,17 +167,17 @@
     <Compile Include="ILComplex.cs" />
     <Compile Include="ILLogicalArray.cs" />
     <Compile Include="ILPerformer.cs" />
-    <Compile Include="Misc\ILCPUID.cs" />
-    <Compile Include="Misc\ILDimension.cs" />
-    <Compile Include="Misc\ILException.cs" />
-    <Compile Include="Misc\ILFormatter.cs" />
-    <Compile Include="Misc\ILIterator.cs" />
-    <Compile Include="Misc\ILMatFile.cs" />
-    <Compile Include="Misc\ILMemoryPool.cs" />
-    <Compile Include="Misc\ILNRandom.cs" />
-    <Compile Include="Misc\ILRand.cs" />
-    <Compile Include="Misc\ILRange.cs" />
-    <Compile Include="Misc\ILTest.cs" />
+    <Compile Include="Native\Misc\ILCPUID.cs" />
+    <Compile Include="Native\Misc\ILDimension.cs" />
+    <Compile Include="Native\Misc\ILException.cs" />
+    <Compile Include="Native\Misc\ILFormatter.cs" />
+    <Compile Include="Native\Misc\ILIterator.cs" />
+    <Compile Include="Native\Misc\ILMatFile.cs" />
+    <Compile Include="Native\Misc\ILMemoryPool.cs" />
+    <Compile Include="Native\Misc\ILNRandom.cs" />
+    <Compile Include="Native\Misc\ILRand.cs" />
+    <Compile Include="Native\Misc\ILRange.cs" />
+    <Compile Include="Native\Misc\ILTest.cs" />
     <Compile Include="Native\FFT\ILManagedFFT.cs" />
     <Compile Include="Native\FFT\IILFFT.cs" />
     <Compile Include="Native\FFT\ILACMLFFT.cs" />
@@ -192,6 +193,7 @@
     <Compile Include="Properties\Settings.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="ManagedLapack, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />

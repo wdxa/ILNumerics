@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LAPACK", "LAPACK\LAPACK.vcproj", "{D547FDFF-0F75-4895-B808-6F9F0CC17BCC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BLAS", "BLAS\BLAS.vcproj", "{3647D5D9-6D16-44E0-B50E-57CCAC81EAE1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "F2C", "F2C\F2C.vcproj", "{713071BE-3D8E-4609-852D-74CC78FEEC08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D547FDFF-0F75-4895-B808-6F9F0CC17BCC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D547FDFF-0F75-4895-B808-6F9F0CC17BCC}.Debug|Win32.Build.0 = Debug|Win32
+		{D547FDFF-0F75-4895-B808-6F9F0CC17BCC}.Release|Win32.ActiveCfg = Release|Win32
+		{D547FDFF-0F75-4895-B808-6F9F0CC17BCC}.Release|Win32.Build.0 = Release|Win32
+		{3647D5D9-6D16-44E0-B50E-57CCAC81EAE1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3647D5D9-6D16-44E0-B50E-57CCAC81EAE1}.Debug|Win32.Build.0 = Debug|Win32
+		{3647D5D9-6D16-44E0-B50E-57CCAC81EAE1}.Release|Win32.ActiveCfg = Release|Win32
+		{3647D5D9-6D16-44E0-B50E-57CCAC81EAE1}.Release|Win32.Build.0 = Release|Win32
+		{713071BE-3D8E-4609-852D-74CC78FEEC08}.Debug|Win32.ActiveCfg = Debug|Win32
+		{713071BE-3D8E-4609-852D-74CC78FEEC08}.Debug|Win32.Build.0 = Debug|Win32
+		{713071BE-3D8E-4609-852D-74CC78FEEC08}.Release|Win32.ActiveCfg = Release|Win32
+		{713071BE-3D8E-4609-852D-74CC78FEEC08}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -19,29 +19,14 @@
 #endregion
 
 using System;
+using NativeMathLib;
 using ILNumerics.Exceptions;
 using ILNumerics.BuiltInFunctions;
 
-namespace ILNumerics.Native {
-    /// <summary>
-    /// Interface to all LAPACK/BLAS functions available
-    /// </summary>
-    /// <remarks>Each native module must implement this interface explicitly. Calls 
-    /// to native functions are made virtual by calling functions of this interface.
-    /// Therefore the user can transparently call any function regardless of the 
-    /// plattform the assymbly (currently) runs on. The native modules implementing
-    /// this interface take care of the details of implementation. 
-    /// <para>Usually users of the library will not have to handle with this interface. 
-    /// Its functions will be used from inside built in functions and are therefore wrapped 
-    /// (mainly from inside <see cref="ILNumerics.BuiltInFunctions.ILMath">ILNumerics.BuiltInFunctions.ILMath</see>).</para>
-    /// <para>Every LAPACK/BLAS function is explicitly implemented for any type supported.
-    /// F.e. IILLapack includes four functions doing general matrix multiply: dgemm, zgemm, cgemm and sgemm - 
-    /// for all four floating point datatypes supported from the LAPACK package.</para>
-    /// <para>LAPACK is an open source linear algebra functions package optimized for 
-    /// use together with highly natively optimized BLAS functions. A LAPACK guide is 
-    /// available in the internet: <see href="http://www.netlib.org/lapack">www.netlib.org</see>.</para>
-    /// </remarks>
-    public class ILManagedLapack : IILLapack {
+namespace ILNumerics.Native
+{
+    public class ILManagedLapack : IILLapack
+    {
 
         private void underConstructionError(string routineName)
         {
@@ -51,27 +36,6 @@ namespace ILNumerics.Native {
 
         #region ?GEMM
 
-        /// <summary>
-        /// Wrapper implementiation for ATLAS GeneralMatrixMultiply
-        /// </summary>
-        /// <param name="TransA">Transposition state for matrix A: one of the constants in enum CBlas_Transpose</param>
-        /// <param name="TransB">Transposition state for matrix B: one of the constants in enum CBlas_Transpose</param>
-        /// <param name="M">Number of rows in A</param>
-        /// <param name="N">Number of columns in B</param>
-        /// <param name="K">Number of columns in A and number of rows in B</param>
-        /// <param name="alpha">multiplicationi factor for A</param>
-        /// <param name="A">pointer to array A</param>
-        /// <param name="lda">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix A</param>
-        /// <param name="B">pointer to array B</param>
-        /// <param name="ldb">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix B</param>
-        /// <param name="beta">multiplication faktor for matrix B</param>
-        /// <param name="C">pointer to predefined array C of neccessary length</param>
-        /// <param name="ldc">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix C</param>
-        /// <remarks>All parameters except C are readonly. Only elements of matrix C will be altered. C must be a predefined 
-        /// continous array of size MxN</remarks>
         public void dgemm(char TransA, char TransB, int M, int N, int K, double alpha, IntPtr A, int lda, IntPtr B, int ldb, double beta, double[] C, int ldc)
         {
             //-> Operation to perform:
@@ -113,27 +77,6 @@ namespace ILNumerics.Native {
                             C[j * ldc + i] += aA[k * lda + i] * pB[j * ldb + k];
             }
         }
-        /// <summary>
-        /// Wrapper implementiation for ATLAS GeneralMatrixMultiply
-        /// </summary>
-        /// <param name="TransA">Transposition state for matrix A: one of the constants in enum CBlas_Transpose</param>
-        /// <param name="TransB">Transposition state for matrix B: one of the constants in enum CBlas_Transpose</param>
-        /// <param name="M">Number of rows in A</param>
-        /// <param name="N">Number of columns in B</param>
-        /// <param name="K">Number of columns in A and number of rows in B</param>
-        /// <param name="alpha">multiplicationi factor for A</param>
-        /// <param name="A">pointer to array A</param>
-        /// <param name="lda">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix A</param>
-        /// <param name="B">pointer to array B</param>
-        /// <param name="ldb">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix B</param>
-        /// <param name="beta">multiplication faktor for matrix B</param>
-        /// <param name="C">pointer to predefined array C of neccessary length</param>
-        /// <param name="ldc">distance between first elements of each column for column based orientation or 
-        /// distance between first elements of each row for row based orientation for matrix C</param>
-        /// <remarks>All parameters except C are readonly. Only elements of matrix C will be altered. C must be a predefined 
-        /// continous array of size MxN</remarks>
         public void zgemm(char TransA, char TransB, int M, int N, int K, complex alpha, IntPtr A, int lda, IntPtr B, int ldb, complex beta, complex[] C, int ldc)
         {
             throw new NotImplementedException("zgemm");
@@ -142,189 +85,36 @@ namespace ILNumerics.Native {
 #endregion 
 
         #region ?GESDD
-        /// <summary>
-        /// singular value decomposition, new version, more memory needed
-        /// </summary>
-        /// <param name="jobz">Specifies options for computing all or part of the matrix U
-        /// <list type="table">
-        /// <listheader>
-        ///     <term>jobz value</term>
-        ///     <description>... will result in:</description>
-        /// </listheader>
-        ///     <item>
-        ///         <term>A</term>
-        ///         <description>all M columns of U and all N rows of V**T are
-        ///                     returned in the arrays U and VT</description>
-        ///     </item>
-        ///     <item>  <term>S</term>
-        ///             <description>the first min(M,N) columns of U and the first
-        ///              min(M,N) rows of V**T are returned in the arrays U
-        ///              and VT</description>
-        ///     </item>
-        ///     <item> <term>O</term>  
-        ///            <description>If M >= N, the first N columns of U are overwritten
-        ///              on the array A and all rows of V**T are returned in
-        ///              the array VT,
-        ///              otherwise, all columns of U are returned in the
-        ///              array U and the first M rows of V**T are overwritten
-        ///              in the array VT</description>
-        ///     </item>
-        ///     <item> <term>N</term> 
-        ///            <description>no columns of U or rows of V**T are computed.</description>
-        ///     </item>
-        /// </list>
-        /// </param>
-        /// <param name="m">The number of rows of the input matrix A.  M greater or equal to 0.</param>
-        /// <param name="n">The number of columns of the input matrix A.  N greater or equal to 0</param>
-        /// <param name="a">On entry, the M-by-N matrix A.
-        ///          On exit, <list><item>
-        ///          if JOBZ = 'O',  A is overwritten with the first N columns
-        ///                          of U (the left singular vectors, stored
-        ///                          columnwise) if M >= N;
-        ///                          A is overwritten with the first M rows
-        ///                          of V**T (the right singular vectors, stored
-        ///                          rowwise) otherwise.</item>
-        ///          <item>if JOBZ .ne. 'O', the contents of A are destroyed.</item></list></param>
-        /// <param name="lda">The leading dimension of the array A.  LDA ge max(1,M).</param>
-        /// <param name="s">array, dimension (min(M,N)). The singular values of A, sorted so that S(i) ge S(i+1)</param>
-        /// <param name="u">array, dimension (LDU,UCOL)
-        ///          UCOL = M if JOBZ = 'A' or JOBZ = 'O' and M &lt; N;
-        ///          UCOL = min(M,N) if JOBZ = 'S'.
-        ///          If JOBZ = 'A' or JOBZ = 'O' and M &lt; N, U contains the M-by-M
-        ///          orthogonal matrix U;
-        ///          if JOBZ = 'S', U contains the first min(M,N) columns of U
-        ///          (the left singular vectors, stored columnwise);
-        ///          if JOBZ = 'O' and M &gt;= N, or JOBZ = 'N', U is not referenced.</param>
-        /// <param name="ldu">The leading dimension of the array U.  LDU &gt;= 1; if  
-        /// JOBZ = 'S' or 'A' or JOBZ = 'O' and M &lt; N, LDU &gt;= M</param>
-        /// <param name="vt">array, dimension (LDVT,N). If JOBZ = 'A' or JOBZ = 'O' and 
-        /// M >= N, VT contains the N-by-N orthogonal matrix V**T; if JOBZ = 'S', 
-        /// VT contains the first min(M,N) rows of V**T 
-        /// (the right singular vectors, stored rowwise); if JOBZ = 'O' and M &lt; N, 
-        /// or JOBZ = 'N', VT is not referenced</param>
-        /// <param name="ldvt">The leading dimension of the array VT.  LDVT &gt; = 1; 
-        /// if JOBZ = 'A' or JOBZ = 'O' and M &gt; = N, LDVT &gt;= N; 
-        /// if JOBZ = 'S', LDVT &gt; min(M,N).</param>
-        /// <param name="info">
-        /// <list>
-        ///     <item> 0:  successful exit.</item>
-        ///     <item> <![CDATA[< 0]]> :  if INFO = -i, the i-th argument had an illegal value.</item>
-        ///     <item> <![CDATA[> 0]]> :  ?BGSDD did not converge, updating process failed.</item>
-        /// </list>
-        /// </param>
-        /// <remarks>(From the lapack manual):DGESDD computes the singular value decomposition (SVD) of a real
-        ///M-by-N matrix A, optionally computing the left and right singular
-        ///vectors.  If singular vectors are desired, it uses a
-        ///divide-and-conquer algorithm.
-        ///The SVD is written
-        ///    <code>A = U * SIGMA * transpose(V)</code> 
-        ///where SIGMA is an M-by-N matrix which is zero except for its
-        ///min(m,n) diagonal elements, U is an M-by-M orthogonal matrix, and
-        ///V is an N-by-N orthogonal matrix.  The diagonal elements of SIGMA
-        ///are the singular values of A; they are real and non-negative, and
-        ///are returned in descending order.  The first min(m,n) columns of
-        ///U and V are the left and right singular vectors of A.
-        ///Note that the routine returns VT = V**T, not V.
-        ///The divide and conquer algorithm makes very mild assumptions about
-        ///floating point arithmetic. It will work on machines with a guard
-        ///digit in add/subtract, or on those binary machines without guard
-        ///digits which subtract like the Cray X-MP, Cray Y-MP, Cray C-90, or
-        ///Cray-2. It could conceivably fail on hexadecimal or decimal machines
-        ///without guard digits, but we know of none.</remarks>
+
         public void dgesdd(char jobz, int m, int n, double[] a, int lda, double[] s, double[] u, int ldu, double[] vt, int ldvt, ref int info)
         {
-            underConstructionError("dgesdd");
+            unsafe
+            {
+                fixed (double* pa = a, ps = s, pu = u, pvt = vt)
+                {
+                    fixed (int* pinfo = &info)
+                    {
+                        double* work = stackalloc double[1];
+                        int* iwork = stackalloc int[((m < n) ? m : n) * 8];
+
+                        int optimalSize = -1;
+                        int* lwork = &optimalSize;
+                        
+                        ManagedLapack.dgesdd((sbyte*)&jobz, &m, &n, pa, &lda, ps, pu, &ldu, pvt, &ldvt, work, lwork, iwork, pinfo);
+                        optimalSize = (int)work[0];
+
+                        if (optimalSize != 0)
+                        {
+                            lwork = &optimalSize;
+                            double* dtmp = stackalloc double[optimalSize]; work = dtmp;
+
+                            ManagedLapack.dgesdd((sbyte*)&jobz, &m, &n, pa, &lda, ps, pu, &ldu, pvt, &ldvt, work, lwork, iwork, pinfo);
+                        }
+                    }
+                }
+            }
         }
-       
-        /// <summary>
-        /// singular value decomposition, new version, more memory needed
-        /// </summary>
-        /// <param name="jobz">Specifies options for computing all or part of the matrix U
-        /// <list type="table">
-        /// <listheader>
-        ///     <term>jobz value</term>
-        ///     <description>... will result in:</description>
-        /// </listheader>
-        ///     <item>
-        ///         <term>A</term>
-        ///         <description>all M columns of U and all N rows of V**T are
-        ///                     returned in the arrays U and VT</description>
-        ///     </item>
-        ///     <item>  <term>S</term>
-        ///             <description>the first min(M,N) columns of U and the first
-        ///              min(M,N) rows of V**T are returned in the arrays U
-        ///              and VT</description>
-        ///     </item>
-        ///     <item> <term>O</term>  
-        ///            <description>If M >= N, the first N columns of U are overwritten
-        ///              on the array A and all rows of V**T are returned in
-        ///              the array VT,
-        ///              otherwise, all columns of U are returned in the
-        ///              array U and the first M rows of V**T are overwritten
-        ///              in the array VT</description>
-        ///     </item>
-        ///     <item> <term>N</term> 
-        ///            <description>no columns of U or rows of V**T are computed.</description>
-        ///     </item>
-        /// </list>
-        /// </param>
-        /// <param name="m">The number of rows of the input matrix A.  M greater or equal to 0.</param>
-        /// <param name="n">The number of columns of the input matrix A.  N greater or equal to 0</param>
-        /// <param name="a">On entry, the M-by-N matrix A.
-        ///          On exit, <list><item>
-        ///          if JOBZ = 'O',  A is overwritten with the first N columns
-        ///                          of U (the left singular vectors, stored
-        ///                          columnwise) if M >= N;
-        ///                          A is overwritten with the first M rows
-        ///                          of V**T (the right singular vectors, stored
-        ///                          rowwise) otherwise.</item>
-        ///          <item>if JOBZ .ne. 'O', the contents of A are destroyed.</item></list></param>
-        /// <param name="lda">The leading dimension of the array A.  LDA ge max(1,M).</param>
-        /// <param name="s">array, dimension (min(M,N)). The singular values of A, sorted so that S(i) ge S(i+1)</param>
-        /// <param name="u">array, dimension (LDU,UCOL)
-        ///          UCOL = M if JOBZ = 'A' or JOBZ = 'O' and M &lt; N;
-        ///          UCOL = min(M,N) if JOBZ = 'S'.
-        ///          If JOBZ = 'A' or JOBZ = 'O' and M &lt; N, U contains the M-by-M
-        ///          orthogonal matrix U;
-        ///          if JOBZ = 'S', U contains the first min(M,N) columns of U
-        ///          (the left singular vectors, stored columnwise);
-        ///          if JOBZ = 'O' and M &gt;= N, or JOBZ = 'N', U is not referenced.</param>
-        /// <param name="ldu">The leading dimension of the array U.  LDU &gt;= 1; if  
-        /// JOBZ = 'S' or 'A' or JOBZ = 'O' and M &lt; N, LDU &gt;= M</param>
-        /// <param name="vt">array, dimension (LDVT,N). If JOBZ = 'A' or JOBZ = 'O' and 
-        /// M >= N, VT contains the N-by-N orthogonal matrix V**T; if JOBZ = 'S', 
-        /// VT contains the first min(M,N) rows of V**T 
-        /// (the right singular vectors, stored rowwise); if JOBZ = 'O' and M &lt; N, 
-        /// or JOBZ = 'N', VT is not referenced</param>
-        /// <param name="ldvt">The leading dimension of the array VT.  LDVT &gt; = 1; 
-        /// if JOBZ = 'A' or JOBZ = 'O' and M &gt; = N, LDVT &gt;= N; 
-        /// if JOBZ = 'S', LDVT &gt; min(M,N).</param>
-        /// <param name="info">
-        /// <list>
-        ///     <item> 0:  successful exit.</item>
-        ///     <item> <![CDATA[< 0]]> :  if INFO = -i, the i-th argument had an illegal value.</item>
-        ///     <item> <![CDATA[> 0]]> :  ?BGSDD did not converge, updating process failed.</item>
-        /// </list>
-        /// </param>
-        /// <remarks>(From the lapack manual):DGESDD computes the singular value decomposition (SVD) of a real
-        ///M-by-N matrix A, optionally computing the left and right singular
-        ///vectors.  If singular vectors are desired, it uses a
-        ///divide-and-conquer algorithm.
-        ///The SVD is written
-        ///    <code>A = U * SIGMA * transpose(V)</code> 
-        ///where SIGMA is an M-by-N matrix which is zero except for its
-        ///min(m,n) diagonal elements, U is an M-by-M orthogonal matrix, and
-        ///V is an N-by-N orthogonal matrix.  The diagonal elements of SIGMA
-        ///are the singular values of A; they are real and non-negative, and
-        ///are returned in descending order.  The first min(m,n) columns of
-        ///U and V are the left and right singular vectors of A.
-        ///Note that the routine returns VT = V**T, not V.
-        ///The divide and conquer algorithm makes very mild assumptions about
-        ///floating point arithmetic. It will work on machines with a guard
-        ///digit in add/subtract, or on those binary machines without guard
-        ///digits which subtract like the Cray X-MP, Cray Y-MP, Cray C-90, or
-        ///Cray-2. It could conceivably fail on hexadecimal or decimal machines
-        ///without guard digits, but we know of none.</remarks>
+
         public void zgesdd(char jobz, int m, int n, complex[] a, int lda, double[] s, complex[] u, int ldu, complex[] vt, int ldvt, ref int info)
         {
             underConstructionError("zgesdd");
@@ -333,159 +123,12 @@ namespace ILNumerics.Native {
 #endregion 
 
         #region ?GESVD
-        /// <summary>
-        /// singular value decomposition, older version, less memory needed 
-        /// </summary>
-        /// <param name="jobz">Specifies options for computing all or part of the matrix U
-        /// <list type="bullet"><item>= 'A':  all M columns of U and all N rows of V**T are
-        ///returned in the arrays U and VT</item>
-        ///     <item> = 'S':  the first min(M,N) columns of U and the first
-        ///              min(M,N) rows of V**T are returned in the arrays U
-        ///              and VT</item>
-        ///     <item> = 'O':  If M >= N, the first N columns of U are overwritten
-        ///              on the array A and all rows of V**T are returned in
-        ///              the array VT. Otherwise, all columns of U are returned in the
-        ///              array U and the first M rows of V**T are overwritten
-        ///              in the array VT</item>
-        ///     <item> = 'N':  no columns of U or rows of V**T are computed.</item>
-        ///        </list>
-        /// </param>
-        /// <param name="m">The number of rows of the input matrix A.  M greater or equal to 0.</param>
-        /// <param name="n">The number of columns of the input matrix A.  N greater or equal to 0</param>
-        /// <param name="a">On entry, the M-by-N matrix A.
-        ///          On exit, <list><item>
-        ///          if JOBZ = 'O',  A is overwritten with the first N columns
-        ///                          of U (the left singular vectors, stored
-        ///                          columnwise) if M >= N;
-        ///                          A is overwritten with the first M rows
-        ///                          of V**T (the right singular vectors, stored
-        ///                          rowwise) otherwise.</item>
-        ///          <item>if JOBZ .ne. 'O', the contents of A are destroyed.</item></list></param>
-        /// <param name="lda">The leading dimension of the array A.  LDA ge max(1,M).</param>
-        /// <param name="s">array, dimension (min(M,N)). The singular values of A, sorted so that S(i) ge S(i+1)</param>
-        /// <param name="u">array, dimension (LDU,UCOL)
-        ///          UCOL = M if JOBZ = 'A' or JOBZ = 'O' and M &lt; N;
-        ///          UCOL = min(M,N) if JOBZ = 'S'.
-        ///          If JOBZ = 'A' or JOBZ = 'O' and M &lt; N, U contains the M-by-M
-        ///          orthogonal matrix U;
-        ///          if JOBZ = 'S', U contains the first min(M,N) columns of U
-        ///          (the left singular vectors, stored columnwise);
-        ///          if JOBZ = 'O' and M &gt;= N, or JOBZ = 'N', U is not referenced.</param>
-        /// <param name="ldu">The leading dimension of the array U.  LDU &gt;= 1; if  
-        /// JOBZ = 'S' or 'A' or JOBZ = 'O' and M &lt; N, LDU &gt;= M</param>
-        /// <param name="vt">array, dimension (LDVT,N). If JOBZ = 'A' or JOBZ = 'O' and 
-        /// M >= N, VT contains the N-by-N orthogonal matrix V**T; if JOBZ = 'S', 
-        /// VT contains the first min(M,N) rows of V**T 
-        /// (the right singular vectors, stored rowwise); if JOBZ = 'O' and M &lt; N, 
-        /// or JOBZ = 'N', VT is not referenced</param>
-        /// <param name="ldvt">The leading dimension of the array VT.  LDVT &gt; = 1; 
-        /// if JOBZ = 'A' or JOBZ = 'O' and M &gt; = N, LDVT &gt;= N; 
-        /// if JOBZ = 'S', LDVT &gt; min(M,N).</param>
-        /// <param name="info">
-        /// <list>
-        ///     <item> 0:  successful exit.</item>
-        ///     <item> lower 0:  if INFO = -i, the i-th argument had an illegal value.</item>
-        ///     <item> greater 0:  DBDSDC did not converge, updating process failed.</item>
-        /// </list>
-        /// </param>
-        /// <remarks>(From the lapack manual):DGESDD computes the singular value decomposition (SVD) of a real
-        ///M-by-N matrix A, optionally computing the left and right singular
-        ///vectors.  If singular vectors are desired, it uses a
-        ///divide-and-conquer algorithm.
-        ///The SVD is written
-        ///    <br>A = U * SIGMA * transpose(V)</br> 
-        ///where SIGMA is an M-by-N matrix which is zero except for its
-        ///min(m,n) diagonal elements, U is an M-by-M orthogonal matrix, and
-        ///V is an N-by-N orthogonal matrix.  The diagonal elements of SIGMA
-        ///are the singular values of A; they are real and non-negative, and
-        ///are returned in descending order.  The first min(m,n) columns of
-        ///U and V are the left and right singular vectors of A.
-        ///Note that the routine returns VT = V**T, not V.
-        ///The divide and conquer algorithm makes very mild assumptions about
-        ///floating point arithmetic. It will work on machines with a guard
-        ///digit in add/subtract, or on those binary machines without guard
-        ///digits which subtract like the Cray X-MP, Cray Y-MP, Cray C-90, or
-        ///Cray-2. It could conceivably fail on hexadecimal or decimal machines
-        ///without guard digits, but we know of none.</remarks>
+        
         public void dgesvd(char jobz, int m, int n, double[] a, int lda, double[] s, double[] u, int ldu, double[] vt, int ldvt, ref int info)
         {
             underConstructionError("dgesvd");
         }
-       
-        /// <summary>
-        /// singular value decomposition, older version, less memory needed 
-        /// </summary>
-        /// <param name="jobz">Specifies options for computing all or part of the matrix U
-        /// <list type="bullet"><item>= 'A':  all M columns of U and all N rows of V**T are
-        ///returned in the arrays U and VT</item>
-        ///     <item> = 'S':  the first min(M,N) columns of U and the first
-        ///              min(M,N) rows of V**T are returned in the arrays U
-        ///              and VT</item>
-        ///     <item> = 'O':  If M >= N, the first N columns of U are overwritten
-        ///              on the array A and all rows of V**T are returned in
-        ///              the array VT. Otherwise, all columns of U are returned in the
-        ///              array U and the first M rows of V**T are overwritten
-        ///              in the array VT</item>
-        ///     <item> = 'N':  no columns of U or rows of V**T are computed.</item>
-        ///        </list>
-        /// </param>
-        /// <param name="m">The number of rows of the input matrix A.  M greater or equal to 0.</param>
-        /// <param name="n">The number of columns of the input matrix A.  N greater or equal to 0</param>
-        /// <param name="a">On entry, the M-by-N matrix A.
-        ///          On exit, <list><item>
-        ///          if JOBZ = 'O',  A is overwritten with the first N columns
-        ///                          of U (the left singular vectors, stored
-        ///                          columnwise) if M >= N;
-        ///                          A is overwritten with the first M rows
-        ///                          of V**T (the right singular vectors, stored
-        ///                          rowwise) otherwise.</item>
-        ///          <item>if JOBZ .ne. 'O', the contents of A are destroyed.</item></list></param>
-        /// <param name="lda">The leading dimension of the array A.  LDA ge max(1,M).</param>
-        /// <param name="s">array, dimension (min(M,N)). The singular values of A, sorted so that S(i) ge S(i+1)</param>
-        /// <param name="u">array, dimension (LDU,UCOL)
-        ///          UCOL = M if JOBZ = 'A' or JOBZ = 'O' and M &lt; N;
-        ///          UCOL = min(M,N) if JOBZ = 'S'.
-        ///          If JOBZ = 'A' or JOBZ = 'O' and M &lt; N, U contains the M-by-M
-        ///          orthogonal matrix U;
-        ///          if JOBZ = 'S', U contains the first min(M,N) columns of U
-        ///          (the left singular vectors, stored columnwise);
-        ///          if JOBZ = 'O' and M &gt;= N, or JOBZ = 'N', U is not referenced.</param>
-        /// <param name="ldu">The leading dimension of the array U.  LDU &gt;= 1; if  
-        /// JOBZ = 'S' or 'A' or JOBZ = 'O' and M &lt; N, LDU &gt;= M</param>
-        /// <param name="vt">array, dimension (LDVT,N). If JOBZ = 'A' or JOBZ = 'O' and 
-        /// M >= N, VT contains the N-by-N orthogonal matrix V**T; if JOBZ = 'S', 
-        /// VT contains the first min(M,N) rows of V**T 
-        /// (the right singular vectors, stored rowwise); if JOBZ = 'O' and M &lt; N, 
-        /// or JOBZ = 'N', VT is not referenced</param>
-        /// <param name="ldvt">The leading dimension of the array VT.  LDVT &gt; = 1; 
-        /// if JOBZ = 'A' or JOBZ = 'O' and M &gt; = N, LDVT &gt;= N; 
-        /// if JOBZ = 'S', LDVT &gt; min(M,N).</param>
-        /// <param name="info">
-        /// <list>
-        ///     <item> 0:  successful exit.</item>
-        ///     <item> lower 0:  if INFO = -i, the i-th argument had an illegal value.</item>
-        ///     <item> greater 0:  DBDSDC did not converge, updating process failed.</item>
-        /// </list>
-        /// </param>
-        /// <remarks>(From the lapack manual):DGESDD computes the singular value decomposition (SVD) of a real
-        ///M-by-N matrix A, optionally computing the left and right singular
-        ///vectors.  If singular vectors are desired, it uses a
-        ///divide-and-conquer algorithm.
-        ///The SVD is written
-        ///    <br>A = U * SIGMA * transpose(V)</br> 
-        ///where SIGMA is an M-by-N matrix which is zero except for its
-        ///min(m,n) diagonal elements, U is an M-by-M orthogonal matrix, and
-        ///V is an N-by-N orthogonal matrix.  The diagonal elements of SIGMA
-        ///are the singular values of A; they are real and non-negative, and
-        ///are returned in descending order.  The first min(m,n) columns of
-        ///U and V are the left and right singular vectors of A.
-        ///Note that the routine returns VT = V**T, not V.
-        ///The divide and conquer algorithm makes very mild assumptions about
-        ///floating point arithmetic. It will work on machines with a guard
-        ///digit in add/subtract, or on those binary machines without guard
-        ///digits which subtract like the Cray X-MP, Cray Y-MP, Cray C-90, or
-        ///Cray-2. It could conceivably fail on hexadecimal or decimal machines
-        ///without guard digits, but we know of none.</remarks>
+
         public void zgesvd(char jobz, int m, int n, complex[] a, int lda, double[] s, complex[] u, int ldu, complex[] vt, int ldvt, ref int info)
         {
             underConstructionError("zgesvd");
@@ -953,13 +596,34 @@ namespace ILNumerics.Native {
         #endregion 
 
         #region ?GELSY - least square solution, QRP
-        public void dgelsy(int m, int n, int nrhs, double[] A, int lda, double[] B, int ldb, int[] JPVT0, double RCond, ref int rank, ref int info)
+        public void dgelsy(int m, int n, int nrhs, double[] a, int lda, double[] b, int ldb, int[] jvpt0, double rcond, ref int rank, ref int info)
         {
-            throw new NotImplementedException("dgelsy");
+            unsafe
+            {
+                fixed (double* pa = a, pb = b)
+                fixed (int* pjvpt0 = jvpt0)
+                fixed (int* pinfo = &info, prank = &rank)
+                {
+                    int optimalSize = -1;
+                    int* lwork = &optimalSize;
+                    double* work = stackalloc double[1];
+
+                    ManagedLapack.dgelsy(&m, &n, &nrhs, pa, &lda, pb, &ldb, pjvpt0, &rcond, prank, work, lwork, pinfo);
+
+                    if (info != 0)
+                        throw new ILArgumentException("?gelsy: unable to determine optimal block size. cancelling...");
+
+                    optimalSize = (int)work[0];
+                    lwork = &optimalSize;
+                    double* tmp = stackalloc double[optimalSize]; work = tmp;
+
+                    ManagedLapack.dgelsy(&m, &n, &nrhs, pa, &lda, pb, &ldb, pjvpt0, &rcond, prank, work, lwork, pinfo);
+                }
+            }
         }
         public void zgelsy(int m, int n, int nrhs, complex[] A, int lda, complex[] B, int ldb, int[] JPVT0, double RCond, ref int rank, ref int info)
         {
-            throw new NotImplementedException("zgelsy");
+            underConstructionError("zgelsy");
         }
         #endregion 
 
