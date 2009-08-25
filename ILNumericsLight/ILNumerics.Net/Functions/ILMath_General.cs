@@ -48,89 +48,36 @@ namespace ILNumerics.BuiltInFunctions {
         /// <summary>
         /// main math class providing static builtin functions
         /// </summary>
-        static ILMath() {
+        static ILMath()
+        {
             #region initialize proc specific interfaces
 
-            switch (Settings.ConfigFile.NativeMathLibrary)
+            try
             {
-                case "off":
-                    Lapack = new ILManagedLapack();
-                    FFT = new ILManagedFFT();
-                    break;
-
-                case "unix":
-                case "linux":
-                    Lapack = new ILLapackGenLinux();
-                    FFT = new ILFFTW3FFT();
-                    break;
-
-                case "win32_amd":
-                    Lapack = new ILACML4_1();
-                    FFT = new ILACMLFFT();
-                    break;
-
-                case "win32_intel":
-                    FFT = new ILMKLFFT();
-                    Lapack = new ILLapackMKL10_0();
-                    break;
-
-                default:
-                    autoDetectOSAndCPU();
-                    break;
+                Type lapackType = Type.GetType("ILNumerics.Native." + Settings.ConfigFile.LAPACKLibrary);
+                Lapack = (IILLapack)Activator.CreateInstance(lapackType);
             }
-            #endregion 
+            catch
+            {
+                Lapack = new ILManagedLapack();
+            }
+
+            try
+            {
+                Type fftType = Type.GetType("ILNumerics.Native." + Settings.ConfigFile.FFTLibrary);
+                FFT = (IILFFT)Activator.CreateInstance(fftType);
+            }
+            catch
+            {
+                FFT = new ILManagedFFT();
+            }
+
+            #endregion
+
             #region initialize machine parameter infos 
             macharD(ref m_machparDouble.ibeta, ref m_machparDouble.it,ref m_machparDouble.irnd,ref m_machparDouble.ngrd,ref m_machparDouble.machep,ref m_machparDouble.negep,ref m_machparDouble.iexp,ref m_machparDouble.minexp,ref m_machparDouble.maxexp,ref m_machparDouble.eps,ref m_machparDouble.epsneg,ref m_machparDouble.xmin,ref m_machparDouble.xmax); 
             macharF(ref m_machparFloat.ibeta, ref m_machparFloat.it,ref m_machparFloat.irnd,ref m_machparFloat.ngrd,ref m_machparFloat.machep,ref m_machparFloat.negep,ref m_machparFloat.iexp,ref m_machparFloat.minexp,ref m_machparFloat.maxexp,ref m_machparFloat.eps,ref m_machparFloat.epsneg,ref m_machparFloat.xmin,ref m_machparFloat.xmax); 
             #endregion
-        }
-        /// <summary>Used by ILMath constructor</summary>
-        private static void autoDetectOSAndCPU()
-        {
-            ILCPUID cpuid; 
-            ILArray<double> A = new double[]{1.0,-1.0}, B = new double[]{1.0, 2.0};
-            switch (Environment.OSVersion.Platform)
-            {
-                case PlatformID.Unix:
-                    Lapack = new ILLapackGenLinux(); 
-                    FFT = new ILFFTW3FFT(); 
-                    break; 
-
-                default: 
-                    cpuid = new ILCPUID(); 
-                    switch (cpuid.vendor)
-                    {
-                        case "AuthenticAMD":
-                            try {
-                                Lapack = new ILACML4_1(); 
-                                FFT = new ILACMLFFT(); 
-                                multiply(A.T,B); 
-                            } catch (Exception) {
-                                FFT = new ILMKLFFT();
-                                try {
-                                    Lapack = new ILLapackMKL10_0();
-                                    multiply(A.T,B); 
-                                } catch (Exception) {
-                                    Lapack = new ILLapackGeneric(); 
-                                }
-                            }
-                            break; 
-                        case "GenuineIntel":
-                            FFT = new ILMKLFFT(); 
-                            try {
-                                Lapack = new ILLapackMKL10_0();
-                                multiply(A.T,B); 
-                            } catch (Exception) {
-                                Lapack = new ILLapackGeneric(); 
-                            }
-                            break; 
-                        default:
-                            Lapack = new ILLapackGeneric();
-                            FFT = new ILManagedFFT();
-                            break;
-                    }
-                    break;
-            }
         }
 		/// <summary>
 		/// Minimal size of dimensions, expensive operations will be carried out by native LAPACK libs. 

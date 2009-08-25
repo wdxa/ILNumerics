@@ -62,16 +62,24 @@ namespace ILNumerics
 
         public Settings()
         {
-            nativeMathLibrary = "auto";
+            LAPACKLibrary = "ILManagedLapack";
+            fftLibrary = "ILMKLFFT";
         }
 
-        private string nativeMathLibrary;
+        private string lapackLibrary, fftLibrary;
 
-        [XmlElement("NativeMathLibrary")]
-        public string NativeMathLibrary
+        [XmlElement("LAPACKLibrary")]
+        public string LAPACKLibrary
         {
-            get { return nativeMathLibrary; }
-            set { nativeMathLibrary = value; }
+            get { return lapackLibrary; }
+            set { lapackLibrary = value; }
+        }
+
+        [XmlElement("FFTLibrary")]
+        public string FFTLibrary
+        {
+            get { return fftLibrary; }
+            set { fftLibrary = value; }
         }
 
     }

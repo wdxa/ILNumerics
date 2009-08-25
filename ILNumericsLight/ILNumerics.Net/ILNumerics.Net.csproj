@@ -167,7 +167,6 @@
     <Compile Include="ILComplex.cs" />
     <Compile Include="ILLogicalArray.cs" />
     <Compile Include="ILPerformer.cs" />
-    <Compile Include="Misc\ILCPUID.cs" />
     <Compile Include="Misc\ILDimension.cs" />
     <Compile Include="Misc\ILException.cs" />
     <Compile Include="Misc\ILFormatter.cs" />
