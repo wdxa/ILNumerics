@@ -235,4 +235,32 @@ namespace ILNumerics.Exceptions
         public ILInvalidOperationException(String message, Exception innerException) 
                 : base(message, innerException) { }
     }
+
+    /// <summary>
+    /// Exception thrown if an unimplemented part of ILManagedLapack is called
+    /// </summary>
+    public class ILManagedLapackNotDoneException : Exception
+    {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="message">LAPACK routine where error is found</param>
+        public ILManagedLapackNotDoneException(String routineName)
+            : base("Routine " + routineName + " Is still under construction. You may need to use a native version of LAPACK instead. " +
+            "Specifiy with ILNumericsLight.dll.config.") { }
+    }
+
+    /// <summary>
+    /// Exception thrown if an unimplemented part of ILManagedFFT is called
+    /// </summary>
+    public class ILManagedFFTNotDoneException : Exception
+    {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="message">FFT routine where error is found</param>
+        public ILManagedFFTNotDoneException(String routineName)
+            : base("Routine " + routineName + " Is still under construction. You may need to use a native version of FFT instead. " +
+            "Specifiy with ILNumericsLight.dll.config.") { }
+    }
 }

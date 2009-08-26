@@ -19,7 +19,8 @@
 #endregion
 
 using System;
-using ILNumerics; 
+using ILNumerics;
+using ILNumerics.Exceptions;
 
 namespace ILNumerics.Native
 {
@@ -36,7 +37,7 @@ namespace ILNumerics.Native
         /// <returns>result, same size as A</returns>
         public ILArray<complex> FFTBackward(ILArray<complex> A, int nDims)
         {
-            throw new NotImplementedException("ILManagedFFT.FFTBackward. Is mkl_custom.dll on the PATH?");
+            throw new ILManagedFFTNotDoneException("FFTBackward");
         }
         /// <summary>
         /// performs backward 1-dimensional fft 
@@ -46,7 +47,7 @@ namespace ILNumerics.Native
         /// <returns>result, same size as A</returns>
         public ILArray<complex> FFTBackward1D(ILArray<complex> A, int alongDim)
         {
-            throw new NotImplementedException("ILManagedFFT.FFTBackward1D. Is mkl_custom.dll on the PATH?");
+            throw new ILManagedFFTNotDoneException("FFTBackward1D");
         }
         /// <summary>
         /// performs backward n-dimensional fft on hermitian sequence
@@ -58,7 +59,7 @@ namespace ILNumerics.Native
         /// If not, the method will be implemented by repeated calls of (inplace) 1D fft.</remarks>
         public ILArray<double> FFTBackwSym(ILArray<complex> A, int nDims)
         {
-            throw new NotImplementedException("ILManagedFFT.FFTBackwSym. Is mkl_custom.dll on the PATH?");
+            throw new ILManagedFFTNotDoneException("FFTBackwSym");
         }
         /// <summary>
         /// performs backward 1-dimensional fft on hermitian sequence
@@ -70,7 +71,7 @@ namespace ILNumerics.Native
         /// If not, the method will be implemented by repeated calls of (inplace) 1D fft.</remarks>
         public ILArray<double> FFTBackwSym1D(ILArray<complex> A, int alongDim)
         {
-            throw new NotImplementedException("ILManagedFFT.FFTBackwSym1D. Is mkl_custom.dll on the PATH?");
+            throw new ILManagedFFTNotDoneException("FFTBackwSym1D");
         }
         /// <summary>
         /// performs n-dimensional fft
@@ -80,7 +81,7 @@ namespace ILNumerics.Native
         /// <returns>result, same size as A</returns>
         public ILArray<complex> FFTForward(ILArray<double> A, int nDims)
         {
-            throw new NotImplementedException("ILManagedFFT.FFTForward. Is mkl_custom.dll on the PATH?");
+            throw new ILManagedFFTNotDoneException("FFTForward");
         }
         /// <summary>
         /// performs n-dimensional fft
@@ -90,7 +91,7 @@ namespace ILNumerics.Native
         /// <returns>result, same size as A</returns>
         public ILArray<complex> FFTForward(ILArray<complex> A, int nDims)
         {
-            throw new NotImplementedException("ILManagedFFT.FFTForward. Is mkl_custom.dll on the PATH?");
+            throw new ILManagedFFTNotDoneException("FFTForward");
         }
         /// <summary>
         /// performs 1-dimensional fft
@@ -100,7 +101,7 @@ namespace ILNumerics.Native
         /// <returns>result, same size as A</returns>
         public ILArray<complex> FFTForward1D(ILArray<complex> A, int alongDim)
         {
-            throw new NotImplementedException("ILManagedFFT.FFTForward1D. Is mkl_custom.dll on the PATH?");
+            throw new ILManagedFFTNotDoneException("FFTForward1D");
         }
         /// <summary>
         /// performs 1-dimensional fft
@@ -110,7 +111,7 @@ namespace ILNumerics.Native
         /// <returns>result, same size as A</returns>
         public ILArray<complex> FFTForward1D(ILArray<double> A, int alongDim)
         {
-            throw new NotImplementedException("ILManagedFFT.FFTForward1D. Is mkl_custom.dll on the PATH?");
+            throw new ILManagedFFTNotDoneException("FFTForward1D");
         }
         /// <summary>
         /// true, if the implementation caches plans between subsequent calls
