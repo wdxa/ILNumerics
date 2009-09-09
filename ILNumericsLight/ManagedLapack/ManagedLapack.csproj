@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BFADFBA1-5D61-44E8-B445-AFBC450186B6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ManagedLapack</RootNamespace>
+    <AssemblyName>ManagedLapack</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="buildtin.cs" />
+    <Compile Include="dlarz.cs" />
+    <Compile Include="dlatrz.cs" />
+    <Compile Include="dlarzt.cs" />
+    <Compile Include="dlarzb.cs" />
+    <Compile Include="dormr3.cs" />
+    <Compile Include="dlaqp2.cs" />
+    <Compile Include="dlaqps.cs" />
+    <Compile Include="dtzrzf.cs" />
+    <Compile Include="dormrz.cs" />
+    <Compile Include="dgeqp3.cs" />
+    <Compile Include="dlaic1.cs" />
+    <Compile Include="dgelsy.cs" />
+    <Compile Include="dpotrs.cs" />
+    <Compile Include="dpotf2.cs" />
+    <Compile Include="dsyrk.cs" />
+    <Compile Include="dpotrf.cs" />
+    <Compile Include="dgetrs.cs" />
+    <Compile Include="dlaswp.cs" />
+    <Compile Include="dgetf2.cs" />
+    <Compile Include="dtrsm.cs" />
+    <Compile Include="dgetrf.cs" />
+    <Compile Include="dlasy2.cs" />
+    <Compile Include="dlarfx.cs" />
+    <Compile Include="dlaqr1.cs" />
+    <Compile Include="dlaqr2.cs" />
+    <Compile Include="dlaexc.cs" />
+    <Compile Include="dasum.cs" />
+    <Compile Include="dladiv.cs" />
+    <Compile Include="dlanv2.cs" />
+    <Compile Include="dlaqr3.cs" />
+    <Compile Include="dlaqr4.cs" />
+    <Compile Include="dlaqr5.cs" />
+    <Compile Include="dlacn2.cs" />
+    <Compile Include="dlaqtr.cs" />
+    <Compile Include="dtrexc.cs" />
+    <Compile Include="dlaln2.cs" />
+    <Compile Include="dlaqr0.cs" />
+    <Compile Include="dlahqr.cs" />
+    <Compile Include="daxpy.cs" />
+    <Compile Include="dgehd2.cs" />
+    <Compile Include="dlahr2.cs" />
+    <Compile Include="dlabad.cs" />
+    <Compile Include="dgebak.cs" />
+    <Compile Include="dgebal.cs" />
+    <Compile Include="dgehrd.cs" />
+    <Compile Include="idamax.cs" />
+    <Compile Include="dorghr.cs" />
+    <Compile Include="dhseqr.cs" />
+    <Compile Include="dtrevc.cs" />
+    <Compile Include="dtrsna.cs" />
+    <Compile Include="dgeevx.cs" />
+    <Compile Include="dlasv2.cs" />
+    <Compile Include="dlamc5.cs" />
+    <Compile Include="dorm2r.cs" />
+    <Compile Include="dorml2.cs" />
+    <Compile Include="dormqr.cs" />
+    <Compile Include="dormlq.cs" />
+    <Compile Include="dorg2r.cs" />
+    <Compile Include="dorgl2.cs" />
+    <Compile Include="dlazq4.cs" />
+    <Compile Include="dlasq6.cs" />
+    <Compile Include="dlasq5.cs" />
+    <Compile Include="dlasrt.cs" />
+    <Compile Include="dlazq3.cs" />
+    <Compile Include="dlasq2.cs" />
+    <Compile Include="dlasq1.cs" />
+    <Compile Include="dlas2.cs" />
+    <Compile Include="dbdsqr.cs" />
+    <Compile Include="ddot.cs" />
+    <Compile Include="dlasd8.cs" />
+    <Compile Include="dlasd7.cs" />
+    <Compile Include="dlasd6.cs" />
+    <Compile Include="dlasd5.cs" />
+    <Compile Include="dlaed6.cs" />
+    <Compile Include="dlasd4.cs" />
+    <Compile Include="drot.cs" />
+    <Compile Include="dlasd3.cs" />
+    <Compile Include="dlasd2.cs" />
+    <Compile Include="dlamrg.cs" />
+    <Compile Include="dlasdt.cs" />
+    <Compile Include="dlasd1.cs" />
+    <Compile Include="dbdsdc.cs" />
+    <Compile Include="dtrmv.cs" />
+    <Compile Include="dlapy2.cs" />
+    <Compile Include="dnrm2.cs" />
+    <Compile Include="dtrmm.cs" />
+    <Compile Include="dger.cs" />
+    <Compile Include="dlassq.cs" />
+    <Compile Include="dlamc4.cs" />
+    <Compile Include="dlamc3.cs" />
+    <Compile Include="dlamc1.cs" />
+    <Compile Include="dlamc2.cs" />
+    <Compile Include="dgemv.cs" />
+    <Compile Include="dscal.cs" />
+    <Compile Include="dgeqr2.cs" />
+    <Compile Include="dlarft.cs" />
+    <Compile Include="dlarfb.cs" />
+    <Compile Include="dgelq2.cs" />
+    <Compile Include="dlarfg.cs" />
+    <Compile Include="dlarf.cs" />
+    <Compile Include="dgebd2.cs" />
+    <Compile Include="dlanst.cs" />
+    <Compile Include="dlabrd.cs" />
+    <Compile Include="dlasdq.cs" />
+    <Compile Include="dlasda.cs" />
+    <Compile Include="dlasd0.cs" />
+    <Compile Include="dswap.cs" />
+    <Compile Include="dcopy.cs" />
+    <Compile Include="dlasr.cs" />
+    <Compile Include="dorgqr.cs" />
+    <Compile Include="dorglq.cs" />
+    <Compile Include="dormbr.cs" />
+    <Compile Include="dorgbr.cs" />
+    <Compile Include="xerbla.cs" />
+    <Compile Include="dlaset.cs" />
+    <Compile Include="dlacpy.cs" />
+    <Compile Include="dgeqrf.cs" />
+    <Compile Include="dlascl.cs" />
+    <Compile Include="dgelqf.cs" />
+    <Compile Include="dlange.cs" />
+    <Compile Include="dlamch.cs" />
+    <Compile Include="dgebrd.cs" />
+    <Compile Include="dlartg.cs" />
+    <Compile Include="iparmq.cs" />
+    <Compile Include="ilaenv.cs" />
+    <Compile Include="dgesdd.cs" />
+    <Compile Include="lsame.cs" />
+    <Compile Include="dgemm.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using NativeMathLib;
 using ILNumerics.Exceptions;
 using ILNumerics.BuiltInFunctions;
 
@@ -33,8 +32,8 @@ namespace ILNumerics.Native
             unsafe
             {
                 fixed (double* pc = c)
-                    ManagedLapack.dgemm((sbyte*)&transa, (sbyte*)&transb, &m, &n, &k, &alpha, (double*)a.ToPointer(),
-                        &lda, (double*)b.ToPointer(), &ldb, &beta, pc, &ldc);
+                    ManagedLapack.dgemm(transa, transb, m, n, k, alpha, (double*)a.ToPointer(),
+                        lda, (double*)b.ToPointer(), ldb, beta, pc, ldc);
             }
         }
         public void zgemm(char transa, char transb, int m, int n, int k, complex alpha, IntPtr a, int lda, IntPtr b, int ldb, complex beta, complex[] c, int ldc)
@@ -56,19 +55,17 @@ namespace ILNumerics.Native
                         double* work = stackalloc double[1];
                         int* iwork = stackalloc int[((m < n) ? m : n) * 8];
 
-                        int optimalSize = -1;
-                        int* lwork = &optimalSize;
-                        
-                        ManagedLapack.dgesdd((sbyte*)&jobz, &m, &n, pa, &lda, ps, pu, &ldu, pvt, &ldvt, work, lwork, iwork, pinfo);
-                        optimalSize = (int)work[0];
+                        int lwork = -1;
 
-                        if (optimalSize != 0)
+                        ManagedLapack.dgesdd(jobz, m, n, pa, lda, ps, pu, ldu, pvt, ldvt, work, lwork, iwork, ref info);
+                        lwork = (int)work[0];
+
+                        if (lwork != 0)
                         {
-                            lwork = &optimalSize;
-                            double* dtmp = stackalloc double[optimalSize]; work = dtmp;
-                        /* --------------------------------------------------------------------- */
+                            double* dtmp = stackalloc double[lwork]; work = dtmp;
+                            /* --------------------------------------------------------------------- */
 
-                            ManagedLapack.dgesdd((sbyte*)&jobz, &m, &n, pa, &lda, ps, pu, &ldu, pvt, &ldvt, work, lwork, iwork, pinfo);
+                            ManagedLapack.dgesdd(jobz, m, n, pa, lda, ps, pu, ldu, pvt, ldvt, work, lwork, iwork, ref info);
                         }
                     }
                 }
@@ -97,8 +94,7 @@ namespace ILNumerics.Native
             unsafe
             {
                 fixed (double* pa = a)
-                fixed (int* pinfo = &info)
-                    ManagedLapack.dpotrf((sbyte*)&uplo, &n, pa, &lda, pinfo);
+                    ManagedLapack.dpotrf(uplo, n, pa, lda, ref info);
             }
         }
         public void zpotrf(char uplo, int n, complex[] a, int lda, ref int info)
@@ -124,8 +120,7 @@ namespace ILNumerics.Native
             unsafe
             {
                 fixed (double* pa = a, pb = b)
-                fixed (int* pinfo = &info)
-                    ManagedLapack.dpotrs((sbyte*)&uplo, &n, &nrhs, pa, &lda, pb, &ldb, pinfo);
+                    ManagedLapack.dpotrs(uplo, n, nrhs, pa, lda, pb, ldb, ref info);
             }
         }
         public void zpotrs(char uplo, int n, int nrhs, complex[] a, int lda, complex[] b, int ldb, ref int info)
@@ -140,8 +135,8 @@ namespace ILNumerics.Native
             unsafe
             {
                 fixed (double* pa = a)
-                fixed (int* pipiv = ipiv, pinfo = &info)
-                    ManagedLapack.dgetrf(&m, &n, pa, &lda, pipiv, pinfo);
+                fixed (int* pipiv = ipiv)
+                    ManagedLapack.dgetrf(m, n, pa, lda, pipiv, ref info);
             }
         }
         public void zgetrf(int m, int n, complex[] a, int lda, int[] ipiv, ref int info)
@@ -218,8 +213,8 @@ namespace ILNumerics.Native
             unsafe
             {
                 fixed (double* pa = a, pb = b)
-                fixed (int* pipiv = ipiv, pinfo = &info)
-                    ManagedLapack.dgetrs((sbyte*)&trans, &n, &nrhs, pa, &lda, pipiv, pb, &ldb, pinfo);
+                fixed (int* pipiv = ipiv)
+                    ManagedLapack.dgetrs(trans, n, nrhs, pa, lda, pipiv, pb, ldb, ref info);
             }
         }
         public void zgetrs(char trans, int n, int nrhs, complex[] a, int lda, int[] ipiv, complex[] b, int ldb, ref int info)
@@ -246,22 +241,19 @@ namespace ILNumerics.Native
             {
                 fixed (double* pa = a, pb = b)
                 fixed (int* pjvpt0 = jvpt0)
-                fixed (int* pinfo = &info, prank = &rank)
                 {
-                    int optimalSize = -1;
-                    int* lwork = &optimalSize;
+                    int lwork = -1;
                     double* work = stackalloc double[1];
 
-                    ManagedLapack.dgelsy(&m, &n, &nrhs, pa, &lda, pb, &ldb, pjvpt0, &rcond, prank, work, lwork, pinfo);
+                    ManagedLapack.dgelsy(m, n, nrhs, pa, lda, pb, ldb, pjvpt0, rcond, ref rank, work, lwork, ref info);
 
                     if (info != 0)
                         throw new ILArgumentException("?gelsy: unable to determine optimal block size. cancelling...");
 
-                    optimalSize = (int)work[0];
-                    lwork = &optimalSize;
-                    double* tmp = stackalloc double[optimalSize]; work = tmp;
+                    lwork = (int)work[0];
+                    double* tmp = stackalloc double[lwork]; work = tmp;
 
-                    ManagedLapack.dgelsy(&m, &n, &nrhs, pa, &lda, pb, &ldb, pjvpt0, &rcond, prank, work, lwork, pinfo);
+                    ManagedLapack.dgelsy(m, n, nrhs, pa, lda, pb, ldb, pjvpt0, rcond, ref rank, work, lwork, ref info);
                 }
             }
         }
@@ -277,27 +269,23 @@ namespace ILNumerics.Native
             unsafe
             {
                 fixed (double* pa = a, pwr = wr, pwi = wi, pvl = vl, pvr = vr, pscale = scale, prconde = rconde, prcondv = rcondv, pabnrm = &abnrm)
-                fixed (int* pilo = &ilo, pihi = &ihi, pinfo = &info)
                 {
                     /* -first have to determine size of and allocate memory for work- */
                     double* work = stackalloc double[1];
                     int* iwork = stackalloc int[2 * n - 2];
 
-                    int optimalSize = -1;
-                    int* lwork = &optimalSize;
+                    int lwork = -1;
 
-                    ManagedLapack.dgeevx((sbyte*)&balance, (sbyte*)&jobvl, (sbyte*)&jobvr, (sbyte*)&sense, &n, pa, &lda, pwr, pwi,
-                        pvl, &ldvl, pvr, &ldvr, pilo, pihi, pscale, pabnrm, prconde, prcondv, work, lwork, iwork, pinfo);
+                    ManagedLapack.dgeevx(balance, jobvl, jobvr, sense, n, pa, lda, pwr, pwi, pvl, ldvl, pvr, ldvr,
+                        ref ilo, ref ihi, pscale, ref abnrm, prconde, prcondv, work, lwork, iwork, ref info);
 
                     if (info != 0) return;
-
-                    optimalSize = (int)work[0];
-                    lwork = &optimalSize;
-                    double* tmp = stackalloc double[optimalSize]; work = tmp;
+                    lwork = (int)work[0];
+                    double* tmp = stackalloc double[lwork]; work = tmp;
                     /* --------------------------------------------------------------------- */
 
-                    ManagedLapack.dgeevx((sbyte*)&balance, (sbyte*)&jobvl, (sbyte*)&jobvr, (sbyte*)&sense, &n, pa, &lda, pwr, pwi,
-                        pvl, &ldvl, pvr, &ldvr, pilo, pihi, pscale, pabnrm, prconde, prcondv, work, lwork, iwork, pinfo);
+                    ManagedLapack.dgeevx(balance, jobvl, jobvr, sense, n, pa, lda, pwr, pwi, pvl, ldvl, pvr, ldvr,
+                        ref ilo, ref ihi, pscale, ref abnrm, prconde, prcondv, work, lwork, iwork, ref info);
                 }
             }
         }
