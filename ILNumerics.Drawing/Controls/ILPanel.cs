@@ -67,6 +67,9 @@ namespace ILNumerics.Drawing.Controls {
         protected Color m_cubeBGColor = Color.Snow; 
         protected ILColormap m_colormap; 
         protected ILLegend m_legend; 
+        protected ZoomModes m_zoomMode = ZoomModes.RollHard; 
+        protected ILZoomAction m_zoomAction; 
+        protected float m_zoomOffset = 50f; 
         protected GraphicDeviceType m_graphicsDevice; 
         protected ILLineProperties m_selectionRectangle; 
         protected bool m_fillBackground = true; 
@@ -79,6 +82,7 @@ namespace ILNumerics.Drawing.Controls {
         protected ILLayoutData m_layoutData = new ILLayoutData(); 
         protected ILLightCollection m_lights = new ILLightCollection(); 
         protected ILRenderProperties m_renderProperties; 
+        protected ILAction m_action; 
 
         internal float m_cubeWidth;  // used to propagate view size to matrices in derived classes
         internal float m_cubeHeight; 
@@ -249,7 +253,7 @@ namespace ILNumerics.Drawing.Controls {
             }
         }
         /// <summary>
-        /// content for graphs will be clipped outside the unit cube
+        /// (experimental) content for graphs will be clipped outside the unit cube
         /// </summary>
         /// <remarks>For 2D plots, not clipping the vertex data may lead to hiding 
         /// the labels drawn next to axes. For 3D plots Clipping may cause unexpected behavior. 
@@ -335,6 +339,26 @@ namespace ILNumerics.Drawing.Controls {
             set {
                 m_autoZoomContent = value;
             }
+        }
+        /// <summary>
+        /// choose the ramp for zooming
+        /// </summary>
+        public ZoomModes ZoomMode {
+            get { return m_zoomMode; }
+            set { m_zoomMode = value; }
+        }
+        /// <summary>
+        /// How much the view cube will be shrinked/expanded on zooming operations (percent)
+        /// </summary>
+        public float ZoomOffset {
+            set { m_zoomOffset = value; }
+            get { return m_zoomOffset; }
+
+        }
+        protected ILZoomAction ZoomAction {
+            get {
+                return m_zoomAction; 
+            }   
         }
         #endregion
 
@@ -576,8 +600,7 @@ namespace ILNumerics.Drawing.Controls {
             base.OnMouseUp(e);
             //System.Diagnostic.Debug.WriteLine("MouseUp");
             if (m_selectingMode == InteractiveModes.ZoomRectangle && m_isMoving) {
-                Zoom(Screen2World2D(m_mouseStart.X,m_mouseStart.Y,0.5f),Screen2World2D(e.X,e.Y,0.5f));
-
+                Zoom(Screen2World2D(m_mouseStart.X,Height - m_mouseStart.Y),Screen2World2D(e.X, Height - e.Y));
             }
             m_isMoving = false; 
         }
@@ -591,12 +614,13 @@ namespace ILNumerics.Drawing.Controls {
             if (m_isMoving == false && (m_selectingMode == InteractiveModes.ZoomRectangle 
                 || m_selectingMode == InteractiveModes.Rotating)) {
                 // determine new center coords
-                ILPoint3Df center = Screen2World2D(e.X,e.Y,Limits.CenterF.Z);
+                ILPoint3Df near, far; 
+                Screen2World(e.X,Height - e.Y, out near, out far); //Limits.CenterF.Z);
                 if (e.Button == System.Windows.Forms.MouseButtons.Left) {
-                    Zoom(center,0.8f); 
+                    Zoom(near,far,m_zoomOffset / 100); 
                 }
                 else if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                    Zoom(center,1.2f);
+                    Zoom(near,far,- m_zoomOffset / 100);
             }
         }
         protected override void OnMouseDoubleClick(MouseEventArgs e) {
@@ -772,8 +796,12 @@ namespace ILNumerics.Drawing.Controls {
             }
         }
         protected void m_viewLimits_Changed(object sender, ClippingChangedEventArgs e) {
-            OnViewLimitsChanged(e); 
-            Invalidate();
+            if (this.InvokeRequired) {
+                Invoke(new ILClippingDataChangedEvent(m_viewLimits_Changed), sender, e);
+            } else {
+                OnViewLimitsChanged(e);
+                Invalidate();
+            }
         }
         protected void m_dataLimits_Changed(object sender, ClippingChangedEventArgs e) {
             if (m_autoZoomContent) 
@@ -846,6 +874,8 @@ namespace ILNumerics.Drawing.Controls {
         }
 
         public virtual void ResetView(bool resetRotation) {
+            if (m_zoomAction != null)
+                m_zoomAction.Cancel();
             if (m_defaultView != null && resetRotation) {
                 m_camera.Phi = m_defaultView.Phi; 
                 m_camera.Rho = m_defaultView.Rho;
@@ -857,13 +887,45 @@ namespace ILNumerics.Drawing.Controls {
             m_clippingView.Update(m_clippingView.CenterF,1.11f); 
             m_clippingView.EventingResume(); 
         }
+        /// <summary>
+        /// Move & shrink/expand current view cube along a given line
+        /// </summary>
+        /// <param name="nearLineEnd"></param>
+        /// <param name="farLineEnd"></param>
+        /// <param name="offset"></param>
+        protected virtual void Zoom(ILPoint3Df nearLineEnd, ILPoint3Df farLineEnd, float offset) {
+            ILPoint3Df minCorner, maxCorner; 
+            m_clippingView.GetZoomParameter(nearLineEnd,farLineEnd,offset, out minCorner, out maxCorner);
+            Zoom(minCorner,maxCorner); 
+        }
 
         protected virtual void Zoom(ILPoint3Df center, float offset) {
             m_clippingView.Update(center,offset); 
         }
 
         protected virtual void Zoom(ILPoint3Df luCorner, ILPoint3Df rbCorner) {
-            m_clippingView.Set(luCorner,rbCorner); 
+            if (m_zoomAction != null)
+                m_zoomAction.Cancel();
+            ILActionRamp ramp;
+            switch (m_zoomMode) {
+                case ZoomModes.Jump:
+                    ramp = ILActionRamp.NoRamp; 
+                    break;
+                case ZoomModes.RollSoft:
+                    ramp = ILActionRamp.Soft; 
+                    break;
+                case ZoomModes.RollHard:
+                    ramp = ILActionRamp.Hard; 
+                    break;
+                case ZoomModes.RollOverride:
+                    ramp = ILActionRamp.Override; 
+                    break;
+                default:
+                    ramp = ILActionRamp.Linear;
+                    break;
+            }
+            m_zoomAction = new ILZoomAction(m_clippingView.Min, luCorner, m_clippingView.Max, rbCorner, ramp, m_clippingView);
+            m_zoomAction.Run();
         }
 
         protected TickLabelAlign GetXTickLabelLine(
@@ -1172,23 +1234,10 @@ namespace ILNumerics.Drawing.Controls {
         /// Transform from a point on screen into world coordinates
         /// </summary>
         /// <param name="x">screen x</param>
-        /// <param name="y">screen y</param>
-        /// <param name="z">z directly transferred to output</param>
+        /// <param name="y">screen y: GL viewport coord! -> (0,0) is lower left corner!</param>
         /// <returns>world coordinate point</returns>
-        public virtual ILPoint3Df Screen2World2D(int x, int y, float z) {
-            ILPoint3Df center = new ILPoint3Df();
-            Size labelsSize = m_axes.MaxTicLabelSize;
-            // map to world coords
-            x -= labelsSize.Width; 
-            y = ClientSize.Height - y - labelsSize.Height; 
-            center.X = ((float)x) / (ClientRectangle.Width - 2 * labelsSize.Width) * (1.0f + 2 * m_axes[0].LabeledTicks.TickFraction) - m_axes[0].LabeledTicks.TickFraction;
-            center.Y = ((float)y) / (ClientRectangle.Height - 2 * labelsSize.Height) * (1.0f + 2 * m_axes[1].LabeledTicks.TickFraction) - m_axes[1].LabeledTicks.TickFraction;
-            center.Z = z;
-            // map to view coords
-            center.X = center.X * m_clippingView.WidthF + m_clippingView.XMin; 
-            center.Y = center.Y * m_clippingView.HeightF + m_clippingView.YMin; 
-            return center; 
-        }
+        public abstract ILPoint3Df Screen2World2D(int x, int y);
+        public abstract void Screen2World(int x, int y, out ILPoint3Df nearClip, out ILPoint3Df farClip); 
         
         /// <summary>
         /// Transform world coordinates to screen coordinates under current transformation

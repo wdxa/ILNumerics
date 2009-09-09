@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ILNumerics.Drawing.Misc; 
 
 namespace ILNumerics.Drawing {
     /// <summary>
@@ -425,9 +426,96 @@ namespace ILNumerics.Drawing {
             ret.X = (x + 0.5f) * (m_xMax-m_xMin) + m_xMin; 
             ret.Y = (y + 0.5f) * (m_yMax-m_yMin) + m_yMin; 
             ret.Z = (z + 0.5f) * (m_zMax-m_zMin) + m_zMin;
-            if (!m_allowZeroVolume) ensureVolumeNotZero();
+            //if (!m_allowZeroVolume) ensureVolumeNotZero();
             return ret;
         }
+        /// <summary>
+        /// Expand/shrink all those edges, not touched by the given line
+        /// </summary>
+        /// <param name="nearLineEnd">near line point</param>
+        /// <param name="farLineEnd">far line point</param>
+        /// <param name="offset">multiplicator, shrink-/expand value</param>
+        public void GetZoomParameter(ILPoint3Df nearLineEnd, ILPoint3Df farLineEnd, float offset, 
+                        out ILPoint3Df minCorner, out ILPoint3Df maxCorner) {
+            // we determine, if the side is touched by the line. 
+            // if 'yes': the side is skipped (its limit/position are kept)
+            // if 'no': the side is moved towards/away from center
+            minCorner = this.Min;
+            maxCorner = this.Max; 
+            float sX, sY, sZ; 
+            float lamb; 
+            float aX = nearLineEnd.X - farLineEnd.X;
+            float aY = nearLineEnd.Y - farLineEnd.Y;
+            float aZ = nearLineEnd.Z - farLineEnd.Z;
+            float offX = WidthF * (offset/2.0f);
+            float offY = HeightF * (offset/2.0f);
+            float offZ = DepthF * (offset/2.0f); 
+            #region front side
+            lamb = (m_yMin - nearLineEnd.Y) / aY; 
+            sX = nearLineEnd.X + lamb * aX;
+            sZ = nearLineEnd.Z + lamb * aZ;
+            if (sX > m_xMax || sX < m_xMin || sZ > m_zMax || sZ < m_zMin) {
+                minCorner.Y += offY; 
+            }
+            #endregion
+            #region right side
+            lamb = (m_xMax - nearLineEnd.X) / aX;
+            sY = nearLineEnd.Y + lamb * aY;
+            sZ = nearLineEnd.Z + lamb * aZ;
+            if (sY > m_yMax || sY < m_yMin || sZ > m_zMax || sZ < m_zMin) {
+                maxCorner.X -= offX;
+            }
+            #endregion
+            #region back side
+            lamb = (m_yMax - nearLineEnd.Y) / aY;
+            sX = nearLineEnd.X + lamb * aX;
+            sZ = nearLineEnd.Z + lamb * aZ;
+            if (sX > m_xMax || sX < m_xMin || sZ > m_zMax || sZ < m_zMin) {
+                maxCorner.Y -= offY;
+            }
+            #endregion
+            #region left side
+            lamb = (m_xMin - nearLineEnd.X) / aX;
+            sY = nearLineEnd.Y + lamb * aY;
+            sZ = nearLineEnd.Z + lamb * aZ;
+            if (sY > m_yMax || sY < m_yMin || sZ > m_zMax || sZ < m_zMin) {
+                minCorner.X += offX;
+            }
+            #endregion
+            #region top side
+            lamb = (m_zMax - nearLineEnd.Z) / aZ;
+            sX = nearLineEnd.X + lamb * aX;
+            sY = nearLineEnd.Y + lamb * aY;
+            if (sY > m_yMax || sY < m_yMin || sX > m_xMax || sX < m_xMin) {
+                maxCorner.Z -= offZ;
+            }
+            #endregion
+            #region bottom side
+            lamb = (m_zMin - nearLineEnd.Z) / aZ;
+            sX = nearLineEnd.X + lamb * aX;
+            sY = nearLineEnd.Y + lamb * aY;
+            if (sY > m_yMax || sY < m_yMin || sX > m_xMax || sX < m_xMin) {
+                minCorner.Z += offZ;
+            }
+            #endregion
+            #region translate: move line to cross middle of view cube
+            ILPoint3Df rQ =  CenterF; 
+            sX = rQ.X - nearLineEnd.X; 
+            sY = rQ.Y - nearLineEnd.Y; 
+            sZ = rQ.Z - nearLineEnd.Z; 
+            lamb = (aX * sX + aY * sY + aZ * sZ) / (aX * aX + aY * aY + aZ * aZ);
+            offX = rQ.X - (nearLineEnd.X + lamb * aX);
+            offY = rQ.Y - (nearLineEnd.Y + lamb * aY);
+            offZ = rQ.Z - (nearLineEnd.Z + lamb * aZ);
+            minCorner.X -= offX;
+            minCorner.Y -= offY;
+            minCorner.Z -= offZ;
+            maxCorner.X -= offX;
+            maxCorner.Y -= offY;
+            maxCorner.Z -= offZ;
+            #endregion
+        }
+
         #endregion
 
         #region private helper

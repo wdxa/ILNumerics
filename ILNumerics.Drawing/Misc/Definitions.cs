@@ -34,6 +34,27 @@ using ILNumerics.Drawing.Graphs;
 namespace ILNumerics.Drawing {
 
     /// <summary>
+    /// defines the movement from current to new zoom setting
+    /// </summary>
+    public enum ZoomModes {
+        /// <summary>
+        /// No ramp, jump to new zoom setting
+        /// </summary>
+        Jump,
+        /// <summary>
+        /// morph softly to new zoom setting
+        /// </summary>
+        RollSoft,
+        /// <summary>
+        /// morph faster to new setting
+        /// </summary>
+        RollHard,
+        /// <summary>
+        /// morph to new setting by 'going over the limit'
+        /// </summary>
+        RollOverride
+    }
+    /// <summary>
     /// predefined colormaps
     /// </summary>
     public enum Colormaps {

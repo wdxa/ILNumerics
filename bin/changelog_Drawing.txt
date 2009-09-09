@@ -1,3 +1,8 @@
+Changes in version 0.12.05
+===========================
+* fixes Zoom in 3D
+* implements morphing feature for Zoom
+
 Changes in version 0.12.04
 ===========================
 * removed AutoFitContent from graphs - caused confusion

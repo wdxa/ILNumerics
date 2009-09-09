@@ -104,7 +104,7 @@ namespace ILNumerics.Drawing.Collections {
         //    OnGraphChanged(sender as ILGraph,e); 
         //}
         /// <summary>
-        /// called when the limits of a graph have changed
+        /// called once the limits of a graph have changed
         /// </summary>
         /// <param name="sender">graph</param>
         /// <param name="e">event args, holding a reference to the clipping data</param>

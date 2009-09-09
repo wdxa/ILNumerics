@@ -54,7 +54,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// </summary>
         public override void MakeCurrent() {
             GL.BindTexture(TextureTarget.Texture2D,m_textureId);  
-            System.Diagnostics.Debug.WriteLine(String.Format("ILOGLTextureStorage: switched to ID#{0}",m_textureId)); 
+            //System.Diagnostics.Debug.WriteLine(String.Format("ILOGLTextureStorage: switched to ID#{0}",m_textureId)); 
         }
         /// <summary>
         /// initialize texture sheet 

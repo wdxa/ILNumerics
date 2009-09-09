@@ -342,6 +342,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
 #endif
                     }
                 }
+
                 #region world label test, please delete me
                 //ILNumerics.Drawing.Labeling.ILLabel label = new ILNumerics.Drawing.Labeling.ILLabel(this); 
                 //label.Position = new Point(0,0); 
@@ -415,7 +416,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 GL.End();
 #endif
                 #endregion
-                
+
                 SwapBuffers();
                 m_axes.XAxis.RenderState3(p);
                 m_axes.YAxis.RenderState3(p);
@@ -718,14 +719,19 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// <param name="x">screen X</param>
         /// <param name="y">screen Y</param>
         /// <returns>world coord</returns>
-        public override ILPoint3Df Screen2World2D(int x, int y, float z) {
-            Vector3 ret; 
+        public override void Screen2World(int x, int y, out ILPoint3Df nearClip, out ILPoint3Df farClip) {
             // TODO: check the Z coord values. 0.68 here was result of trial only! 
-            Glu.UnProject(new Vector3(x,y,0),m_modelViewMatrix,m_projMatrix,m_viewMatrix, out ret); 
-            // transform back from unit cube
-            ILPoint3Df retF = m_clippingView.Map(ret.X,-ret.Y,z); 
-            //retF.Z = 0.0f; 
-            return retF; 
+            Vector3 far,near; 
+            Glu.UnProject(new Vector3(x, y, 1.0f),m_modelViewMatrix, m_projMatrix, m_viewMatrix, out near);
+            Glu.UnProject(new Vector3(x, y, 0.0f),m_modelViewMatrix, m_projMatrix, m_viewMatrix, out far);
+            // transform back from unit cube to clipping view
+            farClip = m_clippingView.Map(far.X, far.Y, far.Z);
+            nearClip = m_clippingView.Map(near.X, near.Y, near.Z);
+        }
+        public override ILPoint3Df Screen2World2D(int x, int y) {
+            Vector3 tmp;
+            Glu.UnProject(new Vector3(x, y, 0), m_modelViewMatrix, m_projMatrix, m_viewMatrix, out tmp);
+            return m_clippingView.Map(tmp.X, tmp.Y, m_clippingView.CenterF.Z);
         }
         
         #endregion

@@ -46,7 +46,6 @@
     <DocumentationFile>..\bin\ILNumerics.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ILNumerics.Net, Version=1.4.3.31673, Culture=neutral, PublicKeyToken=e89b04a2605d95ed, processorArchitecture=MSIL" />
     <Reference Include="OpenTK, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -83,6 +82,9 @@
     <Compile Include="Misc\Events.cs" />
     <Compile Include="Graphs\ILImageSCGraph.cs" />
     <Compile Include="Labeling\ILLabel.cs" />
+    <Compile Include="Misc\ILAction.cs" />
+    <Compile Include="Misc\ILActionRamp.cs" />
+    <Compile Include="Misc\ILActionRampElement.cs" />
     <Compile Include="Misc\ILClippingData.cs" />
     <Compile Include="Graphs\ILPlot2DGraph.cs" />
     <Compile Include="Graphs\ILFilledGraph.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="Misc\ILLineProperties.cs" />
     <Compile Include="Marker\ILMarker.cs" />
     <Compile Include="Marker\ILMarkerShape.cs" />
+    <Compile Include="Misc\ILZoomAction.cs" />
     <Compile Include="Platform\OpenGL\ILOGLBitmapMarkerShape.cs" />
     <Compile Include="Platform\OpenGL\ILOGLImageSCGraph.cs" />
     <Compile Include="Platform\OpenGL\ILOGLLegend.cs" />
@@ -247,6 +250,12 @@
     <None Include="Resources\TriangleDown25x25.png" />
     <Content Include="Resources\TriangleUp25x25A.bmp" />
     <EmbeddedResource Include="Resources\TriangleUp25x25A.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ILNumerics\ILNumerics.Net.csproj">
+      <Project>{3D3902F7-8F28-43AC-8584-4F515A5697C6}</Project>
+      <Name>ILNumerics.Net</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="obsolete\" />
