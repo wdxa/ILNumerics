@@ -192,7 +192,6 @@
     <Compile Include="Properties\Settings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ManagedLapack, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
@@ -202,6 +201,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ManagedLapack\ManagedLapack.csproj">
+      <Project>{BFADFBA1-5D61-44E8-B445-AFBC450186B6}</Project>
+      <Name>ManagedLapack</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
