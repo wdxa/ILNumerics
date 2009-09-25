@@ -113,18 +113,19 @@ namespace ILNumerics.BuiltInFunctions {
             return ret;
         }
         /// <summary>
-        /// Random number generator used for all generations of random numbers
+        /// Set seed to both rand and randn functions
+        /// </summary>
+        /// <param name="seed">Any ole' number will do</param>
+        public static void setseed(int seed)
+        {
+            m_nrandomGenerator = new ILNRandom(seed);
+            m_randomGenerator = new Random(seed);
+        }
+        /// <summary>
+        /// Random number generator used by all rand functions
         /// </summary>
         /// <remarks>One may override this value with her own implementation, derived from <c>Random</c>.</remarks>
         protected static Random m_randomGenerator;
-        /// <summary>
-        /// Set global seed used by all random number generators
-        /// </summary>
-        /// <param name="seed"></param>
-        public static void setseed(int seed)
-        {
-            m_randomGenerator = new Random(seed);
-        }
         /// <summary>
         /// pseudo random n-dimensional array elements
         /// </summary>
@@ -150,7 +151,11 @@ namespace ILNumerics.BuiltInFunctions {
             }
             return new ILArray<double>(data, dimensions);
         }
-        internal static ILNRandom m_nrandomGenerator; 
+        /// <summary>
+        /// Random number generator used by all randn functions
+        /// </summary>
+        /// <remarks>One may override this value with her own implementation, derived from <c>Random</c>.</remarks>
+        internal static ILNRandom m_nrandomGenerator;
         /// <summary>
         /// normal random distributed n-dimensional array elements
         /// </summary>
