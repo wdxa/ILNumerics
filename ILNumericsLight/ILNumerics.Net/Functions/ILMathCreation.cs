@@ -116,7 +116,15 @@ namespace ILNumerics.BuiltInFunctions {
         /// Random number generator used for all generations of random numbers
         /// </summary>
         /// <remarks>One may override this value with her own implementation, derived from <c>Random</c>.</remarks>
-        protected static Random m_randomGenerator; 
+        protected static Random m_randomGenerator;
+        /// <summary>
+        /// Set global seed used by all random number generators
+        /// </summary>
+        /// <param name="seed"></param>
+        public static void setseed(int seed)
+        {
+            m_randomGenerator = new Random(seed);
+        }
         /// <summary>
         /// pseudo random n-dimensional array elements
         /// </summary>
