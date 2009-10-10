@@ -160,6 +160,7 @@ namespace ILNumerics.Drawing.Shapes {
             return m_positionMax;
         }
         public override void Draw(ILRenderProperties props) {
+            if (! m_visible) return; 
             m_renderer.Draw(props,this);
             if (!String.IsNullOrEmpty(m_label.Text)) 
                 m_label.Draw(props, Center); 
@@ -235,6 +236,7 @@ namespace ILNumerics.Drawing.Shapes {
         protected ShadingStyles m_shading; 
         protected ILShapeLabel m_label; 
         protected bool m_vertexStoresColor; 
+        protected bool m_visible; 
         /// <summary>
         /// panel hosting the scene (for current camera position and size updates)
         /// </summary>
@@ -243,6 +245,15 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion 
 
         #region properties 
+
+        /// <summary>
+        /// Switch visiblility for the shape on/off or reads the visibility value
+        /// </summary>
+        public bool Visible {
+            get { return m_visible; }
+            set { m_visible = value; }
+        }
+
         /// <summary>
         /// Get/set method of area filling 
         /// </summary>
@@ -312,6 +323,7 @@ namespace ILNumerics.Drawing.Shapes {
             m_label.Changed += new EventHandler(m_label_Changed); 
             m_label.Text = GetType().Name + " " + GetHashCode();
             m_shading = ShadingStyles.Flat; 
+            m_visible = true; 
             Invalidate(); 
         }
         #endregion

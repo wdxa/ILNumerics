@@ -202,7 +202,8 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion
 
         #region public interface 
-        public override void  Draw(ILRenderProperties props) {
+        public override void Draw(ILRenderProperties props) {
+            if (!m_visible) return;
             if (m_vertCount >= VerticesPerShape) {
                 // draw from back to front
                 if (m_oldCameraPosition != m_panel.Camera.Position) {

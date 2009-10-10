@@ -12,7 +12,7 @@ namespace ILNumerics.Drawing.Misc {
             get {
                 if (s_OverrideRamp == null) {
                     s_OverrideRamp = new ILActionRamp();
-                    ILArray<double> tmp = ILMath.sin(ILMath.linspace(-ILMath.pi / 1.7, ILMath.pi / 1.7, 10));
+                    ILArray<double> tmp = ILMath.sin(ILMath.linspace(-ILMath.pi / 1.7, ILMath.pi / 1.7, 20));
                     tmp -= tmp[0];
                     tmp /= tmp["end"];
                     foreach (double val in tmp.Values) {

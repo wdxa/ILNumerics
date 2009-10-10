@@ -1,5 +1,9 @@
 Changes in version 0.12.05
 ===========================
+* added ILShape.Visible property
+ 
+Changes in version 0.12.05
+===========================
 * fixes Zoom in 3D
 * implements morphing feature for Zoom
 

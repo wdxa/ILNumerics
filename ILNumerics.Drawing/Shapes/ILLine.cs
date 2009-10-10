@@ -89,6 +89,7 @@ namespace ILNumerics.Drawing.Shapes {
 
         #region public interface
         public override void Draw(ILRenderProperties props) {
+            if (!m_visible) return;
             if (m_vertCount == 0 || m_vertCount >= VerticesPerShape) {
                 m_renderer.Draw(props,this);
                 if (!String.IsNullOrEmpty(m_label.Text) && m_vertCount > 1) {
