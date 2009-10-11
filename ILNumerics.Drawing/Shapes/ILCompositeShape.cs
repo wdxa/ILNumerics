@@ -202,14 +202,17 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion
 
         #region public interface 
-        public override void Draw(ILRenderProperties props) {
-            if (!m_visible) return;
+        protected override void IntDrawShape(ILRenderProperties props) {
             if (m_vertCount >= VerticesPerShape) {
                 // draw from back to front
                 if (m_oldCameraPosition != m_panel.Camera.Position) {
                     sortPrimitives(); 
                 }
                 m_renderer.Draw(props,this,m_renderIndices);
+            }
+        }
+        protected override void IntDrawLabel(ILRenderProperties props) {
+            if (m_vertCount >= VerticesPerShape) {
                 ILPoint3Df cent = m_vertices[m_shapeIndices.GetValue(0)].Position; 
                 // draw label at center of first shape
                 if (!String.IsNullOrEmpty(m_label.Text)) {

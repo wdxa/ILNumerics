@@ -48,7 +48,9 @@ namespace ILNumerics.Drawing.Graphs {
         protected List<ILSceneGraphNode> m_childs = new List<ILSceneGraphNode>(); 
         protected ILArray<float> m_centers;
         protected ILPanel m_panel;
-        protected bool m_invalidated; 
+        protected bool m_invalidated;
+        protected bool m_visible;
+
         #endregion
 
         #region eventing 
@@ -71,6 +73,14 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region properties
+        /// <summary>
+        /// Switch visiblility for the shape on/off or reads the visibility value
+        /// </summary>
+        public bool Visible {
+            get { return m_visible; }
+            set { m_visible = value; 
+            }
+        }
         /// <summary>
         /// reference to the scene graph node this node is a child of
         /// </summary>
@@ -140,7 +150,8 @@ namespace ILNumerics.Drawing.Graphs {
             m_center = ILPoint3Df.Empty; 
             m_positionMin = ILPoint3Df.Empty; 
             m_positionMax = ILPoint3Df.Empty; 
-            m_invalidated = true; 
+            m_invalidated = true;
+            m_visible = true; 
         }
         #endregion
 
@@ -188,15 +199,19 @@ namespace ILNumerics.Drawing.Graphs {
             }
         }
         /// <summary>
-        /// draw a childs contained by this node
+        /// draw all childs contained in this node
         /// </summary>
         /// <param name="props">extended rendering properties</param>
-        public virtual void Draw(ILRenderProperties props) { 
+        public virtual void Draw(ILRenderProperties props) {
+            if (!m_visible) {
+                return;
+            }
             if (m_childs != null && m_childs.Count > 0) {
                 ILArray<int> indices = Computation.GetSortedIndices(
                                      m_centers,m_panel.Camera.Position); 
                 foreach (int i in indices.Values) {
-                    m_childs[i].Draw(props); 
+                    if (m_childs[i].Visible)
+                        m_childs[i].Draw(props); 
                 }
             }
         }

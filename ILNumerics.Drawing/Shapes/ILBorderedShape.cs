@@ -70,10 +70,13 @@ namespace ILNumerics.Drawing.Shapes {
         void m_border_Changed(object sender, EventArgs e) {
             OnChanged(); 
         }
-        public override void Draw(ILRenderProperties props) {
-            if (!m_visible) return;
+        protected override void IntDrawShape(ILRenderProperties props) {
             if (m_vertCount == 0 || m_vertCount >= VerticesPerShape) {
-                m_renderer.Draw(props,this);
+                m_renderer.Draw(props,this);   
+            }
+        }
+        protected override void IntDrawLabel(ILRenderProperties props) {
+            if (m_vertCount == 0 || m_vertCount >= VerticesPerShape) {
                 if (!String.IsNullOrEmpty(m_label.Text) && m_vertCount > 1) {
                     ILPoint3Df cent = m_vertices[0].Position + m_vertices[1].Position;
                     m_label.Draw(props, cent / 2); 

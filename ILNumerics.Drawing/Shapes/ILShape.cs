@@ -159,12 +159,6 @@ namespace ILNumerics.Drawing.Shapes {
             }
             return m_positionMax;
         }
-        public override void Draw(ILRenderProperties props) {
-            if (! m_visible) return; 
-            m_renderer.Draw(props,this);
-            if (!String.IsNullOrEmpty(m_label.Text)) 
-                m_label.Draw(props, Center); 
-        }
 
         public override IILVertexDefinition GetVertex(int id) {
             return (IILVertexDefinition)m_vertices[id]; 
@@ -236,7 +230,6 @@ namespace ILNumerics.Drawing.Shapes {
         protected ShadingStyles m_shading; 
         protected ILShapeLabel m_label; 
         protected bool m_vertexStoresColor; 
-        protected bool m_visible; 
         /// <summary>
         /// panel hosting the scene (for current camera position and size updates)
         /// </summary>
@@ -246,13 +239,6 @@ namespace ILNumerics.Drawing.Shapes {
 
         #region properties 
 
-        /// <summary>
-        /// Switch visiblility for the shape on/off or reads the visibility value
-        /// </summary>
-        public bool Visible {
-            get { return m_visible; }
-            set { m_visible = value; }
-        }
 
         /// <summary>
         /// Get/set method of area filling 
@@ -323,7 +309,6 @@ namespace ILNumerics.Drawing.Shapes {
             m_label.Changed += new EventHandler(m_label_Changed); 
             m_label.Text = GetType().Name + " " + GetHashCode();
             m_shading = ShadingStyles.Flat; 
-            m_visible = true; 
             Invalidate(); 
         }
         #endregion
@@ -344,12 +329,24 @@ namespace ILNumerics.Drawing.Shapes {
         public abstract void SetNormal(int id,ILPoint3Df normal);
         public abstract void SetVertex(int vertexID,IILVertexDefinition vertex); 
         public abstract void Translate(ILPoint3Df offset); 
-
+        public override void Draw (ILRenderProperties props) {
+ 	        // draw childs  
+            base.Draw(props);
+            IntDrawShape(props); 
+            IntDrawLabel(props); 
+        }
         #endregion
 
         #region private helpers
         void m_label_Changed(object sender, EventArgs e) {
             OnChanged(); 
+        }
+        protected virtual void IntDrawLabel(ILRenderProperties p) {
+            if (!String.IsNullOrEmpty(m_label.Text)) 
+                m_label.Draw(p, Center); 
+        }
+        protected virtual void IntDrawShape(ILRenderProperties p) {
+            m_renderer.Draw(p,this);
         }
         #endregion
     }

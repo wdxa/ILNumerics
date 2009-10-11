@@ -111,7 +111,5 @@ namespace ILNumerics.Drawing.Shapes {
         }
         #endregion
 
-        #region public interface 
-        #endregion
     }
 }
