@@ -41,11 +41,12 @@ namespace ILNumerics.Test {
 			Header();
             //Test_ReferenceBugTest();
             //Test_SingleIndexResizingWrite();
+            Test_Cast(); 
+            Test_SetElementReferenceArray();
             Test_MinValue();
             Test_MaxValue(); 
             Test_Test2(); 
             Test_Expand(); 
-            Test_Cast(); 
             Test_TrailingSingletonDimension(); 
             Test_SequentialLogicalAccess(); 
             Test_singleElementWriteAccessReference();
@@ -84,6 +85,59 @@ namespace ILNumerics.Test {
 			Test_EnumeratorPerf(ILMath.rand(100,100,300)); 
 			Footer();
 		}
+        public void Test_Cast() {
+            int errorCode = 1;
+            try {
+                ILArray<double> A = new double[,] { { 1.0, 2.0, 3.0 }, { 5.0, 6.0, 7.0 } };
+                if (A.Dimensions[0] != 3 || A.Dimensions[1] != 2)
+                    throw new Exception("invalid shape of implicit cast result: [,]");
+                A = new double[,,]{{{1.0,2.0,3.0},{4.0,5.0,6.0}},
+                                   {{7.0,8.0,9.0},{10.0,11.0,12.0}}};
+                if (A.Dimensions[0] != 3 || A.Dimensions[1] != 2 || A.Dimensions[2] != 2)
+                    throw new Exception("invalid shape of implicit cast result: [,,]");
+                if (!A.Equals(ILMath.counter(3, 2, 2)))
+                    throw new Exception("invalid result: cast from [,,]");
+                try {
+                    ILArray<int> I = new double[,,]{{{1.0,2.0,3.0},{4.0,5.0,6.0}},
+                                   {{7.0,8.0,9.0},{10.0,11.0,12.0}}};
+                } catch (ILCastException e) {
+                    Info("cast wrong type: exception thrown ok");
+                }
+                ILArray<int> B = new int[] { 3, 4, 5, 6, 7, 8, 9 };
+                if (!B.IsRowVector)
+                    throw new Exception("row vector expected: cast[]");
+                Success();
+            } catch (Exception e) {
+                Error(errorCode, e.Message);
+            }
+        }
+
+        private void Test_SetElementReferenceArray() {
+            int errorCode = 1;
+            try {
+                ILArray<double> A = new double[,] { { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 } };
+                ILArray<double> B = A["1,2", "0,1"];
+                // test single element set access
+                if (B.GetValue(0) != 2.0) 
+                    throw new Exception("Invalid element value in referencing subarray!"); 
+                B[0] = 10.0; 
+                if (B.GetValue(0) != 10.0)
+                    throw new Exception("Invalid element value set in referencing subarray!");
+                // test single element access, adressing via strings 
+                B = A["1,2", "0,1"];
+                B["0", "0"] = 11.0;
+                if (B.GetValue(0) != 11.0)
+                    throw new Exception("Invalid element value set in referencing subarray!");
+                // test single element access, adressing via arrays 
+                B = A["1,2", "0,1"];
+                B[0.0,0.0] = 11.0;
+                if (B.GetValue(0) != 11.0)
+                    throw new Exception("Invalid element value set in referencing subarray!");
+                Success(); 
+            } catch (Exception e) {
+                Error(errorCode, e.Message);
+            }
+        }
 
         public void Test_Test2() {
             int errorCode = 1; 
@@ -101,33 +155,6 @@ namespace ILNumerics.Test {
                 Error(errorCode,e.Message); 
             }
         }
-        public void Test_Cast() {
-            int errorCode = 1; 
-            try  {
-                ILArray<double> A = new double[,]{{1.0,2.0,3.0},{5.0,6.0,7.0}};
-                if (A.Dimensions[0]!= 3 || A.Dimensions[1] != 2)
-                    throw new Exception("invalid shape of implicit cast result: [,]"); 
-                A = new double[,,]{{{1.0,2.0,3.0},{4.0,5.0,6.0}},
-                                   {{7.0,8.0,9.0},{10.0,11.0,12.0}}};
-                if (A.Dimensions[0]!= 3 || A.Dimensions[1] != 2 || A.Dimensions[2] != 2)
-                    throw new Exception("invalid shape of implicit cast result: [,,]"); 
-                if (!A.Equals(ILMath.counter(3,2,2)))
-                    throw new Exception("invalid result: cast from [,,]"); 
-                try {
-                    ILArray<int> I = new double[,,]{{{1.0,2.0,3.0},{4.0,5.0,6.0}},
-                                   {{7.0,8.0,9.0},{10.0,11.0,12.0}}};
-                } catch (ILCastException e) {
-                    Info ("cast wrong type: exception thrown ok"); 
-                }
-                ILArray<int> B = new int[]{3,4,5,6,7,8,9}; 
-                if (!B.IsRowVector) 
-                    throw new Exception("row vector expected: cast[]"); 
-                Success(); 
-            } catch (Exception e) {
-                Error(errorCode,e.Message); 
-            }
-        }
-        
         public void Test_MaxValue() {
             int errorCode = 1; 
             try  {

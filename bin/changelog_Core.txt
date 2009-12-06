@@ -1,3 +1,9 @@
+Changes in version 1.4.04
+===========================
+* fixed a bug in single element set acces: 
+  (setting element in referencing array led to wrong result for certain subarrays) 
+* sped up implicit cast operator T[,] and T[,,] 
+
 Changes in version 1.4.03
 ===========================
 * sort: return indices rel. to dim length

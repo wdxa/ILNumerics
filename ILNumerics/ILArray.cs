@@ -4593,8 +4593,10 @@ namespace ILNumerics {
             bool mustExpand = false; 
             int i = getBaseIndex(ref mustExpand, ref dimensions, idx);  
             if (!mustExpand) {
-                if (mustDetach())
+                if (mustDetach()) {
                     Detach();
+                    i = getBaseIndex(ref mustExpand, ref dimensions, idx);
+                }
                 m_data[i] = value;
             } else {
                 ExpandArray(dimensions);

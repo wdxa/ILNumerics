@@ -1727,6 +1727,45 @@ namespace ILNumerics {
             return new ILArray<BaseT>(retArr,dims);
         }
         /// <summary>
+        /// implicit cast 2-dim. system array to ILArray
+        /// </summary>
+        /// <param name="elements">2D System.Array</param>
+        /// <returns>If elements is null: empty array. Else: ILArray of same size as elements</returns>
+        public static implicit operator ILArray<BaseT>(BaseT[,] elements) {
+            if (elements == null || elements.Length == 0) {
+                return ILArray<BaseT>.empty(0, 0);
+            }
+            int[] dims = new int[2];
+            BaseT[] retArr = ILMemoryPool.Pool.New<BaseT>(elements.Length);
+            int posArr = 0;
+            for (int i = 0; i < 2; i++) {
+                dims[i] = elements.GetLength(dims.Length - i - 1);
+            }
+            foreach (BaseT item in elements)
+                retArr[posArr++] = item;
+            return new ILArray<BaseT>(retArr, dims);
+        }
+        /// <summary>
+        /// implicit cast 3-dim. system array to ILArray
+        /// </summary>
+        /// <param name="elements">3D System.Array</param>
+        /// <returns>If elements is null: empty array. Else: ILArray of same size as elements</returns>
+        public static implicit operator ILArray<BaseT>(BaseT[,,] elements) {
+            if (elements == null || elements.Length == 0) {
+                return ILArray<BaseT>.empty(0, 0);
+            }
+            int[] dims = new int[3];
+            BaseT[] retArr = ILMemoryPool.Pool.New<BaseT>(elements.Length);
+            int posArr = 0;
+            for (int i = 0; i < 3; i++) {
+                dims[i] = elements.GetLength(dims.Length - i - 1);
+            }
+            foreach (BaseT item in elements)
+                retArr[posArr++] = item;
+            return new ILArray<BaseT>(retArr, dims);
+        }
+
+        /// <summary>
 		/// Explicitly convert ILArray of size 1x1 (scalar) to system value type.
 		/// </summary>
 		/// <param name="val">ILArray of type ILArray <![CDATA[BaseT]]> of size 1x1</param>
