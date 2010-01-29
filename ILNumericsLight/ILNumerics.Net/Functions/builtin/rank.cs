@@ -72,17 +72,13 @@ namespace ILNumerics.BuiltInFunctions  {
             if (tolerance < 0) {
                 tolerance = inArray.Dimensions.Longest * max(ret).GetValue(0) * System.Double.Epsilon; 
             }
-            // sum vector elements: ret must (and should) be physical vector returned from svd
-            double tmpsum = 0.0;
-            double tmpval = 0.0;
-            int len = ret.Length;
-            double[] d = ret.m_data; 
-            for (int i = 0; i < d.Length; i++) {
-                tmpval = d[i];
-                if (tmpval > tolerance)
-                    tmpsum += tmpval;
+            // count vector elements: ret must (and will) be physical vector returned from svd
+            double count = 0.0;
+            foreach (double d in  ret.Values) {
+                if (d > tolerance)
+                    count ++;
             }
-            return new ILArray<double>(tmpsum);
+            return new ILArray<double>(count);
         }
     }
 }

@@ -1,3 +1,7 @@
+Changes in version 1.4.05
+==========================
+* fixed a bug in ILMath.rank
+
 Changes in version 1.4.04
 ===========================
 * fixed a bug in single element set acces: 
