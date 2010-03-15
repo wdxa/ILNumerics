@@ -103,7 +103,9 @@
     <Compile Include="Algorithms\Sorting\ILQueue.cs" />
     <Compile Include="Algorithms\Sorting\ILQuickSort.cs" />
     <Compile Include="Algorithms\Special\ILSpecialData.cs" />
+    <Compile Include="array.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="convert_python.cs" />
     <Compile Include="Data\ILBinTree.cs" />
     <Compile Include="Data\ILProrityQueue.cs" />
     <Compile Include="Functions\builtin\abs.cs">
@@ -301,6 +303,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ILComplexFloat.cs" />
+    <Compile Include="ILRangePython.cs" />
+    <Compile Include="load.cs" />
+    <Compile Include="mgrid.cs" />
     <Compile Include="Misc\ILCPUID.cs" />
     <Compile Include="Misc\ILDimension.cs">
       <SubType>Code</SubType>
@@ -347,6 +352,7 @@
     </Compile>
     <Compile Include="Native\lapack\ILLapackGenLinux.cs" />
     <Compile Include="Native\lapack\ILLapackMKL10.0C.cs" />
+    <Compile Include="polyfit.cs" />
     <Compile Include="ReferenceManagement.cs" />
   </ItemGroup>
   <ItemGroup>
