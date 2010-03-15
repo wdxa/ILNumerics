@@ -122,6 +122,7 @@
     <Compile Include="Functions\builtin\any.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Functions\builtin\array.cs" />
     <Compile Include="Functions\builtin\asin.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -130,6 +131,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Functions\builtin\conj.cs" />
+    <Compile Include="Functions\builtin\convert_python.cs" />
     <Compile Include="Functions\builtin\cos.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -185,6 +187,7 @@
     <Compile Include="Functions\builtin\linspace.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Functions\builtin\load.cs" />
     <Compile Include="Functions\builtin\log.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -203,10 +206,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Functions\builtin\meshgrid.cs" />
+    <Compile Include="Functions\builtin\mgrid.cs" />
     <Compile Include="Functions\builtin\minall.cs" />
     <Compile Include="Functions\builtin\Norm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Functions\builtin\polyfit.cs" />
     <Compile Include="Functions\builtin\qr.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -285,8 +290,11 @@
     <Compile Include="ILArray.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ILArrayPython.cs" />
+    <Compile Include="ILArray_ConstructorsPython.cs" />
     <Compile Include="ILArray_Overloads.cs" />
     <Compile Include="ILArray_Constructors.cs" />
+    <Compile Include="ILArray_OverloadsPython.cs" />
     <Compile Include="ILBaseArray.cs" />
     <Compile Include="ILCell.cs" />
     <Compile Include="ILComplex.cs">
@@ -320,6 +328,7 @@
     <Compile Include="Misc\ILRange.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Misc\ILRangePython.cs" />
     <Compile Include="Misc\ILSettings.cs" />
     <Compile Include="Misc\MatFile.cs">
       <SubType>Code</SubType>
