@@ -282,7 +282,7 @@ namespace ILNumerics.Storage {
 	/// ILRange objects do not know about a 'maximum size'. They dont know the dimensions of the objects,
 	/// they get applied to. Therefore the 'colon' specifier will get stored and evaluated at the 
 	/// time, the range gets assigned to an ILArray Object. </description>
-	public class ILRange {
+	public partial class ILRange {
         /// <summary>
         /// number of dimensions defined by this range
         /// </summary>
@@ -423,6 +423,7 @@ namespace ILNumerics.Storage {
             m_expandDimensions = oldRange.m_expandDimensions; 
             m_expanding = oldRange.m_expanding; 
 		}
+
         /// <summary>
         /// Construct ILRange from arrays of indices.
         /// </summary>
@@ -1542,6 +1543,7 @@ namespace ILNumerics.Storage {
                 }
 			} // for d < rng.Length
 		}
+
 		/// <summary>
 		/// Evaluates (maps) index array on my range. 
 		/// </summary>

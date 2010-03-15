@@ -1769,8 +1769,11 @@ namespace ILNumerics {
             Type type = GetType(); 
             if (m_data == null)
                 return "(disposed)";
-            if (!String.IsNullOrEmpty(m_name)) 
-                ret.Append(m_name + " "); 
+            #if IRONPYTHON
+            #else
+                if (!String.IsNullOrEmpty(m_name)) 
+                    ret.Append(m_name + " "); 
+            #endif
             if (type.GetGenericArguments() != null && type.GetGenericArguments().Length > 0) {
                 ret.Append("<"+type.GetGenericArguments()[0].Name+"> "); 
             } else {
@@ -1779,7 +1782,7 @@ namespace ILNumerics {
             if (IsScalar) 
                 ret.Append(GetValue(0)); 
             else if (IsEmpty)
-                ret .Append("[empty]"); 
+                ret.Append("[empty]"); 
             else 
                 ret.Append(m_dimensions.ToString()); 
             return ret.ToString(); 
