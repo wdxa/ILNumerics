@@ -34,37 +34,37 @@ using System.Collections;
 
 namespace ILNumerics {
     /// <summary>
-    /// The base type for all array datatypes of ILNumerics.Net
+    /// The base type for all the array datatypes of ILNumerics.Net.
     /// </summary>
     /// <remarks>All numerical arrays must derive from ILBaseArray. ILBaseArrays itself 
-    /// cannot be instanciated. By now only ILArray<![CDATA[<>]]> exist, which describes 
+    /// cannot be instantiated. Currently, only ILArray<![CDATA[<>]]> exist, which describe 
     /// a rectangular array as full (solid) or referencing array. There are plans to 
-    /// extend the collection of derived types by triangular and sparse arrays. 
+    /// extend the collection of derived types to encompass triangular and sparse arrays. 
     /// </remarks>
     [Serializable]
     [System.Diagnostics.DebuggerDisplay("")]
     public abstract class ILBaseArray {
 
         internal ILBaseArray() {
-            // todo: determine type of architecture etc...
+            // TODO: Determine type of architecture etc...
         }
 
         #region implicit casts 
         /// <summary>
-        /// cast scalar to ILBaseArray
+        /// Cast scalar to ILBaseArray.
         /// </summary>
-        /// <param name="input">system value type</param>
-        /// <returns>ILBaseArray</returns>
-        public static  implicit operator ILBaseArray (double input) {
+        /// <param name="input">System value type.</param>
+        /// <returns>ILBaseArray.</returns>
+        public static implicit operator ILBaseArray (double input) {
             return new ILArray<double>(new double[1]{input}); 
         }
         /// <summary>
-        /// cast scalar to ILBaseArray
+        /// Cast scalar to ILBaseArray.
         /// </summary>
-        /// <param name="input">system value type</param>
-        /// <returns>ILBaseArray</returns>
-        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;float></remarks>
-        public static  implicit operator ILBaseArray (float input) {
+        /// <param name="input">System value type.</param>
+        /// <returns>ILBaseArray.</returns>
+        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;float>.</remarks>
+        public static implicit operator ILBaseArray (float input) {
             return new ILArray<float>(new float[1]{input}); 
         }
         /// <summary>
@@ -73,7 +73,7 @@ namespace ILNumerics {
         /// <param name="input">system value type</param>
         /// <returns>ILBaseArray</returns>
         /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;complex></remarks>
-        public static  implicit operator ILBaseArray (complex input) {
+        public static implicit operator ILBaseArray (complex input) {
             return new ILArray<complex>(new complex[1]{input}); 
         }
         /// <summary>
@@ -82,7 +82,7 @@ namespace ILNumerics {
         /// <param name="input">system value type</param>
         /// <returns>ILBaseArray</returns>
         /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;fcomplex></remarks>
-        public static  implicit operator ILBaseArray (fcomplex input) {
+        public static implicit operator ILBaseArray (fcomplex input) {
             return new ILArray<fcomplex>(new fcomplex[1]{input}); 
         }
         /// <summary>
@@ -91,7 +91,7 @@ namespace ILNumerics {
         /// <param name="input">system value type</param>
         /// <returns>ILBaseArray</returns>
         /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;Int16></remarks>
-        public static  implicit operator ILBaseArray (Int16 input) {
+        public static implicit operator ILBaseArray (Int16 input) {
             return new ILArray<Int16>(new Int16[1]{input}); 
         }
         /// <summary>
@@ -100,16 +100,16 @@ namespace ILNumerics {
         /// <param name="input">system value type</param>
         /// <returns>ILBaseArray</returns>
         /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;Int32></remarks>
-        public static  implicit operator ILBaseArray (Int32 input) {
+        public static implicit operator ILBaseArray (Int32 input) {
             return new ILArray<Int32>(new Int32[1]{input}, 1, 1); 
         }
         /// <summary>
-        /// cast system array to ILBaseArray
+        /// Cast system array to ILBaseArray.
         /// </summary>
-        /// <param name="input">system array type</param>
-        /// <returns>ILBaseArray</returns>
-        /// <remarks>The ILBaseArray returned will be of type ILArray&lt;Int32>
-        /// <para>If input is null or empty, an empty ILArray will be returned</para></remarks>
+        /// <param name="input">System array type.</param>
+        /// <returns>ILBaseArray.</returns>
+        /// <remarks>The ILBaseArray returned will be of type ILArray&lt;Int32>.
+        /// <para>If input is null or empty, an empty ILArray will be returned.</para></remarks>
         public static implicit operator ILBaseArray(int[] input) {
             if (input == null || input.Length == 0) {
                 return new ILArray<int>(input); 
@@ -117,67 +117,67 @@ namespace ILNumerics {
             return new ILArray<int>(input, 1,input.Length); 
         }
         /// <summary>
-        /// cast scalar to ILBaseArray
+        /// Cast scalar to ILBaseArray.
         /// </summary>
-        /// <param name="input">system value type</param>
-        /// <returns>ILBaseArray</returns>
-        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;Int64></remarks>
-        public static  implicit operator ILBaseArray (Int64 input) {
+        /// <param name="input">System value type.</param>
+        /// <returns>ILBaseArray.</returns>
+        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;Int64>.</remarks>
+        public static implicit operator ILBaseArray (Int64 input) {
             return new ILArray<Int64>(new Int64[1]{input}, 1, 1); 
         }
         /// <summary>
-        /// cast scalar to ILBaseArray
+        /// Cast scalar to ILBaseArray.
         /// </summary>
-        /// <param name="input">system value type</param>
-        /// <returns>ILBaseArray</returns>
-        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;UInt16></remarks>
-        public static  implicit operator ILBaseArray (UInt16 input) {
+        /// <param name="input">System value type.</param>
+        /// <returns>ILBaseArray.</returns>
+        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;UInt16>.</remarks>
+        public static implicit operator ILBaseArray (UInt16 input) {
             return new ILArray<UInt16>(new UInt16[1]{input}, 1, 1); 
         }
         /// <summary>
-        /// cast scalar to ILBaseArray
+        /// Cast scalar to ILBaseArray.
         /// </summary>
-        /// <param name="input">system value type</param>
-        /// <returns>ILBaseArray</returns>
-        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;UInt32></remarks>
-        public static  implicit operator ILBaseArray (UInt32 input) {
+        /// <param name="input">System value type.</param>
+        /// <returns>ILBaseArray.</returns>
+        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;UInt32>.</remarks>
+        public static implicit operator ILBaseArray (UInt32 input) {
             return new ILArray<UInt32>(new UInt32[1]{input}, 1, 1); 
         }
         /// <summary>
-        /// cast scalar to ILBaseArray
+        /// Cast scalar to ILBaseArray.
         /// </summary>
-        /// <param name="input">system value type</param>
-        /// <returns>ILBaseArray</returns>
-        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;UInt64></remarks>
-        public static  implicit operator ILBaseArray (UInt64 input) {
+        /// <param name="input">System value type.</param>
+        /// <returns>ILBaseArray.</returns>
+        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;UInt64>.</remarks>
+        public static implicit operator ILBaseArray (UInt64 input) {
             return new ILArray<UInt64>(new UInt64[1]{input}); 
         }
         /// <summary>
-        /// cast scalar to ILBaseArray
+        /// Cast scalar to ILBaseArray.
         /// </summary>
-        /// <param name="input">system value type</param>
+        /// <param name="input">System value type.</param>
         /// <returns>ILBaseArray</returns>
-        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;char></remarks>
+        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;char>.</remarks>
         public static  implicit operator ILBaseArray (char input) {
             return new ILArray<char>(new char[1]{input}, 1, 1); 
         }
         /// <summary>
-        /// cast scalar to ILBaseArray
+        /// Cast scalar to ILBaseArray.
         /// </summary>
-        /// <param name="input">system value type</param>
-        /// <returns>ILBaseArray</returns>
-        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;byte></remarks>
+        /// <param name="input">System value type.</param>
+        /// <returns>ILBaseArray.</returns>
+        /// <remarks>The ILBaseArray returned will be scalar of type ILArray&lt;byte>.</remarks>
         public static  implicit operator ILBaseArray (byte input) {
             return new ILArray<byte>(new byte[1]{input}, 1, 1);
         }
         #endregion implicit casts
 
         /// <summary>
-		///		Name of this object.
+		/// Name of this object.
 		/// </summary>
 		protected String m_name = "";
 		/// <summary>
-		///		Set/Get name for this object.
+		///	Set / Get name for this object.
 		/// </summary>
 		public String Name {
 			get {
@@ -191,7 +191,7 @@ namespace ILNumerics {
 			}
 		}
         /// <summary>
-        /// dimension specification for this storage object
+        /// Dimension specification for this storage object.
         /// </summary>
         internal ILDimension m_dimensions;
         /// <summary>
@@ -208,7 +208,7 @@ namespace ILNumerics {
         }
         #region public properties
         /// <summary>
-        /// Length of longest dimension in this instance
+        /// Length of the longest dimension of this instance.
         /// </summary>
         /// <remarks>This attribute is readonly.</remarks>
         public int Length {
@@ -217,7 +217,7 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// Determine if this instance is a scalar
+        /// Determine if this instance is a scalar.
         /// </summary>
         /// <remarks>This attribute is readonly. It returns: Dimension.NumberOfElements == 1.</remarks>
         public bool IsScalar {
@@ -229,7 +229,7 @@ namespace ILNumerics {
         /// Determine if this array is a matrix.
         /// </summary>
         /// <remarks>In order for an array to be a matrix the number of <b>non singleton</b> 
-        /// dimensions must equal 2. This attribute is readonly. </remarks>
+        /// dimensions must equal 2. This attribute is readonly.</remarks>
         public bool IsMatrix {
             get {
                 return m_dimensions.NumberOfDimensions == 2; 
@@ -239,16 +239,16 @@ namespace ILNumerics {
         /// Determine if this array is a vector.
         /// </summary>
         /// <remarks>In order for an array to be a vector the number of <b>non singleton</b> 
-        /// dimensions must equal 1. Keep in mind, all ILArrays have at least 2 dimensions. Therefore 
+        /// dimensions must equal 1. Keep in mind that all ILArrays have at least 2 dimensions. Therefore 
         /// it is not sufficient to test for the number of dimensions, but to take the number of 
-        /// <b>non singleton</b> dimensions into account. This attribute is readonly. </remarks>
+        /// <b>non singleton</b> dimensions into account. This attribute is readonly.</remarks>
         public bool IsVector {
             get {
                 return (Dimensions[0] == 1 || Dimensions[1] == 1) && Dimensions.NumberOfDimensions == 2;
             }
         }
         /// <summary>
-        /// Test if this array instance is a row vector
+        /// Test if this array instance is a row vector.
         /// </summary>
         public bool IsRowVector {
             get {
@@ -257,7 +257,7 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// Test if this array instance is a column vector
+        /// Test if this array instance is a column vector.
         /// </summary>
         public bool IsColumnVector {
             get {
@@ -265,7 +265,7 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// true if array is empty (number of elements stored is 0)
+        /// True if array is empty (number of elements stored is 0).
         /// </summary>
         public bool IsEmpty {
             get {
@@ -273,14 +273,14 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// Determine if this array is of complex inner type
+        /// Determine if this array is of complex inner type.
         /// </summary>
         public abstract bool IsComplex {
             get; 
         }
         
         /// <summary>
-        /// Determine if this array is of numeric inner type
+        /// Determine if this array is of numeric inner type.
         /// </summary>
         public abstract bool IsNumeric {
             get; 
@@ -290,39 +290,39 @@ namespace ILNumerics {
 
 #region Create Reference 
         /// <summary>
-        /// Create referencing copy of this array
+        /// Create referencing copy of this array.
         /// </summary>
-        /// <returns>Reference of this ILArray</returns>
-        /// <remarks>This function is mainly needed for ILCell. Elements of ILCells given back must be 
+        /// <returns>Referencing copy of this ILArray.</returns>
+        /// <remarks>This function is mainly needed for ILCell. Elements of ILCells returned must be 
         /// detached from their originals in order not to overwrite them on write access. Since ILCell 
-        /// may store any types of arrays (ILBaseArray's) and the actual type is not known, ILBaseArrays 
-        /// must be capable of creating a copy of themself. For generic ILArray's this is done in the 
-        /// <see cref="ILArray&lt;BaseT&gt;.CreateReference()"/>  class. </remarks>
+        /// may store any type of array (ILBaseArray) and the actual type is not known, ILBaseArrays 
+        /// must be capable of creating a copy of themselves. For generic ILArrays this is done in the 
+        /// <see cref="ILArray&lt;BaseT&gt;.CreateReference()"/> class. </remarks>
         public abstract ILBaseArray CreateReference(); 
 #endregion Create Reference 
 
         /// <summary>
-        /// Convert values of elements into string representation.
+        /// Convert values of elements into a string representation.
         /// </summary>
-        /// <param name="maxLength">0: all columns will be printed behind eahc other. 
-        /// Other than 0: The columns will be split after 'maxLength' characters. </param>
-        /// <returns>Formated string representation</returns>
+        /// <param name="maxLength">0: all columns will be printed behind each other. 
+        /// Other than 0: the columns will be split after 'maxLength' characters.</param>
+        /// <returns>Formateed string representation.</returns>
         public abstract StringBuilder ValuesToString(int maxLength); 
 
         /// <summary>
-        /// print values of this instance to stream 
+        /// Print values of this instance to a stream. 
         /// </summary>
-        /// <param name="outStream">Stream to write the values into</param>
+        /// <param name="outStream">Stream to write the values into.</param>
         /// <param name="format">Format string to be used for output. See <see cref="System.String.Format(string,object)"/> for a specification
-        /// of valid formating expressions. This flag is only used, when 'method' is set to 'Serial' </param>
-        /// <param name="method">a constant out of <see cref="ILArrayStreamSerializationFlags"/>. Specifies the way 
+        /// of valid formating expressions. This flag is only used, when 'method' is set to 'Serial'.</param>
+        /// <param name="method">A constant out of <see cref="ILArrayStreamSerializationFlags"/>. Specifies the way 
         /// the values will be serialized.</param>
-        /// <remarks><para>If for method 'Formated' is used, any occourences of a NewLine character(s) 
-        /// will be replaced from the format string before applying to the elements. This is due to 
-        /// prevent the format from breaking the 'page' style for the output. </para>
+        /// <remarks><para>If method 'Formatted' is used, any occurences of NewLine character(s) 
+        /// will be replaced from the format string before applying to the elements. This is done to 
+        /// prevent the format from breaking the 'page' style for the output.</para>
         /// <para>If 'method' is set to 'Matlab', the array will be written as Matfile version 5.0. No compression will be used. The internal 'Name' property will be used as 
-        /// array name for writing. This array instance will be the only array in the mat file. If you want to write several arrays bundled into one mat file, use the MatFile class to
-        /// create a collection of arrays and write the MatFile to stream than. </para></remarks>
+        /// the array name for writing. This array instance will be the only array in the mat file. If you want to write several arrays bundled into one mat file, use the MatFile class to
+        /// create a collection of arrays and write the MatFile to stream.</para></remarks>
         public abstract void ToStream(Stream outStream, string format, ILArrayStreamSerializationFlags method); 
     }
 
@@ -331,7 +331,7 @@ namespace ILNumerics {
 	/// Typed base class for all ILNumerics.Net data storage classes for any storage type. 
     /// </summary>
     /// <remarks><para>You should not use this type directly. It serves as a base class 
-    /// for all typed storages only and will be used be derived classes like ILArray<![CDATA[<>]]>.</para>
+    /// for all typed storages only and will be used by derived classes like ILArray<![CDATA[<>]]>.</para>
     /// <para>If you are looking for an (untyped) base class to be used as generic class for any ILArray types, you should use ILBaseArray instead!</para>
     /// </remarks>
 	[Serializable]
@@ -340,15 +340,15 @@ namespace ILNumerics {
         /// <summary>
         /// The actual storage array. 
         /// </summary>
-        /// <remarks> The derived type is responsible for the implementation, which way 
+        /// <remarks>The derived type is responsible for the implementation, the way in which 
         /// the storage is used. So far, this is only an 1D-System.Array of arbitrary size 
-        /// and type.This is hidden for framework users since direct public access 
-        /// to the storage is not intended for public users. </remarks>
+        /// and type. This is hidden for framework users since direct public access 
+        /// to the storage is not intended for public users.</remarks>
         internal BaseT[] m_data;
         /// <summary>
-        /// Get reference of internal element storage array (CAUTION! Experts only!)
+        /// Get a reference to the internal element storage array (CAUTION! Experts only!).
         /// </summary>
-        /// <remarks>Use this at your own risk and only if you have expert knowledge of ILArrays internals!</remarks>
+        /// <remarks>Use this at your own risk and only if you have expert knowledge of the internals of ILArrays!</remarks>
         public BaseT[] InternalArray4Experts {
             get {
                 return m_data; 
@@ -357,43 +357,43 @@ namespace ILNumerics {
 
         #region subarray + range get / set
 		/// <summary>
-		/// Create shifted version of this array
+		/// Create shifted version of this array.
 		/// </summary>
-		/// <param name="shift">number of dimensions to shift this storage.</param>
-		/// <returns>storage as shifted version of this storage.</returns>
+		/// <param name="shift">Number of dimensions to shift.</param>
+        /// <returns>ILBaseArray which is a shifted version of this ILBaseArray.</returns>
 		public abstract ILBaseArray<BaseT> ShiftDimensions(int shift); 
         /// <summary>
-        ///	Subarray to this array + dimension shift
+        ///	Subarray of this array and dimension shift
         /// </summary>
-        /// <param name="range"> arrays specifying the ranges to create subarray from</param>
-        /// <param name="shift"> Number of dimensions to shift the result.</param>
-        /// <returns>shifted subarray as specified</returns>
+        /// <param name="range">Arrays specifying the ranges to create subarray from.</param>
+        /// <param name="shift">Number of dimensions to shift the result.</param>
+        /// <returns>Shifted subarray as specified.</returns>
         public abstract ILBaseArray<BaseT> Subarray(int shift, params ILBaseArray[] range );
         /// <summary>
-        ///	Subarray to this storage
+        ///	Subarray of this array,
         /// </summary>
-        /// <param name="range"> arrays specifying the ranges to create subarray from</param>
-        /// <returns>subarray as specified</returns>
+        /// <param name="range">Arrays specifying the ranges from which to create subarray.</param>
+        /// <returns>Subarray as specified.</returns>
         public abstract ILBaseArray<BaseT> Subarray(params ILBaseArray[] range);
         /// <summary>
-        ///	Subarray to this array + dimension shift
+        ///	Subarray of this array and dimension shift.
         /// </summary>
-        /// <param name="range"> strings specifying the ranges to create subarray from</param>
-        /// <param name="shift"> Number of dimensions to shift the result.</param>
-        /// <returns>shifted subarray as specified</returns>
+        /// <param name="range">Strings specifying the ranges from which to create subarray.</param>
+        /// <param name="shift">Number of dimensions to shift the result.</param>
+        /// <returns>Shifted subarray as specified.</returns>
         public abstract ILBaseArray<BaseT> Subarray(int shift, params string [] range);
         /// <summary>
-        ///	Subarray to this array
+        ///	Subarray of this array.
         /// </summary>
-        /// <param name="range"> strings specifying the ranges to create subarray from</param>
-        /// <returns>subarray as specified</returns>
+        /// <param name="range">Strings specifying the ranges from which to create subarray.</param>
+        /// <returns>Subarray as specified.</returns>
         public abstract ILBaseArray<BaseT> Subarray(params string [] range);
 
         /// <summary>
-        ///	Alter values specified by range
+        ///	Alter values specified by range.
         /// </summary>
         /// <param name="range">
-        /// ILRange specifying the dimensions/indices to alter
+        /// ILRange specifying the dimensions / indices to alter.
         /// </param>
         /// <param name="values">
         /// ILArray holding the new values.
@@ -401,29 +401,29 @@ namespace ILNumerics {
         /// <remarks>
         /// The values pointed to by range will be replaced with the values 
         /// coming from vals. If the underlying 
-        /// ILArray pointed to by vals is of another size then specified 
+        /// ILArray pointed to by vals is of another size than that specified 
         /// by range, only a part of the vals-storaged will be used or respectivly 
-        /// those values will repeatedly get inserted. One may use this as a 
+        /// those values will repeatedly be inserted. One may use this as a 
         /// feature for filling the range with a sequence of values repeatedly. 
         /// On the other hand this may cause the problem of not recognizing 
         /// differences in the size between vals and range!
         /// Another remarkable situation arises, if this storage is the only 
-        /// reference wich is left to an physical storage array and it holds 
+        /// reference which is left to an physical storage array and it holds 
         /// multiple (repeated) entries to single array elements. Due to the 
-        /// nature of a "reference", altering any values will also update corresponding
+        /// nature of a 'reference', altering any values will also update corresponding
         /// entries in the reference storage, pointing to the same underlying elements. 
-        /// (In fact, those corresponding values will only point to the updated 
-        /// elements also.) Keep in mind, that setting a range for a reference which 
+        /// (in fact, those corresponding values will only point to the updated 
+        /// elements also). Keep in mind that setting a range for a reference which 
         /// is connected to an array which is referenced by more than one storage, will 
-        /// usually lead to a Detach() process - therefore the storage gets disconnected 
-        /// and the behavior described will not happen. Since for the user the result 
-        /// is not transparent, consider to eather 
+        /// usually lead to a Detach() process - therefore the storage is disconnected 
+        /// and the behavior described will not occur. Since for the user the result 
+        /// is not transparent, consider either:
         /// <list type="bullet">
         /// <item>
-        /// check the state of the storage before calling SetRange() </item>
+        /// Checking the state of the storage before calling SetRange()</item>
         /// <item>Detach() the storage manually, if required, or</item>
-        /// <item>set the static flag DetachReferences to true to detach all reference storages 
-        /// automatically before altering any values on it.</item></list> Hoever there might be 
+        /// <item>Set the static flag DetachReferences to true to detach all reference storages 
+        /// automatically before altering any values on it.</item></list> However there might be 
         /// situations, where one may want to alter many values by altering only 
         /// one. Therefore the above mentioned flag might be set to true if needed. 
         /// </remarks>
@@ -431,11 +431,11 @@ namespace ILNumerics {
         #endregion
         
         /// <summary>
-        ///  Serialize this ILArray into binary stream.
+        ///  Serialize this ILArray into a binary stream.
         /// </summary>
-        /// <param name="outStream">Sysem.IO.Stream to receive the byte sttream 
+        /// <param name="outStream">Sysem.IO.Stream to receive the byte stream 
         /// for this ILBaseArray</param>
-        /// <returns>true on success, false on error</returns>
+        /// <returns>True on success, false on error.</returns>
         public virtual bool Serialize(Stream outStream) {
             try {
                 BinaryFormatter bf = new BinaryFormatter();
@@ -452,7 +452,7 @@ namespace ILNumerics {
         /// ILArray from</param>
         /// <returns><![CDATA[ILArray<BaseT>]]> reconstructed from Stream. If 
         /// the ILArray could not get restored, an SerializationException 
-        /// will be thrown. </returns>
+        /// will be thrown.</returns>
         public static ILBaseArray<BaseT> Deserialize(Stream inStream) {
             try {
                 BinaryFormatter bf = new BinaryFormatter();
@@ -463,7 +463,7 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// Create iterator for the elements of the current instance of ILBaseArray
+        /// Create iterator for the elements of the current instance of ILBaseArray.
         /// </summary>
         /// <returns>Iterator of the same type as the current instance of ILBaseArray, initialized 
         /// to the first element, ready for counting forwards on 
@@ -471,17 +471,17 @@ namespace ILNumerics {
         public abstract ILIterator<BaseT> CreateIterator();
         /// <summary>
         /// Create iterator for the elements of the current instance of ILBaseArray, specify start 
-        /// element and dimension to walk along
+        /// element and dimension to walk along.
         /// </summary>
-        /// <param name="pos">start position. One out of the ILIteratorPositions: 
-        /// ILStart, ILMiddle, ILEnd</param>
-        /// <param name="leadingDimension">The dimension index to walk along</param>
-        /// <returns>Iterator of the same type as the current instance of ILBaseArray
+        /// <param name="pos">Start position. One of the ILIteratorPositions: 
+        /// ILStart, ILMiddle, ILEnd.</param>
+        /// <param name="leadingDimension">The dimension index to walk along.</param>
+        /// <returns>Iterator of the same type as the current instance of ILBaseArray.
         /// </returns>
         public abstract ILIterator<BaseT> CreateIterator(ILIteratorPositions pos, int leadingDimension);
 
         /// <summary>
-        /// Determine if this array holds numeric values
+        /// Determine if this array holds numeric values.
         /// </summary>
         /// <remarks>An ILArray is stated to be 'numeric' as long as its inner type is one of the 
         /// following: 
@@ -559,7 +559,7 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// Determine if this array has complex elements
+        /// Determine if this array has complex elements.
         /// </summary>
         public override bool IsComplex {
             get {
@@ -604,9 +604,9 @@ namespace ILNumerics {
         #region IEnumerable<ILBaseArray<BaseT>> Member
 
         /// <summary>
-        /// create enumerator returning skalar <![CDATA[ILArray<BaseT>]]>
+        /// Create enumerator returning scalar <![CDATA[ILArray<BaseT>]]>.
         /// </summary>
-        /// <returns>enumerator</returns>
+        /// <returns>Enumerator.</returns>
         /// <remarks>This makes objects of type <![CDATA[ILBaseArray<BaseT>]]> usable in a foreach loop.</remarks>
        public virtual IEnumerator<ILArray<BaseT>> GetEnumerator ( ) {
             int len = m_dimensions.NumberOfElements; 
@@ -614,17 +614,17 @@ namespace ILNumerics {
                 yield return new ILArray<BaseT>(new BaseT[]{GetValue(i)});
         }
         /// <summary>
-        /// create enumerator 
+        /// Create enumerator.
         /// </summary>
-        /// <returns>generic enumerator of inner base type as IEnumerator interface</returns>
+        /// <returns>Generic enumerator of inner base type as IEnumerator interface.</returns>
         /// <remarks>This makes objects of type <![CDATA[ILBaseArray<BaseT>]]> usable in a foreach loop.</remarks>
         IEnumerator  IEnumerable.GetEnumerator() {
             return GetEnumerator(); 
         }
         /// <summary>
-        /// create enumerator returning elements of inner base type
+        /// Create enumerator returning elements of inner base type.
         /// </summary>
-        /// <value>enumerator walking along the first dimension</value>
+        /// <value>Enumerator walking along the first dimension.</value>
         /// <remarks>This makes the return value usable in a foreach loop.</remarks>
         public virtual IEnumerable<BaseT> Values {
             get{
@@ -634,10 +634,10 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// create enumerator capable of walking along arbitrary dimensions 
+        /// Create enumerator capable of walking along arbitrary dimensions. 
         /// </summary>
-        /// <param name="leaddim">leading dimension</param>
-        /// <returns>enumerator of inner base type</returns>
+        /// <param name="leaddim">Leading dimension.</param>
+        /// <returns>Enumerator of inner base type.</returns>
         /// <remarks>This makes the return value usable in a foreach loop.</remarks>
         public virtual IEnumerable<BaseT> Iterator(int leaddim) {
             ILIterator<BaseT> it = CreateIterator(ILIteratorPositions.ILStart,leaddim); 
@@ -653,43 +653,43 @@ namespace ILNumerics {
     /// </summary>
     public enum NumericType {
         /// <summary>
-        /// double element type
+        /// double element type.
         /// </summary>
         Double,
         /// <summary>
-        /// float element type
+        /// float element type.
         /// </summary>
         Single,
         /// <summary>
-        /// complex element type
+        /// complex element type.
         /// </summary>
         Complex ,
         /// <summary>
-        /// fcomplex element type
+        /// fcomplex element type.
         /// </summary>
         FComplex,
         /// <summary>
-        /// byte element type
+        /// byte element type.
         /// </summary>
         Byte,
         /// <summary>
-        /// char element type
+        /// char element type.
         /// </summary>
         Char,
         /// <summary>
-        /// Int16 element type
+        /// Int16 element type.
         /// </summary>
         Int16,
         /// <summary>
-        /// Int32 element type
+        /// Int32 element type.
         /// </summary>
         Int32,
         /// <summary>
-        /// Int64 element type
+        /// Int64 element type.
         /// </summary>
         Int64,
         /// <summary>
-        /// unsigned UInt16 element type
+        /// unsigned UInt16 element type.
         /// </summary>
         UInt16,
         /// <summary>
@@ -697,7 +697,7 @@ namespace ILNumerics {
         /// </summary>
         UInt32,
         /// <summary>
-        /// unsigned UInt64 element type
+        /// unsigned UInt64 element type.
         /// </summary>
         UInt64
     }

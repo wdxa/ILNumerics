@@ -42,29 +42,28 @@ namespace ILNumerics {
     /// <summary>
     /// Main rectangular generic array type. Objects of this class are able to build references.
     /// </summary>
-    /// <typeparam name="BaseT">inner type. This will mostly be a system numeric type or a 
+    /// <typeparam name="BaseT">Inner type. This will mostly be a system numeric type or a 
     /// complex floating point type.</typeparam>
-    /// <remarks> This class serves as the main rectangular array holding arbitrary elements 
-    /// in arbitrary dimensions. The most common specialisation will be a numeric array of arbitrary size. 
-    /// <para>The most significant property of ILArray's is the ability to create, hold and handle references of other 
-    /// ILArray's. Those references act like a solid array to the outside world but consume only a very little 
-    /// memory itself. Therefore they directly use the elements of the original array for computations and only 
-    /// store access rules in a very economical yet performant way. Write access to any arrays involved is 
-    /// controlled by internal reference counting. The references are detached accordingly. That behavior 
-    /// may also get flexible adjusted by the user of the library due to the 
+    /// <remarks>This class serves as the main rectangular array, holding arbitrary elements 
+    /// in arbitrary dimensions. The most common manifestation will be a numeric array of arbitrary size. 
+    /// <para>The most significant property of the ILArray is its ability to create, hold and handle references to other 
+    /// ILArrays. Those references act like a solid array to the outside world but consume only a very small amount of 
+    /// memory themselves. Therefore they directly use the elements of the original array for computations and only 
+    /// store access rules in a very economical yet performant way. Write access to any such arrays is 
+    /// controlled by internal reference counting. The references are detached accordingly. Detaching behavior 
+    /// may also be adjusted in a flexible way by the library user by appropriately setting the 
     /// <see cref="ILDetachingBehavior">ILDetachingBehavior</see> property. </para>
     /// <para>The inner type of the elements (specified through the generic parameter BaseT)
-    /// does not change the general behavior of the ILArray<![CDATA[<>]]>. However, if it comes 
-    /// to mathematical operations there is a limited number 
-    /// of inner types common mathematical functions and operators are defined for. All basic 
-    /// operations (+,-,*,/,<![CDATA[<,>,<=]]>,etc.) are defined for all ILArray's having 
+    /// does not change the general behavior of the ILArray<![CDATA[<>]]>. However, regarding mathematical operations, 
+    /// there are a limited number of inner types that common mathematical functions and operators are defined for. All basic 
+    /// operations (+,-,*,/,<![CDATA[<,>,<=]]>,etc.) are defined for all ILArrays having 
     /// the inner type BaseT of a numeric type (system defined like 'double','int' - or complex, fcomplex).
-    /// Some functions are defined for even less types. This is the case mostly for all linear algebraic functions 
-    /// explicilty involving matrices or vectors (LAPACK) and for trigonometric functions and those, 
-    /// wich explicitly return floating point values (cos, atan etc.). Therefore you may create ILArrays 
-    /// of arbitrary types, but might not be able to use them afterwards in other then some basic 
+    /// Some functions are defined for even fewer types. This is the case mostly for linear algebraic functions 
+    /// explicitly involving matrices or vectors (LAPACK) and for trigonometric functions and those, 
+    /// which explicitly return floating point values (cos, atan etc.). Therefore you may create ILArrays 
+    /// of arbitrary types, but might not be able to use them afterwards other than by applying the
     /// operations defined for all ILArrays - regardless of the inner type - like concatenation, (de)serialization and 
-    /// string exports. </para>
+    /// string export.</para>
     /// </remarks>
     /// <seealso cref="ILBaseArray"/>
     [Serializable]
@@ -75,13 +74,13 @@ namespace ILNumerics {
         #region members + properties 
  
         /// <summary>
-        /// index mapping for reference arrays. Null if this is not a reference but a solid array.
+        /// Index mapping for reference arrays. Null if this is not a reference but a solid array.
         /// </summary>
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)] 
         internal protected ILIndexOffset m_indexOffset;
         
         /// <summary>
-        /// index mapping for reference arrays. Null if this is not a reference but a solid array.
+        /// Index mapping for reference arrays. Null if this is not a reference but a solid array.
         /// </summary>
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)] 
         internal ILIndexOffset IndexOffset {
@@ -95,7 +94,7 @@ namespace ILNumerics {
         /// if it is a physical storage actually holding values itself (called a 'solid array').
         /// </summary>
         /// <return>
-        /// True if this ILArray holds a reference storage, false otherwise
+        /// True if this ILArray holds a reference storage, false otherwise.
         /// </return>
         /// <remarks>
         /// This parameter is readonly. It is useful for estimating the cost for 
@@ -110,13 +109,13 @@ namespace ILNumerics {
         }
    
         /// <summary>
-        /// create transposed version transpose / dimension shift by 1 dimension
+        /// Create transposed version: dimension shift of 1 dimension.
         /// </summary>
-        /// <remarks>this is an alias for GetShifted(1).
-        /// <para><c>T</c> returns an Array of the same size than this array, but 
-        /// having the dimensions shifted by 1. This array may be a vector, matrix or n-dimensional array.</para>
+        /// <remarks>This is an alias for GetShifted(1).
+        /// <para><c>T</c> returns an array of the same size as the original array, but 
+        /// with the dimensions shifted by 1. This array may be a vector, matrix or N-dimensional array.</para>
         /// <para>For complex arrays the result will <![CDATA[<b>NOT<b/>]]> be the complex conjugate! The 
-        /// content of this array will copied only without altering.</para>
+        /// content of this array will be copied without alteration.</para>
         /// </remarks>
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
         public ILArray<BaseT> T {
@@ -126,9 +125,9 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// create solid clone of this object
+        /// Create solid clone of this object.
         /// </summary>
-        /// <remarks>this is a casting alias for object <![CDATA[ILArray<BaseT>.Clone()]]>.</remarks>
+        /// <remarks>This is a casting alias for object <![CDATA[ILArray<BaseT>.Clone()]]>.</remarks>
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
         public ILArray<BaseT> C {
             get {
@@ -137,9 +136,9 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// create full reference of this object
+        /// Create full reference of this object.
         /// </summary>
-        /// <remarks>this is a casting alias for object <![CDATA[ILArray<BaseT>.CreateReference()]]>.</remarks>
+        /// <remarks>This is a casting alias for object <![CDATA[ILArray<BaseT>.CreateReference()]]>.</remarks>
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
         public ILArray<BaseT> R {
             get {
@@ -148,13 +147,13 @@ namespace ILNumerics {
         }
         
         /// <summary>
-        /// Maximum of all elements in this array (if existing)
+        /// Maximum of all the elements of the array (if this exists).
         /// </summary>
         /// <remarks>For reference types the original element will be returned. No copy will be made!
-        /// <para>in order to be comparable, the inner type of this array must implement IComparable. If it does not, 
+        /// <para>In order to be comparable, the inner type of this array must implement IComparable. If it does not, 
         /// an exception will be thrown. Note: all numeric System types do implement IComparable.</para>
         /// </remarks>
-        /// <exception cref="ILArgumentTypeException"> if the inner type BaseT cannot be compared. Inner types 
+        /// <exception cref="ILArgumentTypeException">If the inner type BaseT cannot be compared. Inner types 
         /// must implement IComparable&lt;BaseT&gt; in order to compute the minimum.</exception>
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
         public BaseT MaxValue {
@@ -580,13 +579,13 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// Minimum of all elements in this array (if existing)
+        /// Minmum of all the elements of the array (if this exists).
         /// </summary>
         /// <remarks>For reference types the original element will be returned. No copy will be made!
-        /// <para>in order to be comparable, the inner type of this array must implement IComparable. If it does not, 
+        /// <para>In order to be comparable, the inner type of this array must implement IComparable. If it does not, 
         /// an exception will be thrown. Note: all numeric System types do implement IComparable.</para>
         /// </remarks>
-        /// <exception cref="ILArgumentTypeException"> if the inner type BaseT cannot be compared. Inner types 
+        /// <exception cref="ILArgumentTypeException">If the inner type BaseT cannot be compared. Inner types 
         /// must implement IComparable&lt;BaseT&gt; in order to compute the minimum.</exception>
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
         public BaseT MinValue {
@@ -1012,12 +1011,12 @@ namespace ILNumerics {
         }
         
         /// <summary>
-        /// Get minimum and maximum value of all elements - if exist
+        /// Get minimum and maximum value of all elements - if these exist.
         /// </summary>
-        /// <param name="minValue">output: minimum value</param>
-        /// <param name="maxValue">output: maximum value</param>
-        /// <returns>true if the limits exists and could be computed, false otherwise</returns>
-        /// <remarks>Empty arrays will return false. The output parameter will be found as default(type).</remarks>
+        /// <param name="minValue">Output: minimum value.</param>
+        /// <param name="maxValue">Output: maximum value.</param>
+        /// <returns>True if the limits exists and could be computed, false otherwise.</returns>
+        /// <remarks>Empty arrays will return false. The output parameter will be default(type).</remarks>
         public bool GetLimits(out BaseT minValue, out BaseT maxValue) {
             minValue = default(BaseT);   
             maxValue = default(BaseT);
@@ -1602,26 +1601,26 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// Create referencing copy of this array
+        /// Create referencing copy of this array.
         /// </summary>
-        /// <returns>Reference of this ILArray</returns>
-        /// <remarks><para>This function is mainly needed for ILCell. Elements of ILCells given back must be 
-        /// detached from their originals in order not to overwrite them on write access. Since ILCell 
-        /// may store any types of arrays (ILBaseArray's) and the actual type is not known, ILBaseArrays 
-        /// must be capable of creating a copy of themself. For generic ILArray's this is done in the 
+        /// <returns>Reference of the ILArray.</returns>
+        /// <remarks><para>This function is mainly needed for ILCell. Elements of ILCells returned must be 
+        /// detached from their originals in order not to overwrite them on write access. Since an ILCell 
+        /// may store any type of array (ILBaseArrays) and the actual type is not known, ILBaseArrays 
+        /// must be capable of creating a copy of themselves. For generic ILArrays this is done by the 
         /// <see cref="ILArray&lt;BaseT&gt;.CreateReference()"/>  member. </para>
         /// <para>The actual storage type of the object returned depends on the setting of the member <see cref="ILNumerics.ILArray&lt;BaseT&gt;.MinimumRefDimensions"/>. If the number 
-        /// of dimensions of this array is larger or equal its numer, the object returned will be a reference array. Otherwise it will be a physical 
+        /// of dimensions of this array is larger or equal its value, the object returned will be a reference array, otherwise it will be a physical array.
         /// array anyway. This is especially true for scalars and vectors.</para></remarks>
         public override ILBaseArray CreateReference() {
             return ShiftDimensions(0); 
         }
 
         /// <summary>
-        /// Determine if the referencing ILArray must get detached before writing to it
+        /// Determine if the referencing ILArray must be detached before writing to it.
         /// </summary>
-        /// <returns>True: the current instance must get detached before writing to it. 
-        /// False: one may instntly write to elements of the current instance without detaching it.
+        /// <returns>True: the current instance must be detached before writing to it. 
+        /// False: one may immediately write to elements of the current instance without detaching it.
         /// </returns>
         /// <remarks>
         /// The result depends on the static attribute DetachingBehavior.</remarks>
@@ -1651,19 +1650,19 @@ namespace ILNumerics {
         }
        
         /// <summary>
-        /// Detach this storage if it is a referencing storage. Change this into a solid physical copy.
+        /// Detach this array if it is a referencing array. Change into a solid physical copy.
         /// </summary>
-        /// <remarks> If this storage is a referencing storage, it will 
+        /// <remarks>If this array is a referencing array, it will 
         /// be detached. Therefore a (shallow) physical copy of the elements is created.
-        /// Keep in mind, for ILArrays of base tpye 'object', only the references to real 
-        /// objects are copied, not the referenced objects itself (no 'deep' copy!).
-        /// If this storage already is a 'physical' (i.e.solid) storage, the method will have no effect.
-        /// <br>For reference storages this will lead to a dereferencing copy. This is 
-        /// true for solid ILStorages also. The returned object always is a solid storage. 
+        /// Keep in mind, for ILArrays of base type 'object', only the references to real 
+        /// objects are copied, not the referenced objects themselves (this is a shallow, not a deep copy!).
+        /// If this storage is already a solid (i.e. physical) storage, the method will have no effect.
+        /// <br>For referencing storage this will lead to a dereferencing copy. This is 
+        /// true for solid ILArrays also. The returned object is always a solid storage. 
         /// Detaching an object will decrease the reference counter of the array formerly 
         /// referenced by it. Detach will not check if other references on the storage array exist.
-        /// Therefore it might happen, this storage is the only reference to an storage array and 
-        /// detaching may be unnesseccary - or even worse - migth increase the memory needed to
+        /// Therefore it might happen that this storage is the only reference to an storage array and 
+        /// detaching may be unnecessary - or even worse - might increase the memory required to
         /// store the data (this only becomes true for referencing storages with repeated entries).
         /// </br></remarks>
         public virtual ILArray<BaseT> Detach() {
@@ -1696,10 +1695,10 @@ namespace ILNumerics {
 
         #region static functions 
         /// <summary>
-        /// Create array with all elements initialized to zero
+        /// Create array with all elements initialized to zero.
         /// </summary>
-        /// <param name="dimensions">length of each dimension. This may be a comma separated 
-        /// list of int values</param>
+        /// <param name="dimensions">Length of each dimension. This may be a comma separated 
+        /// list of int values.</param>
         /// <returns>Solid ILArray of specified size.</returns>
         public static ILArray<BaseT> zeros(params int[] dimensions) {
             ILDimension dim = new ILDimension(dimensions);
@@ -1707,27 +1706,27 @@ namespace ILNumerics {
             return new ILArray<BaseT>(data, dimensions);
         }
         /// <summary>
-        /// Create array with all elements initialized to zero
+        /// Create array with all elements initialized to zero.
         /// </summary>
-        /// <param name="dimension">ILDimension object</param>
+        /// <param name="dimension">ILDimension object.</param>
         /// <returns>Solid ILArray of specified size.</returns>
-        /// <remarks>The ILDimension given will be cloned before used.</remarks>
+        /// <remarks>The ILDimension given will be cloned before being used.</remarks>
         public static ILArray<BaseT> zeros (ILDimension dimension) {
             bool cleared = false; 
             BaseT[] data = ILMemoryPool.Pool.New<BaseT>(dimension.NumberOfElements, true, out cleared);
             return new ILArray<BaseT>(data, dimension);
         }
         /// <summary>
-        /// create empty array, size (0 x 0)
+        /// Create empty array, size (0x0).
         /// </summary>
-        /// <returns>Empty ILArray</returns>
+        /// <returns>Empty ILArray.</returns>
         public static ILArray<BaseT> empty(ILDimension dims) {
             return new ILArray<BaseT>(new BaseT [0],dims);
         }
         /// <summary>
-        /// create empty array, size (0 x 0)
+        /// Create empty array, size (0x0)
         /// </summary>
-        /// <returns>Empty ILArray</returns>
+        /// <returns>Empty ILArray.</returns>
         public static ILArray<BaseT> empty(params int[] dims) {
             if (dims == null || dims.Length == 0) 
                 return empty(0,0); 
@@ -1737,33 +1736,33 @@ namespace ILNumerics {
 
         #region overriding object . ToString(), Equals()
         /// <summary>
-        /// write informations about this ILArray to string
+        /// Write information about the ILArray to string.
         /// </summary>
         /// <returns>String containing general information about the current instance of 
-        /// ILArray and the formated elements values.</returns>
+        /// ILArray and the formatted elements' values.</returns>
         /// <remarks>If the number of elements exceeds 10000 the writing of all elements will 
-        /// be ommitted.</remarks>
+        /// be suppressed.</remarks>
         public override string ToString() {
             return ToString("",0);
         }
         /// <summary>
-        ///  formated output for this ILArray
+        /// Formatted output for the ILArray.
         /// </summary>
         /// <param name="s">
-        /// predefined string to be prepended to the output. This may be an empty String (not null!).
+        /// predefined string to be appended to the output. This may be an empty String (not null!).
         /// </param>
-        /// <param name="maxLength">maxmum number of characters for the output lines.</param>
-        /// <returns>Formated string holding all values of this storage.
-        ///  If the number of values exceeds 10.000, the number of elements 
+        /// <param name="maxLength">Maxmum number of characters for the output lines.</param>
+        /// <returns>Formatted string holding all values of this storage.
+        ///  If the number of values exceeds 10000, the number of elements 
         ///  will be printed only.</returns>
         public virtual String ToString(String s, int maxLength) {
             ILFormatter<BaseT> formater = new ILFormatter<BaseT>(this); 
             return formater.ToString("",0); 
         }
         /// <summary>
-        /// here is created, what will be displayed in the headline of the objects if displayed in variable windows
+        /// Here is defined the string displayed in the headline of the objects if displayed in variable windows.
         /// </summary>
-        /// <returns>string with the headline - value is depending on the size of the array</returns>
+        /// <returns>String with the headline - value depends on the size of the array.</returns>
         internal string debuggerHeadLineDisplay () {
             StringBuilder ret = new StringBuilder(20); 
             Type type = GetType(); 
@@ -1788,14 +1787,12 @@ namespace ILNumerics {
             return ret.ToString(); 
         }
 
-                
-
         /// <summary>
-        /// print formated values to string (in the 'matlab style')
+        /// Print formatted values to string (in 'matlab style').
         /// </summary>
-        /// <param name="maxLength">maximum number of characters per line. Set 
-        /// to 0 to not limit this length at all.</param>
-        /// <returns>StringBuilder object filled with formated value's </returns>
+        /// <param name="maxLength">Maximum number of characters per line. Set 
+        /// to 0 to entirely suppress the limit.</param>
+        /// <returns>StringBuilder object filled with formated values.</returns>
         public override StringBuilder ValuesToString(int maxLength) {
             StringBuilder s = new StringBuilder();
             if (maxLength <= 0) maxLength = int.MaxValue;
@@ -2695,12 +2692,12 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// Check if the content of this array equals the content of obj
+        /// Check if the content of this array equals the content of obj.
         /// </summary>
-        /// <param name="obj">typed ILArray containing the values to compare this array with</param>
-        /// <returns>true if all elements contained in obj are equal to the 
-        /// elements of this array. False otherwise.</returns>
-        /// <remarks> This method compares the object references of corresponding elements. 
+        /// <param name="obj">Typed ILArray containing the values with which to compare this array.</param>
+        /// <returns>True if all elements contained in obj are equal to the 
+        /// elements of this array, false otherwise.</returns>
+        /// <remarks>This method compares the object references of corresponding elements. 
         /// The size and type of both arrays must match. Otherwise false will be returned.</remarks>
         public override bool Equals(object obj) {
             if (obj == null) return false; 
@@ -2715,10 +2712,10 @@ namespace ILNumerics {
             return Equals(ILObj);
         }
         /// <summary>
-        /// test if this ILArray equals another ILBaseArray
+        /// Test if this ILArray equals another ILBaseArray.
         /// </summary>
-        /// <param name="obj">ILBaseArray to compare this ILArray with</param>
-        /// <returns>true if all elements match, false otherwise</returns>
+        /// <param name="obj">ILBaseArray with which to compare this ILArray.</param>
+        /// <returns>True if all elements match, false otherwise.</returns>
         public bool Equals(ILBaseArray<BaseT> obj) {
             if (obj == null) return false;
             if (!obj.m_dimensions.IsSameSize(m_dimensions))
@@ -2742,7 +2739,7 @@ namespace ILNumerics {
         /// <summary>
         /// Get Hash Code of the current instance.
         /// </summary>
-        /// <returns>Hash code of the current instance</returns>
+        /// <returns>Hash code of the current instance.</returns>
         public override int GetHashCode() {
             return base.GetHashCode(); 
         }
@@ -2750,10 +2747,10 @@ namespace ILNumerics {
 
         #region subarray + range get / set 
         /// <summary>
-        ///	Alter values specified by range
+        ///	Alter values specified by range.
         /// </summary>
         /// <param name="range">
-        /// ILRange specifying the dimensions/indices to be altered
+        /// ILRange specifying the dimensions/indices to be altered.
         /// </param>
         /// <param name="values">
         /// ILIterator initialized and pointing to the ILArray 
@@ -2763,28 +2760,28 @@ namespace ILNumerics {
         /// The values pointed to by range will be replaced with the values 
         /// found in 'values'. 
         /// A remarkable situation arises, if this storage is the only 
-        /// reference wich is left to an physical storage array and it holds 
+        /// reference which is left to an physical storage array and it holds 
         /// multiple (repeated) entries to single array elements. Due to the 
-        /// nature of a "reference", altering any values will also update corresponding
+        /// nature of a 'reference', altering any values will also update corresponding
         /// entries in the reference storage, pointing to the same underlying elements. 
         /// (In fact, those corresponding values will only point to the updated 
-        /// elements also.) Keep in mind, that setting a range for a reference which 
+        /// elements also.) Keep in mind that setting a range for a reference which 
         /// is connected to an array which is referenced by more than one storage, will 
         /// usually lead to a Detach() process - therefore the storage gets disconnected 
         /// and the behavior described will not happen. Since for the user the result 
-        /// is not transparent, consider to eather 
+        /// is not transparent, consider either: 
         /// <list type="bullet">
         /// <item>
-        /// check the state of the storage before calling SetRange() </item>
+        /// checking the state of the storage before calling SetRange() </item>
         /// <item>Detach() the storage manually, if required, or</item>
         /// <item>set the static flag ILDetachingBehavior to DetachAlways or DetachWrite (default)
         /// to detach all reference storages automatically before altering any values on it.</item>
         /// </list> 
         /// However there may be situations, where one may want to alter many values by changing only 
         /// one. Therefore the above mentioned flag might be set to true if needed. 
-        /// <para>If range contains indices outside of the my dimensions, this array will be reshaped (expanded)
-        /// yccording to those indices. However this might lead to a performance penalty. So you better not 
-        /// expand an array by addressing indices outside of my dimensions! Consult the reference manual for hints 
+        /// <para>If range contains indices outside of the array dimensions, this array will be reshaped (expanded)
+        /// according to those indices. However this might lead to a performance penalty;
+        /// expanding an array by addressing indices outside of the dimensions should therefore be avoided. Consult the reference manual for hints 
         /// to circumvent this situation.</para>
         /// </remarks>
         public override void SetRange(ILRange range, ILBaseArray<BaseT> values) {
@@ -3693,10 +3690,10 @@ namespace ILNumerics {
 #endregion HYCALPER AUTO GENERATED CODE
 
         /// <summary>
-        /// Get / set diagonal elements 
+        /// Get / set diagonal elements. 
         /// </summary>
-        /// <value>vector of same length as number of diagonal elements or scalar. If value is scalar, 
-        /// all diagonal elements will be filled with this scalar value.</value>
+        /// <value>Vector of the same length as the number of diagonal elements or scalar. If value is scalar, 
+        /// all diagonal elements will be filled with this value.</value>
         public ILArray<BaseT> Diagonal {
             get {
                 return BuiltInFunctions.ILMath.diag (this); 
@@ -3743,13 +3740,12 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// Create Reference of the current instance of ILArray and simultanously shift 
-        /// dimensions
+        /// Create referencing or solid array from this array, with shifted dimensions.
         /// </summary>
-        /// <param name="shift">number of dimensions to shift the result</param>
-        /// <returns>ILArray pointing to the current instance</returns>
-        /// <remarks> <para> the type of array returned will depend on the size of the array and
-        /// the setting of the MinimumRefDimensions member.</para></remarks>
+        /// <param name="shift">Number of dimensions to shift the array.</param>
+        /// <returns>Shifted ILArray of the same type.</returns>
+        /// <remarks><para>The type of array returned will (referencing / solid) depends on the size of the array and
+        /// the MinimumRefDimensions member. Shift is to the left.</para></remarks>
 		public override ILBaseArray<BaseT> ShiftDimensions (int shift) {
 			if (m_dimensions.NonSingletonDimensions 
 				>= MinimumRefDimensions) {
@@ -3765,22 +3761,23 @@ namespace ILNumerics {
 			}
         }
         /// <summary>
-        /// Get shifted version of this array
+        /// Create referencing or solid array from this array, with shifted dimensions.
         /// </summary>
-        /// <param name="shift">number of dimensions to shift</param>
-        /// <returns>ILArray of the same type having its dimensions shifted accordingly.</returns>
-        /// <remarks><paramref name="shift"/> may be any integer value. It will be used in modulus 
-        /// the number of my dimensions.
-        /// <para>This is an alias or shortcut for <see cref="ILNumerics.ILArray&lt;BaseT&gt;.ShiftDimensions(int)"/> </para></remarks>
+        /// <param name="shift">Number of dimensions to shift the array.</param>
+        /// <returns>Shifted ILArray of the same type.</returns>
+        /// <remarks><para>The type of array returned will (referencing / solid) depends on the size of the array and
+        /// the MinimumRefDimensions member. Shift is to the left.</para>
+        /// <para>This is an alias or shortcut for <see cref="ILNumerics.ILArray&lt;BaseT&gt;.ShiftDimensions(int)"/></para>
+        /// </remarks>
         public ILArray<BaseT> S(int shift) {
             return (ILArray<BaseT>)ShiftDimensions(shift); 
         }
 
         /// <summary>
-        /// get reference to this array having the dimensions shifted by <c>shiftDimensions</c>.
+        /// Create referencing or solid array from this array, with shifted dimensions.
         /// </summary>
-        /// <param name="shiftDimensions">number of dimensions to shift this array (to the left for positive values)</param>
-        /// <returns>Referencing ILArray of the same type and size with <c>shiftDimensions</c> dimensions shifted to the left.</returns>
+        /// <param name="shiftDimensions">Number of dimensions to shift the array (to the left for positive values)</param>
+        /// <returns>Shifted ILArray of the same type.</returns>
         public ILArray<BaseT> GetShifted(int shiftDimensions) {
             //if (shiftDimensions != 1 || !IsComplex || !IsMatrix) 
                 return (ILArray<BaseT>) ShiftDimensions(shiftDimensions);
@@ -3798,14 +3795,13 @@ namespace ILNumerics {
         #region Reshape, Concat, Repmat  - overriding ILBaseArray<BaseT>
 
         /// <summary>
-        /// Reshape this array
+        /// Reshape this array.
         /// </summary>
-        /// <param name="newDimensions">new dimension object</param>
-        /// <returns>This array after reshaping.</returns>
-        /// <remarks><para>This member changes the current objects dimension. The ILArray will have the 
-        /// size and number of dimension specified by newDimensions. </para>
-        /// <para>If this is a reference array, it is beeing detached.</para></remarks>
-        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if the number of elements dont stay the same</exception>
+        /// <param name="newDimensions">New dimensions of the array.</param>
+        /// <returns>Array after reshaping.</returns>
+        /// <remarks><para>This member changes the current array's dimensions as specified by newDimensions.</para>
+        /// <para>If this is a reference array, it will be detached.</para></remarks>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">If the number of elements do not remain the same.</exception>
         public ILArray<BaseT> Reshape(ILDimension newDimensions) {
             if (newDimensions.NumberOfElements != m_dimensions.NumberOfElements)
                 throw new ILArgumentSizeException ("Reshape: the number of elements must not change!"); 
@@ -3816,14 +3812,13 @@ namespace ILNumerics {
             return this; 
         }
         /// <summary>
-        /// Reshape this array
+        /// Reshape this array.
         /// </summary>
-        /// <param name="dims">new dimension length</param>
-        /// <returns>this array after reshaping</returns>
-        /// <remarks><para>This member changes the current objects dimension. The ILArray will have the 
-        /// size and number of dimension specified by newDimensions. </para>
-        /// <para>If this is a reference array, it is beeing detached.</para></remarks>
-        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if the number of elements dont stay the same</exception>
+        /// <param name="dims">New dimensions of the array.</param>
+        /// <returns>Array after reshaping.</returns>
+        /// <remarks><para>This member changes the current arrays dimensions as specified by newDimensions.</para>
+        /// <para>If this is a reference array, it will be detached.</para></remarks>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">If the number of elements do not remain the same.</exception>
         public ILArray<BaseT> Reshape(params int[] dims) {
             ILDimension newDimension = new ILDimension(dims); 
             return Reshape(newDimension); 
@@ -3831,26 +3826,26 @@ namespace ILNumerics {
 
 
         /// <summary>
-        /// Concatenate this array 
+        /// Concatenate this array. 
         /// </summary>
         /// <param name="inArray">N-dimensional array</param>
-        /// <param name="leadDim">index of dimension to concatenate arrays along.
+        /// <param name="leadDim">Index of dimension along which to concatenate the arrays.
         /// If leadDim is larger than the number of dimensions of one of the arrays
-        /// its value will be used in modulus</param>
-        /// <returns>array having the size of both input arrays layed behind each 
-        /// other along the leadDim's-dimension</returns>
+        /// its value will be used in modulus.</param>
+        /// <returns>Array having the size of both input arrays laid beside one 
+        /// another along the leadDims-dimension</returns>
         /// <remarks>The array returned will be a 
         /// <list type="bullet">
-        /// <item> reference storage, if inArray is the same as this (object references 
+        /// <item>Reference storage, if inArray is the same as this array (object references 
         /// are the same) and ILArray.MinimumRefDimensions is less or equal 
         /// the number of dimensions of the resulting storage, or a 
         /// </item>
-        /// <item>physical storage else. 
+        /// <item>Physical storage otherwise. 
         /// </item></list>
         /// There are only very few cases where it is possible to reference two arrays in the 
-        /// same reference storage. Not only the storages must point to the same underlying 
-        /// physical System.Array, but the ILIndexOffset must be suited in a special way. 
-        /// Therefore the restriction was made always to create a solid storage, if 
+        /// same reference storage. Not only must the storages point to the same underlying 
+        /// physical System.Array, but the ILIndexOffset must be suited in a particular way. 
+        /// Therefore the restriction was made to always create a solid storage, if 
         /// both storages are not the same.</remarks>
         public ILArray<BaseT> Concat(ILArray<BaseT> inArray, int leadDim) {
             ILDimension inDim = inArray.m_dimensions;
@@ -3966,22 +3961,22 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// Replicate this storage. Make large storage out of this
+        /// Replicate this storage to create a larger array.
         /// </summary>
-        /// <param name="dims">dimensions specifier. This may be a 
+        /// <param name="dims">Dimensions specifier. This may be a 
         /// list or an array of integer values. If the number of elements in dim is 
         /// less the number of dimensions in this array, the trailing dimensions will 
         /// be set to 1 (singleton dimensions). On the other hand, if the number specified 
-        /// is larger then the number of dimension of this array - the result 
-        /// will get its number of dimensions extended accordingly. </param>
-        /// <returns>large array beeing a multiple (dims) copy of this array along 
-        /// arbitrary dimensions</returns>
+        /// is larger then the number of dimensions of this array, the result 
+        /// will have its number of dimensions extended accordingly. </param>
+        /// <returns>Large array which is a multiple (dims) copy of this array along 
+        /// arbitrary dimensions.</returns>
         /// <remarks>The array returned will be a 
         /// <list type="bullet">
-        /// <item> reference array, if the number of resulting dimensions is &lt;= 
+        /// <item>Referencing array, if the number of resulting dimensions is &lt;= 
         /// MinimumRefDimensions, or a 
         /// </item>
-        /// <item>dense array else. 
+        /// <item>Solid array otherwise. 
         /// </item></list>
         /// </remarks>
         public ILArray<BaseT> Repmat(params int[] dims) {
@@ -4066,21 +4061,21 @@ namespace ILNumerics {
         //    }
         //}
         /// <summary>
-        /// Remove dimension indices specified from array
+        /// Remove the indices of the specified dimension from array.
         /// </summary>
-        /// <param name="dimension">index of dimension where the <c>indices</c> are located.</param>
-        /// <param name="indices">dimension indices to be removed</param>
-        /// <remarks>after processing, the dimensions indices specified will be removed 
-        /// from all dimensions of this ILArray. The operation is done by building a reference for the 
-        /// existing ILArray. For the indices specified by range, the data 
+        /// <param name="dimension">Index of dimension where the <c>indices</c> are located.</param>
+        /// <param name="indices">Dimension indices to be removed.</param>
+        /// <remarks>After processing, the indices of the dimension specified will be removed 
+        /// from all dimensions of this ILArray. The operation is done by building a reference to the 
+        /// existing ILArray. For the indices specified, the data 
         /// will be excluded. Depending on the value of the property
         /// ILSettings.DetachReferences, this ILArray will be left as solid array (i.e. it 
-        /// would be explicitely detached) or left as referencing ILArray - which should be fine for 
+        /// would be explicitly detached) or left as referencing ILArray - which should be fine for 
         /// most situations.</remarks>
         internal void Remove(int dimension, int[] indices) {
             if (IsScalar) {
                 if (dimension < 0 || dimension > 1)
-                    throw new ILArgumentException ("error removing: invalid dimension specified!"); 
+                    throw new ILArgumentException ("Error removing: invalid dimension specified!"); 
                 if (indices.Length == 1 && indices[0] == 0) {
                     // set to empty 
                     m_data = new BaseT[0]; 
@@ -4088,7 +4083,7 @@ namespace ILNumerics {
                     m_indexOffset = null; 
                     return; 
                 } else {
-                    throw new ILArgumentException("error removing: index out of range!"); 
+                    throw new ILArgumentException("Error removing: index out of range!"); 
                 }
             }
             // non scalar case 
@@ -4110,8 +4105,8 @@ namespace ILNumerics {
                     bool[] marks = new bool[m_dimensions[d]];
                     for (int i = 0; i < indices.Length; i++) {
                         if (indices [i] >= m_dimensions[d] | indices[i] < 0)
-                             throw new ILArgumentException("Index out of range. element " 
-                                    + indices[i] + " does not exist for dimension " + d); 
+                             throw new ILArgumentException("Index out of range. Element " 
+                                    + indices[i] + " does not exist for dimension " + d + "."); 
                         if (!marks[indices[i]]) {
                             marks[indices[i]]= true;
                             usedIdx--; 
@@ -4145,13 +4140,13 @@ namespace ILNumerics {
 
         #region serialize 
         /// <summary>
-        /// Prepare for serialization
+        /// Prepare for serialization.
         /// </summary>
-        /// <param name="context">Streaming Context - provided by the formatter</param>
-        /// <remarks>if the is reference storage we save memory/traffic by eventually detaching 
-        /// this object for not having to store unused array element data. However the 
-        /// serialized version will not reference any other ILStorages/arrays anymore. It will 
-        /// be the only instance pointing to - / using the storage array.</remarks>
+        /// <param name="context">Streaming Context - provided by the formatter.</param>
+        /// <remarks>If the array is a referencing array, we save memory / traffic by eventually detaching 
+        /// this object (by not having to store unused array element data). However the 
+        /// serialized version will no longer reference any other arrays. It will 
+        /// be the only instance pointing to / using the storage array.</remarks>
         [OnSerializing]
         private void OnSerialize(StreamingContext context) {
             if (m_data.Length > m_dimensions.NumberOfElements)
@@ -4159,10 +4154,10 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// post perations after deserializing was finished
+        /// Post operations aftre deserializing is finished.
         /// </summary>
-        /// <param name="context">Streaming context provided by the formatter</param>
-        /// <remarks>After the storage was reconstructed, we need to register it 
+        /// <param name="context">Streaming context provided by the formatter.</param>
+        /// <remarks>After the storage is reconstructed, we need to register it 
         /// for reference counting.</remarks>
         [OnDeserialized]
         void OnDeserialized(StreamingContext context) {
@@ -4170,19 +4165,19 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// print values of this instance to stream 
+        /// Print values of this instance to stream. 
         /// </summary>
-        /// <param name="stream">Stream to write the values into</param>
+        /// <param name="stream">Stream to write the values into.</param>
         /// <param name="format">Format string to be used for output. See <see cref="System.String.Format(string,object)"/> for a specification
-        /// of valid formating expressions. This flag is only used, when 'method' is set to 'Serial' </param>
-        /// <param name="method">a constant out of <see cref="ILArrayStreamSerializationFlags"/>. Specifies the way 
+        /// of valid formating expressions. This flag is only used, when 'method' is set to 'Serial'.</param>
+        /// <param name="method">A constant out of <see cref="ILArrayStreamSerializationFlags"/>. Specifies the way in which
         /// the values will be serialized.</param>
-        /// <remarks><para>If for method 'Formated' is used, any occourences of a NewLine character(s) 
-        /// will be replaced from the format string before applying to the elements. This is due to 
-        /// prevent the format from breaking the 'page' style for the output. </para>
-        /// <para>If 'method' is set to 'Matlab', the array will be written as Matfile version 5.0. No compression will be used. The internal 'Name' property will be used as 
-        /// array name for writing. This array instance will be the only array in the mat file. If you want to write several arrays bundled into one mat file, use the MatFile class to
-        /// create a collection of arrays and write the MatFile to stream than. </para></remarks>
+        /// <remarks><para>If the 'Formatted' method is used, any occurences of the NewLine character(s) 
+        /// will be replaced from the format string before applying to the elements. This is done to 
+        /// prevent the format from breaking the 'page' style of the output.</para>
+        /// <para>If 'method' is set to 'Matlab', the array will be written as Matfile version 5.0. No compression will be used. The internal 'Name' property will be used as the
+        /// array name for writing. This array instance will be the only array in the .mat file. If you want to write several arrays bundled into one mat file, use the MatFile class to
+        /// create a collection of arrays and write the MatFile to stream.</para></remarks>
         public override void ToStream(Stream stream, string format, ILArrayStreamSerializationFlags method) {
           try {
             int len; 
@@ -4215,9 +4210,9 @@ namespace ILNumerics {
         }
 
         /// <summary>
-        /// [deprecated] Write data of this ILArray to MATLAB .mat file
+        /// [deprecated] Write data of this ILArray to Matlab .mat file.
         /// </summary>
-        /// <param name="fileout">Binary stream receiving the data</param>
+        /// <param name="fileout">Binary stream receiving the data.</param>
         /// <param name="version">(not used)</param>
         /// <remarks>This function is deprecated and will soon be removed. 
         /// Use <see cref="ILNumerics.ILMatFile"/> instead!</remarks>
@@ -4490,11 +4485,11 @@ namespace ILNumerics {
         #region single element access 
 
         /// <summary>
-        /// Get single value from this storage
+        /// Get single value from this storage.
         /// </summary>
         /// <param name="idx">Integer array holding the dimension specifier 
-        /// pointing to the value</param>
-        /// <returns>Object on the position pointed to by idx</returns>
+        /// pointing to the value.</param>
+        /// <returns>Object in the position pointed to by idx.</returns>
         public override BaseT GetValue(params int[] idx) {
             if (m_indexOffset == null) {
                 if (idx.Length == 1)
@@ -4558,12 +4553,12 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// Get single value from this storage by single sequential access
+        /// Get single value from this storage by a single sequential access.
         /// </summary>
         /// <param name="idx">Integer array holding the dimension specifier 
-        /// pointing to the value</param>
-        /// <param name="dims">out value: return mapped position in dimensions</param>
-        /// <returns>Object on the position pointed to by idx</returns>
+        /// pointing to the value.</param>
+        /// <param name="dims">Out value: return position mapped to dimensions.</param>
+        /// <returns>Object in the position pointed to by idx.</returns>
         /// <remarks>dims is the final position into the array for the sequential index specification <c>idx</c>.</remarks>
         public BaseT GetValueSeq(int idx, ref int[] dims) {
             if (m_indexOffset == null) {
@@ -4586,10 +4581,10 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// Set single value to element at index specified.
+        /// Set single value to element at the specified index.
         /// </summary>
-        /// <param name="value">new value</param>
-        /// <param name="idx">index of element to be altered</param>
+        /// <param name="value">New value.</param>
+        /// <param name="idx">Index of the element to be altered.</param>
         public override void SetValue(BaseT value, params int[] idx) {
             if (idx.Length == 0) return; 
             int [] dimensions = m_dimensions.ToIntArray(idx.Length);  
@@ -4610,7 +4605,7 @@ namespace ILNumerics {
         /// <summary>
         /// Convert index array into sequential index for storage access.
         /// </summary>
-        /// <param name="idx">int array with dimensions specification</param>
+        /// <param name="idx">int array with dimensions specification.</param>
         /// <returns>Index of requested value inside the physical storage. This 
         /// value may directly be used to query the value via m_data[return_value].
         /// The value return is valid for physical storages as well as for reference 
@@ -4620,7 +4615,7 @@ namespace ILNumerics {
         /// of this storage, the trailing dimensions will be replaced with "0". I.e 
         /// the first index of each non specified dimensions will be used. 
         /// If length of idx is larger than the dimensions of this storage, the behavior
-        /// is undefined. Therefore this function should be enclosed in try,catch blocks 
+        /// is undefined. Therefore this function should be enclosed in try, catch blocks 
         /// to handle this case!</remarks>
         internal int getBaseIndex(params int[] idx) {
             int destIdx = 0;
@@ -4647,10 +4642,10 @@ namespace ILNumerics {
         /// <summary>
         /// Convert index array into sequential index for storage access. Ommit any bound checking.
         /// </summary>
-        /// <param name="idx">int array with dimensions specification</param>
+        /// <param name="idx">int array with dimensions specification.</param>
         /// <param name="MustExpand">Output parameter. On return determine, if the index 
         /// specification points outside of the dimensions of this ILArray and the array 
-        /// must be expanded before accessing elements on that position</param>
+        /// must be expanded before accessing elements on that position.</param>
         /// <param name="Dimensions">if the array was found to be expanded, this are the 
         /// needed dimension sizes for the new array. The sizes are computed from the range 
         /// specification given.</param>
@@ -4712,9 +4707,9 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// Copy values of all elements into System.Array
+        /// Copy values of all elements into System.Array.
         /// </summary>
-        /// <param name="result">System.Array returned, holding all element values of this ILArray</param>
+        /// <param name="result">System.Array, holding all element values of this ILArray.</param>
         /// <remarks>The System.Array may be predefined. If its length is sufficient, it will be used and 
         /// corresponding elements with index lower or equal to i will be overwritten. Here i is the number of elements
         /// contained in the ILArray. If 'result' is null or has less than i elements, it will be recreated from the ILMemeoryPool.</remarks>
@@ -4735,13 +4730,13 @@ namespace ILNumerics {
         #region index access
 
         /// <summary>
-        /// Subarray access for get/set/removal 
+        /// Subarray access for get / set / removal. 
         /// </summary>
-        /// <param name="range">range specification</param>
-        /// <returns>reference pointing to the elements of this array specified by range. If used for removal: 
-        /// the array will be changed to a referencing array having the selected parts removed.</returns>
-        /// <remarks>Query access: for N-dimensional arrays and at least 1 dimensions specified, missing trailing dimensions will be choosen to be 0. Therefore you 
-        /// may ommit those trailing dimensions in range.
+        /// <param name="range">Range specification.</param>
+        /// <returns>Referencing array pointing to the elements of this array specified by range. If used for removal, 
+        /// the array will be changed to a referencing array with the selected parts removed.</returns>
+        /// <remarks>Query access: for N-dimensional arrays with at least 1 dimensions specified, missing trailing dimensions will be defaulted to 0. Therefore these 
+        /// trailing dimensions in range may be omitted.
         /// <example>
         /// <code>Having a matrix A =     
         /// [0, 1, 2, 3
@@ -4754,16 +4749,16 @@ namespace ILNumerics {
         /// A["1,1"] gives [5]
         /// </code>
         /// </example>
-        /// <para>The indexer may be used for querying or altering single/any elements 
+        /// <para>The indexer may be used for querying or altering single / any elements 
         /// in this array. <c>range</c> may contains complex index specifications for one ... any 
         /// dimension. If more than one dimension is to be specified, the dimensions must be seperated 
         /// by ';' (semicolon).</para>
         /// <para>The indexer may also be used for removing parts of the array. Therefore an empty array 
         /// (of the same type) must be assigned to the range specified by <c>range</c> using the set-access. <c>range</c> 
         /// must contain exactly one dimension specification other than ";". If <c>range</c> applies 
-        /// to less dimensions than dimensions existing in the array, the upper dimensions will be 
-        /// merged and the array will be reshaped before applying the removal to it.</para>
-        /// <para>In case of removal the ILArray returned will be a reference array.</para></remarks>
+        /// to fewer dimensions than the dimensions that exist in the array, the upper dimensions will be 
+        /// merged and the array will be reshaped before applying the removal.</para>
+        /// <para>In case of removal the ILArray returned will be a referencing array.</para></remarks>
         public ILArray<BaseT> this[params string[] range] {
             get {
                 return (ILArray<BaseT>)Subarray(range);
@@ -4791,10 +4786,10 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// Subarray access for ILArray and dimension shift
+        /// Subarray access for ILArray with dimension shift.
         /// </summary>
-        /// <paramref name="dims" value="dimension specification"/>
-        /// <value>returns new ILArray as reference subarray to this ILBaseArray</value>
+        /// <paramref name="dims" value="Dimension specification."/>
+        /// <value>Returns new ILArray as referencing subarray to this ILBaseArray.</value>
         public ILArray<BaseT> this[Int16 shiftDims, params string[] dims] {
             get {
                 if (dims == null || dims.Length == 0)
@@ -4803,19 +4798,19 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// get/set/remove single element 
+        /// Get / Set / Remove single element. 
         /// </summary>
-        /// <param name="indices">The type of access depends on the length of indices. 
+        /// <param name="indices">The type of access depends on the length of the indices. 
         /// <list type="bullet">
-        /// <item>if indices is a single value: sequential (linear) index of element to access</item>
-        /// <item>if indices.Length &gt; 1: index array access </item></list></param>
-        /// <returns>scalar ILArray of same type than this array with the only element</returns>
+        /// <item>If indices is a single value: sequential (linear) index of element to access.</item>
+        /// <item>If indices.Length &gt; 1: index array access.</item></list></param>
+        /// <returns>Scalar ILArray of same type as this array containg the accessed element.</returns>
         /// <remarks>If indices contains only one element, the array will be accessed via sequential index access. 
-        /// This is sometimes called "linear" index access also. Sequential index access reflects the index of internal storage 
-        /// the way the data are actually organized in memory. This access method is mainly convinient for vectors where you are not interested of orientation.
+        /// This is sometimes alternately called 'linear' index access. Sequential index access reflects the indexing of the internal storage: 
+        /// the way in which the data are actually organized in memory. This access method is mainly convenient for vectors where you are not interested in orientation.
         /// The following example demonstrates sequential index access: 
         /// <example><code>
-        /// ILArray&lt;double&gt; A = new  ILArray&lt;double&gt;(1.0,12.0);
+        /// ILArray&lt;double&gt; A = new ILArray&lt;double&gt;(1.0,12.0);
         /// A[2] gives: 3.0
         /// </code>But
         /// <code>
@@ -4823,7 +4818,7 @@ namespace ILNumerics {
         /// </code> 
         /// For matrices and N-dimensional arrays this holds as well: 
         /// <code>
-        /// ILArray&lt;double&gt; A = new  ILArray&lt;double&gt;(1.0,12.0);
+        /// ILArray&lt;double&gt; A = new ILArray&lt;double&gt;(1.0,12.0);
         /// A = 
         /// [1.0 4.0
         ///  2.0 5.0 
@@ -4839,8 +4834,8 @@ namespace ILNumerics {
         /// A[2,1,1] gives 12.0
         /// A[2,1] gives 6.0</code>
         /// <para>For get access the array returned will be a scalar solid array.</para></example>
-        /// <para>The reason, this indexer return ILArray is that returning BaseT directly would permit 
-        /// the use of convinient syntax: A[2] = null; for removal ! There is also the argument of consistency between the indexer. </para></remarks>
+        /// <para>The reason this indexer returns an ILArray is that returning BaseT directly allows
+        /// the use of the convenient syntax: A[2] = null; for removal! There is also the argument of consistency with the indexer.</para></remarks>
         public virtual ILArray<BaseT> this[params int[] indices] {
             get {
                 return new ILArray<BaseT>(GetValue(indices)); 
@@ -4867,23 +4862,23 @@ namespace ILNumerics {
         }
         
         /// <summary>
-        /// subarray access
+        /// Subarray access
         /// </summary>
-        /// <param name="range">range specification</param>
-        /// <returns>reference pointing to the elements of this array specified by range. If used for removal: 
-        /// the array will be changed to a referencing array having the parts requested removed and reshaped accordingly.</returns>
-        /// <remarks>Query access: for N-dimensional arrays trailing dimensions will be choosen to be 0. Therefore you 
-        /// may ommit those trailing dimensions in range.
-        /// <para>The indexer may be used for querying or altering single/any elements 
+        /// <param name="range">Range specification.</param>
+        /// <returns>Referencing array pointing to the elements of this array specified by range. If used for removal, 
+        /// the array will be changed to a referencing array with the requested parts removed and reshaped accordingly.</returns>
+        /// <remarks>Query access: for N-dimensional arrays trailing dimensions will be defaulted to 0. Therefore 
+        /// these trailing dimensions may be omitted from range.
+        /// <para>The indexer may be used for querying or altering single / any elements 
         /// in this array. <c>range</c> may contains index specifications for one ... any 
         /// dimension. The array returned will have the size specified by range.</para>
         /// <para>The indexer may also be used for removing parts of the array. Therefore an empty array 
         /// (of the same type) or 'null' must be assigned to the range specified by <c>range</c> using the set-access. <c>range</c> 
-        /// must contain exactly one dimension specification other than null. This may be any vector-sized numeric ILArray of any 
+        /// must contain exactly one dimension specification which is not null. This may be any vector-sized numeric ILArray of any 
         /// type. If <c>range</c> applies 
-        /// to less dimensions than dimensions existing in the array, the upper dimensions will be 
-        /// merged and the array will be reshaped before applying the removal to it.</para>
-        /// <para>In case of removal the ILArray returned will be a reference array.</para></remarks>
+        /// to fewer dimensions than the dimensions that exist in the array, the upper dimensions will be 
+        /// merged and the array will be reshaped before applying the removal.</para>
+        /// <para>In case of removal, the ILArray returned will be a referencing array.</para></remarks>
         public ILArray<BaseT> this [params ILBaseArray [] range] {
             get {
                 return (ILArray<BaseT>)Subarray(range);
@@ -4940,16 +4935,16 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// ranged subarray access
+        /// Ranged subarray access.
         /// </summary>
-        /// <param name="shiftDim">number of dimensions to shift the result</param>
-        /// <param name="range">range specification</param>
-        /// <returns>reference pointing to the elements of this array specified by range. </returns>
-        /// <remarks>For n-dimensional arrays trailing dimensions will be choosen to be 0. Therefore you 
-        /// may ommit those trailing dimensions in range. However, if range contains only one array, those indices 
+        /// <param name="shiftDim">Number of dimensions to shift the result.</param>
+        /// <param name="range">Range specification.</param>
+        /// <returns>Referencing array pointing to the elements of this array specified by range.</returns>
+        /// <remarks>For N-dimensional arrays, trailing dimensions will be defaulted to 0. Therefore 
+        /// trailing dimensions may be omitted from range. However, if range contains only one array, those indices 
         /// are interpreted as sequential index access elements. I.e. the elements in the index vector are allowed to 
-        /// range from 0...[NumberOfElements-1]. A vector containing corresponding elements will be returned for this case.
-        /// <para>The indexer may be used for querying single/any elements 
+        /// range from 0...[NumberOfElements - 1]. A vector containing corresponding elements will be returned in this case.
+        /// <para>The indexer may be used for querying single / any elements 
         /// in this array. <c>range</c> may contains index specifications for one ... any 
         /// dimension. The array returned will have the size specified by range.</para></remarks>
         public ILArray<BaseT> this [Int16 shiftDim, params ILBaseArray[] range] {
@@ -4958,26 +4953,26 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// helper function to prepare parameters for partial removal 
+        /// Helper function to prepare parameters for partial removal. 
         /// </summary>
-        /// <param name="range">object with index specification.May be of 
+        /// <param name="range">Object with index specification. May be of 
         /// type ILBaseArray[] with numeric arrays or a string array according 
         /// to the format of <see cref="ILNumerics.Storage.ILRange"/>. 
         /// </param>
-        /// <param name="dimensionIdx">out parameter: number of dimension the indices to be removed lay in</param>
-        /// <param name="indices">indices to be removed</param>
-        /// <param name="dimensions">dimension structure, may be used if the array must be 
+        /// <param name="dimensionIdx">Out parameter: number of dimension the indices to be removed lie in.</param>
+        /// <param name="indices">Indices to be removed.</param>
+        /// <param name="dimensions">Dimension structure, may be used if the array must be 
         /// reshaped <b>before</b> the removal.</param>
-        /// <remarks>if range consists out of a range specification wich is smaller than 
+        /// <remarks>If range comprises a range specification which is smaller than 
         /// the actual dimension length of this array, the array must also be reshaped in order to remove 
-        /// the data accordingly. This reshape proccess will <b>not</b> be done inside of this function! However 
-        /// ther <c>dimension</c> value returned reflect the size of the array before removing and therefore
-        /// may comfortable be used for reshaping the array.</remarks>
-        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if <list type="bullet">
-        /// <item>the length of range exceeds the dimensions of this array</item>
-        /// <item>more or less than exactly one dimension of <c>range</c> was not null</item>
-        /// <item>the type of range was invalid, or</item>
-        /// <item>range is of type array of <see cref="ILNumerics.ILBaseArray"/>, but the elements are non numeric ILArray's</item>
+        /// the data. This reshape proccess will <b>not</b> be done inside this function! However 
+        /// the <c>dimension</c> value returned reflects the size of the array before removing and therefore
+        /// may be used for reshaping the array.</remarks>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">If:<list type="bullet">
+        /// <item>The length of range exceeds the dimensions of this array.</item>
+        /// <item>Greater than or less than one dimension of <c>range</c> was not null.</item>
+        /// <item>The type of range was invalid, or</item>
+        /// <item>Range is of type array of <see cref="ILNumerics.ILBaseArray"/>, but the elements are non-numeric ILArrays.</item>
         /// </list></exception>
         private void ExtractRemovalParameter (object range, out int dimensionIdx, out int[] indices, out ILDimension dimensions) {
             dimensionIdx = 0; 
@@ -5247,15 +5242,15 @@ namespace ILNumerics {
 #endregion
 
         /// <summary>
-        /// Create full (shallow) copy of this storage. 
+        /// Create full (shallow) copy of this array. 
         /// </summary>
-        /// <returns>ILFullArray as new (physical) representation of this storages data.</returns>
-        /// <remarks>The ILFullArray object returned will be of the same size than this object.
-        /// Keep in mind, no reference counters are altered! The new object is just a plain 
-        /// copy of the old one which remains unchanged. Also: "copy" means, the m_data array
-        /// will be copied, but (of course) not (!) the objects referenced by the array elements!
-        /// Therefore this is a 'shallow' copy only! This is necessary, since objects stored inside
-        /// ILArray do not have any restrictions. (Especially they do not have to support the IClonable()
+        /// <returns>ILArray with solid representation of the array data.</returns>
+        /// <remarks>The ILArray object returned will be of the same size than this object.
+        /// Keep in mind that no reference counters are altered! The new object is just a plain 
+        /// copy of the old one, which remains unchanged. Also: 'copy' means, the m_data array
+        /// will be copied, but (of course) not the objects referenced by the array elements!
+        /// Therefore this is a 'shallow' copy only. This is necessary, since objects stored inside
+        /// ILArray do not have any restrictions (in particular they do not have to support the IClonable()
         /// interface.) </remarks>
         public override object Clone() {
             if (!IsReference) // SM: Should be not!!!
@@ -5264,7 +5259,7 @@ namespace ILNumerics {
                 return CreatePhysicalShiftedFromReference(0); 
         }
         /// <summary>
-        /// Create iterator, initialized to run from start over first dimension
+        /// Create iterator, initialized to run from start over the first dimension.
         /// </summary>
         /// <returns>Iterator of the same type as the current instance of ILArray, initialized 
         /// to the first element, ready for counting forwards on 
@@ -5273,13 +5268,13 @@ namespace ILNumerics {
             return new ILIterator<BaseT>(m_data,m_indexOffset,m_dimensions);
         }
         /// <summary>
-        /// Create iterator for the elements of the current instance of ILArray, specify start 
-        /// element and dimension to walk along
+        /// Create iterator for the elements of the current instance of ILArray; specify start 
+        /// element and dimension to walk along.
         /// </summary>
-        /// <param name="pos">start position. One out of the ILIteratorPositions: 
-        /// ILStart, ILMiddle, ILEnd</param>
-        /// <param name="leadingDimension">The dimension index to walk along</param>
-        /// <returns>Iterator of the same type as the current instance of ILArray
+        /// <param name="pos">Start position. One of the ILIteratorPositions: 
+        /// ILStart, ILMiddle, ILEnd.</param>
+        /// <param name="leadingDimension">The dimension index to walk along.</param>
+        /// <returns>Iterator of the same type as the current instance of ILArray.
         /// </returns>
         public override ILIterator<BaseT> CreateIterator(ILIteratorPositions pos, int leadingDimension) {
             return new ILIterator<BaseT>(m_data, m_indexOffset, m_dimensions,pos,leadingDimension);
@@ -5288,14 +5283,14 @@ namespace ILNumerics {
         #region IEnumerable<ILBaseArray<BaseT>> Member
 
         /// <summary>
-        /// Enumerator creation
+        /// Enumerator creation.
         /// </summary>
-        /// <returns>Enumerator</returns>
-        /// <remarks>This function enables the use of ILArray inside 'foreach' constructs. You 
-        /// barely will use it directly.</remarks>
+        /// <returns>Enumerator.</returns>
+        /// <remarks>This function enables the use of ILArray inside 'foreach' constructs. It 
+        /// will rarely be used directly.</remarks>
         /// <example>ILArray&lt;T&gt; A = ILMath.rand(5,4,6);
         /// foreach (ILArray&lt;T&gt; element in A) {
-        /// // all 'element's are scalar ILArray's
+        /// // all 'elements are scalar ILArrays
         /// String.Format("Element: {0} ",element.GetValue(0));
         /// }
         /// </example>
@@ -5311,11 +5306,11 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// Enumerator returning elements in their natural type
+        /// Enumerator returning elements in their natural type.
         /// </summary>
         /// <example>ILArray&lt;T&gt; A = ILMath.rand(5,4,6);
         /// foreach (double element in A.Values) {
-        /// // all 'element's are scalar double values
+        /// // all 'elements are scalar double values
         /// String.Format("Element: {0} ",element);
         /// }
         /// </example>
@@ -5350,9 +5345,9 @@ namespace ILNumerics {
             }
         }
         /// <summary>
-        /// Expand this storage for addresses outside my dimensions
+        /// Expand this storage for addresses outside my dimensions.
         /// </summary>
-        /// <param name="range">range to fit inside destination array</param>
+        /// <param name="range">Range to fit inside destination array.</param>
         private void ExpandArray (ILRange range) {
             if (!range.Expanding)
                 return; 
@@ -5396,9 +5391,9 @@ namespace ILNumerics {
             m_indexOffset = null; 
         }
         /// <summary>
-        /// Expand this storage for addressed outside my dimensions
+        /// Expand this storage for addressed outside my dimensions.
         /// </summary>
-        /// <param name="indices">range to fit inside destination array</param>
+        /// <param name="indices">Range to fit inside destination array.</param>
         /// <remarks>The input parameter <c>indices</c> will directly be used to create new
         /// ILDimension member of the resized array.</remarks>
         private void ExpandArray (int [] indices) {
@@ -5425,10 +5420,10 @@ namespace ILNumerics {
             m_indexOffset = null;
         }
         /// <summary>
-        /// copy upper triangular part of this array into new physical array
+        /// Copy upper triangular part of this array into new physical array.
         /// </summary>
-        /// <param name="n">length of first dimension of destination array </param>
-        /// <returns>physical array of size [n x {ThisColumnCount})]</returns>
+        /// <param name="n">Length of first dimension of destination array.</param>
+        /// <returns>Physical array of size [n x {ThisColumnCount})].</returns>
         internal ILArray<BaseT> copyUpperTriangle(int n) {
             BaseT[] arr = new BaseT[n * n];
             if (m_dimensions[0] == n) {
@@ -5468,10 +5463,10 @@ namespace ILNumerics {
             return new ILArray<BaseT> (arr,n,n);
         }
         /// <summary>
-        /// copy lower triangular part of this array into new physical array
+        /// Copy lower triangular part of this array into new physical array.
         /// </summary>
-        /// <returns>physical array of same size than this array</returns>
-        /// <remarks>if this is not a 2D array, only the first dimension is referenced.</remarks>
+        /// <returns>Physical array of same size than this array.</returns>
+        /// <remarks>If this is not a 2D array, only the first dimension is referenced.</remarks>
         internal ILArray<BaseT> copyLowerTriangle() {
             int n = m_dimensions[0],pos = 0; 
             BaseT[] arr = new BaseT[n * n];

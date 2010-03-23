@@ -34,9 +34,9 @@ namespace ILNumerics.BuiltInFunctions {
         #region Array Creation
         #region ONES / ZEROS / EMPTY 
         /// <summary>
-        /// create new ILArray&lt;double&gt;, set initial element values to one.
+        /// Create new ILArray&lt;double&gt;, setting initial element values to one.
         /// </summary>
-        /// <returns>Physical ILArray&lt;double&gt; having all elements set to one. </returns>
+        /// <returns>Physical ILArray&lt;double&gt; with all elements set to one.</returns>
         public static ILArray<double> ones(params int[] dimensions) {
 	        ILDimension dim = new ILDimension(dimensions);
 	        double[] data = ILMemoryPool.Pool.New<double>(dim.NumberOfElements);
@@ -52,18 +52,18 @@ namespace ILNumerics.BuiltInFunctions {
 	        }
         }
         /// <summary>
-        /// create new ILArray&lt;double&gt;, set initial element values to one.
+        /// Create new ILArray&lt;double&gt;, setting initial element values to one.
         /// </summary>
-        /// <returns>Physical ILArray&lt;double&gt; having all elements set to one. </returns>
+        /// <returns>Physical ILArray&lt;double&gt; with all elements set to one. </returns>
         public static ILArray<double> ones (ILDimension dimensions) {
             return ones(dimensions.ToIntArray());     
         }
         
         /// <summary>
-        /// create array initialized with all zeros
+        /// Create array initialized with all elements set to zero.
         /// </summary>
-        /// <param name="dimensions">dimension specification</param>
-        /// <returns>zeros array</returns>
+        /// <param name="dimensions">Dimension specification.</param>
+        /// <returns>Zeros-filled array.</returns>
         /// <remarks>The memory for the array is reclaimed from the memory pool, if possible.</remarks>
         public static ILArray<double> zeros(params int[] dimensions) {
             ILDimension retDims = new ILDimension(dimensions); 
@@ -82,29 +82,29 @@ namespace ILNumerics.BuiltInFunctions {
             return new ILArray<double>(retArr,retDims); 
         }
         /// <summary>
-        /// create array initialized with all zeros
+        /// Create array initialized with all elements set to zero.
         /// </summary>
-        /// <param name="dimensions">dimension specification</param>
-        /// <returns>zeros array</returns>
+        /// <param name="dimensions">Dimension specification.</param>
+        /// <returns>Zeros-filled array.</returns>
         public static ILArray<double> zeros(ILDimension dimensions) {
             return zeros(dimensions.ToIntArray()); 
         }
 
         /// <summary>
-        /// create empty array of size 0,0
+        /// Create empty array of size 0,0.
         /// </summary>
-        /// <returns>ILArray of inner type double which is empty. </returns>
+        /// <returns>ILArray of inner type double which is empty.</returns>
         public static ILArray<double> empty() {
             return ILArray<double>.empty(0,0);
         }
         #endregion
 
         /// <summary>
-        /// create matrix having unity diagonal values  
+        /// Create matrix having unity diagonal values.  
         /// </summary>
-        /// <param name="rows">number of rows</param>
-        /// <param name="columns">number of columns</param>
-        /// <returns>diagonal unity matrix</returns>
+        /// <param name="rows">Number of rows.</param>
+        /// <param name="columns">Number of columns.</param>
+        /// <returns>Diagonal unity matrix.</returns>
         public static ILArray<double> eye(int rows, int columns) {
             ILArray<double> ret = zeros(rows, columns);
             int diagLen = Math.Min(rows, columns);
@@ -113,19 +113,19 @@ namespace ILNumerics.BuiltInFunctions {
             return ret;
         }
         /// <summary>
-        /// Random number generator used for all generations of random numbers
+        /// Random number generator used for any generation of random numbers.
         /// </summary>
-        /// <remarks>One may override this value with her own implementation, derived from <c>Random</c>.</remarks>
+        /// <remarks>One may override this value with their own implementation, derived from <c>Random</c>.</remarks>
         protected static Random m_randomGenerator; 
         /// <summary>
-        /// pseudo random n-dimensional array elements
+        /// Pseudo random N-dimensional array elements.
         /// </summary>
         /// <param name="dimensions">int array or single int paramters specifying 
-        /// dimensions for new array to be created</param>
-        /// <returns>n-dimensional array filled with random numbers.</returns>
-        /// <remarks><para> the elements lay within the range 0.0 ... 1.0 and are uniformly 
+        /// dimensions for new array to be created.</param>
+        /// <returns>N-dimensional array filled with random numbers.</returns>
+        /// <remarks><para>The elements lie within the range 0.0 ... 1.0 and are uniformly 
         /// distributed.</para>
-        /// <para>The initial seed will be set to Environment.TickCount on the first call</para></remarks>
+        /// <para>The initial seed will be set to Environment.TickCount on the first call.</para></remarks>
         public static ILArray<double> rand(params int[] dimensions) {
             ILDimension dim = new ILDimension(dimensions);
             double[] data = ILMemoryPool.Pool.New<double>(dim.NumberOfElements);
@@ -144,12 +144,12 @@ namespace ILNumerics.BuiltInFunctions {
         }
         internal static ILNRandom m_nrandomGenerator; 
         /// <summary>
-        /// normal random distributed n-dimensional array elements
+        /// Normal randomly-distributed N-dimensional array elements.
         /// </summary>
         /// <param name="dimensions">int array or single int paramters specifying 
-        /// dimensions for new array to be created</param>
-        /// <returns>n-dimensional array filled with random numbers.</returns>
-        /// <remarks>the elements lay within the range 0.0 ... 1.0 and are choosen to be normally 
+        /// dimensions for new array to be created.</param>
+        /// <returns>N-dimensional array filled with random numbers.</returns>
+        /// <remarks>The elements lie within the range 0.0 ... 1.0 and are choosen to be normally 
         /// distributed.</remarks>
         public static ILArray<double> randn(params int[] dimensions) {
             ILDimension dim; 
@@ -171,25 +171,25 @@ namespace ILNumerics.BuiltInFunctions {
             return new ILArray<double>(data, dim);
         }
         /// <summary>
-        /// Create regulary spaced vector
+        /// Create regulary spaced vector.
         /// </summary>
-        /// <param name="start">start value</param>
-        /// <param name="end">end value</param>
-        /// <returns>row vector of size 1xN</returns>
-        /// <remarks>N is the number of elements 
-        /// between start and end, all equally spaced of distance 1. the last element 
-        /// in vector returned will be less or equal end, if start <![CDATA[<]]> end. If start 
-        /// <![CDATA[>]]> end, the elements in the vector will be in decreasing order - ranging from 
-        /// start ... end. This is the same as vector (start,[-]1,end).</remarks>
+        /// <param name="start">Start value.</param>
+        /// <param name="end">End value.</param>
+        /// <returns>Row vector of size 1xN, where N is the number of elements 
+        /// between start and end, all equally spaced with interval 1. The last element 
+        /// of the returned vector will be less than or equal to end, if start <![CDATA[<]]> end. If start 
+        /// <![CDATA[>]]> end, the elements in the vector will regularly decrease from 
+        /// start to end. In this case, step must be negative.</returns>
+        /// <remarks>This is the same as vector (start,[-]1,end).</remarks>
         public static ILArray<double> vector (double start, double end) {
             return vector (start, Math.Sign(end-start),end);
         }
         /// <summary>
-        /// Create N-d array with elements counting from 1
+        /// Create N-dimensional array with elements counting from 1.
         /// </summary>
-        /// <param name="dimensions">variable int array with dimension specification</param>
-        /// <returns>array with elements counting from 1 ... dimensions.NumberOfElements</returns>
-        /// <remarks>this function may be used for easy and convinient creation of arrays for testing purposes.</remarks>
+        /// <param name="dimensions">Variable int array with dimension specification</param>
+        /// <returns>Array with elements counting from 1 ... dimensions.NumberOfElements</returns>
+        /// <remarks>This function may be used for the convenient creation of arrays for testing purposes.</remarks>
         public static ILArray<double> counter (params int[] dimensions) {
             ILDimension dimRet = new ILDimension(dimensions); 
             double [] retArr = ILMemoryPool.Pool.New<double>(dimRet.NumberOfElements); 
@@ -198,23 +198,23 @@ namespace ILNumerics.BuiltInFunctions {
             return new ILArray<double>(retArr,dimRet); 
         }
         /// <summary>
-        /// Create N-d array with elements, arbitrary limits
+        /// Create N-dimensional array with elements counting from 1 and specified interval.
         /// </summary>
-        /// <param name="start">initial value</param>
-        /// <param name="increment">increment for each element</param>
-        /// <param name="dimensions">variable int array with dimension specification</param>
-        /// <returns>array with elements counting from 1 ... dimensions.NumberOfElements</returns>
-        /// <remarks><para>counter is a fast alternative to the creation of arrays via <see cref="ILNumerics.BuiltInFunctions.ILMath.ones(int[])"/>
-        ///  or <see cref="ILNumerics.BuiltInFunctions.ILMath.zeros(int[])"/> and following modifications. 
-        /// Counter is more general. It can creates arrays of all constants (zeros, ones, twos ...) if <paramref name="increment"/> is 0, constantly 
+        /// <param name="start">Initial value.</param>
+        /// <param name="increment">Increment for each element.</param>
+        /// <param name="dimensions">Variable int array with dimension specification.</param>
+        /// <returns>Array with elements counting from 1 ... dimensions.NumberOfElements.</returns>
+        /// <remarks><para>Counter is a fast alternative to the creation of arrays via <see cref="ILNumerics.BuiltInFunctions.ILMath.ones(int[])"/>
+        /// or <see cref="ILNumerics.BuiltInFunctions.ILMath.zeros(int[])"/> with subsequent modification. 
+        /// Counter is more general. It can create arrays of all constants (zeros, ones, twos ...) if <paramref name="increment"/> is 0, regularly 
         /// incrementing elements if <paramref name="increment"/> is positive or negative.</para>
-        /// This function may also be used for easy and convinient creation of arrays for testing purposes.
+        /// This function may also be used for the convenient creation of arrays for testing purposes.
         /// <para>Keep in mind: in order to distingush this function from the overloaded version <see cref="ILNumerics.BuiltInFunctions.ILMath.counter(int[])"/>
-        /// you need to specify parameter <paramref name="start"/> and <paramref name="increments"/> explicitly as double value:</para>
+        /// you need to specify parameters <paramref name="start"/> and <paramref name="increments"/> explicitly as double value:</para>
         /// <example><code>
-        /// // this will create elements counting from 1...24: 
+        /// // This will create elements counting from 1...24: 
         /// <![CDATA[ILArray<double>]]> A = ILMath.counter(4,3,2); 
-        /// // this will create elements counting from 1...48 with spaces of 2.0: 
+        /// // This will create elements counting from 1...48 with intervals of 2.0: 
         /// <![CDATA[ILArray<double>]]> A = ILMath.counter(1.0,2.0,4,3,2); 
         /// // ... but this will (by mistake) call the wrong function:
         /// <![CDATA[ILArray<double>]]> A = ILMath.counter(1,2,4,3,2); 
@@ -238,16 +238,16 @@ namespace ILNumerics.BuiltInFunctions {
         }
 
         /// <summary>
-        /// Create regulary spaced vector
+        /// Create regularly spaced vector.
         /// </summary>
-        /// <param name="start">start value</param>
-        /// <param name="step">step size</param>
-        /// <param name="end">end value</param>
-        /// <returns>row vector of size 1xN, where N is the number of elements 
-        /// between start and end, all equally spaced of distance step. the last element 
-        /// in vector returned will be less or equal end, if start <![CDATA[<]]> end. If start 
-        /// <![CDATA[>]]> end, the elements in the vector will be decreasing - ranging from 
-        /// start ... to end. In this case, step must be negative. </returns>
+        /// <param name="start">Start value.</param>
+        /// <param name="step">Step size.</param>
+        /// <param name="end">End value.</param>
+        /// <returns>Row vector of size 1xN, where N is the number of elements 
+        /// between start and end, all equally spaced with interval step. The last element 
+        /// of the returned vector will be less than or equal to end, if start <![CDATA[<]]> end. If start 
+        /// <![CDATA[>]]> end, the elements in the vector will regularly decrease from 
+        /// start to end. In this case, step must be negative.</returns>
         public static ILArray<double> vector(double start, double step, double end) {
             if (start == end) 
                 return new ILArray<double>(start); 
@@ -283,13 +283,13 @@ namespace ILNumerics.BuiltInFunctions {
         #endregion
         #region other types than 'double' creation
         /// <summary>
-        /// Create array innitialized with ones
+        /// Create array initialized with all elements set to one.
         /// </summary>
         /// <param name="type">Numeric type specification. One value out of the types listed in the <see cred="ILNumerics.NumericType"/>
         /// enum.</param>
         /// <param name="dimensions">Dimension specification. At least one dimension must be specified.</param>
         /// <returns>ILArray&lt;BaseT&gt; of inner type corresponding to <paramref name="type"/> argument.</returns>
-        /// <remarks>The array returned may be casted to the actual type accordingly afterwards. 
+        /// <remarks>The array returned may be cast to the appropriate actual type afterwards. 
         /// <para>
         /// <list type="number"> 
         /// <listheader>The following types are supported: </listheader>
@@ -474,12 +474,12 @@ namespace ILNumerics.BuiltInFunctions {
         #endregion 
 
         /// <summary>
-        /// Create complex array from real and imaginary parts 
+        /// Create complex array from real and imaginary parts. 
         /// </summary>
-        /// <param name="real">array with real part elements</param>
-        /// <param name="imag">array with imaginary part elements</param>
-        /// <returns>complex array constructed out of real and imaginary parts given.</returns>
-        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if the size of both arguments is not the same</exception>
+        /// <param name="real">Array with real part elements.</param>
+        /// <param name="imag">Array with imaginary part elements.</param>
+        /// <returns>Complex array constructed out of real and imaginary parts given.</returns>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">If the size of both arguments is not the same.</exception>
         public static ILArray<complex> ccomplex(ILArray<double> real, ILArray<double> imag) {
             if (!real.Dimensions.IsSameSize(imag.Dimensions)) 
                 throw new ILArgumentException("complex: input arrays must have the same size!");
@@ -492,12 +492,12 @@ namespace ILNumerics.BuiltInFunctions {
             return ret; 
         }
         /// <summary>
-        /// Create complex array from real and imaginary parts 
+        /// Create complex array from real and imaginary parts. 
         /// </summary>
-        /// <param name="real">array with real part elements</param>
-        /// <param name="imag">array with imaginary part elements</param>
-        /// <returns>complex array constructed out of real and imaginary parts given.</returns>
-        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">if the size of both arguments is not the same</exception>
+        /// <param name="real">Array with real part elements.</param>
+        /// <param name="imag">Array with imaginary part elements.</param>
+        /// <returns>Complex array constructed out of real and imaginary parts supplied.</returns>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentException">If the size of both arguments is not the same.</exception>
         public static ILArray<fcomplex> ccomplex(ILArray<float> real, ILArray<float> imag) {
             if (!real.Dimensions.IsSameSize(imag.Dimensions)) 
                 throw new ILArgumentException("fcomplex: input arrays must have the same size!");
