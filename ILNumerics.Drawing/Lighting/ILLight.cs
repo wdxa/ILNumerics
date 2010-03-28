@@ -76,13 +76,13 @@ namespace ILNumerics.Drawing.Lighting {
                 OnChanged(); 
             }
         }
-        public Color Emission {
-            get { return m_emission; }
-            set { 
-                m_emission = value;  
-                OnChanged(); 
-            }
-        } 
+        //public Color Emission {
+        //    get { return m_emission; }
+        //    set { 
+        //        m_emission = value;  
+        //        OnChanged(); 
+        //    }
+        //} 
         public Color Ambient {
             get {
                 return m_ambient; 
@@ -109,7 +109,6 @@ namespace ILNumerics.Drawing.Lighting {
             m_index = index; 
             Position = new ILPoint3Df(-10f,-100f,200);
             Specular = Color.FromArgb(140,140,140);  Specular = Color.Black;  
-            Emission = Color.Black; 
             Ambient = Color.FromArgb(130,130,130); 
             Diffuse = Color.FromArgb(255,255,255);  
         }

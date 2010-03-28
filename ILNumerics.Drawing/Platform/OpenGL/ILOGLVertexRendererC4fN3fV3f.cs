@@ -157,13 +157,17 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         private void setupLight<T>(ILShape<T> shape) where T : struct, IILVertexDefinition {
             GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.ColorMaterial);
-            GL.ColorMaterial(MaterialFace.Front,ColorMaterialParameter.Diffuse);
-            //GL.LightModel(LightModelParameter.LightModelAmbient, 0.5f);
-            //float[] tmp = new float[4] { 0, 0, 0, 1 };
-            //GL.Materialv(MaterialFace.FrontAndBack, MaterialParameter.Emission, tmp);
-            //tmp = new float[4] { .8f, .8f, .8f, 1f };
-            //GL.Materialv(MaterialFace.Front, MaterialParameter.Specular, tmp);
-            //GL.Material(MaterialFace.Front, MaterialParameter.Shininess, 96); 
+            GL.Enable(EnableCap.Normalize); 
+            GL.ColorMaterial(MaterialFace.FrontAndBack,ColorMaterialParameter.AmbientAndDiffuse);
+            
+            //GL.LightModel(LightModelParameter.LightModelAmbient, 0.2f);
+            float[] tmp = new float[4] { 0.8f, 0.8f, 0.8f, 1.0f };
+            GL.Materialv(MaterialFace.FrontAndBack, MaterialParameter.Specular, tmp);
+
+            GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Shininess, 96); 
+            
+            tmp = new float[4] { .0f, .0f, .0f, 1f };
+            GL.Materialv(MaterialFace.FrontAndBack, MaterialParameter.Emission, tmp);
         }
 
     }

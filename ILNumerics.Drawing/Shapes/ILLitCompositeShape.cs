@@ -95,7 +95,7 @@ namespace ILNumerics.Drawing.Shapes {
         #region private helpers
         #endregion
 
-        private class Computation : ILNumerics.BuiltInFunctions.ILMath {
+        private class Computation : ILMath {
             
             public static void CalculateNormals(VertexType[] vertices, ILArray<int> shapeIndices) {
                 System.Diagnostics.Debug.Assert(vertices != null && vertices.Length > 0 && vertices[0].StoresNormals); 
@@ -117,7 +117,12 @@ namespace ILNumerics.Drawing.Shapes {
                         foreach (int shapeIdx in vertexUser.Values) {
                             normal += snormals[shapeIdx];                         
                         }
-                        vertices[i].Normal = normal / (float)Math.Sqrt(normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z); 
+                        vertices[i].Normal = normal / (float)Math.Sqrt(normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z);
+                        System.Diagnostics.Debug.Assert(
+                            Math.Abs(Math.Sqrt(
+                            vertices[0].Normal.X * vertices[0].Normal.X +
+                            vertices[0].Normal.Y * vertices[0].Normal.Y +
+                            vertices[0].Normal.Z * vertices[0].Normal.Z) - 1.0) < (double)MachineParameterFloat.eps); 
                     }
                 }
             }

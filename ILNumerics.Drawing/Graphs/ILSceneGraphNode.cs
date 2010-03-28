@@ -193,6 +193,12 @@ namespace ILNumerics.Drawing.Graphs {
                 m_positionMax = PositionMax();
                 if (!sizechanged && oldPoint != m_positionMax) sizechanged = true;
                 m_center = Center;
+                if (m_childs != null)
+                foreach (ILSceneGraphNode child in m_childs) {
+                    if (child is ILShape) {
+                        (child as ILShape).Configure();
+                    }
+                }
                 m_invalidated = false;
                 if (sizechanged) 
                     OnSizeChanged(); 

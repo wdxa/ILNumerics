@@ -201,6 +201,13 @@ namespace ILNumerics.Drawing.Misc {
             vertices[offset++] = g1; 
             vertices[offset++] = b1; 
         }
+        /// <summary>
+        /// convert index value to color, interpolating
+        /// </summary>
+        /// <param name="value">index, position into color table, range 0...(Length-1). Values outer limits will be truncated.</param>
+        /// <param name="r">out value: red component</param>
+        /// <param name="g">out value: green component</param>
+        /// <param name="b">out value: blue component</param>
         public void Map(double value, out byte r, out byte g, out byte b) {
             if (value >= m_map.Dimensions[0]-1) {
                 r = (byte)(m_map.GetValue(m_map.Dimensions[0]-1,0)*255); 
