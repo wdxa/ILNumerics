@@ -46,9 +46,9 @@ namespace ILNumerics.Drawing.Shapes {
         /// create composite shape, consisting out of lit quads 
         /// </summary>
         /// <param name="panel">hosting panel</param>
-        /// <param name="numQuad">number of litquads needed</param>
-        public ILLitQuads (ILPanel panel, int numQuads)
-            : base(panel, numQuads * 4, 4) {
+        /// <param name="numVertices">number of vertices needed for all lit quads</param>
+        public ILLitQuads (ILPanel panel, int numVertices)
+            : base(panel, numVertices, 4) {
             m_fillColor = Color.Green; 
         }
         /// <summary>

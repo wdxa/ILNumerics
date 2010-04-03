@@ -14,7 +14,7 @@ namespace ILNumerics.Drawing.Graphs {
     /// <summary>
     /// Surface graph supporting light
     /// </summary>
-    public class ILLitSurfaceGraph : ILLitQuads {
+    public class ILLitSurfaceShape : ILLitQuads {
 
         protected ILColormap m_colorMap; 
         /// <summary>
@@ -22,8 +22,8 @@ namespace ILNumerics.Drawing.Graphs {
         /// </summary>
         /// <param name="panel">the panel hosting the scene</param>
         /// <param name="A">data matrix, at lease 2 rows, 2 columns</param>
-        public ILLitSurfaceGraph(ILPanel panel, ILArray<double> A)
-            : base(panel, (A.Dimensions[0] - 1) * (A.Dimensions[1] - 1)) {
+        public ILLitSurfaceShape(ILPanel panel, ILArray<double> A)
+            : base(panel, A.Dimensions.NumberOfElements) {
             m_colorMap = new ILColormap(Colormaps.ILNumerics); 
             m_shapeIndices = Computation.configureVertices(A, m_colorMap, Vertices);
             Invalidate(); 
@@ -46,7 +46,7 @@ namespace ILNumerics.Drawing.Graphs {
                     byte r, g, b;
                     cmap.Map(colors.GetValue(i), out r, out g, out b);
                     v.Color = Color.FromArgb(255, r, g, b);
-                    v.Alpha = 180; 
+                    v.Alpha = 255; 
                     Vertices[i++] = v;
                     // set next position
                     y--;
