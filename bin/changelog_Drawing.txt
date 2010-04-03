@@ -1,4 +1,10 @@
-Changes in version 0.12.05
+Changes in version 0.12.07
+===========================
+* improved light capabilities
+* added ILLitSurfaceShape
+* improved performance on ILLitCompositeShapes
+
+Changes in version 0.12.06
 ===========================
 * added ILShape.Visible property
  
