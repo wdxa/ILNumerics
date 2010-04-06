@@ -205,7 +205,8 @@ namespace ILNumerics.Drawing.Shapes {
         protected override void IntDrawShape(ILRenderProperties props) {
             if (m_vertCount >= VerticesPerShape) {
                 // draw from back to front
-                if (m_oldCameraPosition != m_panel.Camera.Position) {
+                if (m_oldCameraPosition != m_panel.Camera.Position
+                    || m_renderIndices == null) {
                     sortPrimitives(); 
                 }
                 m_renderer.Draw(props,this,m_renderIndices);

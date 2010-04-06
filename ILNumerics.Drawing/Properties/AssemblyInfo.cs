@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration ( "" )]
 [assembly: AssemblyCompany ( "ILNumerics.Net" )]
 [assembly: AssemblyProduct ( "ILNumerics.Drawing" )]
-[assembly: AssemblyCopyright ( "Copyright © 2008" )]
+[assembly: AssemblyCopyright("Copyright © 2010")]
 [assembly: AssemblyTrademark ( "" )]
 [assembly: AssemblyCulture ( "" )]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // Sie können alle Werte angeben oder die standardmäßigen Revisions- und Buildnummern 
 // übernehmen, indem Sie "*" eingeben:
-[assembly: AssemblyVersion("0.12.7.*")]
-[assembly: AssemblyFileVersion("0.12.7.0")]
+[assembly: AssemblyVersion("0.12.8.*")]
+[assembly: AssemblyFileVersion("0.12.8.0")]

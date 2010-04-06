@@ -33,7 +33,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
     /// An OpenGL vertex renderer, capable of rendering
     /// vertex arrays of type C4bV3f (simple /-primitive shapes).
     /// </summary>
-    public unsafe class ILOGLLineRendererC4bV3f : ILVertexRenderer {
+    public unsafe class ILOGLLinesRendererC4bV3f : ILVertexRenderer {
 
         #region attributes
         #endregion
@@ -41,7 +41,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         #region properties
         #endregion
 
-        public ILOGLLineRendererC4bV3f () {
+        public ILOGLLinesRendererC4bV3f () {
             CloseLines = false; 
         }
         public override void Draw(ILRenderProperties props, ILShape shape) {
@@ -84,7 +84,6 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 else {
                     GL.ShadeModel(ShadingModel.Flat);
                     GL.DisableClientState(EnableCap.ColorArray);
-                    GL.Color4(shape.FillColor); 
                 }
                 GL.DrawElements(BeginMode.Lines, indices.Length,
                                 DrawElementsType.UnsignedInt, (IntPtr)pIndices);

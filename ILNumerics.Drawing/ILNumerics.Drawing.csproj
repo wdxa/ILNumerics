@@ -46,6 +46,7 @@
     <DocumentationFile>..\bin\ILNumerics.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ILNumerics.Net, Version=1.4.1.2, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="OpenTK, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -105,6 +106,7 @@
     <Compile Include="Platform\OpenGL\ILOGLLineRendererC4bV3f.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Platform\OpenGL\ILOGLLinesRendererC4bV3f.cs" />
     <Compile Include="Platform\OpenGL\ILOGLRenderer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -250,12 +252,6 @@
     <None Include="Resources\TriangleDown25x25.png" />
     <Content Include="Resources\TriangleUp25x25A.bmp" />
     <EmbeddedResource Include="Resources\TriangleUp25x25A.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ILNumerics\ILNumerics.Net.csproj">
-      <Project>{3D3902F7-8F28-43AC-8584-4F515A5697C6}</Project>
-      <Name>ILNumerics.Net</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="obsolete\" />

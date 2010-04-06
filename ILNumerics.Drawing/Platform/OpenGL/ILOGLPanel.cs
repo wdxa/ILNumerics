@@ -615,7 +615,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 } else if (shape is ILQuad) {
                     ret = new ILOGLVertexRendererC4bV3f(BeginMode.Quads); 
                 } else if (shape is ILLines) {
-                    ret = new ILOGLVertexRendererC4bV3f(BeginMode.Lines); 
+                    ret = new ILOGLLinesRendererC4bV3f(); 
                 } else if (shape is ILTriangles) {
                     ret = new ILOGLVertexRendererC4bV3f(BeginMode.Triangles); 
                 } else if (shape is ILPoints) {
