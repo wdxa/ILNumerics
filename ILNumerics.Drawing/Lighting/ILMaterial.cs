@@ -38,7 +38,7 @@ namespace ILNumerics.Drawing.Lighting {
 
         #region properties
         /// <summary>
-        /// shape/intensity for specular reflection
+        /// shape/intensity for specular reflection, range: 1...128
         /// </summary>
         public byte Shininess {
             get { return m_shininess; }

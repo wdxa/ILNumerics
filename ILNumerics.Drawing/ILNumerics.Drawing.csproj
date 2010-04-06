@@ -46,7 +46,7 @@
     <DocumentationFile>..\bin\ILNumerics.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ILNumerics.Net, Version=1.4.1.2, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="ILNumerics.Net, Version=1.4.6.919, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="OpenTK, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />

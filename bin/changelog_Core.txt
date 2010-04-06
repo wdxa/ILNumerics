@@ -1,3 +1,7 @@
+Changes in version 1.4.06
+==========================
+* bugfix: ILACML1_4.cs: incorrect mapping for ?potri
+
 Changes in version 1.4.05
 ==========================
 * fixed a bug in ILMath.rank

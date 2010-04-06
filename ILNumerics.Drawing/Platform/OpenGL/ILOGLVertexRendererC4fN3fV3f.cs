@@ -163,10 +163,10 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             
             //GL.LightModel(LightModelParameter.LightModelAmbient, 0.2f);
             float[] tmp = new float[4] { 
-                  shape.Material.Specular.R
-                , shape.Material.Specular.G
-                , shape.Material.Specular.B
-                , shape.Material.Specular.A };
+                  shape.Material.Specular.R / 255f
+                , shape.Material.Specular.G / 255f
+                , shape.Material.Specular.B / 255f
+                , shape.Material.Specular.A / 255f};
             GL.Materialv(MaterialFace.FrontAndBack, MaterialParameter.Specular, tmp);
 
             GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Shininess, shape.Material.Shininess ); 

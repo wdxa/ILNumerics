@@ -272,16 +272,16 @@ namespace ILNumerics.Native {
         }
 
         public void dpotri(char uplo, int n, double[] A, int lda, ref int info) {
-            acml_dpotrf(uplo,n, A, lda, ref info); 
+            acml_dpotri(uplo,n, A, lda, ref info); 
         }
         public void spotri(char uplo, int n, float[] A, int lda, ref int info) {
-            acml_spotrf(uplo,n,A, lda, ref info);
+            acml_spotri(uplo,n,A, lda, ref info);
         }
         public void cpotri(char uplo, int n, fcomplex[] A, int lda, ref int info) {
-            acml_cpotrf(uplo,n, A, lda, ref info);
+            acml_cpotri(uplo,n, A, lda, ref info);
         }
         public void zpotri(char uplo, int n, complex[] A, int lda, ref int info) {
-            acml_zpotrf(uplo,n, A, lda, ref info);
+            acml_zpotri(uplo,n, A, lda, ref info);
         }
 
         public void dgetrf(int M, int N, double[] A, int LDA, int[] IPIV, ref int info) {
