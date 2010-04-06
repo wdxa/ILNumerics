@@ -1,3 +1,8 @@
+Changes in version 0.12.09
+===========================
+* added Material to ILLitCompositShapes
+* removed unneeded/ outdated classes/files
+
 Changes in version 0.12.08
 ===========================
 * bugfix: ILLines did not apply line properties correctly

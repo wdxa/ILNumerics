@@ -75,6 +75,7 @@
     <Compile Include="Labeling\ILSimpleInterpreter.cs" />
     <Compile Include="Labeling\ILSimpleTexInterpreter.cs" />
     <Compile Include="Lighting\ILLight.cs" />
+    <Compile Include="Lighting\ILMaterial.cs" />
     <Compile Include="Marker\ILBitmapMarkerShape.cs" />
     <Compile Include="Marker\ILMarkerShapeProxy.cs" />
     <Compile Include="Marker\ILStyledMarkerShape.cs" />
@@ -201,6 +202,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Shapes\ILLitSphere.cs" />
+    <Compile Include="Shapes\ILLitSurfaceShape.cs" />
     <Compile Include="Shapes\ILLitTriangles.cs" />
     <Compile Include="Shapes\ILPoints.cs" />
     <Compile Include="Shapes\ILPolygon.cs">

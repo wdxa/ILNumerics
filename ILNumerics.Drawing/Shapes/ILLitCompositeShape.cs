@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Text;
 using ILNumerics.Drawing.Interfaces; 
 using ILNumerics.Drawing.Controls; 
+using ILNumerics.Drawing.Lighting; 
 using ILNumerics.Exceptions; 
 using ILNumerics.BuiltInFunctions; 
 
@@ -37,10 +38,15 @@ namespace ILNumerics.Drawing.Shapes {
 
         #region attributes
         bool m_autoNormals;
-        Dictionary<int, List<int>> m_shapeIndicesIndex; 
+        Dictionary<int, List<int>> m_shapeIndicesIndex; // used for speedy normal calculation
+        ILMaterial m_material; 
         #endregion
 
         #region properties
+        public ILMaterial Material {
+            get { return m_material; }
+            set { m_material = value; }
+        }
         public bool AutoNormal {
             get { return m_autoNormals; }
             set { 
@@ -70,6 +76,7 @@ namespace ILNumerics.Drawing.Shapes {
             else 
                 m_autoNormals = false; 
             m_oldCameraPosition = ILPoint3Df.Empty;
+            m_material = new ILMaterial(); 
         }
         public ILLitCompositeShape (ILPanel panel, int verticesPerShape, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping) 
             : base (panel, verticesPerShape, X, Y, Z, mapping) { 

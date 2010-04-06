@@ -65,8 +65,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             //GL.Disable(EnableCap.PolygonOffsetFill); 
             ILShape<C4fN3fV3f> cShape = (shape as ILShape<C4fN3fV3f>);
             fixed (C4fN3fV3f* pVertices = cShape.Vertices) {
-                if (UseLight) {
-                    setupLight(cShape);  
+                if (UseLight && (cShape is ILLitCompositeShape<C4fN3fV3f>)) {
+                    setupLight(cShape as ILLitCompositeShape<C4fN3fV3f>);  
                 } else {
                     GL.Disable(EnableCap.Lighting); 
                 }
@@ -103,10 +103,11 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             ILShape<C4fN3fV3f> cShape = (shape as ILShape<C4fN3fV3f>);
             fixed (int* pIndices = indices.InternalArray4Experts) 
             fixed (C4fN3fV3f* pVertices = cShape.Vertices) {
-                if (UseLight)
-                    setupLight(cShape);  
-                else 
-                    GL.Disable(EnableCap.Lighting); 
+                if (UseLight && (cShape is ILLitCompositeShape<C4fN3fV3f>)) {
+                    setupLight(cShape as ILLitCompositeShape<C4fN3fV3f>);
+                } else {
+                    GL.Disable(EnableCap.Lighting);
+                }
                 GL.InterleavedArrays(InterleavedArrayFormat.C4fN3fV3f, 0, (IntPtr)pVertices);
                 if (cShape.Shading == ShadingStyles.Interpolate)
                     GL.ShadeModel(ShadingModel.Smooth);
@@ -154,17 +155,21 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             GL.Disable(EnableCap.Lighting); 
 
         }
-        private void setupLight<T>(ILShape<T> shape) where T : struct, IILVertexDefinition {
+        private void setupLight<T>(ILLitCompositeShape<T> shape) where T : struct, IILVertexDefinition {
             GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.ColorMaterial);
             GL.Enable(EnableCap.Normalize); 
             GL.ColorMaterial(MaterialFace.FrontAndBack,ColorMaterialParameter.AmbientAndDiffuse);
             
             //GL.LightModel(LightModelParameter.LightModelAmbient, 0.2f);
-            float[] tmp = new float[4] { 0.8f, 0.8f, 0.8f, 1.0f };
+            float[] tmp = new float[4] { 
+                  shape.Material.Specular.R
+                , shape.Material.Specular.G
+                , shape.Material.Specular.B
+                , shape.Material.Specular.A };
             GL.Materialv(MaterialFace.FrontAndBack, MaterialParameter.Specular, tmp);
 
-            GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Shininess, 96); 
+            GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Shininess, shape.Material.Shininess ); 
             
             tmp = new float[4] { .0f, .0f, .0f, 1f };
             GL.Materialv(MaterialFace.FrontAndBack, MaterialParameter.Emission, tmp);
