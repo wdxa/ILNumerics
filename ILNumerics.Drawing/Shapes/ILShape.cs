@@ -127,15 +127,15 @@ namespace ILNumerics.Drawing.Shapes {
         /// <param name="vertexIdx">index of vertex in vertex array</param>
         /// <param name="vertex">new vertex definition</param>
         public override void SetVertex(int vertexIdx,IILVertexDefinition vertex) {
-            VertexType curVert = m_vertices[vertexID]; 
+            VertexType curVert = m_vertices[vertexIdx]; 
             if (VertexDefinition.StoresColor && vertex.StoresColor) {
                 curVert.Color = vertex.Color; 
             }
             if (VertexDefinition.StoresNormals && vertex.StoresNormals) {
                 curVert.Normal = vertex.Normal; 
             }
-            curVert.Position = vertex.Position; 
-            m_vertices[vertexID] = curVert; 
+            curVert.Position = vertex.Position;
+            m_vertices[vertexIdx] = curVert; 
         }
         /// <summary>
         /// set color for single vertex (color only, no alpha!)

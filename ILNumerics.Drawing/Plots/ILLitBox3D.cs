@@ -117,7 +117,7 @@ namespace ILNumerics.Drawing.Plots {
              m_lineProperties = new ILLineProperties();
              m_lineProperties.Changed += new EventHandler(m_lineProperties_Changed);
              m_label = new ILShapeLabel(panel,CoordSystem.World3D);
-             m_label.Text = "";  (max * 1000).Z.ToString("F3"); 
+             m_label.Text = ""; //  (max * 1000).Z.ToString("F3"); 
 
              m_topColor = topColor; 
              // setup quads 
