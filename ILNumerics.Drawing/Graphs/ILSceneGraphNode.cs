@@ -33,27 +33,32 @@ using ILNumerics.Drawing.Controls;
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
-    /// Base class for all scene graph nodes. A node
-    /// can contain an arbitrary number of other nodes, building 
-    /// the graph. 
+    /// abstract base class for all scene graph nodes
     /// </summary>
     public abstract class ILSceneGraphNode : 
-                ICollection<ILSceneGraphNode>, IEnumerable<ILSceneGraphNode>, IEnumerable {
+                //ICollection<ILSceneGraphNode>,
+                IEnumerable<ILSceneGraphNode>
+                ,IEnumerable {
         
         #region attributes 
         protected ILSceneGraphNode m_parent; 
         protected ILPoint3Df m_center;
         protected ILPoint3Df m_positionMin; 
         protected ILPoint3Df m_positionMax; 
-        protected List<ILSceneGraphNode> m_childs = new List<ILSceneGraphNode>(); 
-        protected ILArray<float> m_centers;
-        protected ILPanel m_panel;
         protected bool m_invalidated;
         protected bool m_visible;
-
+        protected ILPanel m_panel; // needed for camera position
         #endregion
 
-        #region eventing 
+        #region constructors
+        internal ILSceneGraphNode(ILPanel panel) {
+            m_panel = panel; 
+            m_invalidated = true;
+            m_visible = true; 
+        }
+        #endregion
+
+        #region eventing
         /// <summary>
         /// fires when the size of the cube tigthly enclosing the shape has changed
         /// </summary>
@@ -73,8 +78,9 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region properties
+
         /// <summary>
-        /// Switch visiblility for the shape on/off or reads the visibility value
+        /// Get/set visiblility for the scene graph branch 
         /// </summary>
         public bool Visible {
             get { return m_visible; }
@@ -93,256 +99,115 @@ namespace ILNumerics.Drawing.Graphs {
             }
         }
         /// <summary>
-        /// the minimum coordinate of a cube tightly enclosing the shape
+        /// the minimum coordinate of a cube tightly enclosing the node (and all childs) 
         /// </summary>
         /// <returns></returns>
-        public virtual ILPoint3Df PositionMin() {
-            if (m_positionMin.IsEmtpy()) {
-                m_positionMin = ILPoint3Df.MaxValue; 
-                foreach (ILSceneGraphNode node in m_childs) {
-                    m_positionMin = ILPoint3Df.Min(node.PositionMin(),m_positionMin); 
+        public virtual ILPoint3Df PositionMin {
+            get {
+                if (m_positionMin.IsEmtpy()) {
+                    ComputeNodeLimits();
                 }
-            } 
-            return m_positionMin;
-        }
-        /// <summary>
-        /// the maximum coordinate of a cube tightly enclosing the shape
-        /// </summary>
-        /// <returns></returns>
-        public virtual ILPoint3Df PositionMax () {
-            if (m_positionMax.IsEmtpy()) {
-                m_positionMax = ILPoint3Df.MinValue; 
-                foreach (ILSceneGraphNode node in m_childs) {
-                    m_positionMax = ILPoint3Df.Max(node.PositionMax(),m_positionMax); 
-                }
+                return m_positionMin;
             }
-            return m_positionMax; 
+        }
+        /// the maximum coordinate of a cube tightly enclosing the node (and all childs) 
+        /// </summary>
+        /// <returns></returns>
+        public virtual ILPoint3Df PositionMax {
+            get {
+                if (m_positionMax.IsEmtpy()) {
+                    ComputeNodeLimits();
+                }
+                return m_positionMax;
+            }
         }
         /// <summary>
-        /// current center according to shapes vertices 
+        /// current geometric center according of scene graph branch
         /// </summary>
         public virtual ILPoint3Df Center {
             get {
                 if (m_center.IsEmtpy()) {
-                    m_center = new ILPoint3Df();
-                    for (int i = 0; i < m_childs.Count; i++) {
-                        ILPoint3Df center = m_childs[i].Center;
-                        m_center += center;
-                        m_centers.SetValue(center.X, i, 0);
-                        m_centers.SetValue(center.Y, i, 1);
-                        m_centers.SetValue(center.Z, i, 2);
-                    }
-                    m_center /= (m_childs.Count);
+                    ComputeNodeLimits(); 
                 }
                 return m_center;
             }
         }
         #endregion
 
-        #region constructor
-        /// <summary>
-        /// construct a new scene graph node 
-        /// </summary>
-        /// <param name="panel">the hosting panel</param>
-        public ILSceneGraphNode (ILPanel panel) {
-            m_centers = new ILArray<float>(0,3); 
-            m_panel = panel; 
-            m_center = ILPoint3Df.Empty; 
-            m_positionMin = ILPoint3Df.Empty; 
-            m_positionMax = ILPoint3Df.Empty; 
-            m_invalidated = true;
-            m_visible = true; 
-        }
-        #endregion
-
         #region public interface 
         /// <summary>
-        /// invalidate nodes cache, may or may not for childs also
+        /// invalidate geometry cache for this and all nodes up to root
         /// </summary>
-        /// <param name="invalidChilds">true: clear the size cache for all childs also</param>
-        public void Invalidate(bool invalidChilds) {
+        public virtual void Invalidate() {
             m_center = ILPoint3Df.Empty;
             m_positionMin = ILPoint3Df.Empty;
             m_positionMax = ILPoint3Df.Empty;
-            if (invalidChilds) {
-                invalidateChilds(this);
-            }
+            m_invalidated = true;
             if (Parent != null) {
-                Parent.Invalidate(false);
+                Parent.Invalidate();
             } else {
                 OnInvalidated();
             }
-            m_invalidated = true;
-        }
-        /// <summary>
-        /// Invalidate nodes cache, recompute size spanned by this node on next redraw
-        /// </summary>
-        public void Invalidate() {
-            Invalidate(true);
         }
         /// <summary>
         /// recompute the size spanned by this node, may fires Changed() event
         /// </summary>
-        public virtual void Configure() {
-            if (m_invalidated) {
-                bool sizechanged = false; 
-                ILPoint3Df oldPoint = m_positionMin; 
-                m_positionMin = PositionMin();
-                if (oldPoint != m_positionMin) sizechanged = true; 
-                oldPoint = m_positionMax; 
-                m_positionMax = PositionMax();
-                if (!sizechanged && oldPoint != m_positionMax) sizechanged = true;
-                m_center = Center;
-                if (m_childs != null)
-                foreach (ILSceneGraphNode child in m_childs) {
-                    if (child is ILShape) {
-                        (child as ILShape).Configure();
-                    }
-                }
-                m_invalidated = false;
-                if (sizechanged) 
-                    OnSizeChanged(); 
-            }
-        }
+        public abstract void Configure(); 
         /// <summary>
-        /// draw all childs contained in this node
+        /// draw all children contained in this node
         /// </summary>
         /// <param name="props">extended rendering properties</param>
-        public virtual void Draw(ILRenderProperties props) {
-            if (!m_visible) {
-                return;
-            }
-            if (m_childs != null && m_childs.Count > 0) {
-                ILArray<int> indices = Computation.GetSortedIndices(
-                                     m_centers,m_panel.Camera.Position); 
-                foreach (int i in indices.Values) {
-                    if (m_childs[i].Visible)
-                        m_childs[i].Draw(props); 
-                }
-            }
-        }
+        public abstract void Draw(ILRenderProperties props);
+
         #endregion
 
         #region private helper 
-        protected void invalidateChilds(ILSceneGraphNode parent) {
-            parent.m_center = ILPoint3Df.Empty;
-            parent.m_positionMin = ILPoint3Df.Empty;
-            parent.m_positionMax = ILPoint3Df.Empty;
-            foreach (ILSceneGraphNode child in parent.m_childs) {
-                child.invalidateChilds(child);
-            }
-        }
-        #endregion
-
-        #region IList<ILSceneGraphNode> Member
-
-        public virtual int IndexOf(ILSceneGraphNode item) {
-            return m_childs.IndexOf(item); 
-        }
-
-        public virtual void Insert(int index, ILSceneGraphNode item) {
-            m_childs.Insert(index,item); 
-        }
-
-        public virtual void RemoveAt(int index) {
-            m_childs.RemoveAt(index); 
-        }
-        #endregion
-
-        #region ICollection<ILSceneGraphNode> Member
         /// <summary>
-        /// add a single node to the end of child collection
+        /// compute limits of the cube tightly enclosing the branch below this node
         /// </summary>
-        /// <param name="item"></param>
-        public virtual void Add(ILSceneGraphNode item) {
-            m_childs.Add(item);
-            item.Parent = this; 
-        }
-        /// <summary>
-        /// wipe all nodes from the collection 
-        /// </summary>
-        public virtual void Clear() {
-            m_childs.Clear(); 
-        }
-        /// <summary>
-        /// Determine, if this collection contains a specific node item
-        /// </summary>
-        /// <param name="item"></param>
         /// <returns></returns>
-        public bool Contains(ILSceneGraphNode item) {
-            return m_childs.Contains(item); 
-        }
+        protected abstract void ComputeNodeLimits(); 
 
-        public void CopyTo(ILSceneGraphNode[] array, int arrayIndex) {
-            m_childs.CopyTo(array,arrayIndex); 
-        }
-        /// <summary>
-        /// Number of childs this node contains
-        /// </summary>
-        public int Count {
-            get { return m_childs.Count;  }
-        }
-        /// <summary>
-        /// determine if this collection is readonly, always returns false
-        /// </summary>
-        public bool IsReadOnly {
-            get { return false; }
-        }
-        /// <summary>
-        /// remove a single child node from the collection
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public virtual bool Remove(ILSceneGraphNode item) {
-            return m_childs.Remove(item); 
-        }
-
+        //protected void invalidateChilds(ILSceneGraphNode parent) {
+        //    parent.m_center = ILPoint3Df.Empty;
+        //    parent.m_positionMin = ILPoint3Df.Empty;
+        //    parent.m_positionMax = ILPoint3Df.Empty;
+        //    foreach (ILSceneGraphNode child in parent.m_childs) {
+        //        child.invalidateChilds(child);
+        //    }
+        //}
         #endregion
 
         #region IEnumerable<ILSceneGraphNode> Member
+
         /// <summary>
         /// Create &amp; returns a typed enumerator
         /// </summary>
-        /// <returns></returns>
+        /// <returns>enumerator of all scene graph nodes below this node</returns>
         public IEnumerator<ILSceneGraphNode> GetEnumerator() {
-            return m_childs.GetEnumerator(); 
+            List<ILSceneGraphNode> ret = new List<ILSceneGraphNode>();
+            CollectAllChildren(ret);
+            return ret.GetEnumerator(); 
         }
-
         #endregion
 
         #region IEnumerable Member
         /// <summary>
         /// Create and return untyped enumerator
         /// </summary>
-        /// <returns></returns>
+        /// <returns>IEnumerator of all scene graph nodes below this node</returns>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
-            foreach (ILSceneGraphNode node in m_childs) {
+            List<ILSceneGraphNode> children = new List<ILSceneGraphNode>();
+            CollectAllChildren(children);
+            foreach (ILSceneGraphNode node in children) {
                 yield return node; 
             }
         }
-
-        #endregion
-
-    private class Computation : ILNumerics.BuiltInFunctions.ILMath {
-        /// <summary>
-        /// compute distance to camera and return sorted indices for rendering
-        /// </summary>
-        /// <param name="centers">current primitive centers</param>
-        /// <param name="position">current camera position</param>
-        /// <returns>sorted indices of primitives in descending order</returns>
-        internal static ILArray<int> GetSortedIndices(ILArray<float> centers, 
-                                        ILPoint3Df position) {
-            ILArray<float> pos = new float[]{ -position.X, -position.Y, -position.Z }; 
-            // move camera outside of centers
-            pos *= maxall(abs(centers)); 
-            pos = repmat(pos,centers.Dimensions[0],1); 
-            // compute distances
-            ILArray<float> dist = sum(pow(centers-pos,2),1); 
-            ILArray<double> ret; 
-            sort(dist,out ret, 0,false); 
-            return toint32(ret); 
+        protected virtual void CollectAllChildren(List<ILSceneGraphNode> nodes) {
+            nodes.Add(this); 
         }
-    }
+        
+        #endregion
 
     }
 

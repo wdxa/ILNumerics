@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;RENDERER_DRAW_NORMALS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;RENDERER_DRAW_NORMALS_</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -64,7 +64,13 @@
     </Compile>
     <Compile Include="Graphs\ILBarGraph2D.cs" />
     <Compile Include="Graphs\ILSceneGraph.cs" />
+    <Compile Include="Graphs\ILSceneGraphInnerNode.cs" />
     <Compile Include="Graphs\ILSceneGraphNode.cs" />
+    <Compile Include="Graphs\ILSceneGraphRootNode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graphs\ILSceneGraphShapedLeaf.cs" />
+    <Compile Include="Interfaces\IILSupportsLight.cs" />
     <Compile Include="Interfaces\IILVertexDefinition.cs" />
     <Compile Include="Labeling\ILShapeLabel.cs" />
     <Compile Include="Interfaces\IILLegendRenderer.cs" />
@@ -128,6 +134,7 @@
     <Compile Include="Platform\OpenGL\ILOGLZAxis.cs" />
     <Compile Include="Graphs\ILSurfaceGraph.cs" />
     <Compile Include="Platform\OpenGL\ILOGLPointsRendererC4bV3f.cs" />
+    <Compile Include="Plots\ILBarGraph3d.cs" />
     <Compile Include="Resources\Images.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -144,10 +151,10 @@
     <Compile Include="Controls\ILColorBar.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\ILControl.cs">
+    <Compile Include="Graphs\ILControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\ILControl.Designer.cs">
+    <Compile Include="Graphs\ILControl.Designer.cs">
       <DependentUpon>ILControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\ILGraphCollection.cs" />
@@ -194,21 +201,26 @@
     <Compile Include="Misc\ILRenderProperties.cs" />
     <Compile Include="Shapes\ILLine.cs" />
     <Compile Include="Shapes\ILLines.cs" />
-    <Compile Include="Shapes\ILLitBox.cs">
+    <Compile Include="Shapes\ILLitBorderedShape.cs" />
+    <Compile Include="Plots\ILLitBox3D.cs" />
+    <Compile Include="Shapes\ILLitCompositeShape.cs" />
+    <Compile Include="Shapes\ILLitQuad.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shapes\ILLitCompositeShape.cs" />
     <Compile Include="Shapes\ILLitQuads.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Shapes\ILLitSphere.cs" />
     <Compile Include="Shapes\ILLitSurfaceShape.cs" />
+    <Compile Include="Shapes\ILLitTriangle.cs" />
     <Compile Include="Shapes\ILLitTriangles.cs" />
     <Compile Include="Shapes\ILPoints.cs" />
     <Compile Include="Shapes\ILPolygon.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shapes\ILQuad.cs" />
+    <Compile Include="Shapes\ILQuad.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Shapes\ILQuads.cs">
       <SubType>Code</SubType>
     </Compile>

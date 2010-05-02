@@ -36,19 +36,20 @@ using ILNumerics.Drawing.Interfaces;
 namespace ILNumerics.Drawing.Shapes {
     #region ILShape<VertexType> class definition
     /// <summary>
-    /// shape definition, specific vertex type
+    /// abstract generic shape, specific vertex type
     /// </summary>
-    /// <typeparam name="VertexType">the internal vertex type, IILVertexDefinition struct</typeparam>
+    /// <typeparam name="VertexType">the internal vertex type, IILVertexDefinition</typeparam>
     public abstract class ILShape<VertexType> : ILShape
         where VertexType : struct, IILVertexDefinition {
 
         #region attributes 
         protected VertexType[] m_vertices; 
         protected VertexType m_sampleVertex = new VertexType(); 
-        protected readonly int m_numVerticesPerShape; 
+        protected readonly int m_numVerticesPerShape;
         #endregion
 
         #region properties
+
         /// <summary>
         /// access to internal vertex array
         /// </summary>
@@ -72,9 +73,9 @@ namespace ILNumerics.Drawing.Shapes {
         /// <para>The center is important to position the shape in the scene - according to 
         /// other shapes. This defines the order in which the shapes are rendered, which 
         /// is neccessary for transparency to appear correctly. In general one should
-        /// not alter the center. This will compute the center of a shape according to its 
-        /// true vertices weight average. However, for certain special shapes it might 
-        /// be helpful to override the center to manually determine the rendering order for the scenes' shape.</para></remarks>
+        /// not alter the center. This will compute the center of a shape accordingly to its 
+        /// real vertices weight average. However, for certain special shapes it might 
+        /// be helpful to override the center to manually determine the rendering order in the scene.</para></remarks>
         public ILPoint3Df CustomCenter {
             get {
                 return m_customCenter;
@@ -97,25 +98,6 @@ namespace ILNumerics.Drawing.Shapes {
                 return (IILVertexDefinition)m_sampleVertex; 
             }
         }
-        public override ILPoint3Df Center {
-            get {
-                if (m_useCustomCenter) return m_customCenter;
-                ILPoint3Df ret = new ILPoint3Df();
-                if (m_vertices.Length == 0) return ret;
-                // technical problem: if any childs exist here, 
-                // we would have to take their centers into account 
-                // as well. this would be non-trivial, because
-                // we dont easiely know how many childs exist in 
-                // whole subtree (without walking them). So we only 
-                // take the center of the shape here (as a hack). 
-                foreach (IILVertexDefinition vertex in m_vertices) {
-                    ret.X += vertex.XPosition;
-                    ret.Y += vertex.YPosition;
-                    ret.Z += vertex.ZPosition;
-                }
-                return ret / m_vertices.Length;
-            }
-        }
         #endregion
 
         #region constructors
@@ -123,7 +105,7 @@ namespace ILNumerics.Drawing.Shapes {
             : base (panel) {
             m_numVerticesPerShape = verticesPerShape; 
             m_vertices = new VertexType[numberVertices];
-            m_vertCount = numberVertices; 
+            m_vertCount = numberVertices;
             m_renderer = panel.GetCreationFactory().CreateVertexRenderer(typeof(VertexType), this); 
             VertexType a = new VertexType(); 
             m_vertexStoresColor = a.StoresColor; 
@@ -131,39 +113,20 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion
 
         #region public interface 
-        public override ILPoint3Df PositionMin() {
-            if (m_positionMin.IsEmtpy()) {
-                m_positionMin = ILPoint3Df.MaxValue;
-                foreach (ILSceneGraphNode node in m_childs) {
-                    m_positionMin = ILPoint3Df.Min(node.PositionMin(), m_positionMin);
-                }
-                foreach (IILVertexDefinition vertex in m_vertices) {
-                    if (vertex.XPosition < m_positionMin.X) m_positionMin.X = vertex.XPosition;
-                    if (vertex.YPosition < m_positionMin.Y) m_positionMin.Y = vertex.YPosition;
-                    if (vertex.ZPosition < m_positionMin.Z) m_positionMin.Z = vertex.ZPosition;
-                }
-            }
-            return m_positionMin;
+        /// <summary>
+        /// Query single vertex via IILVertexDefinition interface 
+        /// </summary>
+        /// <param name="i">index of vertex in vertex array</param>
+        /// <returns>vertex definition</returns>
+        public override IILVertexDefinition GetVertex(int i) {
+            return (IILVertexDefinition)m_vertices[i]; 
         }
-        public override ILPoint3Df PositionMax() {
-            if (m_positionMax.IsEmtpy()) {
-                m_positionMax = ILPoint3Df.MinValue;
-                foreach (ILSceneGraphNode node in m_childs) {
-                    m_positionMax = ILPoint3Df.Max(node.PositionMax(), m_positionMax);
-                }
-                foreach (IILVertexDefinition vertex in m_vertices) {
-                    if (vertex.XPosition > m_positionMax.X) m_positionMax.X = vertex.XPosition;
-                    if (vertex.YPosition > m_positionMax.Y) m_positionMax.Y = vertex.YPosition;
-                    if (vertex.ZPosition > m_positionMax.Z) m_positionMax.Z = vertex.ZPosition;
-                }
-            }
-            return m_positionMax;
-        }
-
-        public override IILVertexDefinition GetVertex(int id) {
-            return (IILVertexDefinition)m_vertices[id]; 
-        }
-        public override void SetVertex(int vertexID,IILVertexDefinition vertex) {
+        /// <summary>
+        /// alter single vertex via IILVertexDefinition interface
+        /// </summary>
+        /// <param name="vertexIdx">index of vertex in vertex array</param>
+        /// <param name="vertex">new vertex definition</param>
+        public override void SetVertex(int vertexIdx,IILVertexDefinition vertex) {
             VertexType curVert = m_vertices[vertexID]; 
             if (VertexDefinition.StoresColor && vertex.StoresColor) {
                 curVert.Color = vertex.Color; 
@@ -174,6 +137,11 @@ namespace ILNumerics.Drawing.Shapes {
             curVert.Position = vertex.Position; 
             m_vertices[vertexID] = curVert; 
         }
+        /// <summary>
+        /// set color for single vertex (color only, no alpha!)
+        /// </summary>
+        /// <param name="vertexID">index of vertex in vertex array</param>
+        /// <param name="color">new color</param>
         public override void SetColor(int vertexID,Color color) {
             if (VertexDefinition.StoresColor) {
                 VertexType vert = m_vertices[vertexID]; 
@@ -181,18 +149,32 @@ namespace ILNumerics.Drawing.Shapes {
                 m_vertices[vertexID] = vert; 
             }
         }
+        /// <summary>
+        /// set position if single vertex 
+        /// </summary>
+        /// <param name="vertexID">index of vertex in vertex array</param>
+        /// <param name="position">new position </param>
         public override void SetPosition(int vertexID,ILPoint3Df position) {
             VertexType vert = m_vertices[vertexID]; 
             vert.Position = position; 
             m_vertices[vertexID] = vert; 
         }
+        /// <summary>
+        /// set normal vector for single vertex
+        /// </summary>
+        /// <param name="vertexID">index of vertex in vertex array</param>
+        /// <param name="normal">new normal vector</param>
         public override void SetNormal(int vertexID,ILPoint3Df normal) {
             if (VertexDefinition.StoresNormals) {
                 VertexType vert = m_vertices[vertexID]; 
-                vert.Position = normal; 
+                vert.Normal = normal; 
                 m_vertices[vertexID] = vert; 
             }
         }
+        /// <summary>
+        /// translate all vertices of the shape
+        /// </summary>
+        /// <param name="offset">offset, all vertices will be moved by that amount</param>
         public override void Translate(ILPoint3Df offset) {
             for (int i = 0; i < m_vertCount; i++) {
                 VertexType tmp = m_vertices[i]; 
@@ -202,19 +184,51 @@ namespace ILNumerics.Drawing.Shapes {
         }
         #endregion
 
+        #region private helper 
+        protected override void ComputeLimits() {
+            ILPoint3Df cent = new ILPoint3Df();
+            if (m_vertices.Length == 0) {
+                // fast exit
+                m_positionCenter = cent;
+                m_positionMin = cent;
+                m_positionMax = cent;
+                return;
+            }
+            ILPoint3Df max = ILPoint3Df.MinValue, min = ILPoint3Df.MaxValue, cur;
+            foreach (IILVertexDefinition vertex in m_vertices) {
+                cur = vertex.Position;
+                cent = cent + cur;
+                max = ILPoint3Df.Max(max, cur);
+                min = ILPoint3Df.Min(min, cur);
+            }
+            m_positionCenter = cent / m_vertices.Length;
+            m_positionMax = max;
+            m_positionMin = min;
+        }
+        #endregion
+
     }
     #endregion
 
     #region ILShape base class definition
-    public abstract class ILShape  : ILSceneGraphNode, IDisposable {
+    /// <summary>
+    /// abstract base class for all shapes 
+    /// </summary>
+    public abstract class ILShape  :  IDisposable {
 
         #region events 
+        /// <summary>
+        /// fires, when any properties of the shape have changed
+        /// </summary>
         public event EventHandler Changed; 
         protected virtual void OnChanged() {
             if (Changed != null) {
                 Changed(this, new EventArgs()); 
             }
         }
+        /// <summary>
+        /// fires when the size of the shape has changed
+        /// </summary>
         public event EventHandler SizeChanged; 
         protected virtual void OnSizeChanged() {
             if (SizeChanged != null) {
@@ -224,8 +238,12 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion 
 
         #region attributes
+        protected ILPanel m_panel; 
         protected bool m_useCustomCenter; 
-        protected ILPoint3Df m_customCenter; 
+        protected ILPoint3Df m_customCenter;
+        protected ILPoint3Df m_positionMin;
+        protected ILPoint3Df m_positionMax;
+        protected ILPoint3Df m_positionCenter; 
         protected Color m_fillColor; 
         protected ShadingStyles m_shading; 
         protected ILShapeLabel m_label; 
@@ -234,19 +252,59 @@ namespace ILNumerics.Drawing.Shapes {
         /// panel hosting the scene (for current camera position and size updates)
         /// </summary>
         protected int m_vertCount;
-        protected ILVertexRenderer m_renderer; 
+        protected ILVertexRenderer m_renderer;
+        protected ILSceneGraphShapedLeaf m_sceneNode; 
         #endregion 
 
         #region properties 
-
-
+        /// <summary>
+        /// returns the scene graph node holding this shape
+        /// </summary>
+        public ILSceneGraphShapedLeaf SceneGraphNode {
+            get {
+                return m_sceneNode; 
+            }
+            set {
+                m_sceneNode = value; 
+            }
+        }
+        /// <summary>
+        /// Get minimum coordinate of the cube enclosing the shape
+        /// </summary>
+        public ILPoint3Df PositionMin {
+            get {
+                if (m_positionMin.IsEmtpy())
+                    ComputeLimits();
+                return m_positionMin;
+            }
+        }
+        /// <summary>
+        /// Get maximum coordinate of the cube enclosing the shape
+        /// </summary>
+        public ILPoint3Df PositionMax {
+            get {
+                if (m_positionMax.IsEmtpy())
+                    ComputeLimits();
+                return m_positionMax;
+            }
+        }
+        /// <summary>
+        /// Get weight center of vertices 
+        /// </summary>
+        public ILPoint3Df Center {
+            get {
+                if (m_positionCenter.IsEmtpy())
+                    ComputeLimits();
+                return m_positionCenter;
+            }
+        }
         /// <summary>
         /// Get/set method of area filling 
         /// </summary>
         /// <remarks><para>Two methods are available: 'Interpolate' and 'Flat'. For 'Interpolate' mode,
         /// the color and alpha values stored in individual vertices are used for rendering. 
         /// In 'Flat' mode, only the single properties 'FillColor' and 'Opacity' determine 
-        /// the color and transparency of the whols shape. Even if vertices store individual
+        /// the color and transparency of the whole shape. Even if vertices store individual
         /// color values, those are ignored in that case.</para></remarks>
         public ShadingStyles Shading {
             get { 
@@ -303,7 +361,8 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion
 
         #region constructors
-        protected ILShape (ILPanel panel) : base(panel) {
+        protected ILShape (ILPanel panel) {
+            m_panel = panel; 
             m_fillColor = Color.White;
             m_label = new ILShapeLabel(panel);
             m_label.Changed += new EventHandler(m_label_Changed); 
@@ -319,21 +378,63 @@ namespace ILNumerics.Drawing.Shapes {
         /// </summary>
         public virtual void Dispose() {}
         /// <summary>
-        /// access to an internal vertex
+        /// Query single vertex via IILVertexDefinition interface 
         /// </summary>
-        /// <param name="id">number of vertex to be accessed</param>
-        /// <returns>generic vertex definition interface instance</returns>
-        public abstract IILVertexDefinition GetVertex(int id); 
-        public abstract void SetColor(int id,Color color); 
-        public abstract void SetPosition(int id,ILPoint3Df position);
-        public abstract void SetNormal(int id,ILPoint3Df normal);
-        public abstract void SetVertex(int vertexID,IILVertexDefinition vertex); 
+        /// <param name="i">index of vertex in vertex array</param>
+        /// <returns>vertex definition</returns>
+        public abstract IILVertexDefinition GetVertex(int id);
+        /// <summary>
+        /// set color for single vertex (color only, no alpha!)
+        /// </summary>
+        /// <param name="vertexID">index of vertex in vertex array</param>
+        /// <param name="color">new color</param>
+        public abstract void SetColor(int id, Color color);
+        /// <summary>
+        /// set position if single vertex 
+        /// </summary>
+        /// <param name="vertexID">index of vertex in vertex array</param>
+        /// <param name="position">new position </param>
+        public abstract void SetPosition(int id, ILPoint3Df position);
+        /// <summary>
+        /// set normal vector for single vertex
+        /// </summary>
+        /// <param name="vertexID">index of vertex in vertex array</param>
+        /// <param name="normal">new normal vector</param>
+        public abstract void SetNormal(int id, ILPoint3Df normal);
+        /// <summary>
+        /// alter single vertex via IILVertexDefinition interface
+        /// </summary>
+        /// <param name="vertexIdx">index of vertex in vertex array</param>
+        /// <param name="vertex">new vertex definition</param>
+        public abstract void SetVertex(int vertexID, IILVertexDefinition vertex);
+        /// <summary>
+        /// translate all vertices of the shape
+        /// </summary>
+        /// <param name="offset">offset, all vertices will be moved by that amount</param>
         public abstract void Translate(ILPoint3Df offset); 
-        public override void Draw (ILRenderProperties props) {
- 	        // draw childs  
-            base.Draw(props);
+        /// <summary>
+        /// draw this shape (internal use) 
+        /// </summary>
+        /// <param name="props"></param>
+        public void Draw (ILRenderProperties props) {
             IntDrawShape(props); 
             IntDrawLabel(props); 
+        }
+        /// <summary>
+        /// configure this shape (internal use)
+        /// </summary>
+        public virtual void Configure() { }
+        /// <summary>
+        /// Invalidates this shape, needed after altering any vertex data
+        /// </summary>
+        public virtual void Invalidate() {
+
+            m_positionMin = ILPoint3Df.Empty;
+            m_positionMax = ILPoint3Df.Empty;
+            m_positionCenter = ILPoint3Df.Empty;
+            if (m_sceneNode != null) {
+                m_sceneNode.Invalidate(false); 
+            }
         }
         #endregion
 
@@ -348,6 +449,7 @@ namespace ILNumerics.Drawing.Shapes {
         protected virtual void IntDrawShape(ILRenderProperties p) {
             m_renderer.Draw(p,this);
         }
+        protected abstract void ComputeLimits();
         #endregion
     }
     #endregion

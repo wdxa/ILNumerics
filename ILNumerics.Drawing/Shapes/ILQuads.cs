@@ -42,8 +42,8 @@ namespace ILNumerics.Drawing.Shapes {
         : ILCompositeShape<C4bV3f> {
 
         #region constructors
-        public ILQuads (ILPanel panel, int numQuads) 
-            : base (panel, numQuads * 4, 4) {
+        public ILQuads (ILPanel panel, int numVertices) 
+            : base (panel, numVertices, 4) {
             m_fillColor = Color.Green;    
         }
         public ILQuads (ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z) 

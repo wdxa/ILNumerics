@@ -33,7 +33,8 @@ namespace ILNumerics.Drawing.Lighting {
 
         #region attributes
         byte m_shininess;
-        Color m_specular; 
+        Color m_specular;
+        Color m_emission; 
         #endregion
 
         #region properties
@@ -51,6 +52,13 @@ namespace ILNumerics.Drawing.Lighting {
             get { return m_specular; }
             set { m_specular = value; }
         }
+        /// <summary>
+        /// color for emissive reflection
+        /// </summary>
+        public Color Emission {
+            get { return m_emission; }
+            set { m_emission = value; }
+        }
         #endregion
 
         #region public interface
@@ -59,7 +67,8 @@ namespace ILNumerics.Drawing.Lighting {
         /// </summary>
         public ILMaterial() {
             m_shininess = (byte)96;
-            m_specular = Color.FromArgb(int.MaxValue); 
+            m_specular = Color.FromArgb(255, Color.Gray);
+            m_emission = Color.FromArgb(255, Color.Black); 
         }
         #endregion
 

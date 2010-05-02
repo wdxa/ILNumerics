@@ -33,7 +33,8 @@ using ILNumerics.Exceptions;
 using ILNumerics.BuiltInFunctions; 
 
 namespace ILNumerics.Drawing.Shapes {
-    public abstract class ILLitCompositeShape<VertexType> : ILCompositeShape<VertexType> 
+    public abstract class ILLitCompositeShape<VertexType> 
+        : ILCompositeShape<VertexType>, IILSupportsLight
         where VertexType : struct, IILVertexDefinition {
 
         #region attributes
@@ -47,7 +48,7 @@ namespace ILNumerics.Drawing.Shapes {
             get { return m_material; }
             set { m_material = value; }
         }
-        public bool AutoNormal {
+        public bool AutoNormals {
             get { return m_autoNormals; }
             set { 
                 if (VerticesPerShape < 3 && value) 
@@ -101,6 +102,10 @@ namespace ILNumerics.Drawing.Shapes {
                 Computation.CalculateNormals(m_vertices, m_shapeIndices, m_shapeIndicesIndex);
             }
         }
+        public override void Invalidate() {
+            base.Invalidate();
+            m_shapeIndicesIndex = null; 
+        }
         #endregion
 
         #region private helpers
@@ -152,12 +157,15 @@ namespace ILNumerics.Drawing.Shapes {
 #endif
                 // find all shapes using this vertex
                 for (int i = 0; i < vertices.Length; i++) {
+                    if (!shapeIndicesIndex.ContainsKey(i)) continue;  
                     ILPoint3Df normal = new ILPoint3Df(); 
                     foreach (int shapeIdx in shapeIndicesIndex[i]) {
                         normal += snormals[shapeIdx];                         
                     }
-                    vertices[i].Normal = normal / (float)Math.Sqrt(
-                                    normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z);
+                    // we let OpenGL normalize the normals...
+                    //vertices[i].Normal = normal / (float)Math.Sqrt(
+                    //                normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z);
+
                     //System.Diagnostics.Debug.Assert(
                     //    Math.Abs(Math.Sqrt(
                     //    vertices[0].Normal.X * vertices[0].Normal.X +

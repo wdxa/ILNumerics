@@ -26,45 +26,24 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading; 
+using System.Drawing; 
+using ILNumerics.Drawing; 
+using ILNumerics.Drawing.Controls; 
+using ILNumerics.Drawing.Misc;
+using ILNumerics.Drawing.Graphs;  
+using ILNumerics.Drawing.Interfaces; 
+using ILNumerics.Drawing.Shapes; 
 
-namespace ILNumerics.Drawing.Misc {
-    public abstract class ILAction {
+namespace ILNumerics.Drawing.Shapes {
+    /// <summary>
+    /// A single simple bordered quad supporting light
+    /// </summary>
+    public class ILLitQuad : ILLitBorderedShape<C4fN3fV3f> {
 
-        #region attributes
-        TimeSpan m_duration; 
-        Thread m_workerThread; 
-        protected bool m_canceled; 
+        #region constructors
+        public ILLitQuad (ILPanel panel) 
+            : base (panel,4) { } 
         #endregion
 
-        #region properties
-        #endregion
-
-        #region constructor
-        public ILAction() {
-            m_canceled = false; 
-            m_workerThread = new Thread(new ParameterizedThreadStart(RunInternal)); 
-        }
-        #endregion
-
-        #region public interface 
-        // Run
-        public void Run() {
-            if (m_workerThread.ThreadState != ThreadState.Running) {
-                m_canceled = false; 
-                m_workerThread.Start();
-            }
-        }
-        // Cancel
-        public void Cancel() {
-            m_canceled = true; 
-        }
-
-        protected abstract void RunInternal(object parameter); 
-        #endregion 
-
-        #region private helper
-
-        #endregion
     }
 }

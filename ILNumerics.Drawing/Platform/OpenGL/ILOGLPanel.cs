@@ -627,9 +627,15 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 ILOGLVertexRendererC4fN3fV3f ret; 
                 if (shape is ILLitQuads) {
                     ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Quads); 
-                    ret.UseLight = true; 
-                } else if (shape is ILLitBox) {
-                    ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Quads); 
+                    ret.UseLight = true;
+                //} else if (shape is ILLitBox) {
+                //    ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Quads);
+                //    ret.UseLight = true;
+                } else if (shape is ILLitQuad) {
+                    ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Quads);
+                    ret.UseLight = true;
+                } else if (shape is ILLitTriangle) {
+                    ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Triangles);
                     ret.UseLight = true;
                 } else if (shape is ILLitSphere) {
                     ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Quads);

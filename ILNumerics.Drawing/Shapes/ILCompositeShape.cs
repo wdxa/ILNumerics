@@ -56,6 +56,17 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion
 
         #region properties
+        /// <summary>
+        /// Indices used to render primitives from vertices 
+        /// </summary>
+        public ILArray<int> Indices {
+            get {
+                return m_shapeIndices; 
+            }
+            set {
+                m_shapeIndices = value; 
+            }
+        }
         #endregion
 
         #region constructors
@@ -104,7 +115,7 @@ namespace ILNumerics.Drawing.Shapes {
 			}
             m_panel = panel; 
             Opacity = 255; 
-            m_shading = ShadingStyles.Flat; 
+            m_shading = ShadingStyles.Interpolate; 
         }
         /// <summary>
         /// create composite shape 

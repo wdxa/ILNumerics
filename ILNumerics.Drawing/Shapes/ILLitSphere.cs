@@ -63,7 +63,7 @@ namespace ILNumerics.Drawing.Shapes {
             m_radius = radius;
             m_vertRes = vertResolution; 
             m_horRes = horResolution; 
-            AutoNormal = false; 
+            AutoNormals = false; 
             createVertices(m_horRes,m_vertRes); 
             colorVertices(color); 
         }

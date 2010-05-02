@@ -233,7 +233,7 @@ namespace ILNumerics.Drawing.Labeling {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void m_renderer_CacheCleared(object sender, EventArgs e) {
+        protected void m_renderer_CacheCleared(object sender, EventArgs e) {
             m_cachedExpression = ""; 
         }
         /// <summary>

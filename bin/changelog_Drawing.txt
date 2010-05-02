@@ -1,3 +1,11 @@
+Changes in version 0.12.11
+===========================
+* reworked scene graph inner node structure
+* fixed automatic invalidation on changes to scene graph children collection
+* improved lightning for shapes
+* added new shapes: ILLitBorderedShape, ILLitQuad, ILLitTriangle
+* added new plots: ILLitBox3D, ILBarGraph3D (still under construction)
+
 Changes in version 0.12.10
 ===========================
 * corrected color (byte) -> OpenGL (float) translation in

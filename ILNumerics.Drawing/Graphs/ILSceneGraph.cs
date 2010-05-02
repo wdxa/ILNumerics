@@ -31,7 +31,6 @@ using ILNumerics.Drawing.Controls;
 using ILNumerics.Drawing.Interfaces; 
 using ILNumerics.Drawing.Shapes;
 using ILNumerics.BuiltInFunctions; 
-using ILNumerics.Drawing.Shapes; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
@@ -47,14 +46,14 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region attributes
-        ILSceneGraphNode m_root; 
+        ILSceneGraphRoot m_root; 
         #endregion
 
         #region properties
         /// <summary>
         /// access to the root node of the scene
         /// </summary>
-        public ILSceneGraphNode Root {
+        public ILSceneGraphInnerNode Root {
             get {return m_root; }
         }
         #endregion
@@ -69,7 +68,7 @@ namespace ILNumerics.Drawing.Graphs {
         }
 
         void m_root_SizeChanged(object sender, EventArgs e) {
-            m_localClipping.Set(m_root.PositionMin(),m_root.PositionMax());
+            m_localClipping.Set(m_root.PositionMin,m_root.PositionMax);
         }
         #endregion
 
@@ -84,9 +83,14 @@ namespace ILNumerics.Drawing.Graphs {
             }
         }
         public void AddNode(ILSceneGraphNode node) {
-            AddNode(node, m_root); 
+            AddNode(node, m_root);
         }
-        public void AddNode(ILSceneGraphNode node, ILSceneGraphNode parent) {
+        public void AddNode(ILShape shape) {
+            ILSceneGraphShapedLeaf node = new ILSceneGraphShapedLeaf(m_panel);
+            node.Shape = shape; 
+            AddNode(node, m_root);
+        }
+        public void AddNode(ILSceneGraphNode node, ILSceneGraphInnerNode parent) {
             parent.Add(node);             
         }
         #endregion
@@ -94,8 +98,11 @@ namespace ILNumerics.Drawing.Graphs {
         #region private helpers
         private void getAllShapes(ILSceneGraphNode node, List<ILShape> ret) {
             foreach (ILSceneGraphNode n in node) {
-                if (n is ILShape) 
-                    ret.Add(n as ILShape); 
+                if (n is ILSceneGraphShapedLeaf) {
+                    ILSceneGraphShapedLeaf snode = n as ILSceneGraphShapedLeaf;
+                    if (snode.Shape != null)
+                        ret.Add(snode.Shape);
+                }
                 getAllShapes(n,ret); 
             }
         }
@@ -121,9 +128,5 @@ namespace ILNumerics.Drawing.Graphs {
         }
 
         #endregion
-    }
-
-    internal class ILSceneGraphRoot : ILSceneGraphNode { 
-        public ILSceneGraphRoot (ILPanel panel) : base(panel) {}
     }
 }

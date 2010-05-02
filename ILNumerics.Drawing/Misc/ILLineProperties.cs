@@ -173,6 +173,17 @@ namespace ILNumerics.Drawing {
         public ILLineProperties Clone() {
             return (ILLineProperties) this.MemberwiseClone(); 
         }
+        public void CopyFrom(ILLineProperties props) {
+            if (props != null) {
+                this.Antialiasing = props.Antialiasing;
+                this.Color = props.Color;
+                this.Pattern = props.Pattern;
+                this.PatternScale = props.PatternScale;
+                this.Style = props.Style;
+                this.Visible = props.Visible;
+                this.Width = props.Width; 
+            }
+        }
         #endregion 
 
         #region constructors

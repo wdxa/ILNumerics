@@ -56,8 +56,13 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion
 
         #region constructors
-        public ILLines (ILPanel panel, int numLines) 
-            : base (panel, numLines * 2, 2) {
+        /// <summary>
+        /// Create new lines composite shapes, prepare memory for vertices only
+        /// </summary>
+        /// <param name="panel">panel hosting the scene</param>
+        /// <param name="numVertices">number of overall vertices in the shape</param>
+        public ILLines (ILPanel panel, int numVertices)
+            : base(panel, numVertices, 2) {
             m_fillColor = Color.Blue;   
             m_properties = new ILLineProperties();
             m_properties.Changed += new EventHandler(m_properties_Changed);
