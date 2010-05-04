@@ -5,6 +5,8 @@ Changes in version 0.12.11
 * improved lightning for shapes
 * added new shapes: ILLitBorderedShape, ILLitQuad, ILLitTriangle
 * added new plots: ILLitBox3D, ILBarGraph3D (still under construction)
+* possibly breaking change: ILShape.Visible moved to ILSceneGraphNode.Visible
+  (as well as some other properties of ILShape)
 
 Changes in version 0.12.10
 ===========================
