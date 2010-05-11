@@ -173,17 +173,16 @@ namespace ILNumerics.Drawing.Labeling {
                 throw new ArgumentException("texture size is too large for this packer!");
             // add to packer  
             ILTextureData item; Node node;
-            int h = (int)bmpRect.Height; 
-            int w = (int)bmpRect.Width; 
+            Rectangle itemRect = Rectangle.Ceiling(bmpRect); 
             if (m_items.TryGetValue(key,out item)) {
-                item.Height = h; 
-                item.Width = w; 
+                item.Height = itemRect.Height;
+                item.Width = itemRect.Width; 
                 // todo: remove item from packer & from texture sheet (somehow...[?])
                 node = m_root.Insert(item);
                 if (node == null) 
                     return false; 
             } else {
-                item = new ILTextureData(h,w); 
+                item = new ILTextureData(itemRect.Height, itemRect.Width); 
                 node = m_root.Insert(item); 
                 if (node == null) 
                     return false; 

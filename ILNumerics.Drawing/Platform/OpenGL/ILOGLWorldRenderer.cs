@@ -55,7 +55,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
 
         #region member / properties
         ILTextureManager m_textureManager; 
-        float[] m_curPosition = new float[16]; 
+        float[] m_curPosition = new float[16];
+        Color m_colorOverride; 
         #endregion
 
         #region constructors
@@ -175,14 +176,14 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         public void Draw(ILRenderQueue queue, 
                         float x1, float y1, float z1, float x2, float y2, float z2, 
                         Color color) {
-            float x, y, xm, ym, zm;
+            float x, y, xm, ym;
 
             xm = (x2 - x1)/(queue.Size.Width);
             ym = (y2 - y1)/(queue.Size.Height); 
             x = 0.5f; y = 0.5f; 
             int lineHeight = 0; 
             m_textureManager.Reset(); 
-            GL.Color3(color); 
+            GLColor3(color); 
             
             foreach (ILRenderQueueItem item in queue) {
                 // special symbols & control sequences 
@@ -203,9 +204,9 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     // quads at once.
                     ILTextureData textData = m_textureManager.GetTextureItem(item.Key,true); 
                     if (item.Color != Color.Empty) {
-                        GL.Color3(item.Color); 
+                        GLColor3(item.Color); 
                     } else {
-                        GL.Color3(color); 
+                        GLColor3(color); 
                     }
                     GL.Begin(BeginMode.Quads); 
                     RectangleF rectF = textData.TextureRectangle; 
@@ -257,7 +258,24 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             Draw(renderQueue,position.X,position.Y,0,position.X + renderQueue.Size.Width,position.Y+renderQueue.Size.Height,0,color); 
         }
 
+        public Color ColorOverride {
+            get {
+                return m_colorOverride;
+            }
+            set {
+                m_colorOverride = value;
+            }
+        }
+
         #endregion
+
+        private void GLColor3(Color color) {
+            if (m_colorOverride.IsEmpty) {
+                GL.Color3(color);
+            } else {
+                GL.Color3(m_colorOverride);
+            }
+        }
 
     }
 }

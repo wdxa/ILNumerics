@@ -65,6 +65,7 @@ namespace ILNumerics.Drawing.Shapes {
             : base(panel, numVertices, 2) {
             m_fillColor = Color.Blue;   
             m_properties = new ILLineProperties();
+            m_properties.Color = Color.Blue;
             m_properties.Changed += new EventHandler(m_properties_Changed);
         }
 
@@ -72,17 +73,41 @@ namespace ILNumerics.Drawing.Shapes {
             : base (panel,2,X,Y,Z) { 
             m_fillColor = Color.Blue;    
             m_properties = new ILLineProperties();
+            m_properties.Color = Color.Blue; 
             m_properties.Changed += new EventHandler(m_properties_Changed);
         }
-        public ILLines (ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping) 
-            : base (panel,2,X,Y,Z,mapping) { 
-            m_fillColor = Color.Blue; 
+        public ILLines(ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping)
+            : base(panel, 2, X, Y, Z, mapping) {
+            m_fillColor = Color.Blue;
             m_properties = new ILLineProperties();
+            m_properties.Color = Color.Blue;
             m_properties.Changed += new EventHandler(m_properties_Changed);
             ILColorEnumerator colors = new ILColorEnumerator();
             for (int i = 0; i < m_vertCount; i++) {
-                m_vertices[i].Color = colors.NextColor(); 
+                m_vertices[i].Color = colors.NextColor();
             }
+        }
+        /// <summary>
+        /// create lines composite shape 
+        /// </summary>
+        /// <param name="panel">hosting panel</param>
+        /// <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
+        /// <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
+        /// <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
+        /// <param name="colors">matrix with [vertCount] rows, 3 columns for (R,G,B) or 4 columns for 
+        /// (A,R,G,B) for every vertex specified by X,Y,Z. Elements must range from 0..255. If colors 
+        /// has 3 columns only, an alpha value of 255 is used as default.</param>
+        /// <param name="mapping">Composes shapes out of vertices. Matrix having [verticesPerShape] rows.
+        /// Every element in a column specifies the index of a vertex according to its position in X,Y,Z.#
+        /// The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
+        /// get used arbitrary times (or not at all). All elements must be positive integer values in 
+        /// range 0...[vertCount-1].</param>
+        public ILLines(ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray colors, ILBaseArray mapping)
+            : base(panel, 2, X, Y, Z,colors, mapping) {
+            m_fillColor = Color.Blue;
+            m_properties = new ILLineProperties();
+            m_properties.Color = Color.Blue;
+            m_properties.Changed += new EventHandler(m_properties_Changed);
         }
         #endregion
 

@@ -80,6 +80,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 }
                 GL.DrawArrays(m_primitiveType, 0, cShape.VertexCount);
             }
+            GL.Disable(EnableCap.Lighting); 
             ILBorderedShape<C4fN3fV3f> bShape = (shape as ILBorderedShape<C4fN3fV3f>); 
             if (bShape != null && bShape.Border.Visible) {
                 fixed (C4fN3fV3f* pVertices = bShape.Vertices) {
@@ -89,7 +90,6 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     GL.DrawArrays(BeginMode.LineLoop, 0, bShape.VertexCount);
                 }
             }
-            GL.Disable(EnableCap.Lighting); 
         }
         public override void Draw(ILRenderProperties props, ILShape shape, ILArray<int> indices) {
             System.Diagnostics.Debug.Assert(indices != null && indices.IsVector); 

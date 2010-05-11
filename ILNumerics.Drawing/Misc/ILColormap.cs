@@ -147,13 +147,26 @@ namespace ILNumerics.Drawing.Misc {
         /// <returns>colors as ILArray, the i-th row represents the color for the i-th element of A as RGB tripel.</returns>
         public ILArray<float> Map (ILArray<float> A) {
             ILArray<float> ret = new ILArray<float>(A.Dimensions.NumberOfElements,3); 
-            float min = A.MinValue; 
-            float dist = m_map.Dimensions[0] / (A.MaxValue - min);
+            float min, max;
+            if (!A.GetLimits(out min, out max) || min == max) {
+                // special case: all constant: eturn middle of colormap
+                return ILMath.repmat(m_map[m_map.Length / 2, null], ret.Dimensions[0], 1);
+            }
+
+            float dist = (m_map.Dimensions[0]-1) / (A.MaxValue - min);
             for (int i = 0; i < ret.Dimensions[0]; i++) {
-                double index = (double)(A.GetValue(i)-min)*dist; 
+                double index = (double)(A.GetValue(i)-min)*dist;
+                if (index >= m_map.Dimensions[0] - 1) {
+                    ret[i, null] = m_map["end;:"];
+                    continue;
+                } else if (index < 0) {
+                    ret[i, null] = m_map["0;:"];
+                    continue;
+                }
                 int find = (int)Math.Floor(index); 
                 if (find == index) { 
-                    ret[i,null] = m_map[i,null]; 
+                    ret[i,null] = m_map[find,null];
+                    continue; 
                 }
                 // interpolate
                 index = index - find; 

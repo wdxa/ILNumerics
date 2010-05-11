@@ -44,7 +44,8 @@ namespace ILNumerics.Drawing.Plots {
         float m_paddingX = 0.2f;
         float m_paddingY = 0.3f;
         Color m_barColor = Color.FromArgb(170, 210, 210, 255); 
-        Color m_barColorGradient = Color.FromArgb(170, 180, 180, 255); 
+        Color m_barColorGradient = Color.FromArgb(170, 180, 180, 255);
+        bool m_showTopLabels = true; 
         #endregion
 
         public ILBarGraph3D(ILPanel panel, ILBaseArray data) 
@@ -68,6 +69,65 @@ namespace ILNumerics.Drawing.Plots {
             }
         }
 
+        #region public interface
+        public void SetDefaultView(ILPanel panel
+                                , string xlabel, string ylabel, string zlabel
+                                , ICollection<string> xtickLabels
+                                , ICollection<string> ytickLabels
+                                ) {
+            // configure light
+            panel.Lights[0].Enabled = true;
+            panel.Lights[0].Position = new ILPoint3Df(-50, 10, 50);
+            panel.Projection = Projection.Orthographic;
+
+            panel.BackgroundFilled = false;
+            panel.BackColor = Color.Black; 
+            panel.Axes.GridVisible = false;
+            panel.Axes.LinesVisible = false; 
+            // configure X axis
+            panel.Axes[0].LabeledTicks.Mode = TickMode.Manual;
+            panel.Axes[0].LabeledTicks.Color = Color.White;
+            panel.Axes[0].LabeledTicks.Clear();
+            int counter = 0;
+            foreach (string s in xtickLabels) {
+                panel.Axes[0].LabeledTicks.Add(m_boxes[0, counter].Center.X, s);
+                counter++;
+            }
+            panel.Axes[0].NearLines.Visible = false;
+            panel.Axes[0].FarLines.Visible = false;
+            panel.Axes[0].Label.Color = Color.White;
+            panel.Axes[0].Label.Text = xlabel;
+
+            // configure Y axis
+            panel.Axes[1].LabeledTicks.Mode = TickMode.Manual;
+            panel.Axes[1].LabeledTicks.Color = Color.White;
+            panel.Axes[1].LabeledTicks.Clear();
+            counter = 0;
+            foreach (string s in ytickLabels) {
+                panel.Axes[1].LabeledTicks.Add(m_boxes[counter,0].Center.Y, s);
+                counter++;
+            }
+            panel.Axes[1].NearLines.Visible = false;
+            panel.Axes[1].FarLines.Visible = false;
+            panel.Axes[1].Label.Color = Color.White;
+            panel.Axes[1].Label.Text = ylabel;
+            
+            panel.Axes[2].NearLines.Visible = false;
+            panel.Axes[2].FarLines.Visible = false;
+            panel.Axes[2].Grid.Visible = true;
+            panel.Axes[2].Grid.Color = Color.DarkGray;
+            panel.Axes[2].Grid.Antialiasing = true;
+
+            panel.Axes[2].Label.Color = Color.LightGray;
+            panel.Axes[2].Label.Text = zlabel; 
+
+            panel.Axes[2].LabeledTicks.Color = Color.White; 
+
+        }
+
+        #endregion
+
+        #region private helper
         private void create(ILBaseArray data, Colormaps colormap) {
             ILArray<float> dataF = ILNumerics.BuiltInFunctions.ILMath.tosingle(data); 
             m_boxes = new ILLitBox3D[data.Dimensions[0],data.Dimensions[1]];
@@ -101,5 +161,6 @@ namespace ILNumerics.Drawing.Plots {
                 }
             }
         }
+        #endregion
     }
 }

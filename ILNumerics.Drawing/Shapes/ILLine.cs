@@ -54,12 +54,61 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion
 
         #region properties
+        /// <summary>
+        /// [deprecated] line properties, use individual properties of ILLine instead
+        /// </summary>
         public ILLineProperties Properties {
             get { return m_properties; }
             set { m_properties = value; }
         } 
+        /// <summary>
+        /// the oldest vertex to be removed on the next Queue() call
+        /// </summary>
         internal int OldestVertexID {
             get { return m_oldestVertexID; }
+        }
+        /// <summary>
+        /// determines, if the line is to be drawn antialiased (on width > 1 only)
+        /// </summary>
+        public bool Antialiasing {
+            get { return m_properties.Antialiasing; }
+            set { m_properties.Antialiasing = value; }
+        }
+        /// <summary>
+        /// stipple pattern for the line, if Style is set to custom pattern
+        /// </summary>
+        public short Pattern {
+            get { return m_properties.Pattern; }
+            set { m_properties.Pattern = value; }
+        }
+        /// <summary>
+        /// scaling for the stipple pattern
+        /// </summary>
+        public float PatternScale {
+            get { return m_properties.PatternScale; }
+            set { m_properties.PatternScale = value; }
+        }
+        /// <summary>
+        /// line style, default: solid
+        /// </summary>
+        public LineStyle Style {
+            get { return m_properties.Style; }
+            set { m_properties.Style = value; }
+        }
+        /// <summary>
+        /// line width (pixels)
+        /// </summary>
+        public int Width {
+            get { return m_properties.Width; }
+            set { m_properties.Width = value; }
+        }
+        public override Color FillColor {
+            get {
+                return m_properties.Color;
+            }
+            set {
+                m_properties.Color = value;
+            }
         }
         #endregion
 
@@ -76,12 +125,26 @@ namespace ILNumerics.Drawing.Shapes {
             m_oldestVertexID = 0;  
             m_properties = new ILLineProperties(); 
             m_properties.Changed += new EventHandler(m_properties_Changed);
-            m_autoLimitsUpdateCount = numVertices; 
+            m_properties.Color = Color.Blue;
+            m_autoLimitsUpdateCount = numVertices;
+            m_shading = ShadingStyles.Flat; 
+        }
+        public ILLine(ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z) 
+            : base (panel, X,Y,Z) {
+            m_fillColor = Color.Black;
+            m_border.Visible = false;
+            m_oldestVertexID = 0;
+            m_properties = new ILLineProperties();
+            m_properties.Changed += new EventHandler(m_properties_Changed);
+            m_properties.Color = Color.Blue;
+            m_shading = ShadingStyles.Flat; 
+            m_autoLimitsUpdateCount = Vertices.Length; 
         }
         #endregion
 
         #region private helpers 
         void m_properties_Changed(object sender, EventArgs e) {
+            m_fillColor = m_properties.Color;
             OnChanged();
         }
         protected override void IntDrawShape(ILRenderProperties props) {

@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Text;
 using ILNumerics.Drawing.Graphs;
+using ILNumerics.Exceptions;
 using ILNumerics.Drawing.Interfaces;  
 using ILNumerics.Drawing.Controls; 
 namespace ILNumerics.Drawing.Shapes {
@@ -66,6 +67,40 @@ namespace ILNumerics.Drawing.Shapes {
             m_shading = ShadingStyles.Flat; 
             m_vertexStoresColor = false; 
         }
+        public ILBorderedShape(ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z) 
+            : this(panel, (X != null && X.IsVector) ? X.Length 
+                           : (Y != null && Y.IsVector) ? Y.Length
+                           : (Z != null && Z.IsVector) ? Z.Length
+                           : 0) {
+            ILArray<float> x = null,y = null,z = null;
+            int minLen = 0; 
+            if (X != null) {
+                if (!X.IsVector)
+                    throw new ILArgumentException("X must be vector!");
+                x = ILNumerics.BuiltInFunctions.ILMath.tosingle(X);
+                minLen = X.Length; 
+            } 
+            if (Y != null) {
+                if (!Y.IsVector)
+                    throw new ILArgumentException("Y must be vector!");
+                y = ILNumerics.BuiltInFunctions.ILMath.tosingle(Y);
+                minLen = Math.Min(minLen, Y.Length); 
+            } 
+            if (Z != null) {
+                if (!Z.IsVector)
+                    throw new ILArgumentException("Z must be vector!");
+                z = ILNumerics.BuiltInFunctions.ILMath.tosingle(Z);
+                minLen = Math.Min(minLen, Z.Length); 
+            }
+            for (int i = 0; i < Vertices.Length && i < minLen; i++) {
+                VertexType v = new VertexType();
+                if (x != null) v.XPosition = x.GetValue(i);
+                if (y != null) v.YPosition = y.GetValue(i);
+                if (z != null) v.ZPosition = z.GetValue(i);
+                Vertices[i] = v; 
+            }
+        }
+
 
         void m_border_Changed(object sender, EventArgs e) {
             OnChanged(); 

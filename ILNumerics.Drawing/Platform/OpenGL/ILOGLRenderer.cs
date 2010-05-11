@@ -55,7 +55,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
 
         #region member / properties
         ILTextureManager m_textureManager; 
-        float[] m_curPosition = new float[16]; 
+        float[] m_curPosition = new float[16];
+        Color m_colorOverride = Color.Empty; 
         #endregion
 
         #region constructors
@@ -223,7 +224,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             m_textureManager.Reset(); 
             w = 0.5f; h = 0.5f; 
             int lineHeight = 0; 
-            GL.Color3(color); 
+            GLColor3(color); 
             foreach (ILRenderQueueItem item in queue) {
                 // special symbols & control sequences 
                 switch (item.Key) {
@@ -243,9 +244,9 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     // quads at once.
                     ILTextureData textData = m_textureManager.GetTextureItem(item.Key,true); 
                     if (item.Color != Color.Empty) {
-                        GL.Color3(item.Color); 
+                        GLColor3(item.Color); 
                     } else {
-                        GL.Color3(color); 
+                        GLColor3(color); 
                     }
                     GL.Begin(BeginMode.Quads); 
                     RectangleF rectF = textData.TextureRectangle; 
@@ -294,7 +295,24 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         public void Draw(ILRenderQueue renderQueue, float x1, float y1, float z1, float x2, float y2, float z2, Color color) {
             Draw(renderQueue,new Point((int)x1,(int)y1),TextOrientation.Horizontal,color); 
         }
+        public Color ColorOverride {
+            get {
+                return m_colorOverride; 
+            }
+            set {
+                m_colorOverride = value; 
+            }
+        }
 
         #endregion
+
+        private void GLColor3(Color color) {
+            if (m_colorOverride.IsEmpty) {
+                GL.Color3(color);
+            } else {
+                GL.Color3(m_colorOverride);
+            }
+        }
+
     }
 }

@@ -1,3 +1,14 @@
+Changes in version 0.12.12
+===========================
+* addes some convenience constructors for ILLine shapes
+* improved properties interface for ILLine (lokal properties are aliased to local ILProperties class)
+* fixed a minor bug in ILTextRenderer (char caching may failed at edge of texture sheets) 
+* added update capabilities for all composite shapes
+* new higher level plots: ILLitSurface, ILBarGraph3D, ILVectorField
+* much improved text rendering for shape labels: ILShapeLabel.FringeColor
+* some slight layout improvements (f.e. backcolor for ILPanel > light gray)
+* bugfix in ILColormap, handling out-o-range values
+
 Changes in version 0.12.11
 ===========================
 * reworked scene graph inner node structure

@@ -96,27 +96,11 @@ namespace ILNumerics.Drawing.Shapes {
         /// range 0...[vertCount-1].</param>
         public ILCompositeShape (ILPanel panel, int verticesPerShape, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping) 
             : base (panel,X.Length,verticesPerShape) {
-            if (!X.IsVector || !Y.IsVector || !Z.IsVector || X.Length != Y.Length || Y.Length != Z.Length) {
-                throw new ILArgumentException("numeric vectors of same length expected for: X, Y and Z"); 
-            }
-            if (mapping == null || mapping.IsEmpty || !mapping.IsMatrix || !mapping.IsNumeric || mapping.Dimensions[0] != verticesPerShape) 
-                throw new ILArgumentException("mapping must be a numeric matrix, "+verticesPerShape.ToString()+" rows, each column specifies indices for the vertices of a single shape."); 
-            if (mapping is ILArray<int>) 
-                m_shapeIndices = (mapping as ILArray<int>).C; 
-            else 
-                m_shapeIndices = ILMath.toint32(mapping); 
-            ILArray<float> fX = ILMath.tosingle(X); 
-            ILArray<float> fY = ILMath.tosingle(Y); 
-            ILArray<float> fZ = ILMath.tosingle(Z); 
-            for (int i = 0; i < m_vertices.Length; i++) {
-                m_vertices[i].XPosition = fX.GetValue(i);     
-                m_vertices[i].YPosition = fY.GetValue(i);     
-                m_vertices[i].ZPosition = fZ.GetValue(i);     
-			}
-            m_panel = panel; 
+            Update(X, Y, Z, mapping);
             Opacity = 255; 
             m_shading = ShadingStyles.Interpolate; 
         }
+
         /// <summary>
         /// create composite shape 
         /// </summary>
@@ -129,23 +113,13 @@ namespace ILNumerics.Drawing.Shapes {
         /// Every vertex is only used once. Every shape uses [verticesPerShape] vertices one after another.</remarks>
         public ILCompositeShape (ILPanel panel, int verticesPerShape, ILBaseArray X, ILBaseArray Y, ILBaseArray Z) 
             : base (panel,X.Length,verticesPerShape) {
-            if (!X.IsVector || !Y.IsVector || !Z.IsVector || X.Length != Y.Length || Y.Length != Z.Length) {
-                throw new ILArgumentException("numeric vectors of same length expected for: X, Y and Z"); 
-            }
-            ILArray<float> fX = ILMath.tosingle(X); 
-            ILArray<float> fY = ILMath.tosingle(Y); 
-            ILArray<float> fZ = ILMath.tosingle(Z); 
-            for (int i = 0; i < m_vertices.Length; i++) {
-                m_vertices[i].XPosition = fX.GetValue(i);     
-                m_vertices[i].YPosition = fY.GetValue(i);     
-                m_vertices[i].ZPosition = fZ.GetValue(i);     
-			}
+            Update(X, Y, Z);
             m_shapeIndices = ILMath.toint32(
-                ILMath.counter(0.0,1.0,VerticesPerShape, m_vertCount / VerticesPerShape)); 
-            m_panel = panel; 
+                ILMath.counter(0.0, 1.0, VerticesPerShape, m_vertCount / VerticesPerShape));
             Opacity = 255; 
             m_shading = ShadingStyles.Flat; 
         }
+
         /// <summary>
         /// create composite shape 
         /// </summary>
@@ -164,55 +138,93 @@ namespace ILNumerics.Drawing.Shapes {
         /// range 0...[vertCount-1].</param>
         public ILCompositeShape (ILPanel panel, int verticesPerShape, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray colors, ILBaseArray mapping) 
             : base (panel,X.Length,verticesPerShape) {
-            if (!VertexDefinition.StoresColor) 
-                throw new NotSupportedException("The underlying vertex type cannot store individual color values! Use another shape or flat shading!"); 
-            if (!X.IsVector || !Y.IsVector || !Z.IsVector || X.Length != Y.Length || Y.Length != Z.Length) {
-                throw new ILArgumentException("numeric vectors of same length expected for: X, Y and Z"); 
-            }
-            if ((colors.Dimensions[1] != 3 && colors.Dimensions[1] != 4) || colors.Dimensions[0] != X.Length) 
-                throw new ILArgumentException("invalid size of colors data! Colors must have 3 or 4 columns with color components (RGB) or alpha value + color components (ARGB) respectively. Number of rows must match number of vertices."); 
-            if (mapping == null || mapping.IsEmpty || !mapping.IsMatrix || !mapping.IsNumeric || mapping.Dimensions[0] != verticesPerShape) 
-                throw new ILArgumentException("mapping must be a numeric matrix, "+verticesPerShape.ToString()+" rows, each column specifies indices for the vertices of a single shape."); 
-            if (mapping is ILArray<int>) 
-                m_shapeIndices = (mapping as ILArray<int>).C; 
-            else 
-                m_shapeIndices = ILMath.toint32(mapping); 
-            if (m_shapeIndices.MinValue < 0 || m_shapeIndices.MaxValue >= X.Dimensions[1]) {
-                throw new ILArgumentException("invalid mapping: indices must point to existing vertex indices"); 
-            }
-            ILArray<float> fX = ILMath.tosingle(X); 
-            ILArray<float> fY = ILMath.tosingle(Y); 
-            ILArray<float> fZ = ILMath.tosingle(Z); 
-            ILArray<byte> fcol = ILMath.tobyte(colors); 
-            if (fcol.Dimensions[1] == 3) {
-                for (int i = 0; i < m_vertices.Length; i++) {
-                    m_vertices[i].XPosition = fX.GetValue(i);     
-                    m_vertices[i].YPosition = fY.GetValue(i);     
-                    m_vertices[i].ZPosition = fZ.GetValue(i); 
-                    m_vertices[i].Color = Color.FromArgb(
-                            fcol.GetValue(i,0),
-                            fcol.GetValue(i,1),
-                            fcol.GetValue(i,2)); 
-			    }
-            } else if (fcol.Dimensions[1] == 4) {
-                for (int i = 0; i < m_vertices.Length; i++) {
-                    m_vertices[i].XPosition = fX.GetValue(i);     
-                    m_vertices[i].YPosition = fY.GetValue(i);     
-                    m_vertices[i].ZPosition = fZ.GetValue(i); 
-                    m_vertices[i].Color = Color.FromArgb(
-                            fcol.GetValue(i,1),
-                            fcol.GetValue(i,2),
-                            fcol.GetValue(i,3)); 
-                    m_vertices[i].Alpha = fcol.GetValue(i); 
-			    }
-            }
-            m_panel = panel; 
+            Update(X, Y, Z, colors, mapping);
             Opacity = 255;
             m_shading = ShadingStyles.Interpolate; 
         }
+
         #endregion
 
         #region public interface 
+        public void Update(ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping) {
+            if (!X.IsVector || !Y.IsVector || !Z.IsVector || X.Length != Y.Length || Y.Length != Z.Length) {
+                throw new ILArgumentException("numeric vectors of same length expected for: X, Y and Z");
+            }
+            if (mapping == null || mapping.IsEmpty || !mapping.IsMatrix || !mapping.IsNumeric || mapping.Dimensions[0] != VerticesPerShape)
+                throw new ILArgumentException("mapping must be a numeric matrix, " + VerticesPerShape.ToString() + " rows, each column specifies indices for the vertices of a single shape.");
+            if (mapping is ILArray<int>)
+                m_shapeIndices = (mapping as ILArray<int>).C;
+            else
+                m_shapeIndices = ILMath.toint32(mapping);
+            ILArray<float> fX = ILMath.tosingle(X);
+            ILArray<float> fY = ILMath.tosingle(Y);
+            ILArray<float> fZ = ILMath.tosingle(Z);
+            for (int i = 0; i < m_vertices.Length; i++) {
+                m_vertices[i].XPosition = fX.GetValue(i);
+                m_vertices[i].YPosition = fY.GetValue(i);
+                m_vertices[i].ZPosition = fZ.GetValue(i);
+            }
+            Invalidate();
+        }
+        public void Update(ILBaseArray X, ILBaseArray Y, ILBaseArray Z) {
+            if (!X.IsVector || !Y.IsVector || !Z.IsVector || X.Length != Y.Length || Y.Length != Z.Length) {
+                throw new ILArgumentException("numeric vectors of same length expected for: X, Y and Z");
+            }
+            ILArray<float> fX = ILMath.tosingle(X);
+            ILArray<float> fY = ILMath.tosingle(Y);
+            ILArray<float> fZ = ILMath.tosingle(Z);
+            for (int i = 0; i < m_vertices.Length; i++) {
+                m_vertices[i].XPosition = fX.GetValue(i);
+                m_vertices[i].YPosition = fY.GetValue(i);
+                m_vertices[i].ZPosition = fZ.GetValue(i);
+            }
+            Invalidate();
+        }
+        public void Update(ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray colors, ILBaseArray mapping) {
+            if (!VertexDefinition.StoresColor)
+                throw new NotSupportedException("The underlying vertex type cannot store individual color values! Use another shape or flat shading!");
+            if (!X.IsVector || !Y.IsVector || !Z.IsVector || X.Length != Y.Length || Y.Length != Z.Length) {
+                throw new ILArgumentException("numeric vectors of same length expected for: X, Y and Z");
+            }
+            if ((colors.Dimensions[1] != 3 && colors.Dimensions[1] != 4) || colors.Length != X.Length)
+                throw new ILArgumentException("invalid size of colors data! Colors must have 3 or 4 columns with color components (RGB) or alpha value + color components (ARGB) respectively. Number of rows must match number of vertices.");
+            if (mapping == null || mapping.IsEmpty || !mapping.IsMatrix || !mapping.IsNumeric || mapping.Dimensions[0] != VerticesPerShape)
+                throw new ILArgumentException("mapping must be a numeric matrix, " + VerticesPerShape.ToString() + " rows, each column specifies indices for the vertices of a single shape.");
+            if (mapping is ILArray<int>)
+                m_shapeIndices = (mapping as ILArray<int>).C;
+            else
+                m_shapeIndices = ILMath.toint32(mapping);
+            if (m_shapeIndices.MinValue < 0 || m_shapeIndices.MaxValue >= X.Dimensions[1]) {
+                throw new ILArgumentException("invalid mapping: indices must point to existing vertex indices");
+            }
+            ILArray<float> fX = ILMath.tosingle(X);
+            ILArray<float> fY = ILMath.tosingle(Y);
+            ILArray<float> fZ = ILMath.tosingle(Z);
+            ILArray<byte> fcol = ILMath.tobyte(colors);
+            if (fcol.Dimensions[1] == 3) {
+                for (int i = 0; i < m_vertices.Length; i++) {
+                    m_vertices[i].XPosition = fX.GetValue(i);
+                    m_vertices[i].YPosition = fY.GetValue(i);
+                    m_vertices[i].ZPosition = fZ.GetValue(i);
+                    m_vertices[i].Color = Color.FromArgb(
+                            fcol.GetValue(i, 0),
+                            fcol.GetValue(i, 1),
+                            fcol.GetValue(i, 2));
+                }
+            } else if (fcol.Dimensions[1] == 4) {
+                for (int i = 0; i < m_vertices.Length; i++) {
+                    m_vertices[i].XPosition = fX.GetValue(i);
+                    m_vertices[i].YPosition = fY.GetValue(i);
+                    m_vertices[i].ZPosition = fZ.GetValue(i);
+                    m_vertices[i].Color = Color.FromArgb(
+                            fcol.GetValue(i, 1),
+                            fcol.GetValue(i, 2),
+                            fcol.GetValue(i, 3));
+                    m_vertices[i].Alpha = fcol.GetValue(i);
+                }
+            }
+            Invalidate();
+        }
         protected override void IntDrawShape(ILRenderProperties props) {
             if (m_vertCount >= VerticesPerShape) {
                 // draw from back to front

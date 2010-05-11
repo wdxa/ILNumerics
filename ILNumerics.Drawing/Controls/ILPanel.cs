@@ -390,7 +390,8 @@ namespace ILNumerics.Drawing.Controls {
             m_clippingView.Changed += new ILClippingDataChangedEvent(m_viewLimits_Changed);
             m_colormap = new ILColormap();
             m_colormap.Changed += new EventHandler(m_colormap_Changed);
-            Padding = new Padding(5); 
+            Padding = new Padding(5);
+            BackColor = Color.White; 
             m_legend = ILLegend.Create(this);
             m_legend.Changed += new EventHandler(m_legend_Changed);
             m_active = false;

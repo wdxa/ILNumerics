@@ -63,7 +63,6 @@ namespace ILNumerics.Drawing.Labeling {
         protected IILRenderer m_renderer;
         protected ILRenderQueue m_renderQueue; 
 
-
 #endregion
 
 #region properties 
@@ -172,6 +171,15 @@ namespace ILNumerics.Drawing.Labeling {
 #endregion
 
 #region constructor
+        /// <summary>
+        /// [abstract] Create a new labeling element 
+        /// </summary>
+        /// <param name="panel">panel hosting the element</param>
+        /// <param name="font">default font for the element</param>
+        /// <param name="color">default color for the element</param>
+        public ILLabelingElement(ILPanel panel, Font font, Color color) 
+            : this(panel,font,color,CoordSystem.Screen) {
+        }
 
         /// <summary>
         /// [abstract] Create a new labeling element 
@@ -179,7 +187,8 @@ namespace ILNumerics.Drawing.Labeling {
         /// <param name="panel">panel hosting the element</param>
         /// <param name="font">default font for the element</param>
         /// <param name="color">default color for the element</param>
-        public ILLabelingElement (ILPanel panel, Font font, Color color) {
+        /// <param name="coordSystem">world / screen rendering method</param>
+        public ILLabelingElement (ILPanel panel, Font font, Color color, CoordSystem coordSystem) {
             if (font != null) {
                 m_font = font; 
             } else {
@@ -192,7 +201,7 @@ namespace ILNumerics.Drawing.Labeling {
             m_size = Size.Empty; 
             m_expression = string.Empty; 
             // init interpreter & renderer
-            m_renderer = panel.TextRendererManager.GetDefault(CoordSystem.Screen);
+            m_renderer = panel.TextRendererManager.GetDefault(coordSystem);
             m_renderer.CacheCleared += new EventHandler(m_renderer_CacheCleared);
             m_interpreter = new ILSimpleTexInterpreter(); 
         }

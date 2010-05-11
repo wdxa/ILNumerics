@@ -47,11 +47,8 @@ namespace ILNumerics.Drawing.Plots {
          Color m_fillColor;
          Color m_topColor; 
          byte m_opacity = 255;
-         ILPoint3Df m_min;
-         ILPoint3Df m_max;
-         ILShapeLabel m_label;
-         ILPoint3Df m_labelMin;
-         ILPoint3Df m_labelMax;
+         ILWorldLabel m_valLabel;
+         ILShapeLabel m_topLabel; 
          #endregion
 
          private static class QuadIndices {
@@ -75,6 +72,9 @@ namespace ILNumerics.Drawing.Plots {
                  }
                  m_opacity = value; }
          }
+         /// <summary>
+         /// the color used at one corner for each quad to generate a simple gradient effect 
+         /// </summary>
          public Color GradientColor {
              get { return m_gradColor; }
              set {
@@ -101,6 +101,20 @@ namespace ILNumerics.Drawing.Plots {
                  updateColors(); 
              }
          }
+         /// <summary>
+         /// reference to the label which renders the current z-value onto the top area (world coords)
+         /// </summary>
+         public ILWorldLabel ValueLabel {
+             get {
+                 return m_valLabel; 
+             }
+         }
+         /// <summary>
+         /// label drawn in screen coords on top of the lit box
+         /// </summary>
+         public ILShapeLabel TopLabel {
+             get { return m_topLabel; }
+         }
          #endregion
 
          #region constructor
@@ -116,20 +130,25 @@ namespace ILNumerics.Drawing.Plots {
              : base(panel) {
              m_lineProperties = new ILLineProperties();
              m_lineProperties.Changed += new EventHandler(m_lineProperties_Changed);
-             m_label = new ILShapeLabel(panel,CoordSystem.World3D);
-             m_label.Text = ""; //  (max * 1000).Z.ToString("F3"); 
+             m_valLabel = new ILWorldLabel(panel);
+             m_valLabel.Text = ""; // (max * 1000).Z.ToString("F3");
 
-             m_topColor = topColor; 
-             // setup quads 
+             ILPoint3Df mi = ILPoint3Df.Min(min, max);
+             ILPoint3Df ma = ILPoint3Df.Max(min, max);
+             m_valLabel.PositionMax = new ILPoint3Df(ma.X,mi.Y,ma.Z);
+             m_valLabel.PositionMin = new ILPoint3Df(mi.X, ma.Y, ma.Z); ;
+
+             m_topLabel = new ILShapeLabel(panel);
+             m_topLabel.Color = Color.Blue;
+             //m_topLabel.Font = new Font("Arial", 10, FontStyle.Bold);
+             string tval = max.Z.ToString("F2");
+             m_topLabel.Text =  String.Format("{0}",tval);
+             m_topLabel.Alignment = TickLabelAlign.bottom | TickLabelAlign.center; 
+
+             m_topColor = topColor;
+
+             #region setup quads
              m_quads = new ILLitQuad[6];
-             m_min = min;
-             m_max = max;
-             m_labelMin = min;
-             m_labelMin.Z = Math.Max(max.Z, min.Z);
-             m_labelMin.Y = max.Y;
-             m_labelMax = max;
-             m_labelMax.Y = min.Y;
-             m_labelMax.Z = m_labelMin.Z; 
 
              // front
              ILLitQuad quad = new ILLitQuad(m_panel);
@@ -173,14 +192,16 @@ namespace ILNumerics.Drawing.Plots {
              quad.Vertices[2].Position = new ILPoint3Df(max.X, max.Y, min.Z);
              quad.Vertices[3].Position = new ILPoint3Df(min.X, max.Y, min.Z);
              m_quads[QuadIndices.bottom] = quad;
+             #endregion
 
              foreach (ILLitQuad s in m_quads) {
                  s.Label.Text = "";
                  s.Shading = ShadingStyles.Interpolate;
                  s.Opacity = m_opacity;
-                 s.Border.Color = Color.Black;
-                 s.Border.Width = 2;
-                 s.Border.Visible = true; 
+                 s.Border.Color = Color.Gray;
+                 s.Border.Width = 1;
+                 s.Border.Visible = true;
+                 s.Border.Antialiasing = false; 
                  Add(s); 
              }
              m_fillColor = fillColor;
@@ -191,8 +212,10 @@ namespace ILNumerics.Drawing.Plots {
          #region public interface
          public override void Draw(ILRenderProperties props) {
              base.Draw(props);
-             m_label.Draw(props, m_labelMin, m_labelMax);
-
+             m_valLabel.Draw(props);
+             ILPoint3Df labPos = m_quads[QuadIndices.top].Center; 
+             labPos.Z = Math.Max(m_quads[QuadIndices.top].Center.Z,m_quads[QuadIndices.bottom].Center.Z); 
+             m_topLabel.Draw(props,labPos); 
          }
          #endregion
 

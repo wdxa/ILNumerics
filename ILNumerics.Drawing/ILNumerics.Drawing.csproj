@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;RENDERER_DRAW_NORMALS_</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;RENDERER_DRAW_NORMALS_ DRAWTEXTURESHEET_</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -46,7 +46,9 @@
     <DocumentationFile>..\bin\ILNumerics.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ILNumerics.Net, Version=1.4.6.919, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="ILNumerics.Net, Version=1.4.6.25585, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="OpenTK, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -70,8 +72,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graphs\ILSceneGraphShapedLeaf.cs" />
+    <Compile Include="Interfaces\IILPanelConfigurator.cs" />
     <Compile Include="Interfaces\IILSupportsLight.cs" />
     <Compile Include="Interfaces\IILVertexDefinition.cs" />
+    <Compile Include="Labeling\ILLabel.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Labeling\ILShapeLabel.cs" />
     <Compile Include="Interfaces\IILLegendRenderer.cs" />
     <Compile Include="Interfaces\IILTextInterpreter.cs" />
@@ -80,6 +86,7 @@
     <Compile Include="Labeling\ILRenderQueue.cs" />
     <Compile Include="Labeling\ILSimpleInterpreter.cs" />
     <Compile Include="Labeling\ILSimpleTexInterpreter.cs" />
+    <Compile Include="Labeling\ILWorldLabel.cs" />
     <Compile Include="Lighting\ILLight.cs" />
     <Compile Include="Lighting\ILMaterial.cs" />
     <Compile Include="Marker\ILBitmapMarkerShape.cs" />
@@ -89,7 +96,6 @@
     <Compile Include="Misc\Definitions.cs" />
     <Compile Include="Misc\Events.cs" />
     <Compile Include="Graphs\ILImageSCGraph.cs" />
-    <Compile Include="Labeling\ILLabel.cs" />
     <Compile Include="Misc\ILAction.cs" />
     <Compile Include="Misc\ILActionRamp.cs" />
     <Compile Include="Misc\ILActionRampElement.cs" />
@@ -135,6 +141,7 @@
     <Compile Include="Graphs\ILSurfaceGraph.cs" />
     <Compile Include="Platform\OpenGL\ILOGLPointsRendererC4bV3f.cs" />
     <Compile Include="Plots\ILBarGraph3d.cs" />
+    <Compile Include="Plots\ILVectorField.cs" />
     <Compile Include="Resources\Images.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -211,7 +218,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Shapes\ILLitSphere.cs" />
-    <Compile Include="Shapes\ILLitSurfaceShape.cs" />
+    <Compile Include="Plots\ILLitSurface.cs" />
     <Compile Include="Shapes\ILLitTriangle.cs" />
     <Compile Include="Shapes\ILLitTriangles.cs" />
     <Compile Include="Shapes\ILPoints.cs" />

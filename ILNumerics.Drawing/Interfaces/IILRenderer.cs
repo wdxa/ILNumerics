@@ -128,7 +128,15 @@ namespace ILNumerics.Drawing.Interfaces {
         /// <param name="key">key identifying the item</param>
         /// <param name="size">if the key was found: the size of the corresponding item</param>
         /// <returns>true, if the key exist, false otherwise</returns>
-        bool TryGetSize(string key, ref Size size); 
+        bool TryGetSize(string key, ref Size size);
+        /// <summary>
+        /// if set to a color (not Color.Empty), that color will be used for all renderings. 
+        /// The color contained in the rendering queue is ignored than.
+        /// </summary>
+        Color ColorOverride {
+            get;
+            set; 
+        }
 
         /// <summary>
         /// for cached renderers, fires if the internal cache was cleared

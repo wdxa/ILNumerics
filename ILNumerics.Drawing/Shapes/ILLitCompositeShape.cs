@@ -163,8 +163,7 @@ namespace ILNumerics.Drawing.Shapes {
                         normal += snormals[shapeIdx];                         
                     }
                     // we let OpenGL normalize the normals...
-                    //vertices[i].Normal = normal / (float)Math.Sqrt(
-                    //                normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z);
+                    vertices[i].Normal = normal; // / (float)Math.Sqrt(normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z);
 
                     //System.Diagnostics.Debug.Assert(
                     //    Math.Abs(Math.Sqrt(

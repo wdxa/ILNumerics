@@ -126,7 +126,10 @@
     <Compile Include="Functions\builtin\asin.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Functions\builtin\atan.cs" />
+    <Compile Include="Functions\builtin\atan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Functions\builtin\atan2.cs" />
     <Compile Include="Functions\builtin\ceil.cs">
       <SubType>Code</SubType>
     </Compile>

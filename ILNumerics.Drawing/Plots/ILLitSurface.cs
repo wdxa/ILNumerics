@@ -34,31 +34,92 @@ using ILNumerics.Drawing.Controls;
 using ILNumerics.Drawing.Shapes; 
 using ILNumerics.Drawing.Misc;
 using ILNumerics.BuiltInFunctions; 
+using ILNumerics.Drawing.Labeling; 
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
-    /// Surface graph supporting light
+    /// Surface graph supporting light and transparency
     /// </summary>
-    public class ILLitSurfaceShape : ILLitQuads {
+    public class ILLitSurface : ILSceneGraphInnerNode {
 
-        protected ILColormap m_colorMap; 
+        protected ILColormap m_colorMap;
+        protected ILBaseArray m_data;
+        ILLitQuads m_quads;
+
+        /// <summary>
+        /// colormap used for coloring the surface 
+        /// </summary>
+        public ILColormap Colormap {
+            get { return m_colorMap; }
+            set {
+                m_colorMap = value;
+                Invalidate();
+            }
+        }
+        /// <summary>
+        /// reference to the label for the surface
+        /// </summary>
+        public ILShapeLabel Label {
+            get { return m_quads.Label; }
+        }
+        /// <summary>
+        /// get a reference to the data values or sets it, used for updates to the plot
+        /// </summary>
+        public ILBaseArray Data {
+            get { return m_data; }
+            set {
+                if (value != null && value.Dimensions.IsSameSize(m_data.Dimensions)) {
+                    m_data = value.CreateReference();
+                    Invalidate();
+                }
+            }
+        }
+        /// <summary>
+        /// get reference to IILLitQuads lit composite shape used for rendering the surface
+        /// </summary>
+        public ILLitQuads Quads {
+            get { return m_quads; }
+        }
         /// <summary>
         /// create new lit surface, provide data array A
         /// </summary>
         /// <param name="panel">the panel hosting the scene</param>
         /// <param name="A">data matrix, at lease 2 rows, 2 columns</param>
-        public ILLitSurfaceShape(ILPanel panel, ILArray<double> A)
-            : base(panel, A.Dimensions.NumberOfElements) {
-            m_colorMap = new ILColormap(Colormaps.ILNumerics); 
-            m_shapeIndices = Computation.configureVertices(A, m_colorMap, Vertices);
-            Invalidate(); 
+        /// <param name="colormap">colormap used for auto coloring surface</param>
+        public ILLitSurface(ILPanel panel, ILBaseArray A, ILColormap colormap)
+            : base(panel) {
+            m_quads = new ILLitQuads(panel, A.Dimensions.NumberOfElements);
+            m_quads.Shading = ShadingStyles.Interpolate;
+            Add(m_quads);
+            m_colorMap = colormap;
+            m_data = A.CreateReference();
+            Invalidate();
+        }
+        /// <summary>
+        /// create new lit surface, provide data array A
+        /// </summary>
+        /// <param name="panel">the panel hosting the scene</param>
+        /// <param name="A">data matrix, at lease 2 rows, 2 columns</param>
+        public ILLitSurface(ILPanel panel, ILBaseArray A)
+            : this(panel, A, new ILColormap(Colormaps.ILNumerics)) { }
+
+        public override void Configure() {
+            if (m_invalidated) {
+                m_quads.Indices = Computation.configureVertices(
+                                m_data, m_colorMap, m_quads.Vertices);
+                m_quads.Invalidate();
+                m_quads.Configure();
+                m_invalidated = false; 
+            }
+            base.Configure();
         }
 
         private class Computation : ILMath {
-            public static ILArray<int> configureVertices(ILArray<double> A, ILColormap cmap, C4fN3fV3f[] Vertices) {
+            public static ILArray<int> configureVertices(ILBaseArray data, ILColormap cmap, C4fN3fV3f[] Vertices) {
                 int i = 0, x, y;
                 double z;
                 double minZ, maxZ;
+                ILArray<double> A = todouble(data); 
                 if (!A.GetLimits(out minZ, out maxZ))
                     minZ = maxZ = 1.0;
                 x = 0;
