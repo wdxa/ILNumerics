@@ -83,7 +83,7 @@ namespace ILNumerics.Drawing.Plots {
         }
 
         /// <summary>
-        /// collection of labels for x axis
+        /// collection of label texts for x axis
         /// </summary>
         public ICollection<string> XLabels {
             get { return m_xLabels; }
@@ -94,7 +94,7 @@ namespace ILNumerics.Drawing.Plots {
         }
 
         /// <summary>
-        /// collection of labels for y axis
+        /// collection of label texts for y axis
         /// </summary>
         public ICollection<string> YLabels {
             get { return m_yLabels; }

@@ -137,7 +137,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 GL.Vertex3(x2,y2,z);
                 GL.End();
             }
-            if (m_labeledTicks.Display == TickDisplay.BothSides || !background) {
+            if (m_labeledTicks.Display == TickDisplay.BothSides || (!background && drawlines)) {
                 #region create ticks 
                 scale = m_clipping.ScaleToUnitCube().Z; 
                 offse = m_clipping.CenterToUnitCube().Z;

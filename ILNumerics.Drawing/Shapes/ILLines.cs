@@ -45,14 +45,65 @@ namespace ILNumerics.Drawing.Shapes {
         #region attributes 
         ILLineProperties m_properties;
         void m_properties_Changed(object sender, EventArgs e) {
-            OnChanged(); 
+            m_fillColor = m_properties.Color;
+            OnChanged();
         }
         #endregion
 
         #region properties
+        /// <summary>
+        /// all properties for the lines (in shading mode 'flat')
+        /// </summary>
         public ILLineProperties Properties {
             get { return m_properties; }
-        } 
+        }
+        /// <summary>
+        /// determines, if the line is to be drawn antialiased (on width > 1 only)
+        /// </summary>
+        public bool Antialiasing {
+            get { return m_properties.Antialiasing; }
+            set { m_properties.Antialiasing = value; }
+        }
+        /// <summary>
+        /// stipple pattern for the line, if Style is set to custom pattern
+        /// </summary>
+        public short Pattern {
+            get { return m_properties.Pattern; }
+            set { m_properties.Pattern = value; }
+        }
+        /// <summary>
+        /// scaling for the stipple pattern
+        /// </summary>
+        public float PatternScale {
+            get { return m_properties.PatternScale; }
+            set { m_properties.PatternScale = value; }
+        }
+        /// <summary>
+        /// line style, default: solid
+        /// </summary>
+        public LineStyle Style {
+            get { return m_properties.Style; }
+            set { m_properties.Style = value; }
+        }
+        /// <summary>
+        /// line width (pixels)
+        /// </summary>
+        public int Width {
+            get { return m_properties.Width; }
+            set { m_properties.Width = value; }
+        }
+        /// <summary>
+        /// color for the lines (in shading mode 'flat')
+        /// </summary>
+        public override Color FillColor {
+            get {
+                return m_properties.Color;
+            }
+            set {
+                m_properties.Color = value;
+            }
+        }
+
         #endregion
 
         #region constructors
@@ -68,14 +119,28 @@ namespace ILNumerics.Drawing.Shapes {
             m_properties.Color = Color.Blue;
             m_properties.Changed += new EventHandler(m_properties_Changed);
         }
-
-        public ILLines (ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z) 
+        /// <summary>
+        /// create new lines composite shape
+        /// </summary>
+        /// <param name="panel">panel hosting the scene</param>
+        /// <param name="X">X coords vector</param>
+        /// <param name="Y">Y coords vector</param>
+        /// <param name="Z">Z coords vector</param>
+        public ILLines(ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z) 
             : base (panel,2,X,Y,Z) { 
             m_fillColor = Color.Blue;    
             m_properties = new ILLineProperties();
             m_properties.Color = Color.Blue; 
             m_properties.Changed += new EventHandler(m_properties_Changed);
         }
+        /// <summary>
+        /// create new lines composite shape
+        /// </summary>
+        /// <param name="panel">panel hosting the scene</param>
+        /// <param name="X">X coords vector</param>
+        /// <param name="Y">Y coords vector</param>
+        /// <param name="Z">Z coords vector</param>
+        /// <param name="mapping">matrix defining line ends as indices into vertex array, 2 rows, every column a line</param>
         public ILLines(ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping)
             : base(panel, 2, X, Y, Z, mapping) {
             m_fillColor = Color.Blue;
@@ -97,9 +162,9 @@ namespace ILNumerics.Drawing.Shapes {
         /// <param name="colors">matrix with [vertCount] rows, 3 columns for (R,G,B) or 4 columns for 
         /// (A,R,G,B) for every vertex specified by X,Y,Z. Elements must range from 0..255. If colors 
         /// has 3 columns only, an alpha value of 255 is used as default.</param>
-        /// <param name="mapping">Composes shapes out of vertices. Matrix having [verticesPerShape] rows.
+        /// <param name="mapping">Composes shapes out of vertices. Matrix having 2 rows.
         /// Every element in a column specifies the index of a vertex according to its position in X,Y,Z.#
-        /// The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
+        /// The 2 elements in a column therefore compose a single line. Vertices may 
         /// get used arbitrary times (or not at all). All elements must be positive integer values in 
         /// range 0...[vertCount-1].</param>
         public ILLines(ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray colors, ILBaseArray mapping)

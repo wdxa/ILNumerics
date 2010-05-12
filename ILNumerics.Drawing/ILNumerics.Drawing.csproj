@@ -61,6 +61,12 @@
   <ItemGroup>
     <Compile Include="Collections\ILLightCollection.cs" />
     <Compile Include="Collections\ILTickCollection.cs" />
+    <Compile Include="Controls\ILControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ILControl.Designer.cs">
+      <DependentUpon>ILControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ILSubfigure.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -158,12 +164,6 @@
     <Compile Include="Controls\ILColorBar.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Graphs\ILControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Graphs\ILControl.Designer.cs">
-      <DependentUpon>ILControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Collections\ILGraphCollection.cs" />
     <Compile Include="Misc\ILColorProvider.cs" />
     <Compile Include="Controls\ILMovingDockPanel.cs">
@@ -211,6 +211,7 @@
     <Compile Include="Shapes\ILLitBorderedShape.cs" />
     <Compile Include="Plots\ILLitBox3D.cs" />
     <Compile Include="Shapes\ILLitCompositeShape.cs" />
+    <Compile Include="Shapes\ILLitPolygon.cs" />
     <Compile Include="Shapes\ILLitQuad.cs">
       <SubType>Code</SubType>
     </Compile>

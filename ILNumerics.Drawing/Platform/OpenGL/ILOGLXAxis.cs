@@ -66,7 +66,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 tickLen = m_labeledTicks.TickFraction 
                     * ((m_labeledTicks.Direction == TickDirection.Inside)? 1.0f : -1.0f);
                 // must draw ticks? 
-                bool drawticks,drawLines = false; 
+                bool drawticks = false, drawLines = false; 
                 if (m_labeledTicks.Display == TickDisplay.BothSides) {
                     drawticks = true; 
                 } else {
@@ -84,7 +84,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 if (background) {
                     if (m_farLines.Visible) {
                         ILOGLPanel.SetupLineStyle(m_farLines);
-                        drawLines = true; 
+                        drawLines = true;
                     }
                     y *= -1.0f; 
                     GL.Disable(EnableCap.DepthTest);
@@ -109,7 +109,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     GL.End();
                 }
                 GL.Enable(EnableCap.DepthTest);
-                if (drawticks) {
+                if (drawticks && drawLines) {
                     #region create ticks 
                     if (!m_layoutData.CameraPosition.LooksFromTop) {
                         //tickLen *= -1.0f;

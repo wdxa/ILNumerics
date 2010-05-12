@@ -66,7 +66,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 tickLen = m_labeledTicks.TickFraction 
                     * ((m_labeledTicks.Direction == TickDirection.Inside)? -1.0f : 1.0f);
                 // must draw ticks? 
-                bool drawticks, drawlines = false; 
+                bool drawticks = false, drawlines = false; 
                 if (m_labeledTicks.Display == TickDisplay.BothSides) {
                     drawticks = true; 
                 } else {
@@ -108,7 +108,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     }
                     GL.End();
                 }
-                if (drawticks) {
+                if (drawticks && drawlines) {
                     #region create ticks 
                     if (!m_layoutData.CameraPosition.LooksFromTop) {
                         //tickLen *= -1.0f;

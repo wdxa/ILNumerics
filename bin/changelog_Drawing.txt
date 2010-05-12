@@ -1,3 +1,9 @@
+Changes in version 0.12.13
+===========================
+* hides labeled ticks also when hiding axis main lines
+* ILLitSurface: option to update X and Y values as well
+* added line properties for ILLines also
+
 Changes in version 0.12.12
 ===========================
 * addes some convenience constructors for ILLine shapes

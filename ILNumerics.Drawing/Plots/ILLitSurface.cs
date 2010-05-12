@@ -34,7 +34,7 @@ using ILNumerics.Drawing.Controls;
 using ILNumerics.Drawing.Shapes; 
 using ILNumerics.Drawing.Misc;
 using ILNumerics.BuiltInFunctions; 
-using ILNumerics.Drawing.Labeling; 
+using ILNumerics.Drawing.Labeling;
 
 namespace ILNumerics.Drawing.Graphs {
     /// <summary>
@@ -43,7 +43,9 @@ namespace ILNumerics.Drawing.Graphs {
     public class ILLitSurface : ILSceneGraphInnerNode {
 
         protected ILColormap m_colorMap;
-        protected ILBaseArray m_data;
+        protected ILArray<float> m_xVals;
+        protected ILArray<float> m_yVals; 
+        protected ILArray<float> m_zVals;
         ILLitQuads m_quads;
 
         /// <summary>
@@ -65,13 +67,61 @@ namespace ILNumerics.Drawing.Graphs {
         /// <summary>
         /// get a reference to the data values or sets it, used for updates to the plot
         /// </summary>
-        public ILBaseArray Data {
-            get { return m_data; }
+        public ILBaseArray XValues {
+            get { return m_xVals; }
             set {
-                if (value != null && value.Dimensions.IsSameSize(m_data.Dimensions)) {
-                    m_data = value.CreateReference();
+                if (value != null && value.Dimensions.IsSameSize(m_zVals.Dimensions)) {
+                    if (value is ILArray<float>)
+                        m_xVals = ((ILArray<float>)value).R;
+                    else
+                        m_xVals = ILMath.tosingle(value);
                     Invalidate();
+                } else {
+                    throw new ArgumentException("invalid size of data array"); 
                 }
+            }
+        }
+        /// <summary>
+        /// get a reference to the data values or sets it, used for updates to the plot
+        /// </summary>
+        public ILBaseArray YValues {
+            get { return m_yVals; }
+            set {
+                if (value != null && value.Dimensions.IsSameSize(m_zVals.Dimensions)) {
+                    if (value is ILArray<float>)
+                        m_yVals = ((ILArray<float>)value).R;
+                    else
+                        m_yVals = ILMath.tosingle(value);
+                    Invalidate();
+                } else {
+                    throw new ArgumentException("invalid size of data array");
+                }
+            }
+        }
+        /// <summary>
+        /// get a reference to the data values or sets it, used for updates to the plot
+        /// </summary>
+        public ILBaseArray ZValues {
+            get { return m_zVals; }
+            set {
+                if (value != null && (m_zVals == null || value.Dimensions.IsSameSize(m_zVals.Dimensions))) {
+                    if (value is ILArray<float>)
+                        m_zVals = ((ILArray<float>)value).R;
+                    else
+                        m_zVals = ILMath.tosingle(value);
+                    Invalidate();
+                } else {
+                    throw new ArgumentException("invalid size of data array");
+                }
+            }
+        }
+        /// <summary>
+        /// [deprecated] Z coordinate values, use ZValues instead!
+        /// </summary>
+        public ILBaseArray Data {
+            get { return m_zVals; }
+            set {
+                ZValues = value; 
             }
         }
         /// <summary>
@@ -81,18 +131,46 @@ namespace ILNumerics.Drawing.Graphs {
             get { return m_quads; }
         }
         /// <summary>
-        /// create new lit surface, provide data array A
+        /// create new lit surface, provide data array Z
         /// </summary>
         /// <param name="panel">the panel hosting the scene</param>
-        /// <param name="A">data matrix, at lease 2 rows, 2 columns</param>
+        /// <param name="Z">data matrix, at lease 2 rows, 2 columns</param>
         /// <param name="colormap">colormap used for auto coloring surface</param>
-        public ILLitSurface(ILPanel panel, ILBaseArray A, ILColormap colormap)
+        public ILLitSurface(ILPanel panel, ILBaseArray Z, ILColormap colormap)
             : base(panel) {
-            m_quads = new ILLitQuads(panel, A.Dimensions.NumberOfElements);
+            if (Z == null || Z.Dimensions[0] < 2 || Z.Dimensions[1] < 2)
+                throw new ArgumentException("invalid parameter size: Z");
+            m_quads = new ILLitQuads(panel, Z.Dimensions.NumberOfElements);
             m_quads.Shading = ShadingStyles.Interpolate;
             Add(m_quads);
             m_colorMap = colormap;
-            m_data = A.CreateReference();
+            ZValues = Z; 
+            Invalidate();
+        }
+        /// <summary>
+        /// create new lit surface, provide data for X,Y and Z coordinates
+        /// </summary>
+        /// <param name="panel">the panel hosting the scene</param>
+        /// <param name="X">X coordinates matrix, same size as Z or null</param>
+        /// <param name="Y">Y coordinates matrix, same size as Z or null</param>
+        /// <param name="Z">Z data matrix, at lease 2 rows, 2 columns</param>
+        /// <param name="colormap">colormap used for auto coloring surface</param>
+        public ILLitSurface(ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILColormap colormap)
+            : base(panel) {
+            if (Z == null || Z.Dimensions[0] < 2 || Z.Dimensions[1] < 2)
+                throw new ArgumentException("invalid parameter size: Z");
+            if (X == null || !X.Dimensions.IsSameSize(Z.Dimensions))
+                throw new ArgumentException("invalid parameter size: X");
+            if (Y == null || !Y.Dimensions.IsSameSize(Z.Dimensions))
+                throw new ArgumentException("invalid parameter size: Y");
+            m_quads = new ILLitQuads(panel, Z.Dimensions.NumberOfElements);
+            m_quads.Shading = ShadingStyles.Interpolate;
+            Add(m_quads);
+            m_colorMap = colormap;
+            XValues = X;
+            YValues = Y;
+            ZValues = Z; 
+
             Invalidate();
         }
         /// <summary>
@@ -106,7 +184,8 @@ namespace ILNumerics.Drawing.Graphs {
         public override void Configure() {
             if (m_invalidated) {
                 m_quads.Indices = Computation.configureVertices(
-                                m_data, m_colorMap, m_quads.Vertices);
+                                m_xVals,m_yVals,
+                                m_zVals, m_colorMap, m_quads.Vertices);
                 m_quads.Invalidate();
                 m_quads.Configure();
                 m_invalidated = false; 
@@ -115,20 +194,25 @@ namespace ILNumerics.Drawing.Graphs {
         }
 
         private class Computation : ILMath {
-            public static ILArray<int> configureVertices(ILBaseArray data, ILColormap cmap, C4fN3fV3f[] Vertices) {
+            public static ILArray<int> configureVertices(
+                    ILArray<float> xVals, ILArray<float> yVals,
+                    ILArray<float> zVals, ILColormap cmap, C4fN3fV3f[] Vertices) {
                 int i = 0, x, y;
-                double z;
-                double minZ, maxZ;
-                ILArray<double> A = todouble(data); 
-                if (!A.GetLimits(out minZ, out maxZ))
-                    minZ = maxZ = 1.0;
+                float minZ, maxZ;
+                if (!zVals.GetLimits(out minZ, out maxZ))
+                    minZ = maxZ = 1.0f;
                 x = 0;
-                y = A.Dimensions[0] - 1;
-                ILArray<float> colors = (tosingle((A - minZ) / (maxZ - minZ)))[":"] * (cmap.Length-1);
+                y = zVals.Dimensions[0] - 1;
+                ILArray<float> colors = (tosingle((zVals - minZ) / (maxZ - minZ)))[":"] * (cmap.Length - 1);
                 colors[isnan(colors)] = 0;
-                foreach (double a in A.Values) {
+                bool useXvals = (xVals != null && !xVals.IsEmpty);
+                bool useYvals = (yVals != null && !yVals.IsEmpty);
+                foreach (float a in zVals.Values) {
                     C4fN3fV3f v = new C4fN3fV3f();
-                    v.Position = new ILPoint3Df(x, y, (float)a);
+                    v.Position = new ILPoint3Df(
+                         (useXvals)? xVals.GetValue(y,x): x 
+                        ,(useYvals)? yVals.GetValue(y,x): y
+                        , a);
                     byte r, g, b;
                     cmap.Map(colors.GetValue(i), out r, out g, out b);
                     v.Color = Color.FromArgb(255, r, g, b);
@@ -138,21 +222,21 @@ namespace ILNumerics.Drawing.Graphs {
                     y--;
                     if (y < 0) {
                         x++;
-                        y = A.Dimensions[0] - 1;
+                        y = zVals.Dimensions[0] - 1;
                     }
                 }
 
                 // create quad indices
-                int numQuad = (A.Dimensions[0] - 1) * (A.Dimensions[1] - 1);
+                int numQuad = (zVals.Dimensions[0] - 1) * (zVals.Dimensions[1] - 1);
                 x = 0; y = 0;
-                ILArray<double> ret = zeros(4, numQuad); 
-                ILArray<double> mult = counter(0.0,1.0,A.Dimensions.ToIntArray());
-                mult = mult["0:" + (A.Dimensions[0] - 2), "0:" + (A.Dimensions[1] - 2)];
+                ILArray<double> ret = zeros(4, numQuad);
+                ILArray<double> mult = counter(0.0, 1.0, zVals.Dimensions.ToIntArray());
+                mult = mult["0:" + (zVals.Dimensions[0] - 2), "0:" + (zVals.Dimensions[1] - 2)];
                 mult = mult[":"].T; 
 
                 ret["0;:"] = mult;
                 ret["3;:"] = mult + 1;
-                mult = mult + A.Dimensions.SequentialIndexDistance(1); 
+                mult = mult + zVals.Dimensions.SequentialIndexDistance(1); 
                 ret["2;:"] = mult + 1;
                 ret["1;:"] = mult; 
                 return toint32(ret); 

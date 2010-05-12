@@ -36,7 +36,7 @@ using ILNumerics.Drawing.Shapes;
 
 namespace ILNumerics.Drawing.Shapes {
     /// <summary>
-    /// A single simple bordered quad supporting light
+    /// A single simple bordered triangle supporting light
     /// </summary>
     public class ILLitTriangle : ILLitBorderedShape<C4fN3fV3f> {
 
