@@ -87,7 +87,7 @@ namespace ILNumerics
         {
             get
             {
-                return (ILArray<BaseT>)Subarray((object[])slices);
+                return (ILArray<BaseT>)SubarrayPython((object[])slices);
             }
             set
             {
@@ -123,7 +123,7 @@ namespace ILNumerics
         {
             get
             {
-                return (ILArray<BaseT>)Subarray(genSlices);
+                return (ILArray<BaseT>)SubarrayPython(genSlices);
             }
             set
             {

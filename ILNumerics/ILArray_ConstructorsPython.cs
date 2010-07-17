@@ -48,10 +48,10 @@ namespace ILNumerics
         /// <param name="range">String specifying the ranges to create subarray from</param>
         /// <param name="shift">Number of dimensions to shift the result.</param>
         /// <returns>shifted subarray as specified</returns>
-        public ILBaseArray<BaseT> Subarray(int shift, params object[] range)
+        public ILBaseArray<BaseT> SubarrayPython(int shift, params object[] range)
         {
             if (shift < 1)
-                return Subarray(range);
+                return SubarrayPython(range);
             if (range == null)
                 return ShiftDimensions(shift);
             ILRange rng = new ILRange(m_dimensions, RangeSide.Right, range);
@@ -79,8 +79,9 @@ namespace ILNumerics
         /// </summary>
         /// <param name="range">Strings specifying the ranges to create subarray from</param>
         /// <returns>subarray as specified</returns>
-        public ILBaseArray<BaseT> Subarray(params object[] range)
+        public ILBaseArray<BaseT> SubarrayPython(params object[] range)
         {
+            if (range is ILBaseArray[]) return Subarray(range as ILBaseArray[]);
             if (range == null)
                 return ShiftDimensions(0);
             ILRange rng = new ILRange(m_dimensions, RangeSide.Right, range);

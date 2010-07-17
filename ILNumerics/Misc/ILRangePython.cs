@@ -144,19 +144,39 @@ namespace ILNumerics.Storage
                     }
                     else
                     {
-                        //
-                        if (((Slice)rng[d]).start == null) start = 0;
-                        else start = (int)(((Slice)rng[d]).start);
-                        if (((Slice)rng[d]).stop == null) ende = dimsd - 1;
-                        else ende = (int)(((Slice)rng[d]).stop);
-                        if (((Slice)rng[d]).step == null) step = 1;
-                        else step = (int)(((Slice)rng[d]).step);
+                        if (((Slice)rng[d]).step == null)
+                        {
+                            if (((Slice)rng[d]).start == null) start = 0;
+                                else start = (int)(((Slice)rng[d]).start);
+                            if (((Slice)rng[d]).stop == null) ende = dimsd - 1;
+                                else ende = (int)(((Slice)rng[d]).stop);
+                            step = (ende >= start) ? 1 : -1;
+                        }
+                        else 
+                        {
+                            step = (int)(((Slice)rng[d]).step); 
+                            if (step > 0)
+                            {
+                                if (((Slice)rng[d]).start == null) start = 0;
+                                    else start = (int)(((Slice)rng[d]).start);
+                                if (((Slice)rng[d]).stop == null) ende = dimsd - 1;
+                                    else ende = (int)(((Slice)rng[d]).stop);
+                            }
+                            else if (step < 0)
+                            {
+                                if (((Slice)rng[d]).start == null) start = dimsd - 1;
+                                    else start = (int)(((Slice)rng[d]).start);
+                                if (((Slice)rng[d]).stop == null) ende = 0;
+                                    else ende = (int)(((Slice)rng[d]).stop);
+                            }
+                            else throw new ILArgumentException("Invalid index for dimension " + d.ToString() + ".");
+                        }
 
-                        if (start < 0 || ende < 0) throw new ILArgumentException("Invalid index for dimension " + d.ToString());
+                        if (start < 0 || ende < 0) throw new ILArgumentException("Invalid index for dimension " + d.ToString() + ".");
                         if (start >= dimsd || ende >= dimsd)
                         {
                             if (side == RangeSide.Right)
-                                throw new ILArgumentException("invalid index for dimension " + d.ToString());
+                                throw new ILArgumentException("Invalid index for dimension " + d.ToString() + ".");
                             else
                             {
                                 Expanding = true;
