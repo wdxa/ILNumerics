@@ -59,18 +59,7 @@ namespace ILNumerics.BuiltInFunctions {
                     throw new ILArgumentException("mgrid: start and stop of slices must be provided");
                 }
                 double xStep = 1, yStep = 1, xStart = 0, yStart = 0, xStop = 1, yStop = 1;
-                if (xslice.step == null) { xStep = 1; }
-                else
-                {
-                    if (xslice.step is int) xStep = (double)(int)(xslice.step);
-                    if (xslice.step is double) xStep = (double)(xslice.step);
-                }
-                if (yslice.step == null) { yStep = 1; }
-                else
-                {
-                    if (yslice.step is int) yStep = (double)(int)(yslice.step);
-                    if (yslice.step is double) yStep = (double)(yslice.step);
-                }
+                //
                 if (xslice.start is int) xStart = (double)(int)(xslice.start);
                 if (xslice.start is double) xStart = (double)(xslice.start);
                 if (xslice.stop is int) xStop = (double)(int)(xslice.stop);
@@ -81,6 +70,27 @@ namespace ILNumerics.BuiltInFunctions {
                 if (yslice.stop is int) yStop = (double)(int)(yslice.stop);
                 if (yslice.stop is double) yStop = (double)(yslice.stop);
                 // 
+                if (xslice.step == null)
+                {
+                    if (xStop >= xStart) xStep = 1;
+                    else xStep = -1;
+                }
+                else
+                {
+                    if (xslice.step is int) xStep = (double)(int)(xslice.step);
+                    if (xslice.step is double) xStep = (double)(xslice.step);
+                }
+                if (yslice.step == null)
+                {
+                    if (yStop >= yStart) yStep = 1;
+                    else yStep = -1;
+                }
+                else
+                {
+                    if (yslice.step is int) yStep = (double)(int)(yslice.step);
+                    if (yslice.step is double) yStep = (double)(yslice.step);
+                }
+                //
                 IronPython.Runtime.List list = new IronPython.Runtime.List();
                 int nx = (int)Math.Floor((xStop - xStart) / xStep) + 1;
                 int ny = (int)Math.Floor((yStop - yStart) / yStep) + 1;
@@ -101,24 +111,7 @@ namespace ILNumerics.BuiltInFunctions {
                     throw new ILArgumentException("mgrid: start and stop of slices must be provided");
                 }
                 double xStep = 1, yStep = 1, zStep = 1, xStart = 0, yStart = 0, zStart = 0, xStop = 1, yStop = 1, zStop = 1;
-                if (xslice.step == null) { xStep = 1; }
-                else
-                {
-                    if (xslice.step is int) xStep = (double)(int)(xslice.step);
-                    if (xslice.step is double) xStep = (double)(xslice.step);
-                }
-                if (yslice.step == null) { yStep = 1; }
-                else
-                {
-                    if (yslice.step is int) yStep = (double)(int)(yslice.step);
-                    if (yslice.step is double) yStep = (double)(yslice.step);
-                }
-                if (zslice.step == null) { zStep = 1; }
-                else
-                {
-                    if (zslice.step is int) zStep = (double)(int)(zslice.step);
-                    if (zslice.step is double) zStep = (double)(zslice.step);
-                }
+                //
                 if (xslice.start is int) xStart = (double)(int)(xslice.start);
                 if (xslice.start is double) xStart = (double)(xslice.start);
                 if (xslice.stop is int) xStop = (double)(int)(xslice.stop);
@@ -133,6 +126,37 @@ namespace ILNumerics.BuiltInFunctions {
                 if (zslice.start is double) zStart = (double)(zslice.start);
                 if (zslice.stop is int) zStop = (double)(int)(zslice.stop);
                 if (zslice.stop is double) zStop = (double)(zslice.stop);
+                //
+                if (xslice.step == null)
+                {
+                    if (xStop >= xStart) xStep = 1;
+                    else xStep = -1;
+                }
+                else
+                {
+                    if (xslice.step is int) xStep = (double)(int)(xslice.step);
+                    if (xslice.step is double) xStep = (double)(xslice.step);
+                }
+                if (yslice.step == null)
+                {
+                    if (yStop >= yStart) yStep = 1;
+                    else yStep = -1;
+                }
+                else
+                {
+                    if (yslice.step is int) yStep = (double)(int)(yslice.step);
+                    if (yslice.step is double) yStep = (double)(yslice.step);
+                }
+                if (zslice.step == null)
+                {
+                    if (zStop >= zStart) zStep = 1;
+                    else zStep = -1;
+                }
+                else
+                {
+                    if (zslice.step is int) zStep = (double)(int)(zslice.step);
+                    if (zslice.step is double) zStep = (double)(zslice.step);
+                }
                 //
                 IronPython.Runtime.List list = new IronPython.Runtime.List();
                 int nx = (int)Math.Floor((xStop - xStart) / xStep) + 1;
