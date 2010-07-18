@@ -1810,7 +1810,7 @@ namespace ILNumerics {
             int curLineLength = 0;
             if (false) {
 #region HYCALPER LOOPSTART valuesToString
-/*!HC:TYPELIST:
+                /*!HC:TYPELIST:
 <hycalper>
 <type>
     <source locate="after">
@@ -1844,8 +1844,8 @@ namespace ILNumerics {
     <destination>18</destination>
     <destination>3</destination>
     <destination>3</destination>
-    <destination>36</destination>
-    <destination>24</destination>
+    <destination>16</destination>
+    <destination>16</destination>
     <destination>18</destination>
 </type>
 <type>
@@ -1913,7 +1913,7 @@ namespace ILNumerics {
                     if (l > elemLength) elemLength = l; 
                 }
 ]]></destination>
-    <destination><![CDATA[float scaling = (float)(object)MaxValue; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling  = (float)Math.Pow(10,Math.Floor(Math.Log10(scaling))); ]]></destination>
+    <destination><![CDATA[float scaling = Math.Max(Math.Abs((float)(object)MaxValue), Math.Abs((float)(object)MinValue)); if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling  = (float)Math.Pow(10,Math.Floor(Math.Log10(scaling))); ]]></destination>
     <destination>double scaling = 1.0; </destination>
     <destination>double scaling = 1.0; </destination>
     <destination>double scaling = 1.0; </destination>
@@ -1922,8 +1922,8 @@ namespace ILNumerics {
     <destination>double scaling = 1.0; </destination>
     <destination>double scaling = 1.0; </destination>
     <destination>double scaling = 1.0; </destination>
-    <destination><![CDATA[double scaling = ((complex)(object)MaxValue).real; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling = Math.Pow(10,Math.Floor(Math.Log10(scaling))); ]]></destination>
-    <destination><![CDATA[float scaling = ((fcomplex)(object)MaxValue).real; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling  = (float)Math.Pow(10,Math.Floor(Math.Log10(scaling)));]]></destination>
+    <destination><![CDATA[double scaling = Math.Max(Math.Max(Math.Abs(((complex)(object)MaxValue).real), Math.Abs(((complex)(object)MaxValue).real)), Math.Max(Math.Abs(((complex)(object)MaxValue).imag), Math.Abs(((complex)(object)MaxValue).imag))); if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling = Math.Pow(10, Math.Floor(Math.Log10(scaling)));]]></destination>
+    <destination><![CDATA[double scaling = Math.Max(Math.Max(Math.Abs(((fcomplex)(object)MaxValue).real), Math.Abs(((fcomplex)(object)MaxValue).real)), Math.Max(Math.Abs(((fcomplex)(object)MaxValue).imag), Math.Abs(((fcomplex)(object)MaxValue).imag))); if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling = Math.Pow(10, Math.Floor(Math.Log10(scaling)));]]></destination>
     <destination>double scaling = 1.0; </destination>
 </type>
 <type>
@@ -1931,17 +1931,17 @@ namespace ILNumerics {
         minusCompens
     </source>
     <destination></destination>
-    <destination><![CDATA[if (element >= 0) s.Append(" "); ]]></destination>
-    <destination><![CDATA[if (element >= 0) s.Append(" "); ]]></destination>
-    <destination><![CDATA[if (element >= 0) s.Append(" "); ]]></destination>
-    <destination><![CDATA[if (element >= 0) s.Append(" "); ]]></destination>
-    <destination><![CDATA[if (element >= 0) s.Append(" "); ]]></destination>
-    <destination><![CDATA[if (element >= 0) s.Append(" "); ]]></destination>
-    <destination><![CDATA[if (element >= 0) s.Append(" "); ]]></destination>
-    <destination><![CDATA[if (element >= 0) s.Append(" "); ]]></destination>
-    <destination><![CDATA[if (element >= 0) s.Append(" "); ]]></destination>
-    <destination><![CDATA[if (element >= 0) s.Append(" "); ]]></destination>
-    <destination><![CDATA[if (element >= 0) s.Append(" "); ]]></destination>
+    <destination><![CDATA[if (sElement.Substring(0, 1) != "-") s.Append(" "); ]]></destination>
+    <destination><![CDATA[if (sElement.Substring(0, 1) != "-") s.Append(" "); ]]></destination>
+    <destination><![CDATA[if (sElement.Substring(0, 1) != "-") s.Append(" "); ]]></destination>
+    <destination><![CDATA[if (sElement.Substring(0, 1) != "-") s.Append(" "); ]]></destination>
+    <destination><![CDATA[if (sElement.Substring(0, 1) != "-") s.Append(" "); ]]></destination>
+    <destination><![CDATA[if (sElement.Substring(0, 1) != "-") s.Append(" "); ]]></destination>
+    <destination><![CDATA[if (sElement.Substring(0, 1) != "-") s.Append(" "); ]]></destination>
+    <destination><![CDATA[if (sElement.Substring(0, 1) != "-") s.Append(" "); ]]></destination>
+    <destination><![CDATA[if (sElement.Substring(0, 1) != "-") s.Append(" "); ]]></destination>
+    <destination><![CDATA[if (sElement.Substring(0, 1) != "-") s.Append(" "); ]]></destination>
+    <destination><![CDATA[if (sElement.Substring(0, 1) != "-") s.Append(" "); ]]></destination>
     <destination></destination>
 </type>
 </hycalper>
@@ -1949,9 +1949,9 @@ namespace ILNumerics {
             } else if (this is /*!HC:inCls1*/ ILArray<double> ) {    
                 /*!HC:inArr1*/ double element;
                 /*!HC:inArr1*/ double [] elements = (this.m_data as /*!HC:inArr1*/ double []);
-                elemLength = /*!HC:HCelemLength*/ 5 ; 
+                elemLength = /*!HC:HCelemLength*/ 7 ; 
                 /*!HC:tscale*/ 
-                double scaling = (double)(object)MaxValue; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling = Math.Pow(10,Math.Floor(Math.Log10(scaling))); 
+                double scaling = Math.Max(Math.Abs((double)(object)MaxValue), Math.Abs((double)(object)MinValue)); if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling = Math.Pow(10,Math.Floor(Math.Log10(scaling))); 
                 while (acc[m_dimensions.NumberOfDimensions - 1] <
                         m_dimensions[m_dimensions.NumberOfDimensions - 1]) {
                     // show only two first dimensions at the same time ... 
@@ -1978,7 +1978,7 @@ namespace ILNumerics {
                                 curLineLength = 0;
                             }
                             /*!HC:minusCompens*/
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -1997,7 +1997,7 @@ namespace ILNumerics {
  #endregion HYCALPER LOOPEND valuesToString
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
-
+               
             } else if (this is  ILArray<object> ) {    
                 object element;
                 object [] elements = (this.m_data as  object []);
@@ -2043,12 +2043,12 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<fcomplex> ) {    
                 fcomplex element;
                 fcomplex [] elements = (this.m_data as  fcomplex []);
-                elemLength =  24 ; 
-                float scaling = ((fcomplex)(object)MaxValue).real; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling  = (float)Math.Pow(10,Math.Floor(Math.Log10(scaling)));
+                elemLength =  16 ; 
+                double scaling = Math.Max(Math.Max(Math.Abs(((fcomplex)(object)MaxValue).real), Math.Abs(((fcomplex)(object)MaxValue).real)), Math.Max(Math.Abs(((fcomplex)(object)MaxValue).imag), Math.Abs(((fcomplex)(object)MaxValue).imag))); if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling = Math.Pow(10, Math.Floor(Math.Log10(scaling)));
                 while (acc[m_dimensions.NumberOfDimensions - 1] <
                         m_dimensions[m_dimensions.NumberOfDimensions - 1]) {
                     // show only two first dimensions at the same time ... 
@@ -2073,7 +2073,7 @@ namespace ILNumerics {
                                 s.Append(Environment.NewLine);
                                 curLineLength = 0;
                             }
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -2089,12 +2089,12 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<complex> ) {    
                 complex element;
                 complex [] elements = (this.m_data as  complex []);
-                elemLength =  36 ; 
-                double scaling = ((complex)(object)MaxValue).real; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling = Math.Pow(10,Math.Floor(Math.Log10(scaling))); 
+                elemLength =  16 ; 
+                double scaling = Math.Max(Math.Max(Math.Abs(((complex)(object)MaxValue).real), Math.Abs(((complex)(object)MaxValue).real)), Math.Max(Math.Abs(((complex)(object)MaxValue).imag), Math.Abs(((complex)(object)MaxValue).imag))); if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling = Math.Pow(10, Math.Floor(Math.Log10(scaling)));
                 while (acc[m_dimensions.NumberOfDimensions - 1] <
                         m_dimensions[m_dimensions.NumberOfDimensions - 1]) {
                     // show only two first dimensions at the same time ... 
@@ -2119,7 +2119,7 @@ namespace ILNumerics {
                                 s.Append(Environment.NewLine);
                                 curLineLength = 0;
                             }
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -2135,7 +2135,7 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<byte> ) {    
                 byte element;
                 byte [] elements = (this.m_data as  byte []);
@@ -2165,7 +2165,7 @@ namespace ILNumerics {
                                 s.Append(Environment.NewLine);
                                 curLineLength = 0;
                             }
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -2181,7 +2181,7 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<char> ) {    
                 char element;
                 char [] elements = (this.m_data as  char []);
@@ -2211,7 +2211,7 @@ namespace ILNumerics {
                                 s.Append(Environment.NewLine);
                                 curLineLength = 0;
                             }
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -2227,7 +2227,7 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<UInt64> ) {    
                 UInt64 element;
                 UInt64 [] elements = (this.m_data as  UInt64 []);
@@ -2257,7 +2257,7 @@ namespace ILNumerics {
                                 s.Append(Environment.NewLine);
                                 curLineLength = 0;
                             }
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -2273,7 +2273,7 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<UInt32> ) {    
                 UInt32 element;
                 UInt32 [] elements = (this.m_data as  UInt32 []);
@@ -2303,7 +2303,7 @@ namespace ILNumerics {
                                 s.Append(Environment.NewLine);
                                 curLineLength = 0;
                             }
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -2319,7 +2319,7 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<UInt16> ) {    
                 UInt16 element;
                 UInt16 [] elements = (this.m_data as  UInt16 []);
@@ -2349,7 +2349,7 @@ namespace ILNumerics {
                                 s.Append(Environment.NewLine);
                                 curLineLength = 0;
                             }
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -2365,7 +2365,7 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<Int64> ) {    
                 Int64 element;
                 Int64 [] elements = (this.m_data as  Int64 []);
@@ -2395,7 +2395,7 @@ namespace ILNumerics {
                                 s.Append(Environment.NewLine);
                                 curLineLength = 0;
                             }
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -2411,7 +2411,7 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<Int32> ) {    
                 Int32 element;
                 Int32 [] elements = (this.m_data as  Int32 []);
@@ -2441,7 +2441,7 @@ namespace ILNumerics {
                                 s.Append(Environment.NewLine);
                                 curLineLength = 0;
                             }
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -2457,7 +2457,7 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<Int16> ) {    
                 Int16 element;
                 Int16 [] elements = (this.m_data as  Int16 []);
@@ -2487,7 +2487,7 @@ namespace ILNumerics {
                                 s.Append(Environment.NewLine);
                                 curLineLength = 0;
                             }
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -2503,12 +2503,12 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<float> ) {    
                 float element;
                 float [] elements = (this.m_data as  float []);
                 elemLength =  5 ; 
-                float scaling = (float)(object)MaxValue; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling  = (float)Math.Pow(10,Math.Floor(Math.Log10(scaling))); 
+                float scaling = Math.Max(Math.Abs((float)(object)MaxValue), Math.Abs((float)(object)MinValue)); if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling  = (float)Math.Pow(10,Math.Floor(Math.Log10(scaling))); 
                 while (acc[m_dimensions.NumberOfDimensions - 1] <
                         m_dimensions[m_dimensions.NumberOfDimensions - 1]) {
                     // show only two first dimensions at the same time ... 
@@ -2533,7 +2533,7 @@ namespace ILNumerics {
                                 s.Append(Environment.NewLine);
                                 curLineLength = 0;
                             }
-                            if (element >= 0) s.Append(" "); 
+                            if (sElement.Substring(0, 1) != "-") s.Append(" "); 
                             s.Append(" " + sElement);
                             curLineLength += sElement.Length;
                         }
@@ -2549,7 +2549,7 @@ namespace ILNumerics {
                     }
                     if (d >= m_dimensions.NumberOfDimensions) break;      
                 }
-
+               
             } else if (this is  ILArray<ILBaseArray> ) {    
                 ILBaseArray element;
                 ILBaseArray [] elements = (this.m_data as  ILBaseArray []);

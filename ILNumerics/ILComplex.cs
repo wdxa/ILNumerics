@@ -3740,13 +3740,13 @@ namespace ILNumerics {
             if (digits < 1) return ""; 
             if (digits != m_lastDigits) {
                 m_lastDigits = digits; 
-                m_precSpecR = String.Format("{{0:f{0}}}",digits);
-                m_precSpecI = String.Format("{{1:f{0}}}i",digits);
+                m_precSpecR = String.Format("{{0:f{0}}}", digits);
+                m_precSpecI = String.Format("{{1:f{0}}}i", digits);
             }
             if (imag >= 0) {
-                return String.Format(m_precSpecR+"+"+m_precSpecI,real,imag); 
+                return String.Format(m_precSpecR + "+" + m_precSpecI, real, imag); 
             } else {
-                return String.Format(m_precSpecR+" "+m_precSpecI,real,imag); 
+                return String.Format(m_precSpecR + m_precSpecI, real, imag); 
             }
         }
         /// <summary>
