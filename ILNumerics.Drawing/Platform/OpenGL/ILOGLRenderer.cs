@@ -56,7 +56,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         #region member / properties
         ILTextureManager m_textureManager; 
         float[] m_curPosition = new float[16];
-        Color m_colorOverride = Color.Empty; 
+        Color m_colorOverride = Color.Empty;
+        float m_xMin, m_xMax, m_yMin, m_yMax; 
         #endregion
 
         #region constructors
@@ -130,6 +131,12 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 GL.Disable(EnableCap.ClipPlane4); 
                 GL.Disable(EnableCap.ClipPlane5); 
             }
+            if (p.PassCount == 0) {
+                m_xMin = float.MaxValue;
+                m_xMax = float.MinValue;
+                m_yMin = float.MaxValue;
+                m_yMax = float.MinValue;
+            }
         }
         
         public void Begin (ILRenderProperties p, ref double[] modelview) {
@@ -153,6 +160,12 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             GL.PopMatrix();
             GL.MatrixMode(MatrixMode.Projection);
             GL.PopMatrix();
+            if (p.PassCount == 0) {
+                if (p.MinX > m_xMin) p.MinX = (int)m_xMin;
+                if (p.MaxX < m_xMax) p.MaxX = (int)m_xMax;
+                if (p.MaxY < m_yMax) p.MaxY = (int)m_yMax;
+                if (p.MinY > m_yMin) p.MinY = (int)m_yMin;
+            }
         }
         #endregion
 
@@ -208,6 +221,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                         TextOrientation orientation,
                         Color color) {
             float w, h;
+            if (String.IsNullOrEmpty(queue.Expression.Trim())) return; 
             w = queue.Size.Width; 
             h = queue.Size.Height; 
             // compensate for unexact glx.MeasureString results... (to be fixed!)
@@ -223,7 +237,12 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             GL.LoadMatrix(m_curPosition);
             m_textureManager.Reset(); 
             w = 0.5f; h = 0.5f; 
-            int lineHeight = 0; 
+            int lineHeight = 0;
+            float drawPosX, drawPosY;
+            float xMin = float.MaxValue; // relative to label (include rotation)
+            float yMin = float.MaxValue;
+            float xMax = float.MinValue;
+            float yMax = float.MinValue; 
             GLColor3(color); 
             foreach (ILRenderQueueItem item in queue) {
                 // special symbols & control sequences 
@@ -248,22 +267,31 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     } else {
                         GLColor3(color); 
                     }
+                    drawPosY = h + item.Offset.Y; 
+
                     GL.Begin(BeginMode.Quads); 
                     RectangleF rectF = textData.TextureRectangle; 
-                    GL.TexCoord2(rectF.Left,rectF.Bottom);   
-                    GL.Vertex2(w,h + textData.Height + item.Offset.Y-1);      // ul
-                    GL.TexCoord2(rectF.Left,rectF.Top); 
-                    GL.Vertex2(w,h + item.Offset.Y);                    // bl
+                    GL.TexCoord2(rectF.Left,rectF.Bottom);
+                    GL.Vertex2(w, drawPosY + textData.Height - 1);      // bl
+                    GL.TexCoord2(rectF.Left,rectF.Top);
+                    GL.Vertex2(w, drawPosY);                    // tl
+                    if (xMin > w) xMin = w;
+                    if (yMin > drawPosY) yMin = drawPosY;
+
                     w += textData.Width-1; 
-                    GL.TexCoord2(rectF.Right,rectF.Top); 
-                    GL.Vertex2(w,h+ item.Offset.Y);                    // br
-                    GL.TexCoord2(rectF.Right,rectF.Bottom); 
-                    GL.Vertex2(w,h + textData.Height+ item.Offset.Y-1);      // tr
+                    GL.TexCoord2(rectF.Right,rectF.Top);
+                    GL.Vertex2(w, drawPosY);                    // tr
+                    GL.TexCoord2(rectF.Right,rectF.Bottom);
+                    GL.Vertex2(w, drawPosY + textData.Height - 1);      // br
                     if (textData.Height > lineHeight)
                         lineHeight = textData.Height; 
-                    GL.End(); 
+                    GL.End();
+                    if (xMax < w) xMax = w;
+                    if (yMax < drawPosY + textData.Height - 1) 
+                        yMax = drawPosY + textData.Height - 1;
+
 #if BOUNDINGBOXES_ITEM
-            // define DEBUG symbol to draw bouning box around each item (debug feature)
+            // define DEBUG symbol to draw bounding box around each item (debug feature)
             GL.Color3(Color.Red); 
             GL.Begin(BeginMode.LineLoop); 
                 w-= textData.Width; 
@@ -281,7 +309,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             // define debugsymbol "BOUNDINGBOXES", to draw bounding box around whole expression
             GL.Disable(EnableCap.Texture2D); 
             GL.Color3(Color.Red); 
-            GL.LineWidth(1); 
+            GL.LineWidth(1);
+            GL.Disable(EnableCap.LineStipple);
             GL.Begin(BeginMode.LineLoop); 
                 GL.Vertex2(0,0);      // ul
                 GL.Vertex2(0,queue.Size.Height);                    // bl
@@ -290,6 +319,18 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             GL.End();
             GL.Enable(EnableCap.Texture2D); 
 #endif
+            // check outer limits 
+            if (orientation == TextOrientation.Horizontal) {
+                if (m_xMin > location.X + xMin) m_xMin = location.X + xMin;
+                if (m_xMax < location.X + xMax) m_xMax = location.X + xMax;
+                if (m_yMin > location.Y + yMin) m_yMin = location.Y + yMin;
+                if (m_yMax < location.Y + yMax) m_yMax = location.Y + yMax;
+            } else if (orientation == TextOrientation.Vertical) {
+                if (m_xMin > location.X - yMax) m_xMin = location.X - yMax;
+                if (m_xMax < location.X - yMin) m_xMax = location.X - yMin;
+                if (m_yMin > location.Y - xMin) m_yMin = location.Y - xMin;
+                if (m_yMax < location.Y - xMax) m_yMax = location.Y - xMax;
+            }
         }
 
         public void Draw(ILRenderQueue renderQueue, float x1, float y1, float z1, float x2, float y2, float z2, Color color) {

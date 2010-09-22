@@ -76,5 +76,22 @@ namespace ILNumerics.Drawing.Graphs {
         }
         public abstract void DrawToLegend(ILRenderProperties p, Rectangle sampleRect, Rectangle labelRect);         
         #endregion
+
+        public override bool Is3DGraph() {
+            return true;
+        }
+
+        #region IILPanelConfigurator
+        public override void ConfigurePanel(ILPanel panel) {
+            panel.InteractiveMode = InteractiveModes.ZoomRectangle;
+            panel.AspectRatio = AspectRatioMode.StretchToFill;
+            panel.PlotBoxScreenSizeMode = PlotBoxScreenSizeMode.StrictOptimal;
+            panel.ClipViewData = false;
+            panel.DefaultView.Set(0f, 0f, panel.DefaultView.Distance);
+        }
+        #endregion
+
+
+
     }
 }

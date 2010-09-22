@@ -91,17 +91,15 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 }
             }
         }
-        public override void Draw(ILRenderProperties props, ILShape shape, ILArray<int> indices) {
-            System.Diagnostics.Debug.Assert(indices != null && indices.IsVector); 
+        public override void Draw(ILRenderProperties props, ILShape shape, int[] indices) {
+            System.Diagnostics.Debug.Assert(indices != null); 
             GL.Enable(EnableCap.DepthTest);
-            GL.Disable(EnableCap.Blend); 
-            if (indices.IsReference) indices.Detach(); 
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc (BlendingFactorSrc.SrcAlpha,
                           BlendingFactorDest.OneMinusSrcAlpha); 
             // draw shape
             ILShape<C4fN3fV3f> cShape = (shape as ILShape<C4fN3fV3f>);
-            fixed (int* pIndices = indices.InternalArray4Experts) 
+            fixed (int* pIndices = indices) 
             fixed (C4fN3fV3f* pVertices = cShape.Vertices) {
                 if (UseLight && (cShape is ILLitCompositeShape<C4fN3fV3f>)) {
                     setupLight(cShape as ILLitCompositeShape<C4fN3fV3f>);
@@ -128,7 +126,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             // draw border 
             ILBorderedShape<C4fN3fV3f> bShape = (shape as ILBorderedShape<C4fN3fV3f>); 
             if (bShape != null && bShape.Border.Visible) {
-                fixed (int* pIndices = indices.InternalArray4Experts) 
+                fixed (int* pIndices = indices) 
                 fixed (C4fN3fV3f* pVertices = bShape.Vertices) {
                     ILOGLPanel.SetupLineStyle(bShape.Border);
                     GL.InterleavedArrays(
@@ -158,7 +156,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         private void setupLight(IILSupportsLight shape) {
             GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.ColorMaterial);
-            GL.Enable(EnableCap.Normalize); 
+            //GL.Enable(EnableCap.Normalize); 
             GL.ColorMaterial(MaterialFace.FrontAndBack,ColorMaterialParameter.AmbientAndDiffuse);
             
             //GL.LightModel(LightModelParameter.LightModelAmbient, 0.2f);

@@ -31,7 +31,8 @@ using ILNumerics.Drawing.Graphs;
 using ILNumerics.BuiltInFunctions; 
 using ILNumerics.Exceptions; 
 using ILNumerics.Drawing.Interfaces; 
-using ILNumerics.Drawing.Controls; 
+using ILNumerics.Drawing.Controls;
+using ILNumerics.Misc; 
 
 namespace ILNumerics.Drawing.Shapes {
     public abstract class ILCompositeShape<VertexType> : ILShape<VertexType> 
@@ -44,7 +45,7 @@ namespace ILNumerics.Drawing.Shapes {
         /// <summary>
         /// actual indices used for rendering (sorted for translucent shapes)
         /// </summary>
-        protected ILArray<int> m_renderIndices;
+        protected int[] m_renderIndices;
         /// <summary>
         /// cache indices defining each shapes corners
         /// </summary>
@@ -53,6 +54,8 @@ namespace ILNumerics.Drawing.Shapes {
         /// cache camera position of last sorting
         /// </summary>
         protected ILPoint3Df m_oldCameraPosition;
+
+        private float[] m_vertexPositions; 
         #endregion
 
         #region properties
@@ -247,42 +250,127 @@ namespace ILNumerics.Drawing.Shapes {
                 }
             }
         }
-        protected void sortPrimitives () {
-            m_oldCameraPosition = m_panel.Camera.Position; 
-            m_renderIndices = Computation.SortIndices(
-                        m_vertices,m_shapeIndices,m_vertCount,m_panel.Camera.Position,
-                        VerticesPerShape);
+        protected override void  ComputeLimits() {
+ 	         base.ComputeLimits();
+             updateVertexPositions(Vertices, ref m_vertexPositions);
+        }
+        protected override void IntConfigure() {
+            // nothing to do here ...
         }
         #endregion
 
-        private class Computation : ILMath {
-            public static ILArray<int> SortIndices(VertexType[] vertices, 
-                                            ILArray<int> shapeIndices,int vertCount, 
-                                            ILPoint3Df camera, int vertPerPrimitive) {
-                //System.Diagnostics.Debug.Assert(Math.IEEERemainder(vertCount,vertPerPrimitive) == 0); 
-                float[] posArr = new float[3*vertCount]; 
-                int p = 0; 
-                foreach (VertexType vertex in vertices) {
-                    posArr[p++] = vertex.XPosition; 
-                    posArr[p++] = vertex.YPosition; 
-                    posArr[p++] = vertex.ZPosition; 
-                }
-                ILArray<float> pos = new ILArray<float>(posArr,3,vertCount); 
-                ILArray<float> cam = new ILArray<float>(
-                                     new float[] {camera.X, camera.Y, camera.Z},3,1); 
-                // flip the camera around and move it outside the scene 
-                ILArray<double> ind = null; 
-                cam = -cam * maxall(pos);
-                cam = repmat(cam,1,vertCount); 
-                pos = pos - cam;
-                pos = sum(pos * pos,0);   // pos holds distances for eaech vertex now
-                // sort per primitive
-                pos = sum(reshape(pos[shapeIndices[":"]], vertPerPrimitive, shapeIndices.Dimensions[1]),0);
-                ind = ILArray<double>.empty();
-                sort(pos,out ind,1,false); 
-                // ind: indices into shapeIndices' columns 
-                return shapeIndices[null,ind][":"]; 
-            }
+        #region private helper
+
+        //protected void sortPrimitives() {
+        //    m_oldCameraPosition = m_panel.Camera.Position;
+        //    Computation.SortIndices(
+        //                m_vertices, m_shapeIndices, m_vertCount, m_panel.Camera.Position,
+        //                VerticesPerShape).ExportValues(ref m_renderIndices);
+        //}
+
+        private void sortPrimitives() {
+            m_oldCameraPosition = m_panel.Camera.Position;
+            if (m_renderIndices == null || m_renderIndices.Length < m_shapeIndices.Dimensions.NumberOfElements)
+                m_renderIndices = new int[m_shapeIndices.Dimensions.NumberOfElements];
+            float camScale = (ILPoint3Df.Max(m_positionMax, m_positionMin) - m_positionCenter).GetLength(); 
+            Computation.SortIndices(
+                        m_vertexPositions
+                        , m_shapeIndices
+                        , m_vertCount
+                        , m_panel.Camera.LookAt + ((m_panel.Camera.LookAt - m_panel.Camera.Position) * camScale)
+                        , VerticesPerShape
+                        , m_renderIndices);
         }
+        
+        private void updateVertexPositions(VertexType[] vertices, ref float[] vertexPositions) {
+            if (vertexPositions == null || vertexPositions.Length < 3 * vertices.Length) {
+                vertexPositions = new float[3 * vertices.Length];
+            }
+            int p = 0;
+            if (vertices is C4bV3f[]) {
+                C4bV3f[] verticesC4bV3f = (C4bV3f[])(object)vertices; 
+                foreach (C4bV3f vertex in verticesC4bV3f) {
+                    vertexPositions[p++] = vertex.XPosition;
+                    vertexPositions[p++] = vertex.YPosition;
+                    vertexPositions[p++] = vertex.ZPosition;
+                }
+            } else if (vertices is C4fN3fV3f[]) {
+                C4fN3fV3f[] verticesC4fN3fV3f = (C4fN3fV3f[])(object)vertices; 
+                foreach (C4fN3fV3f vertex in verticesC4fN3fV3f) {
+                    vertexPositions[p++] = vertex.XPosition;
+                    vertexPositions[p++] = vertex.YPosition;
+                    vertexPositions[p++] = vertex.ZPosition;
+                }
+            } 
+            // ... more vertex types here? 
+        }
+
+        private class Computation : ILMath {
+            public static void SortIndices(float[] vertPositions,
+                                            ILArray<int> shapeIndices, int vertCount,
+                                            ILPoint3Df camera, int vertPerPrimitive, int[] renderIndices) {
+                ////System.Diagnostics.Debug.Assert(Math.IEEERemainder(vertCount,vertPerPrimitive) == 0); 
+                //float[] posArr = new float[3*vertCount]; 
+                //int p = 0; 
+                //foreach (VertexType vertex in vertices) {
+                //    posArr[p++] = vertex.XPosition; 
+                //    posArr[p++] = vertex.YPosition; 
+                //    posArr[p++] = vertex.ZPosition; 
+                //}
+                bool dummy;
+                float[] dist = ILMemoryPool.Pool.New<float>(vertPositions.Length / 3, false, out dummy);
+                float camx = camera.X, camy = camera.Y, camz = camera.Z;
+                for (int distPos = 0, vPos = 0; distPos < dist.Length; distPos++) {
+                    float tmpX = vertPositions[vPos++] - camx;
+                    float tmpY = vertPositions[vPos++] - camy;
+                    float tmpZ = vertPositions[vPos++] - camz;
+                    dist[distPos] = tmpX * tmpX + tmpY * tmpY + tmpZ * tmpZ;
+                }
+#if DEBUG
+                //ILArray<double> indDeb; 
+                //ILArray<float> minID = sort(new ILArray<float>(dist, 1, dist.Length), out indDeb,1,false);
+                //System.Diagnostics.Debug.Write("ind: " + shapeIndices.ValuesToString(0));
+                //System.Diagnostics.Debug.Write("dist: " + new ILArray<float>(dist, 1, dist.Length).ValuesToString(0));
+                //System.Diagnostics.Debug.Write("dist[ind]: " + (new ILArray<float>(dist, 1, dist.Length)[shapeIndices]).ValuesToString(0));
+                //System.Diagnostics.Debug.Write("sum(dist[ind]): " + sum(new ILArray<float>(dist, 1, dist.Length)[shapeIndices]).ValuesToString(0));
+#endif
+                dist = sum(new ILArray<float>(dist, 1, dist.Length)[shapeIndices], 0).InternalArray4Experts;
+                double[] idx = counter(0.0, 1.0, 1, dist.Length).InternalArray4Experts;
+                Algorithms.ILQuickSort.QuickSortAscSolidIDX(dist, idx, 0, dist.Length - 1, 1);
+                // ind: indices into shapeIndices' columns 
+                shapeIndices[null, (ILArray<double>)idx].ExportValues(ref renderIndices);
+            }
+
+            //public static ILArray<int> SortIndices(VertexType[] vertices,
+            //                                ILArray<int> shapeIndices, int vertCount,
+            //                                ILPoint3Df camera, int vertPerPrimitive) {
+            //    //System.Diagnostics.Debug.Assert(Math.IEEERemainder(vertCount,vertPerPrimitive) == 0); 
+            //    float[] posArr = new float[3 * vertCount];
+            //    int p = 0;
+            //    foreach (VertexType vertex in vertices) {
+            //        posArr[p++] = vertex.XPosition;
+            //        posArr[p++] = vertex.YPosition;
+            //        posArr[p++] = vertex.ZPosition;
+            //    }
+            //    ILArray<float> pos = new ILArray<float>(posArr, 3, vertCount);
+            //    ILArray<float> cam = new ILArray<float>(
+            //                         new float[] { camera.X, camera.Y, camera.Z }, 3, 1);
+            //    // flip the camera around and move it outside the scene 
+            //    ILArray<double> ind = null;
+            //    cam = -cam * maxall(pos);
+            //    cam = repmat(cam, 1, vertCount);
+            //    pos = pos - cam;
+            //    pos = sum(pos * pos, 0);   // pos holds distances for eaech vertex now
+            //    // sort per primitive
+            //    pos = sum(reshape(pos[shapeIndices[":"]], vertPerPrimitive, shapeIndices.Dimensions[1]), 0);
+            //    ind = ILArray<double>.empty();
+            //    sort(pos, out ind, 1, false);
+            //    // ind: indices into shapeIndices' columns 
+            //    return shapeIndices[null, ind][":"];
+            //}
+
+        }
+
+        #endregion
     }
 }

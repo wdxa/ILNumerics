@@ -58,8 +58,8 @@ namespace ILNumerics.Drawing.Labeling {
         #region constructors
         public ILShapeLabel(ILPanel panel) : base(panel, null, Color.Black) {
             m_panel = panel; 
-            m_coordSystem = CoordSystem.Screen; 
-            m_alignment = TickLabelAlign.center | TickLabelAlign.vertCenter;
+            m_coordSystem = CoordSystem.Screen;
+            m_anchor = new PointF(.5f,.5f);  // TickLabelAlign.center | TickLabelAlign.vertCenter;
             m_fringeOffsets = new int[,]{ 
                 { -1, -1 },
                 { -1,  0 },
@@ -74,8 +74,8 @@ namespace ILNumerics.Drawing.Labeling {
         public ILShapeLabel(ILPanel panel, CoordSystem coordSystem) 
             : base(panel, null, Color.Black) {
             m_panel = panel;
-            m_coordSystem = CoordSystem.Screen; 
-            m_alignment = TickLabelAlign.center | TickLabelAlign.vertCenter;
+            m_coordSystem = CoordSystem.Screen;
+            m_anchor = new PointF(.5f, .5f);  // TickLabelAlign.center | TickLabelAlign.vertCenter;
             m_renderer.CacheCleared -= new EventHandler(m_renderer_CacheCleared);
             m_renderer = panel.TextRendererManager.GetDefault(coordSystem);
             m_renderer.CacheCleared += new EventHandler(m_renderer_CacheCleared);
@@ -94,7 +94,7 @@ namespace ILNumerics.Drawing.Labeling {
                     interprete(m_expression);
                 double[] modelview = null;
                 m_renderer.Begin(p, ref modelview);
-                Point dest = m_panel.Transform(center, modelview);
+                Point dest = m_panel.World2Screen(center, modelview);
                 offsetAlignment(m_size, ref dest);
                 if (m_fringeColor.IsEmpty) {
                     m_renderer.Draw(m_renderQueue, dest, TextOrientation.Horizontal, m_color);

@@ -28,15 +28,17 @@ using System.Collections.Generic;
 using System.Text;
 using ILNumerics.Exceptions;
 using ILNumerics.Drawing.Internal;
+using ILNumerics.Drawing.Misc;
 using ILNumerics.BuiltInFunctions; 
 using ILNumerics.Drawing.Interfaces; 
-using ILNumerics.Drawing.Graphs; 
+using ILNumerics.Drawing.Graphs;
+using ILNumerics.Drawing.Misc;
 
 namespace ILNumerics.Drawing.Collections {
     /// <summary>
     /// Collection of graph objects - all graphs currently contained in a subfigure
     /// </summary>
-    public class ILGraphCollection : List<ILGraph>, IDisposable {
+    public sealed class ILGraphCollection : List<ILGraph>, IDisposable {
 
         public event ILGraphCollectionChangedEvent CollectionChanged;
         public event ILGraphChangedEvent GraphChanged; 
@@ -62,6 +64,8 @@ namespace ILNumerics.Drawing.Collections {
         #region members / properties
         private IILCreationFactory m_graphFact; 
         private ILClippingData m_clippingData;
+        private List<ILGraph> m_unsortedCache;
+        private ILGraphComparer m_graphComparer;
         /// <summary>
         /// Clippping volume for data in all graphs of the collection
         /// </summary>
@@ -82,6 +86,8 @@ namespace ILNumerics.Drawing.Collections {
         internal ILGraphCollection(IILCreationFactory vPainterFact) : base() {
             m_graphFact = vPainterFact; 
             m_clippingData = new ILClippingData();
+            m_unsortedCache = new List<ILGraph>();
+            m_graphComparer = new ILGraphComparer(); 
         }
         /// <summary>
         /// dispose all graphs contained in this collection
@@ -203,9 +209,12 @@ namespace ILNumerics.Drawing.Collections {
         public ILPlot2DGraph[] AddPlot2DGraph(ILBaseArray data) {
             List<ILGraph> graphs = Add(data,GraphType.Plot2D);    
             List<ILPlot2DGraph> ret = new List<ILPlot2DGraph>(); 
-            foreach (ILGraph g in graphs) 
-                ret.Add((ILPlot2DGraph)g); 
-            ILColorProvider.Colorize(ret);
+            ILColorEnumerator cenumerator = new ILColorEnumerator(Colormaps.Lines);
+            foreach (ILGraph g in graphs) {
+                ILPlot2DGraph plot2DGraph = (ILPlot2DGraph)g;
+                ret.Add(plot2DGraph);
+                plot2DGraph.Line.Color = cenumerator.NextColor();
+            }
             return ret.ToArray(); 
         }
         /// <summary>
@@ -216,10 +225,13 @@ namespace ILNumerics.Drawing.Collections {
         /// <returns>Array of newly created graph(s)</returns>
         public ILPlot2DGraph[] AddPlot2DGraph(ILBaseArray XData, ILBaseArray YData) {
             List<ILGraph> graphs = Add(XData,YData,GraphType.Plot2D);    
-            List<ILPlot2DGraph> ret = new List<ILPlot2DGraph>(); 
-            foreach (ILGraph g in graphs) 
-                ret.Add((ILPlot2DGraph)g); 
-            ILColorProvider.Colorize(ret);
+            List<ILPlot2DGraph> ret = new List<ILPlot2DGraph>();
+            ILColorEnumerator cenumerator = new ILColorEnumerator(Colormaps.Lines);
+            foreach (ILGraph g in graphs) {
+                ILPlot2DGraph plot2DGraph = (ILPlot2DGraph)g;
+                ret.Add(plot2DGraph);
+                plot2DGraph.Line.Color = cenumerator.NextColor();
+            }
             return ret.ToArray(); 
         }
         /// <summary>
@@ -228,7 +240,7 @@ namespace ILNumerics.Drawing.Collections {
         /// <param name="data">data to be plotted</param>
         /// <param name="properties">determine GraphType</param>
         /// <returns>List with newly created graph(s)</returns>
-        public List<ILGraph> Add (ILBaseArray data, GraphType graphType) {
+        public List<ILGraph> Add(ILBaseArray data, GraphType graphType) {
             if (!data.IsNumeric) 
                 throw new ILArgumentException("Add graph: data array must be numeric!");
             List<ILGraph> ret = new List<ILGraph>();
@@ -389,6 +401,19 @@ namespace ILNumerics.Drawing.Collections {
             foreach (ILGraph g in this) {
                 g.Invalidate(); 
             }
+        }
+        internal void GetSortedList4Render(ILCamera camera, List<ILGraph> sortList) {
+            m_unsortedCache.Clear();
+            foreach (ILGraph g in this) {
+                if (g.Is3DGraph()) {
+                    sortList.Add(g); 
+                } else {
+                    m_unsortedCache.Add(g);
+                }
+            }
+            m_graphComparer.Camera = camera;
+            sortList.Sort(m_graphComparer);
+            sortList.AddRange(m_unsortedCache);
         }
         #endregion
 

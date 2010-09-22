@@ -90,14 +90,13 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             }
 
         }
-        public override void Draw(ILRenderProperties props, ILShape shape, ILArray<int> indices) {
-            System.Diagnostics.Debug.Assert(indices != null && indices.IsVector); 
+        public override void Draw(ILRenderProperties props, ILShape shape, int[] indices) {
+            System.Diagnostics.Debug.Assert(indices != null); 
             GL.Enable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Blend); 
-            if (indices.IsReference) indices.Detach(); 
             ILBorderedShape<C4bV3f> bShape = (shape as ILBorderedShape<C4bV3f>); 
             if (bShape != null && bShape.Border.Visible) {
-                fixed (int* pIndices = indices.InternalArray4Experts) 
+                fixed (int* pIndices = indices) 
                 fixed (C4bV3f* pVertices = bShape.Vertices) {
                     ILOGLPanel.SetupLineStyle(bShape.Border);
                     GL.InterleavedArrays(
@@ -122,7 +121,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             } else {
                 GL.Disable(EnableCap.LineSmooth);
             }
-            fixed (int* pIndices = indices.InternalArray4Experts) 
+            fixed (int* pIndices = indices) 
             fixed (C4bV3f* pVertices = cShape.Vertices) {
                 GL.InterleavedArrays(InterleavedArrayFormat.C4ubV3f, 0, (IntPtr)pVertices);
                 if (cShape.Shading == ShadingStyles.Interpolate)

@@ -109,13 +109,13 @@ namespace ILNumerics.Drawing.Plots {
         #region constructors
 
         /// <summary>
-        /// create new vector field scene graph plot
+        /// create new vector field plot
         /// </summary>
         /// <param name="panel">panel hosting the scene</param>
         /// <param name="data">3d data array: :;:;0 - X coords of vectors, :;:;1 - Y coords</param>
-        /// <param name="colormap">Colormap used for coloring, on Null: Colormaps.ILNumerics is used as default</param>
-        /// <param name="XLabels">labels for X axis, on Null: auto labeling</param>
-        /// <param name="YLabels">labels for Y axis, on Null: auto labeling</param>
+        /// <param name="colormap">Colormap used for coloring, on null: Colormaps.ILNumerics is used as default</param>
+        /// <param name="XLabels">labels for X axis, on null: auto labeling</param>
+        /// <param name="YLabels">labels for Y axis, on null: auto labeling</param>
         public ILVectorField(ILPanel panel, ILBaseArray data
             , ILColormap colormap, ICollection<string> XLabels
             , ICollection<string> YLabels ) 
@@ -139,10 +139,6 @@ namespace ILNumerics.Drawing.Plots {
         #endregion
 
         #region public interface
-        public override void Invalidate() {
-            base.Invalidate();
-            m_invalidated = true;
-        }
         public override void Configure() {
             if (m_invalidated) {
                 ILArray<double> indices;
@@ -162,7 +158,7 @@ namespace ILNumerics.Drawing.Plots {
         #region IILPanelConfigurator Members
 
         public void ConfigurePanel(ILPanel panel) {
-            panel.DefaultView = new ILCamera(0, 0, -10);
+            panel.DefaultView.SetDeg(0, 0, -10);
         }
 
         #endregion
@@ -190,7 +186,7 @@ namespace ILNumerics.Drawing.Plots {
         #endregion
 
         #region computation
-        private class Computation : ILNumerics.BuiltInFunctions.ILMath {
+        public class Computation : ILNumerics.BuiltInFunctions.ILMath {
 
             public static ILArray<double> CreateVertices(ILBaseArray dataInput 
                                             ,out ILArray<double> indices
@@ -233,7 +229,7 @@ namespace ILNumerics.Drawing.Plots {
                 return ret.Reshape(4 * numRows * numCols, 6).T;
             }
 
-            internal static ILArray<double> CreateTestData(int numRows, int numCols) {
+            public static ILArray<double> CreateTestData(int numRows, int numCols) {
                 ILArray<double> Y = repmat(linspace(0, pi * 2, numCols), numRows, 1);
                 ILArray<double> X = cos(Y);
                 X[":;:;1"] = sin(Y);

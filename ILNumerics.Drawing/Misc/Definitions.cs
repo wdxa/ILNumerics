@@ -34,6 +34,19 @@ using ILNumerics.Drawing.Graphs;
 namespace ILNumerics.Drawing {
 
     /// <summary>
+    /// modes for projecting the rendering output to the available client area
+    /// </summary>
+    public enum AspectRatioMode {
+        /// <summary>
+        /// plots fill available rendering area of the PlotCubeScreenRectF rectangle
+        /// </summary>
+        StretchToFill, 
+        /// <summary>
+        /// plots will be shrinked to fit inside PlotCubeScreeRectF but maintain data aspect ratio
+        /// </summary>
+        MaintainRatios
+    }
+    /// <summary>
     /// defines the movement from current to new zoom setting
     /// </summary>
     public enum ZoomModes {
@@ -200,6 +213,40 @@ namespace ILNumerics.Drawing {
         /// manually create ticks 
         /// </summary>
         Manual
+    }
+    /// <summary>
+    /// options for the sizing of the projection of the plot cube onto the 2D screen client area of the control
+    /// </summary>
+    public enum PlotBoxScreenSizeMode {
+        /// <summary>
+        /// the projection of the plot cube drawing area fills the whole controls space (labels may be hidden) 
+        /// </summary>
+        Maximum, 
+        /// <summary>
+        /// the size of plot cube projection rectangle is automatically determined, taking labels size into account
+        /// </summary>
+        Optimal,
+        /// <summary>
+        /// more pixel exact positioning, strictly only the place really needed for labels is used (slower)
+        /// </summary>
+        StrictOptimal,
+        /// <summary>
+        /// No automatic resizing for the cube projection size, values from PlotCubeScreenRect are taken
+        /// </summary>
+        Manual
+    }
+    /// <summary>
+    /// possible states/reasons/sources for rendering the scene
+    /// </summary>
+    internal enum RenderReason {
+        /// <summary>
+        /// normal source, the scene is to be rendered the common way
+        /// </summary>
+        PaintEvent, 
+        /// <summary>
+        /// the rendering was re-initialized because the matrices need to be recalculated for laying out labels correctly 
+        /// </summary>
+        RecalcLabels
     }
     /// <summary>
     /// Alignments for labels 
@@ -381,12 +428,21 @@ namespace ILNumerics.Drawing {
         None
     }
     /// <summary>
-    /// single precision 3D point definition
+    /// single precision 3D point structure
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct ILPoint3Df {
+        /// <summary>
+        /// X coordinate
+        /// </summary>
         public float X;
+        /// <summary>
+        /// Y coordinate
+        /// </summary>
         public float Y;
+        /// <summary>
+        /// Z coordinate
+        /// </summary>
         public float Z;
         /// <summary>
         /// create point in single precision
@@ -398,6 +454,17 @@ namespace ILNumerics.Drawing {
             X = x; 
             Y = y; 
             Z = z; 
+        }
+        /// <summary>
+        /// create new ILPoint3Df by double values (for convenience, internally casted to float)
+        /// </summary>
+        /// <param name="x">X coord</param>
+        /// <param name="y">Y coord</param>
+        /// <param name="z">Z coors</param>
+        public ILPoint3Df (double x, double y, double z) {
+            X = (float)x; 
+            Y = (float)y; 
+            Z = (float)z; 
         }
         /// <summary>
         /// convert this point to string representation
@@ -494,6 +561,9 @@ namespace ILNumerics.Drawing {
                 return (ret / len); 
             return ret; 
         }
+        public float GetLength() {
+            return (float)Math.Sqrt(X * X + Y * Y + Z * Z); 
+        }
         public static ILPoint3Df MaxValue {
             get { return new ILPoint3Df(float.MaxValue,float.MaxValue,float.MaxValue); }
         }
@@ -547,6 +617,64 @@ namespace ILNumerics.Drawing {
             return ret; 
         }
 
+
+        public static ILPoint3Df normalize(ILPoint3Df p) {
+            float length = (float)Math.Sqrt(p.X * p.X + p.Y * p.Y + p.Z * p.Z);
+            return p / length;                 
+        }
+
+        public static ILPoint3Df normalize(float x, float y, float z) {
+            float length = (float)Math.Sqrt(x * x + y * y + z * z);
+            return new ILPoint3Df(x,y,z) / length;                 
+        }
+
+        public void ToPolar(out float len, out float phi, out float rho) {
+            len = (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+            phi = (float)Math.Atan2(Y, X);
+            rho = (float)Math.Atan2(Math.Sqrt(X * X + Y * Y), Z);
+        }
+
+        /// <summary>
+        /// rotate the vector, keep length
+        /// </summary>
+        /// <param name="normal">axis as rotation normal</param>
+        /// <param name="angleDeg">angle to move (radian)</param>
+        /// <returns>rotated version of this vector, does not change original vector</returns>
+        public ILPoint3Df Spin(ILPoint3Df normal, float angleDeg) {
+            float a = angleDeg * (float)Math.PI / 180f;
+            float cosa = (float)Math.Cos(a);
+            float sina = (float)Math.Sin(a);
+            normal = ILPoint3Df.normalize(normal);
+            float omincosa = 1 - cosa;
+            ILPoint3Df ret = new ILPoint3Df(
+                (cosa + X * X * omincosa) * normal.X
+                + (X * Y * omincosa - Z * sina) * normal.Y
+                + (X * Z * omincosa + Y * sina) * normal.Z,
+
+                (Y * X * omincosa + Z * sina) * normal.X
+                + (cosa + Y * Y * omincosa) * normal.Y
+                + (Y * Z * omincosa - X * sina) * normal.Z,
+
+                (Z * X * omincosa - Y * sina) * normal.X
+                + (Z * Y * omincosa + X * sina) * normal.Y
+                + (cosa + Z * Z * omincosa) * normal.Z);
+            return ret; 
+        }
+        /// <summary>
+        /// Compares obj's coordinate values to those of this class instance
+        /// </summary>
+        /// <param name="obj">ILPoint3Df to compare</param>
+        /// <returns>true, if X,Y and Z coordinates are equal</returns>
+        public override bool Equals(object obj) {
+            return ((ILPoint3Df)obj) == this;
+        }
+        /// <summary>
+        /// get a hash code for this ILPoint3Df object
+        /// </summary>
+        /// <returns>hash code</returns>
+        public override int GetHashCode() {
+            return base.GetHashCode();
+        }
     }
     /// <summary>
     /// double precision 3D point definition

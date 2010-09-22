@@ -131,10 +131,22 @@ namespace ILNumerics.Drawing.Graphs {
                 base.CreateIndices();
             }
         }
+        public override bool Is3DGraph() {
+            return true;
+        }
+
         #endregion
 
         #region IILLegendRenderer
         public abstract void DrawToLegend(ILRenderProperties p, Rectangle sampleRect, Rectangle labelRect); 
+        #endregion 
+
+        #region IILPanelConfigurator
+        public override void ConfigurePanel(ILPanel panel) {
+            panel.InteractiveMode = InteractiveModes.Rotating;
+            panel.DefaultView.Set(5.8f, 1.17f, panel.DefaultView.Distance); 
+        }
+
         #endregion
     }
 }

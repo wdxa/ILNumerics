@@ -43,6 +43,9 @@ namespace ILNumerics.Drawing.Graphs {
         void m_root_Invalidated(object sender, EventArgs e) {
             Invalidate();
         }
+        void m_root_SizeChanged(object sender, EventArgs e) {
+            m_localClipping.Set(m_root.PositionMin, m_root.PositionMax);
+        }
         #endregion
 
         #region attributes
@@ -59,20 +62,20 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region constructors
-        public ILSceneGraph (ILPanel panel, ILClippingData clipping) 
+        internal ILSceneGraph (ILPanel panel, ILClippingData clipping) 
             : base(panel,clipping) {
             m_root = new ILSceneGraphRoot(panel);
             m_root.Invalidated += new EventHandler(m_root_Invalidated);
             m_root.SizeChanged += new EventHandler(m_root_SizeChanged);
             m_graphType = GraphType.SceneGraph; 
         }
-
-        void m_root_SizeChanged(object sender, EventArgs e) {
-            m_localClipping.Set(m_root.PositionMin,m_root.PositionMax);
-        }
         #endregion
 
         #region public interface
+        public override bool Is3DGraph() {
+            return true;
+        }
+
         public override void Draw(ILRenderProperties p) {
             m_root.Draw(p); 
         }
@@ -128,5 +131,13 @@ namespace ILNumerics.Drawing.Graphs {
         }
 
         #endregion
+
+        #region IILPanelConfigurator
+        public override void ConfigurePanel(ILPanel panel) {
+            panel.InteractiveMode = InteractiveModes.Rotating;
+            panel.DefaultView.Set(5.8f, 1.17f, panel.DefaultView.Distance);
+        }
+        #endregion
+
     }
 }

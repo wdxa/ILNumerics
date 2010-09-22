@@ -69,10 +69,13 @@ using ILNumerics.Misc;
  */
     
 namespace ILNumerics.Algorithms {
-    internal class ILQuickSort {
+    /// <summary>
+    /// internal quick sort implementation
+    /// </summary>
+    public class ILQuickSort {
 
 #region HYCALPER LOOPSTART recursiveQuickSorts
-        internal static void QuickSortAscSolid (/*!HC:inArr1*/ double [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid (/*!HC:inArr1*/ double [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -123,7 +126,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid (/*!HC:inArr1*/ double [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid(/*!HC:inArr1*/ double [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -184,7 +187,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX (/*!HC:inArr1*/ double [] vecP, /*!HC:inArr2*/ double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX(/*!HC:inArr1*/ double [] vecP, /*!HC:inArr2*/ double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -262,7 +265,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX (/*!HC:inArr1*/ double [] vecP, /*!HC:inArr2*/ double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX(/*!HC:inArr1*/ double [] vecP, /*!HC:inArr2*/ double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -343,7 +346,7 @@ namespace ILNumerics.Algorithms {
 #endregion HYCALPER LOOPEND recursiveQuickSorts
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
-        internal static void QuickSortAscSolid ( UInt64 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid ( UInt64 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -394,7 +397,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid ( UInt64 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid( UInt64 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -455,7 +458,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX ( UInt64 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX( UInt64 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -533,7 +536,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX ( UInt64 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX( UInt64 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -611,7 +614,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolid ( UInt32 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid ( UInt32 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -662,7 +665,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid ( UInt32 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid( UInt32 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -723,7 +726,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX ( UInt32 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX( UInt32 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -801,7 +804,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX ( UInt32 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX( UInt32 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -879,7 +882,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolid ( UInt16 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid ( UInt16 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -930,7 +933,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid ( UInt16 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid( UInt16 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -991,7 +994,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX ( UInt16 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX( UInt16 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1069,7 +1072,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX ( UInt16 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX( UInt16 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1147,7 +1150,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolid ( Int64 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid ( Int64 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1198,7 +1201,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid ( Int64 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid( Int64 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1259,7 +1262,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX ( Int64 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX( Int64 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1337,7 +1340,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX ( Int64 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX( Int64 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1415,7 +1418,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolid ( Int32 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid ( Int32 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1466,7 +1469,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid ( Int32 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid( Int32 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1527,7 +1530,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX ( Int32 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX( Int32 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1605,7 +1608,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX ( Int32 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX( Int32 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1683,7 +1686,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolid ( Int16 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid ( Int16 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1734,7 +1737,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid ( Int16 [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid( Int16 [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1795,7 +1798,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX ( Int16 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX( Int16 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1873,7 +1876,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX ( Int16 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX( Int16 [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -1951,7 +1954,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolid ( float [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid ( float [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2002,7 +2005,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid ( float [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid( float [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2063,7 +2066,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX ( float [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX( float [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2141,7 +2144,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX ( float [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX( float [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2219,7 +2222,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolid ( fcomplex [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid ( fcomplex [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2270,7 +2273,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid ( fcomplex [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid( fcomplex [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2331,7 +2334,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX ( fcomplex [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX( fcomplex [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2409,7 +2412,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX ( fcomplex [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX( fcomplex [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2487,7 +2490,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolid ( complex [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid ( complex [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2538,7 +2541,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid ( complex [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid( complex [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2599,7 +2602,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX ( complex [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX( complex [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2677,7 +2680,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX ( complex [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX( complex [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2755,7 +2758,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolid ( char [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid ( char [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2806,7 +2809,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid ( char [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid( char [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2867,7 +2870,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX ( char [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX( char [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -2945,7 +2948,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX ( char [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX( char [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -3023,7 +3026,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolid ( byte [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolid ( byte [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -3074,7 +3077,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolid ( byte [] vecP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolid( byte [] vecP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -3135,7 +3138,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortAscSolidIDX ( byte [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortAscSolidIDX( byte [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);
@@ -3213,7 +3216,7 @@ namespace ILNumerics.Algorithms {
                 } // fixed
             } // unsafe 
         }
-        internal static void QuickSortDescSolidIDX ( byte [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
+        public static void QuickSortDescSolidIDX( byte [] vecP,  double [] idxP, int loBound, int hiBound, int inc) {
             System.Diagnostics.Debug.Assert(vecP != null); 
             System.Diagnostics.Debug.Assert(loBound <= hiBound);
             System.Diagnostics.Debug.Assert(loBound >= 0);

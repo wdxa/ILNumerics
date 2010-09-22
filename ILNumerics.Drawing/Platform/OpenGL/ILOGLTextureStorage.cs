@@ -61,8 +61,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// </summary>
         protected override void InitTexture() {
             GL.GenTextures(1, out m_textureId);
-            System.Diagnostics.Debug.WriteLine(String.Format("ILTextureStorage{2}: TextureID={0}, Thread={1}"
-                    ,m_textureId, System.Threading.Thread.CurrentThread.ManagedThreadId,this.GetHashCode())); 
+            //System.Diagnostics.Debug.WriteLine(String.Format("ILTextureStorage{2}: TextureID={0}, Thread={1}"
+            //        ,m_textureId, System.Threading.Thread.CurrentThread.ManagedThreadId,this.GetHashCode())); 
             GL.BindTexture(TextureTarget.Texture2D, m_textureId);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)All.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)All.Repeat);

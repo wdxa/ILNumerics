@@ -55,7 +55,7 @@ namespace ILNumerics.Drawing.Misc {
         #region attributes
         protected ILPanel m_panel;
         protected Size m_size;
-        protected Point m_location; 
+        protected PointF m_location; 
         protected Color m_bgColor; 
         protected ILLineProperties m_border; 
         protected float m_opacity; 
@@ -102,9 +102,9 @@ namespace ILNumerics.Drawing.Misc {
             }
         }
         /// <summary>
-        /// get/ set location of legend box (upper/left corner), empty for auto mode
+        /// get/ set location of legend box (upper/left corner, fraction of ClientSize [(0,0)...(1f,1F)]), empty for auto mode
         /// </summary>
-        public Point Location {
+        public PointF Location {
             get {
                 return m_location; 
             }
@@ -142,13 +142,13 @@ namespace ILNumerics.Drawing.Misc {
             m_size = Size.Empty; 
             m_border = new ILLineProperties();
             m_border.Antialiasing = false; 
-            m_border.Color = Color.FromArgb(0x9f,0x9f,0xbf); 
+            m_border.Color = Color.FromArgb(0x9f,0x9f,0xaf); 
             m_border.Style = LineStyle.Solid; 
             m_border.Width = 2; 
             m_border.Changed += new EventHandler(m_border_Changed);
-            m_location = Point.Empty; 
-            m_bgColor = Color.FromArgb(0x4f,0x4f,0x2f);; 
-            m_opacity = 0.85f; 
+            m_location = Point.Empty;
+            m_bgColor = Color.FromArgb(200, 233, 254, 225); 
+            m_opacity = 0.9f; 
             m_padding = new Padding(5);
             m_visible = false; 
         }
@@ -197,7 +197,7 @@ namespace ILNumerics.Drawing.Misc {
             foreach (ILGraph graph in m_panel.Graphs) {
                 if (graph is IILLegendRenderer) {
                     providers.Add(graph as IILLegendRenderer); 
-                }
+                } 
             }
             // compute final example sizes to fit into my size
             offsX = m_size.Width * 0.1f; offsY = m_size.Height * 0.1f;
@@ -206,7 +206,8 @@ namespace ILNumerics.Drawing.Misc {
             area.X = (int)offsX; 
             for (int i = 0; i < providers.Count; i++) {
                 area.Y = (int)(offsY + i * area.Height); 
-                //providers[i].DrawIntoLegend(graphics,area);
+                // todo: not implemented! 
+                providers[i].DrawToLegend(p,area,area);
             }
         }
 

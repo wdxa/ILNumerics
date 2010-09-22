@@ -32,7 +32,11 @@ using ILNumerics.Drawing.Controls;
 using ILNumerics.Exceptions; 
 
 namespace ILNumerics.Drawing.Shapes {
-    public class ILLitBorderedShape<VertexType>
+    /// <summary>
+    /// Base class for all simple, bordered shapes to be used within ILNumerics.Drawing scene graphs
+    /// </summary>
+    /// <typeparam name="VertexType"></typeparam>
+    public abstract class ILLitBorderedShape<VertexType>
         : ILBorderedShape<VertexType>, IILSupportsLight
         where VertexType : struct, IILVertexDefinition {
 

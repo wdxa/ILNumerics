@@ -60,7 +60,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             }
             // draw to OpenGL context
             if (GraphicsContext.CurrentContext == null)
-                throw new GraphicsContextException("No GraphicsContext is current in the calling thread.");
+                throw new GraphicsContextException("No OpenGL GraphicsContext current is selected for the calling thread.");
 
             #region set 2D projection   
             float[] viewport = new float[4]; 
@@ -97,13 +97,20 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             }
             Point location = Point.Empty; 
             if (m_location.IsEmpty) {
+                int minx = m_panel.ClientSize.Width - boxSize.Width - m_border.Width * 2;
+                int miny = m_panel.ClientSize.Height - boxSize.Height - m_border.Width * 2; 
                 // by default: place legend at upper right corner
-                location.X = m_panel.ClientSize.Width - boxSize.Width - m_panel.Padding.Right - m_border.Width * 2; 
-                location.Y = m_panel.Padding.Top;  //m_panel.ClientSize.Height - boxSize.Height - m_panel.Padding.Bottom - m_border.Width * 2; 
+                location.X = m_panel.ClientSize.Width - boxSize.Width - m_panel.Padding.Right - m_border.Width * 2;
+                if (location.X < 0) location.X = 0;
+                if (location.X > minx) location.X = minx; 
+                location.Y = m_panel.Padding.Top;
+                if (location.Y < 0) location.Y = 0; 
+                if (location.Y > miny) location.Y = miny; 
             } else 
-                location = m_location; 
+                location = new Point((int)(m_location.X * (float)m_panel.ClientSize.Width)
+                            ,(int)(m_location.Y * (float)m_panel.ClientSize.Height)); 
 
-            float offsX = Math.Max(m_border.Width / 2.0f,1.0f), offsY; 
+            float offsX = Math.Max(m_border.Width / 2.0f,1.0f); 
             m_bgColor = Color.FromArgb((int)(m_opacity * 255),m_bgColor); 
             GL.Color4(m_bgColor);
             GL.ShadeModel(ShadingModel.Flat); 

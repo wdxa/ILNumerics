@@ -57,7 +57,7 @@ namespace ILNumerics.Drawing.Labeling {
         protected Color m_color; 
         protected Font m_font; 
         protected Size m_size; 
-        internal TickLabelAlign m_alignment; 
+        internal PointF m_anchor; 
         protected TextOrientation m_orientation; 
         protected IILTextInterpreter m_interpreter; 
         protected IILRenderer m_renderer;
@@ -115,14 +115,14 @@ namespace ILNumerics.Drawing.Labeling {
             }
         }
         /// <summary>
-        /// Get/set the alignment relative to render location for the label content
+        /// Get/set the relative offset of the 'Position' point rel. to the overall label size, range 0..1 for X and Y 
         /// </summary>
-        public TickLabelAlign Alignment {
+        public PointF Anchor {
             get {
-                return m_alignment; 
+                return m_anchor; 
             }
             set {
-                m_alignment = value; 
+                m_anchor = value; 
                 OnChanged(); 
             }
         }
@@ -252,37 +252,51 @@ namespace ILNumerics.Drawing.Labeling {
         /// <param name="point">original point</param>
         protected void offsetAlignment(Size size, ref Point point) {
             if (m_orientation == TextOrientation.Vertical) {
-                if (0 != (TickLabelAlign.right & m_alignment)) {
-                    // point.X = point.X; 
-                } else if (0 != (TickLabelAlign.center & m_alignment)) {
-                    point.X = point.X - size.Height / 2; 
-                } else 
-                    point.X = point.X + size.Height; 
-                if (0 != (TickLabelAlign.bottom & m_alignment)) {
-                    point.Y = point.Y - size.Width;     
-                } else if (0 != (TickLabelAlign.vertCenter & m_alignment)) {
-                    point.Y = point.Y - size.Width / 2; 
-                } //else point.Y = point.Y; 
+                point.X = point.X + (int)(m_anchor.Y * size.Height);
+                point.Y = point.Y - (int)(m_anchor.X * size.Width); 
+                //if (0 != (TickLabelAlign.right & m_alignment)) {
+                //    // point.X = point.X; 
+                //} else if (0 != (TickLabelAlign.center & m_alignment)) {
+                //    point.X = point.X - size.Height / 2; 
+                //} else 
+                //    point.X = point.X + size.Height; 
+                //if (0 != (TickLabelAlign.bottom & m_alignment)) {
+                //    point.Y = point.Y - size.Width;     
+                //} else if (0 != (TickLabelAlign.vertCenter & m_alignment)) {
+                //    point.Y = point.Y - size.Width / 2; 
+                //} //else point.Y = point.Y; 
             } else {
-                if (0 != (TickLabelAlign.right & m_alignment)) { 
-                    point.X = point.X - size.Width;     
-                } else if (0 != (TickLabelAlign.center & m_alignment)) {
-                    point.X = point.X - size.Width / 2; 
-                } // else point.X = point.X; 
-                if (0 != (TickLabelAlign.bottom & m_alignment)) {
-                    point.Y = point.Y - size.Height;     
-                } else if (0 != (TickLabelAlign.vertCenter & m_alignment)) {
-                    point.Y = point.Y - size.Height / 2; 
-                } // else point.Y = point.Y; 
+                point.X = point.X - (int)(m_anchor.X * size.Width);
+                point.Y = point.Y - (int)(m_anchor.Y * size.Height);
+                //if (0 != (TickLabelAlign.right & m_alignment)) { 
+                //    point.X = point.X - size.Width;     
+                //} else if (0 != (TickLabelAlign.center & m_alignment)) {
+                //    point.X = point.X - size.Width / 2; 
+                //} // else point.X = point.X; 
+                //if (0 != (TickLabelAlign.bottom & m_alignment)) {
+                //    point.Y = point.Y - size.Height;     
+                //} else if (0 != (TickLabelAlign.vertCenter & m_alignment)) {
+                //    point.Y = point.Y - size.Height / 2; 
+                //} // else point.Y = point.Y; 
             }
         }
         /// <summary>
-        /// return offset according to current setting of m_alingment
+        /// return offset according to current setting of m_alignment
         /// </summary>
         /// <param name="size">size of an element to align</param>
         /// <returns>offset according to Alignment property</returns>
         protected Point offsetAlignment(Size size) {
             Point ret = new Point(); 
+            offsetAlignment(size, ref ret); 
+            return ret; 
+        }
+        /// <summary>
+        /// return offset according to current setting of m_alignment
+        /// </summary>
+        /// <param name="size">size of an element to align</param>
+        /// <returns>offset according to Alignment property</returns>
+        protected Point offsetAlignment(Size size, Point p) {
+            Point ret = new Point(p.X, p.Y); 
             offsetAlignment(size, ref ret); 
             return ret; 
         }

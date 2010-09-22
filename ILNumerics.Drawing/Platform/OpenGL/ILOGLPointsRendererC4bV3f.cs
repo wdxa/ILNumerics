@@ -61,14 +61,13 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 GL.DrawArrays(BeginMode.Points, 0, points.VertexCount);
             }
         }
-        public override void Draw(ILRenderProperties props, ILShape shape, ILArray<int> indices) {
+        public override void Draw(ILRenderProperties props, ILShape shape, int[] indices) {
             GL.Enable(EnableCap.DepthTest);
-            if (indices.IsReference) indices.Detach(); 
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc (BlendingFactorSrc.SrcAlpha,
                           BlendingFactorDest.OneMinusSrcAlpha); 
             ILPoints points = shape as ILPoints;
-            fixed (int* pIndices = indices.InternalArray4Experts) 
+            fixed (int* pIndices = indices) 
             fixed (C4bV3f* pVertices = points.Vertices) {
                 GL.InterleavedArrays(InterleavedArrayFormat.C4ubV3f, 0, (IntPtr)pVertices);
                 if (points.Shading == ShadingStyles.Flat) {

@@ -198,7 +198,7 @@ namespace ILNumerics.Drawing.Controls {
         /// </summary>
         /// <param name="bitmap">predefined bitmap to draw content into. The size must have been initialized according to 'bounds'.</param>
         /// <param name="bounds">Rectangle specifying the region to be copied.</param>
-        public virtual void DrawToBitmap(Bitmap bitmap, Rectangle bounds) {
+        public virtual new void DrawToBitmap(Bitmap bitmap, Rectangle bounds) {
             base.DrawToBitmap(bitmap,bounds);
             Bitmap tmpbmp = new Bitmap(m_panel.Size.Width,m_panel.Size.Height); 
             m_panel.DrawToBitmap(tmpbmp,new Rectangle(0,0,tmpbmp.Width,tmpbmp.Height)); 

@@ -180,7 +180,7 @@ namespace ILNumerics.Drawing.Graphs {
                     m_quads[i].Vertices[3].Position = pos; 
                     // label the bar
                     m_quads[i].Label.Text = i.ToString(); 
-                    m_quads[i].Label.Alignment = TickLabelAlign.center | TickLabelAlign.top; 
+                    m_quads[i].Label.Anchor = new PointF(.5f,0);  // TickLabelAlign.center | TickLabelAlign.top; 
                     // bars will be transparent,oldest fading out
                     m_quads[i].Opacity = (byte)(5 + i * 230f / m_quads.Length); 
                     // add the bar to the (underlying) scene graph

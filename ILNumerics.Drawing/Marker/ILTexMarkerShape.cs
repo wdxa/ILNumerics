@@ -136,8 +136,8 @@ namespace ILNumerics.Drawing.Marker {
                         ILClippingData clip = m_panel.Limits; 
                         float s05x; 
                         float s05y; 
-                        s05x = Math.Abs(queue.Size.Width * clip.WidthF / 2 / (m_panel.ClientSize.Width - m_panel.m_cubeMargin * 2)); 
-                        s05y = Math.Abs(queue.Size.Height * clip.HeightF / 2 / (m_panel.ClientSize.Height - m_panel.m_cubeMargin * 2)); 
+                        s05x = Math.Abs(queue.Size.Width * clip.WidthF / 2 / (m_panel.ClientSize.Width)); 
+                        s05y = Math.Abs(queue.Size.Height * clip.HeightF / 2 / (m_panel.ClientSize.Height)); 
                     #endregion
                     // this is slow! Todo: replace by point sprites! 
                     w = vertices[i].XPosition; 

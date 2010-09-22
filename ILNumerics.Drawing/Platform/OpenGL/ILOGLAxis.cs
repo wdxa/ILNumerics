@@ -42,7 +42,6 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
     public abstract class ILOGLAxis : ILAxis, IDisposable {
 
         #region attributes
-        ILOGLPanel m_panel; 
         private int m_primitivCount;
         #endregion
 
@@ -54,7 +53,6 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             m_invalidated = true;
             panel.GraphicsDeviceCreated += new ILGraphicsDeviceCreatedEvent(initialize);
             panel.GraphicsDeviceReset += new ILGraphicsDeviceResetEvent(configure);
-            m_panel = panel;
         }
         #endregion
 

@@ -30,16 +30,19 @@ using ILNumerics.Drawing.Misc;
 
 namespace ILNumerics.Drawing {
     /// <summary>
-    /// Clipping data - this class is for internal use only!
+    /// Class holding and managing limits for a 3 dimensional cube
     /// </summary>
-    public class ILClippingData {
+    public sealed class ILClippingData {
 
         #region eventing 
         /// <summary>
         /// fires if the data range have changed
         /// </summary>
         public event ILClippingDataChangedEvent Changed; 
-        protected void OnChange() {
+        /// <summary>
+        /// called if the limits have changed
+        /// </summary>
+        private void OnChange() {
             if (m_eventingActive && Changed != null) {
                 Changed ( this, new ClippingChangedEventArgs(this)); 
             }
@@ -55,11 +58,21 @@ namespace ILNumerics.Drawing {
         private float m_xMax = float.MinValue;
         private float m_yMax = float.MinValue;
         private float m_zMax = float.MinValue;
+        private float m_sphereRadius; 
         private bool m_isDirty = false;
-        private bool m_allowZeroVolume = true; 
+        private bool m_allowZeroVolume = true;
         #endregion
 
         #region properties 
+
+        /// <summary>
+        /// the radius of a sphere tightly enclosing the box determined by this clipping data limits (readonly)
+        /// </summary>
+        public float SphereRadius {
+            get {
+                return m_sphereRadius;  
+            }
+        }
         /// <summary>
         /// minimum value for x axis
         /// </summary>
@@ -72,6 +85,7 @@ namespace ILNumerics.Drawing {
                     m_isDirty = true; 
                     m_xMin = value;
                     if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    m_sphereRadius = getSphereRadius(); 
                     if (m_eventingActive && Changed != null)
                         OnChange();
                 }
@@ -89,6 +103,7 @@ namespace ILNumerics.Drawing {
                     m_isDirty = true; 
                     m_yMin = value;
                     if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    m_sphereRadius = getSphereRadius();
                     if (m_eventingActive && Changed != null)
                         OnChange();
                 }
@@ -106,6 +121,7 @@ namespace ILNumerics.Drawing {
                     m_isDirty = true;
                     m_zMin = value;
                     if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    m_sphereRadius = getSphereRadius();
                     if (m_eventingActive && Changed != null)
                         OnChange(); 
                 }
@@ -123,6 +139,7 @@ namespace ILNumerics.Drawing {
                     m_isDirty = true; 
                     m_xMax = value;
                     if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    m_sphereRadius = getSphereRadius();
                     if (m_eventingActive && Changed != null)
                         OnChange(); 
                 }
@@ -140,6 +157,7 @@ namespace ILNumerics.Drawing {
                     m_isDirty = true; 
                     m_yMax = value;
                     if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    m_sphereRadius = getSphereRadius();
                     if (m_eventingActive && Changed != null)
                         OnChange(); 
                 }
@@ -157,6 +175,7 @@ namespace ILNumerics.Drawing {
                     m_isDirty = true; 
                     m_zMax = value;
                     if (!m_allowZeroVolume) ensureVolumeNotZero();
+                    m_sphereRadius = getSphereRadius();
                     if (m_eventingActive && Changed != null)
                         OnChange(); 
                 }
@@ -272,6 +291,7 @@ namespace ILNumerics.Drawing {
             if (clipData.YMax > YMax) { m_isDirty = true; m_yMax = clipData.YMax; }
             if (clipData.ZMax > ZMax) { m_isDirty = true; m_zMax = clipData.ZMax; }
             if (!m_allowZeroVolume) ensureVolumeNotZero();
+            m_sphereRadius = getSphereRadius();
             if (m_isDirty && m_eventingActive && Changed != null) 
                 OnChange(); 
             }
@@ -294,6 +314,7 @@ namespace ILNumerics.Drawing {
                 if (point.Z > ZMax) { m_isDirty = true; m_zMax = point.Z; }
             }
             if (!m_allowZeroVolume) ensureVolumeNotZero();
+            m_sphereRadius = getSphereRadius();
             if (m_isDirty && m_eventingActive && Changed != null) 
                 OnChange(); 
         }
@@ -322,6 +343,7 @@ namespace ILNumerics.Drawing {
             m_zMin = center.Z - s; 
             m_zMax = center.Z + s;
             if (!m_allowZeroVolume) ensureVolumeNotZero();
+            m_sphereRadius = getSphereRadius();
             if (m_eventingActive && Changed != null) 
                 OnChange();  
         }
@@ -339,6 +361,7 @@ namespace ILNumerics.Drawing {
             m_zMin = Math.Min(lunCorner.Z,rbfCorner.Z); 
             m_zMax = Math.Max(lunCorner.Z,rbfCorner.Z);
             if (!m_allowZeroVolume) ensureVolumeNotZero();
+            m_sphereRadius = getSphereRadius();
             if (m_eventingActive && Changed != null) 
                 OnChange(); 
         }
@@ -368,6 +391,7 @@ namespace ILNumerics.Drawing {
             m_yMax = m_clippingData.YMax;
             m_zMax = m_clippingData.ZMax;
             if (!m_allowZeroVolume) ensureVolumeNotZero();
+            m_sphereRadius = getSphereRadius();
             m_isDirty = true; 
             if (m_eventingActive && Changed != null) 
                 OnChange();  
@@ -428,6 +452,10 @@ namespace ILNumerics.Drawing {
             ret.Z = (z + 0.5f) * (m_zMax-m_zMin) + m_zMin;
             //if (!m_allowZeroVolume) ensureVolumeNotZero();
             return ret;
+        }
+
+        public override string ToString() {
+            return String.Format("Min:{0} Max:{1}",Min,Max); 
         }
         /// <summary>
         /// Expand/shrink all those edges, not touched by the given line
@@ -519,6 +547,11 @@ namespace ILNumerics.Drawing {
         #endregion
 
         #region private helper
+
+        private float getSphereRadius() {
+            return ((Max - Min) / 2f).GetLength(); 
+        }
+
         /// <summary>
         /// Ensure that this clipping data has valid length for all dimensions  [deprecated]
         /// </summary>
@@ -572,6 +605,12 @@ namespace ILNumerics.Drawing {
         #endregion
 
         #region operator overloads 
+        /// <summary>
+        /// Equalty operator overload, true if both cubes span the same region in 3D space 
+        /// </summary>
+        /// <param name="limit1">cube 1</param>
+        /// <param name="limit2">cube 2</param>
+        /// <returns>true if both cubes span the same 3D space, false otherwise</returns>
         public static bool operator == (ILClippingData limit1, ILClippingData limit2) {
             return (limit1.m_xMax == limit2.m_xMax && 
                     limit1.m_yMax == limit2.m_yMax && 
@@ -580,7 +619,13 @@ namespace ILNumerics.Drawing {
                     limit1.m_yMin == limit2.m_yMin && 
                     limit1.m_zMin == limit2.m_zMin); 
         }
-        public static bool operator != (ILClippingData limit1, ILClippingData limit2) {
+        /// <summary>
+        /// unequalty operator
+        /// </summary>
+        /// <param name="limit1">cube 1</param>
+        /// <param name="limit2">cube 2</param>
+        /// <returns>false if both cubes span the same 3D space, true otherwise</returns>
+        public static bool operator !=(ILClippingData limit1, ILClippingData limit2) {
             return (limit1.m_xMax != limit2.m_xMax || 
                     limit1.m_yMax != limit2.m_yMax ||
                     limit1.m_zMax != limit2.m_zMax || 
@@ -588,7 +633,21 @@ namespace ILNumerics.Drawing {
                     limit1.m_yMin != limit2.m_yMin || 
                     limit1.m_zMin != limit2.m_zMin); 
         }
-
+        /// <summary>
+        /// Returns hash code for this ILClippingData
+        /// </summary>
+        /// <returns>hash code</returns>
+        public override int GetHashCode() {
+            return base.GetHashCode();
+        }
+        /// <summary>
+        /// Compares to cube objects
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>true if obj references this class instance, false otherwise</returns>
+        public override bool Equals(object obj) {
+            return base.Equals(obj);
+        }
         #endregion
 
     }

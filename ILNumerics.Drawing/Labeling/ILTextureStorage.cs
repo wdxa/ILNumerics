@@ -92,10 +92,8 @@ namespace ILNumerics.Drawing.Labeling {
             m_root.Rect = new Rectangle(0,0,m_width,m_height); 
             InitTexture(); 
             m_disposed = false; 
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine("ILTextureStorage (constr) ThreadID:" 
-                + System.Threading.Thread.CurrentThread.ManagedThreadId);
-#endif
+            //System.Diagnostics.Debug.WriteLine("ILTextureStorage (constr) ThreadID:" 
+            //    + System.Threading.Thread.CurrentThread.ManagedThreadId);
         }
         #endregion
 

@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILNumerics.Drawing", "ILNumerics.Drawing\ILNumerics.Drawing.csproj", "{638FA579-A984-48A2-B3D0-D89991982134}"
 EndProject
 Global

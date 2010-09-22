@@ -31,10 +31,16 @@ using ILNumerics.Drawing.Graphs;
 namespace ILNumerics.Drawing.Misc {
     public class ILGraphComparer : IComparer<ILGraph> {
 
-        ILPoint3Df m_camera; 
-        public ILGraphComparer (ILPoint3Df camera) {
-            m_camera = camera; 
-        }
+        ILCamera m_camera;
+
+        public ILCamera Camera {
+            get { return m_camera; }
+            set { m_camera = value; }
+        } 
+
+        public ILGraphComparer () {}
+
+
 
         #region IComparer<ILGraph> Member
 
@@ -45,7 +51,7 @@ namespace ILNumerics.Drawing.Misc {
         /// <param name="y">second graph</param>
         /// <returns></returns>
         public int Compare(ILGraph x, ILGraph y) {
-            if (m_camera.Z > 0)
+            if (m_camera.LooksFromTop)
                 return Comparer<float>.Default.Compare(x.Limits.CenterF.Z,y.Limits.CenterF.Z); 
             else     
                 return Comparer<float>.Default.Compare(y.Limits.CenterF.Z,x.Limits.CenterF.Z); 

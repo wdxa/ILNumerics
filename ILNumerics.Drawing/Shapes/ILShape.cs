@@ -104,12 +104,12 @@ namespace ILNumerics.Drawing.Shapes {
         public ILShape (ILPanel panel, int numberVertices, int verticesPerShape) 
             : base (panel) {
             m_numVerticesPerShape = verticesPerShape; 
-            m_vertices = new VertexType[numberVertices];
-            m_vertCount = numberVertices;
-            m_renderer = panel.GetCreationFactory().CreateVertexRenderer(typeof(VertexType), this); 
+            m_renderer = panel.GetCreationFactory().CreateVertexRenderer(typeof(VertexType), this);
+            Resize(numberVertices);
             VertexType a = new VertexType(); 
             m_vertexStoresColor = a.StoresColor; 
         }
+
         #endregion
 
         #region public interface 
@@ -185,6 +185,10 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion
 
         #region private helper 
+        protected void Resize(int numberVertices) {
+            m_vertCount = numberVertices;
+            m_vertices = new VertexType[numberVertices];
+        }
         protected override void ComputeLimits() {
             ILPoint3Df cent = new ILPoint3Df();
             if (m_vertices.Length == 0) {
@@ -247,7 +251,8 @@ namespace ILNumerics.Drawing.Shapes {
         protected Color m_fillColor; 
         protected ShadingStyles m_shading; 
         protected ILShapeLabel m_label; 
-        protected bool m_vertexStoresColor; 
+        protected bool m_vertexStoresColor;
+        private bool m_invalidated; 
         /// <summary>
         /// panel hosting the scene (for current camera position and size updates)
         /// </summary>
@@ -423,12 +428,19 @@ namespace ILNumerics.Drawing.Shapes {
         /// <summary>
         /// configure this shape (internal use)
         /// </summary>
-        public virtual void Configure() { }
+        /// <remarks>Configure is called once for each rendering frame. If the shape 
+        /// is invalidated, this causes IntConfigure to be called on the shape.</remarks>
+        public virtual void Configure() {
+            if (m_invalidated) {
+                IntConfigure();
+                m_invalidated = false;
+            }
+        }
         /// <summary>
         /// Invalidates this shape, needed after altering any vertex data
         /// </summary>
         public virtual void Invalidate() {
-
+            m_invalidated = true; 
             m_positionMin = ILPoint3Df.Empty;
             m_positionMax = ILPoint3Df.Empty;
             m_positionCenter = ILPoint3Df.Empty;
@@ -450,6 +462,10 @@ namespace ILNumerics.Drawing.Shapes {
             m_renderer.Draw(p,this);
         }
         protected abstract void ComputeLimits();
+        /// <summary>
+        /// Internal Configure: prepare the shape for rendering (vertex creation, sorting etc.)
+        /// </summary>
+        protected abstract void IntConfigure(); 
         #endregion
     }
     #endregion

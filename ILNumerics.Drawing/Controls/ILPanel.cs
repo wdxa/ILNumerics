@@ -59,7 +59,8 @@ namespace ILNumerics.Drawing.Controls {
         protected bool m_ready = false; 
         private bool m_isStartingUp = true; 
         protected ILCamera m_camera;
-        protected ILCamera m_defaultView; 
+        protected ILCamera m_defaultView;
+        protected bool m_autoDefaultView = true; 
         protected InteractiveModes m_selectingMode = InteractiveModes.Rotating; 
         protected ILPoint3Df m_scaling;
         protected Projection m_projection = Projection.Orthographic; 
@@ -69,27 +70,69 @@ namespace ILNumerics.Drawing.Controls {
         protected ILLegend m_legend; 
         protected ZoomModes m_zoomMode = ZoomModes.RollHard; 
         protected ILZoomAction m_zoomAction; 
-        protected float m_zoomOffset = 50f; 
+        protected float m_zoomOffset = 50f;
+        protected float m_zoomFactor = 1.0f;
         protected GraphicDeviceType m_graphicsDevice; 
         protected ILLineProperties m_selectionRectangle; 
         protected bool m_fillBackground = true; 
         private bool m_autoZoomContent = true; 
+        protected ILLayoutData m_layoutData = new ILLayoutData(); 
+        protected ILLightCollection m_lights = new ILLightCollection(); 
+        protected ILRenderProperties m_renderProperties; 
+        protected ILAction m_action;
+        protected List<ILGraph> m_sortingCacheList = new List<ILGraph>(); 
+        /// <summary>
+        /// pixel size of the current PlotCubeScreenRectangle
+        /// </summary>
+        protected RectangleF m_plotBoxScreenRectF;
+        protected PlotBoxScreenSizeMode m_plotBoxScreenSizeMode;
+        protected AspectRatioMode m_aspectRatio; 
+        protected double[] m_clipplanes = new double[24]; 
+        
+        private const int MAXRENDERPASSES = 2; 
+        private const float LABELS_VERTICAL_MIN_RHO = 0.8f; 
         protected const float pi05 = (float) Math.PI / 2; 
         protected const float pi2 = (float) Math.PI * 2; 
         protected const float pi32 = (float) Math.PI / 2 * 3; 
         protected const float pi4 = (float) Math.PI / 4; 
         protected const float pi8 = (float) Math.PI / 8; 
-        protected ILLayoutData m_layoutData = new ILLayoutData(); 
-        protected ILLightCollection m_lights = new ILLightCollection(); 
-        protected ILRenderProperties m_renderProperties; 
-        protected ILAction m_action; 
-
-        internal float m_cubeWidth;  // used to propagate view size to matrices in derived classes
-        internal float m_cubeHeight; 
-        internal int m_cubeMargin; 
         #endregion
 
         #region properties
+        public bool AutoDefaultView { 
+            get { return m_autoDefaultView; }
+            set { m_autoDefaultView = value; }
+        }
+        /// <summary>
+        /// Determines how the projected data plots are mapped to PlotCubeScreenRectF
+        /// </summary>
+        public AspectRatioMode AspectRatio {
+            get { return m_aspectRatio; }
+            set { m_aspectRatio = value; }
+        }
+        /// <summary>
+        /// the normalizes projected size (range 0..1) of plot cube on 2D client area, set: sets PlotCubeScreenMode -> Manual
+        /// </summary>
+        public RectangleF PlotBoxScreenRect {
+            get { return m_plotBoxScreenRectF; }
+            set { 
+                m_plotBoxScreenRectF = value;
+                m_plotBoxScreenSizeMode = PlotBoxScreenSizeMode.Manual; 
+                //Invalidate(); 
+            }
+        }
+        /// <summary>
+        /// options for determining the size of the plot cube on the 2D screen client area, default: optimal
+        /// </summary>
+        public PlotBoxScreenSizeMode PlotBoxScreenSizeMode {
+            get { return m_plotBoxScreenSizeMode; }
+            set {
+                m_plotBoxScreenSizeMode = value;
+                if (value == PlotBoxScreenSizeMode.Maximum) {
+                    m_plotBoxScreenRectF = new RectangleF(0, 0, 1f, 1f);
+                }
+            }
+        }
         /// <summary>
         /// Access collection of lights for configuration
         /// </summary>
@@ -133,7 +176,7 @@ namespace ILNumerics.Drawing.Controls {
             }
             set {
                 m_fillBackground = value; 
-                Invalidate(); 
+                //Invalidate(); 
             }
         }
         /// <summary>
@@ -145,7 +188,7 @@ namespace ILNumerics.Drawing.Controls {
             }
             set {
                 m_drawHidden = value; 
-                Invalidate(); 
+                //Invalidate(); 
             }
         }
         /// <summary>
@@ -157,7 +200,7 @@ namespace ILNumerics.Drawing.Controls {
             }
             set {
                 m_cubeBGColor = value; 
-                Invalidate();
+                //Invalidate();
             }
         }
         /// <summary>
@@ -193,7 +236,7 @@ namespace ILNumerics.Drawing.Controls {
             }
             set {
                 m_backColor = value; 
-                Invalidate();
+                //Invalidate();
             }
         }
         /// <summary>
@@ -205,7 +248,7 @@ namespace ILNumerics.Drawing.Controls {
             }
             set {
                 m_projection = value; 
-                Invalidate();
+                //Invalidate();
             }
         }
         /// <summary>
@@ -279,40 +322,6 @@ namespace ILNumerics.Drawing.Controls {
             }
         }
         /// <summary>
-        /// actual width (X-direction) of the scene before (!) rotating. Including axis, ticks - without labels. 
-        /// </summary>
-        /// <remarks>Since the labels will not get rotated, their size must be determind on other ways</remarks>
-        protected float ViewWidth {
-            get {
-                float ret = 1.0f; 
-                if (m_axes[1].LabeledTicks.Direction == TickDirection.Outside)
-                    ret += m_axes[1].LabeledTicks.TickFraction * 2.0f; 
-                return ret; 
-            } 
-        }
-        /// <summary>
-        /// actual height (Y-direction) of the scene before (!) rotating. Including axis, ticks and labels. 
-        /// </summary>
-        protected float ViewHeight {
-            get {
-                float ret = 1.0f; 
-                if (m_axes[0].LabeledTicks.Direction == TickDirection.Outside)
-                    ret += m_axes[0].LabeledTicks.TickFraction * 2.0f; 
-                return ret; 
-            } 
-        }
-        /// <summary>
-        /// actual depth (Z-direction) of the scene before (!) rotating. Including axis, ticks and labels. 
-        /// </summary>
-        protected float ViewDepth {
-            get {
-                float ret = 1.0f;   // TODO! check which outside ticks contribute to Z-direction!
-                //if (m_axis[2].LabeledTicks.Direction == TickDirection.Outside)
-                //    ret += m_axis[2].LabeledTicks.TickFraction * 2.0f; 
-                return ret; 
-            } 
-        }
-        /// <summary>
         /// Get or set default camera position for reset of the scene
         /// </summary>
         /// <remarks>The default position is used when the scene is reset. That
@@ -325,8 +334,13 @@ namespace ILNumerics.Drawing.Controls {
             get {
                 return m_defaultView; 
             }
-            set {
-                m_defaultView = value; 
+            protected set {
+                if (value != null) {
+                    m_defaultView = value;
+                    m_autoDefaultView = false; 
+                } else {
+                    m_autoDefaultView = true; 
+                }
             }
         }
         /// <summary>
@@ -369,6 +383,7 @@ namespace ILNumerics.Drawing.Controls {
 #endif
             this.DoubleBuffered = false; 
             //BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            m_plotBoxScreenSizeMode = PlotBoxScreenSizeMode.Optimal; 
             m_graphicsDevice = graphicsDevice; 
             m_textureManager = new ILTextureManager(m_graphicsDevice);
             m_textureManager.DefaultHeight = 500; 
@@ -379,14 +394,15 @@ namespace ILNumerics.Drawing.Controls {
             m_selectionRectangle.Width = 1; 
             m_selectionRectangle.Style = LineStyle.Solid; 
             m_selectionRectangle.Changed += new EventHandler(m_selectionRectangle_Changed);
-            m_renderProperties = new ILRenderProperties (); 
+            m_camera = new ILCamera((float)0.0f,0.0f,10.0f);
+            m_defaultView = new ILCamera(m_camera);
+            m_defaultView.Changed += new EventHandler(m_defaultView_Changed);
+            m_renderProperties = new ILRenderProperties ();
+            m_renderProperties.Camera = Camera; 
             m_textRendererManager = new ILRendererManager(this); 
             m_clippingView = new ILClippingData();
             m_clippingView.AllowZeroVolume = false; 
-            m_camera = new ILCamera((float)Math.PI*3/2*0,0.0f,5.0f);
-            m_defaultView = new ILCamera(m_camera); 
             m_layoutData = new ILLayoutData(m_camera);
-            m_camera.Changed += new EventHandler(m_camera_Change);
             m_clippingView.Changed += new ILClippingDataChangedEvent(m_viewLimits_Changed);
             m_colormap = new ILColormap();
             m_colormap.Changed += new EventHandler(m_colormap_Changed);
@@ -431,11 +447,16 @@ namespace ILNumerics.Drawing.Controls {
 #endif
         }
 
+        /// <summary>
+        /// causes the panel to redraw
+        /// </summary>
         public override void Refresh() {
-            base.Refresh();
-            Invalidate();
+            if (InvokeRequired) {
+                Invoke((MethodInvoker) delegate () { Refresh(); }); 
+            } else {
+                base.Refresh(); 
+            }
         }
-
         #endregion
 
         #region events
@@ -462,7 +483,9 @@ namespace ILNumerics.Drawing.Controls {
         #endregion
 
         #region event handlers
-
+        protected void m_defaultView_Changed(object sender, EventArgs e) {
+            m_autoDefaultView = false;
+        }
         protected override void OnHandleCreated(EventArgs e) {
 #if TRACE 
             Trace.TraceInformation("{0},{1} ILPanel.OnHandleCreated() start",DateTime.Now, Environment.TickCount); 
@@ -481,6 +504,7 @@ namespace ILNumerics.Drawing.Controls {
             Trace.TraceInformation("{0},{1} ILPanel.OnHandleDestroyed() start",DateTime.Now, Environment.TickCount); 
             Trace.Indent(); 
 #endif
+            if (m_zoomAction != null) m_zoomAction.Cancel(); 
             Dispose(); 
             base.OnHandleDestroyed(e);
 #if TRACE 
@@ -525,7 +549,7 @@ namespace ILNumerics.Drawing.Controls {
             if (GraphicsDeviceCreated!= null) {
                 GraphicsDeviceCreated(this,null);
             }
-            Invalidate(); 
+            //Invalidate(); 
 #if TRACE 
             Trace.Unindent(); 
             Trace.TraceInformation("{0},{1} ILPanel.OnGraphicsDeviceCreated() end",DateTime.Now, Environment.TickCount); 
@@ -552,6 +576,10 @@ namespace ILNumerics.Drawing.Controls {
                 m_active = true; 
             else 
                 m_active = false; 
+        }
+        protected override void OnSizeChanged(EventArgs e) {
+            base.OnSizeChanged(e);
+            base.Invalidate(); 
         }
 
         protected override void OnMouseMove(MouseEventArgs e) {
@@ -581,19 +609,15 @@ namespace ILNumerics.Drawing.Controls {
                     if (m_camera.Rho > Math.PI) m_camera.Rho = (float)Math.PI; 
                     if (m_camera.Rho < 0) m_camera.Rho = 0.0f; 
                     m_camera.EventingResume();
-                    m_camera.OnChange(); 
-                    Invalidate(); 
                     m_mouseStart = e.Location; 
+                    Refresh(); 
                 }
                 #endregion
             } else if (m_selectingMode == InteractiveModes.ZoomRectangle) {
                 if (m_isMoving || (e.Button == System.Windows.Forms.MouseButtons.Left 
                     && Math.Sqrt(Math.Pow(Math.Abs(e.X - m_mouseStart.X),2) + Math.Pow(Math.Abs(e.Y - m_mouseStart.Y),2)) > 3.0)) {
                     m_isMoving = true; 
-                    Invalidate();
-                    #region render targeting rectangle
-                    //drawSelectionRect(new Point(e.X,e.Y));
-                    #endregion
+                    Refresh();
                 }
             }
         }
@@ -626,7 +650,8 @@ namespace ILNumerics.Drawing.Controls {
         }
         protected override void OnMouseDoubleClick(MouseEventArgs e) {
             base.OnMouseDoubleClick(e);
-            ResetView(true); 
+            ResetView(true);
+            Refresh(); 
         }
 
         protected override void OnPaint(System.Windows.Forms.PaintEventArgs e) {
@@ -639,7 +664,7 @@ namespace ILNumerics.Drawing.Controls {
                 Trace.TraceInformation("{0},{1} ILPanel.OnPaint(): ClipRectangle.Size = empty -> skipping",DateTime.Now, Environment.TickCount); 
 #endif
                 return; 
-            } 
+            }
 /* THIS IS PRELIMINARY IMPLEMENTATION! REASON: While using GDI renderer, 
  * it is importatnt, to have the whole (visible) surface area invalidated
  * and available for clipping of the graphics objects in 'e'. Otherwise 
@@ -662,6 +687,9 @@ namespace ILNumerics.Drawing.Controls {
                     Trace.Indent(); 
 #endif
                     Configure();
+                    if (m_isStartingUp) {
+                        ResetView(true);
+                    }
 #if TRACE 
                 Trace.Unindent(); 
                 Trace.TraceInformation("{0},{1} ILPanel.OnPaint(): rendering started",DateTime.Now, Environment.TickCount); 
@@ -674,15 +702,20 @@ namespace ILNumerics.Drawing.Controls {
                     ,e.Graphics.VisibleClipBounds.Width
                     ,e.Graphics.VisibleClipBounds.Height)); 
 #endif
-                m_renderProperties.Graphics = e.Graphics; 
-                RenderScene(m_renderProperties);
+                m_renderProperties.Graphics = e.Graphics;
+                m_renderProperties.Reason = RenderReason.PaintEvent;
+                m_renderProperties.MinX = int.MaxValue;
+                m_renderProperties.MinY = int.MaxValue;
+                m_renderProperties.MaxX = int.MinValue;
+                m_renderProperties.MaxY = int.MinValue; 
+                RenderScene(m_renderProperties.Reset());
 #if TRACE 
                 Trace.Unindent(); 
                 Trace.TraceInformation("{0},{1} ILPanel.OnPaint(): rendering ended",DateTime.Now, Environment.TickCount); 
 #endif
                 if (m_isStartingUp) {
-                    Invalidate();
                     m_isStartingUp = false;
+                    Refresh();
                 }
             } catch (Exception exc) {
 #if TRACE 
@@ -692,20 +725,6 @@ namespace ILNumerics.Drawing.Controls {
                 System.Diagnostics.Debug.WriteLine("ILPanel.OnPaint failed: " + exc.ToString()); 
             }
         }
-        protected override void OnPaintBackground(PaintEventArgs pevent) {
-            //base.OnPaintBackground(pevent);
-        }
-        protected override void OnSizeChanged(EventArgs e) {
-            base.OnSizeChanged(e);
-            if (m_ready) {
-                // Configure() will be called from device_reset event handler!
-                Invalidate();
-            }
-        }
-
-        protected void m_camera_Change(object sender, EventArgs e) {
-            Invalidate(); 
-        }
         void m_legend_Changed(object sender, EventArgs e) {
             Invalidate(); 
         }
@@ -714,101 +733,32 @@ namespace ILNumerics.Drawing.Controls {
             ResetView(false); 
         }
         protected void m_graphs_OnCollectionChanged(object sender, ILGraphCollectionChangedEventArgs args) {
-            switch (args.Reason) {
-                case GraphCollectionChangeReason.Added:
-                    switch (args.Graph.Type) {
-                        case GraphType.Plot2D:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            ClipViewData = true; 
-                            ResetView(true); 
-                            break;
-                        case GraphType.Plot3D:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.Surf:
-                            InteractiveMode = InteractiveModes.Rotating;
-                            m_camera.Phi = 5.8f;
-                            m_camera.Rho = 1.17f; 
-                            ResetView(false);
-                            break;
-                        case GraphType.Mesh:
-                            InteractiveMode = InteractiveModes.Rotating; 
-                            break;
-                        case GraphType.Waterfall:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.Ribbon:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.Image:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.Imagesc:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.PColor:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.Contour:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.CountourFilled:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.ContourSlice:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.Scatter:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.Scatter3:
-                            InteractiveMode = InteractiveModes.Rotating; 
-                            break;
-                        case GraphType.Errorbar:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.Stem:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.Stairs:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.Stem3:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.Bar:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        case GraphType.BarHorizontal:
-                            InteractiveMode = InteractiveModes.ZoomRectangle; 
-                            break;
-                        default:
-                            InteractiveMode = InteractiveModes.Rotating; 
-                            break;
-                    }
-                    break;
-                case GraphCollectionChangeReason.Deleted:
-                    break;
-                case GraphCollectionChangeReason.Changed:
-
-                    break; 
-                default:
-                    break;
+            if (args.Reason == GraphCollectionChangeReason.Added) {
+                if (AutoDefaultView) {
+                    args.Graph.ConfigurePanel(this);
+                }
             }
-        }
+       }
         protected void m_viewLimits_Changed(object sender, ClippingChangedEventArgs e) {
-            if (this.InvokeRequired) {
-                Invoke(new ILClippingDataChangedEvent(m_viewLimits_Changed), sender, e);
+            if (this.InvokeRequired && IsHandleCreated) {
+                try {
+                    Invoke(new ILClippingDataChangedEvent(m_viewLimits_Changed), sender, e);
+                } catch (Exception) { }
             } else {
+                m_camera.LookAt = m_clippingView.CenterF; 
                 OnViewLimitsChanged(e);
-                Invalidate();
             }
         }
         protected void m_dataLimits_Changed(object sender, ClippingChangedEventArgs e) {
+            m_defaultView.EventingSuspend();
+            m_defaultView.LookAt = m_graphs.Limits.CenterF;
+            m_defaultView.Distance = m_graphs.Limits.SphereRadius * 10f;
+            m_defaultView.EventingResume(false);
             if (m_autoZoomContent) 
                 ResetView(false); 
             OnDataLimitsChanged(e);  
         }
+
         protected void m_colormap_Changed(object sender, EventArgs e) {
             OnColormapChanged(); 
         }
@@ -825,71 +775,42 @@ namespace ILNumerics.Drawing.Controls {
         /// <returns></returns>
         public abstract object GetDeviceContext(); 
         /// <summary>
-        /// Cause a reconfiguration of all axes and graphs on the next paint event
+        /// Causes a reconfiguration of all axes and graphs on the next paint event
         /// </summary>
+        /// <remarks>Call this method after any changes to vertex relevant data. It causes all drawable objects to clear their caches and recalculate all vertex data.</remarks>
         protected new void Invalidate() {
-            if (!m_ready) return; 
+            if (!m_ready) return;
+            m_ready = false; 
             m_graphs.Invalidate(); 
             m_axes.Invalidate();
-            base.Invalidate(this.ClientRectangle, true);
+            //base.Invalidate(this.ClientRectangle, true); <- this would cause an immediate redraw also. Use Refresh() for this!
         }
         /// <summary>
-        /// [internal] Configure this panel, to make it ready for output, set "m_ready = true" at end!
+        /// update viewing limits to show all data, rotate the scene to default (-> DefaultView)
         /// </summary>
-        protected abstract void Configure(); 
-        /// <summary>
-        /// Get size of projected view cube - after (!) rotation but before projection -> world space
-        /// includes bounding box and ticks for all axis respectively (no labels)
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        protected virtual void GetTransformedSize(out float x, out float y) {
-            x = ViewWidth;   // the unrotated width - without labels size
-            y = ViewHeight;  // dito for height
-            if (m_camera.Rho == 0.0f && m_camera.Phi == 0.0f) {
-            } else {
-                float cosPhi = (float)Math.Abs(m_camera.CosPhi);// % (Math.PI / 2.0));
-                float sinPhi = (float)Math.Abs(m_camera.SinPhi);// % (Math.PI / 2.0));
-                float z = ViewDepth;
-                z = (float)(z * Math.Sin(m_camera.Rho) + cosPhi * y + sinPhi * x);
-                x = (float)(cosPhi * x + sinPhi * y);
-                y = z;
-            }
-        }
-        
-        protected abstract void UpdateMatrices();
-
-        protected virtual void RenderScene(ILRenderProperties p) {
-            if (!DesignMode) {
-                computeLayoutData(p);
-            }
-        }
-        /// <summary>
-        /// initialize all device specific classes, first called after the panel has been created
-        /// </summary>
-        /// <remarks>derived types should init all devices here</remarks>
-        protected virtual void Initialize() {}
-
         public virtual void ResetView() {
             ResetView(true);
         }
-
+        /// <summary>
+        /// update viewing limits to show all data, optionally reset the scene rotation
+        /// </summary>
+        /// <param name="resetRotation">true: rotate the scene to the default (-> DefaultView)</param>
         public virtual void ResetView(bool resetRotation) {
             if (m_zoomAction != null)
                 m_zoomAction.Cancel();
-            if (m_defaultView != null && resetRotation) {
-                m_camera.Phi = m_defaultView.Phi; 
-                m_camera.Rho = m_defaultView.Rho;
-                m_camera.Distance = m_defaultView.Distance; 
-                //UpdateMatrices(); 
-            }
             m_clippingView.EventingSuspend(); 
             m_clippingView.CopyFrom(m_graphs.Limits); 
-            m_clippingView.Update(m_clippingView.CenterF,1.11f); 
+            m_clippingView.Update(m_clippingView.CenterF,1.1f); 
             m_clippingView.EventingResume(); 
+            if (m_defaultView != null && resetRotation) {
+                m_camera.LookAt = m_defaultView.LookAt; 
+                m_camera.Phi = m_defaultView.Phi;
+                m_camera.Rho = m_defaultView.Rho;
+                m_camera.Distance = m_defaultView.Distance;
+            }
         }
         /// <summary>
-        /// Move & shrink/expand current view cube along a given line
+        /// Move &amp; shrink/expand current view cube along a given line
         /// </summary>
         /// <param name="nearLineEnd"></param>
         /// <param name="farLineEnd"></param>
@@ -897,13 +818,23 @@ namespace ILNumerics.Drawing.Controls {
         protected virtual void Zoom(ILPoint3Df nearLineEnd, ILPoint3Df farLineEnd, float offset) {
             ILPoint3Df minCorner, maxCorner; 
             m_clippingView.GetZoomParameter(nearLineEnd,farLineEnd,offset, out minCorner, out maxCorner);
-            Zoom(minCorner,maxCorner); 
+            Zoom(minCorner,maxCorner);
+            //m_camera.LookAt = m_clippingView.CenterF; 
         }
-
+        /// <summary>
+        /// move the center of the viewing cube and expand / shrink the volume by offset
+        /// </summary>
+        /// <param name="center">new center</param>
+        /// <param name="offset">offset multiplicator, 1f means: no change</param>
         protected virtual void Zoom(ILPoint3Df center, float offset) {
-            m_clippingView.Update(center,offset); 
+            m_clippingView.Update(center,offset);
+            Refresh();
         }
-
+        /// <summary>
+        /// Zoome the scene to new limits
+        /// </summary>
+        /// <param name="luCorner">'upper left' (first) corner of the new viewing cube</param>
+        /// <param name="rbCorner">'bottom right' (opposed) corner of the viewing cube</param>
         protected virtual void Zoom(ILPoint3Df luCorner, ILPoint3Df rbCorner) {
             if (m_zoomAction != null)
                 m_zoomAction.Cancel();
@@ -925,300 +856,10 @@ namespace ILNumerics.Drawing.Controls {
                     ramp = ILActionRamp.Linear;
                     break;
             }
-            m_zoomAction = new ILZoomAction(m_clippingView.Min, luCorner, m_clippingView.Max, rbCorner, ramp, m_clippingView);
+            m_zoomAction = new ILZoomAction(m_clippingView.Min, luCorner, m_clippingView.Max, rbCorner, ramp, this);
             m_zoomAction.Run();
         }
 
-        protected TickLabelAlign GetXTickLabelLine(
-                                        out Point start2D, 
-                                        out Point end2D) {
-            TickLabelAlign align = TickLabelAlign.left;
-            ILPoint3Df start = new ILPoint3Df(),end = new ILPoint3Df(); 
-            ILTickCollection ticks = m_axes[0].LabeledTicks; 
-            float tickLen = (ticks.Direction == TickDirection.Outside)? 
-                             ticks.TickFraction : 0f;
-            float padX = ticks.Padding, padY = padX; 
-            switch (m_camera.Quadrant) {
-                case CameraQuadrant.TopLeftFront:
-                    start.X = -0.5f; 
-                    start.Y = -0.5f - tickLen; 
-                    start.Z = -0.5f; 
-                    end.X = 0.5f; 
-                    end.Y = start.Y; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.left | TickLabelAlign.top;
-                    padX *= -m_camera.SinPhi; 
-                    padY = (m_camera.CosPhi - m_camera.SinRho * m_camera.SinPhi) * padY + m_camera.SinPhi * ticks.Font.Height / 2; 
-                    break;
-                case CameraQuadrant.TopLeftBack:
-                    start.X = -0.5f; 
-                    start.Y = 0.5f + tickLen; 
-                    start.Z = -0.5f; 
-                    end.X = 0.5f; 
-                    end.Y = start.Y; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.right 
-                            | TickLabelAlign.top; 
-                    padX *= m_camera.SinPhi; 
-                    padY = (-m_camera.CosPhi - m_camera.SinRho * m_camera.SinPhi) * padY + m_camera.SinPhi * ticks.Font.Height / 2; 
-                    break;
-                case CameraQuadrant.TopRightBack:
-                    start.X = -0.5f; 
-                    start.Y = 0.5f + tickLen; 
-                    start.Z = -0.5f; 
-                    end.X = 0.5f; 
-                    end.Y = start.Y; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.left 
-                            | TickLabelAlign.top; 
-                    padX *= m_camera.SinPhi; 
-                    padY = (-m_camera.CosPhi + m_camera.SinRho * m_camera.SinPhi) * padY - m_camera.SinPhi * ticks.Font.Height / 2; 
-                    break;
-                case CameraQuadrant.TopRightFront:
-                    start.X = -0.5f; 
-                    start.Y = -0.5f - tickLen; 
-                    start.Z = -0.5f; 
-                    end.X = 0.5f; 
-                    end.Y = start.Y; 
-                    end.Z = start.Z; 
-                    if (m_camera.Is2DView) {
-                        align = TickLabelAlign.center | TickLabelAlign.top; 
-                    } else {
-                        align = TickLabelAlign.right | TickLabelAlign.top; 
-                    }
-                    padX *= -m_camera.SinPhi; 
-                    padY = (m_camera.CosPhi + m_camera.SinRho * m_camera.SinPhi) * padY - m_camera.SinPhi * ticks.Font.Height / 2;
-                    break;
-                case CameraQuadrant.BottomLeftFront:
-                    start.X = -0.5f; 
-                    start.Y = 0.5f + tickLen; 
-                    start.Z = -0.5f; 
-                    end.X = 0.5f; 
-                    end.Y = start.Y; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.right 
-                            | TickLabelAlign.top; 
-                    padX *= m_camera.SinPhi; 
-                    padY = (m_camera.CosPhi - m_camera.SinRho * m_camera.SinPhi) * padY + m_camera.SinPhi * ticks.Font.Height / 2;
-                    break;
-                case CameraQuadrant.BottomLeftBack:
-                    start.X = -0.5f; 
-                    start.Y = -0.5f - tickLen; 
-                    start.Z = -0.5f; 
-                    end.X = 0.5f; 
-                    end.Y = start.Y; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.left 
-                            | TickLabelAlign.top; 
-                    padX *= -m_camera.SinPhi; 
-                    padY = (-m_camera.CosPhi - m_camera.SinRho * m_camera.SinPhi) * padY + m_camera.SinPhi * ticks.Font.Height / 2;
-                    break;
-                case CameraQuadrant.BottomRightBack:
-                    start.X = -0.5f; 
-                    start.Y = -0.5f - tickLen; 
-                    start.Z = -0.5f; 
-                    end.X = 0.5f; 
-                    end.Y = start.Y; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.right 
-                            | TickLabelAlign.top; 
-                    padX *= -m_camera.SinPhi; 
-                    padY = (-m_camera.CosPhi + m_camera.SinRho * m_camera.SinPhi) * padY - m_camera.SinPhi * ticks.Font.Height / 2;
-                    break;
-                default:    // BottomRightFront
-                    start.X = -0.5f; 
-                    start.Y = 0.5f + tickLen; 
-                    start.Z = -0.5f; 
-                    end.X = 0.5f; 
-                    end.Y = start.Y; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.left 
-                            | TickLabelAlign.top; 
-                    padX *= m_camera.SinPhi; 
-                    padY = (m_camera.CosPhi + m_camera.SinRho * m_camera.SinPhi) * padY - m_camera.SinPhi * ticks.Font.Height / 2;
-                  break;
-            }
-            World2Screen(start,end,out start2D, out end2D); 
-            // align in screen coords 
-            int offY = (int)((m_camera.SinRho - (m_camera.SinPhi % Math.PI)) 
-                        * m_axes[0].LabeledTicks.Font.Height / 2 
-                        + padY);
-            // add padding 
-            //System.Diagnostics.Debug.WriteLine(m_camera.Phi); 
-            start2D.Y += (int)padY;
-            end2D.Y += (int)padY;
-            start2D.X += (int)padX; 
-            end2D.X += (int)padX;
-            return align;
-        }
-        protected TickLabelAlign GetYTickLabelLine(
-                                        out Point start2D, 
-                                        out Point end2D) {
-            TickLabelAlign align = TickLabelAlign.left;
-            ILPoint3Df start = new ILPoint3Df(),end = new ILPoint3Df(); 
-            ILTickCollection ticks = m_axes[1].LabeledTicks; 
-            float tickLen = (ticks.Direction == TickDirection.Outside)? 
-                ticks.TickFraction : 0f; 
-            float padX = ticks.Padding, padY = padX; 
-            switch (m_camera.Quadrant) {
-                case CameraQuadrant.TopLeftFront:
-                    start.X = -0.5f - tickLen; 
-                    start.Y = -0.5f;  
-                    start.Z = -0.5f; 
-                    end.X = start.X;  
-                    end.Y = 0.5f; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.right | TickLabelAlign.top; 
-                    padX *= -m_camera.CosPhi; 
-                    padY = (-m_camera.SinPhi + m_camera.SinRho * m_camera.CosPhi) * padY - m_camera.CosPhi * ticks.Font.Height / 2;
-                    break;
-                case CameraQuadrant.TopLeftBack:
-                    start.X = -0.5f - tickLen; 
-                    start.Y = -0.5f; 
-                    start.Z = -0.5f; 
-                    end.X = start.X; 
-                    end.Y = 0.5f; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.left 
-                            | TickLabelAlign.top; 
-                    padX *= -m_camera.CosPhi; 
-                    padY = (-m_camera.SinPhi - m_camera.SinRho * m_camera.CosPhi) * padY + m_camera.CosPhi * ticks.Font.Height / 2;
-                    break;
-                case CameraQuadrant.TopRightBack:
-                    start.X = 0.5f + tickLen; 
-                    start.Y = -0.5f; 
-                    start.Z = -0.5f; 
-                    end.X = start.X; 
-                    end.Y = 0.5f; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.right 
-                            | TickLabelAlign.top; 
-                    padX *= m_camera.CosPhi; 
-                    padY = (m_camera.SinPhi - m_camera.SinRho * m_camera.CosPhi) * padY + m_camera.CosPhi * ticks.Font.Height / 2;
-                    break;
-                case CameraQuadrant.TopRightFront:
-                    start.X = 0.5f + tickLen; 
-                    start.Y = -0.5f; 
-                    start.Z = -0.5f; 
-                    end.X = start.X; 
-                    end.Y = 0.5f; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.left | TickLabelAlign.top; 
-                    padX *= m_camera.CosPhi; 
-                    padY = (m_camera.SinPhi + m_camera.SinRho * m_camera.CosPhi) * padY - m_camera.CosPhi * ticks.Font.Height / 2;
-                    break;
-                case CameraQuadrant.BottomLeftFront:
-                    start.X = 0.5f + tickLen; 
-                    start.Y = -0.5f; 
-                    start.Z = -0.5f; 
-                    end.X = start.X; 
-                    end.Y = 0.5f; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.left 
-                            | TickLabelAlign.top; 
-                    padX *= m_camera.CosPhi; 
-                    padY = (-m_camera.SinPhi + m_camera.SinRho * m_camera.CosPhi) * padY - m_camera.CosPhi * ticks.Font.Height / 2;
-                    break;
-                case CameraQuadrant.BottomLeftBack:
-                    start.X = 0.5f + tickLen; 
-                    start.Y = -0.5f; 
-                    start.Z = -0.5f; 
-                    end.X = start.X; 
-                    end.Y = 0.5f; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.right 
-                            | TickLabelAlign.top; 
-                    padX *= m_camera.CosPhi; 
-                    padY = (-m_camera.SinPhi - m_camera.SinRho * m_camera.CosPhi) * padY + m_camera.CosPhi * ticks.Font.Height / 2;
-                    break;
-                case CameraQuadrant.BottomRightBack:
-                    start.X = -0.5f - tickLen; 
-                    start.Y = -0.5f; 
-                    start.Z = -0.5f; 
-                    end.X = start.X; 
-                    end.Y = 0.5f; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.left 
-                            | TickLabelAlign.top; 
-                    padX *= -m_camera.CosPhi; 
-                    padY = (m_camera.SinPhi - m_camera.SinRho * m_camera.CosPhi) * padY + m_camera.CosPhi * ticks.Font.Height / 2;
-                 break;
-                default:    // BottomRightFront
-                    start.X = - 0.5f - tickLen; 
-                    start.Y = - 0.5f ; 
-                    start.Z = -0.5f; 
-                    end.X = start.X; 
-                    end.Y = 0.5f; 
-                    end.Z = start.Z; 
-                    align = TickLabelAlign.right 
-                            | TickLabelAlign.top; 
-                    padX *= -m_camera.CosPhi; 
-                    padY = (m_camera.SinPhi + m_camera.SinRho * m_camera.CosPhi) * padY - m_camera.CosPhi * ticks.Font.Height / 2;
-                    break;
-            }
-            World2Screen(start,end,out start2D, out end2D); 
-            // align in screen coords 
-            //int offY = (int)(Math.Abs(m_camera.CosPhi) * ticks.Font.Height / 2);
-            //offY -= (int)(Math.Sin(m_camera.Rho) * ticks.Font.Height / 2); 
-            start2D.Y += (int)padY;
-            end2D.Y += (int)padY; 
-            start2D.X += (int)padX; 
-            end2D.X += (int)padX; 
-            return align;
-        }
-        protected TickLabelAlign GetZTickLabelLine(
-                                        out Point start2D, 
-                                        out Point end2D) {
-            TickLabelAlign align = TickLabelAlign.vertCenter | TickLabelAlign.right;
-            ILPoint3Df start = new ILPoint3Df(),end = new ILPoint3Df(); 
-            ILTickCollection ticks = m_axes[2].LabeledTicks; 
-            float tickLen = 0; 
-            if (ticks.Direction == TickDirection.Outside)
-                 tickLen = ticks.TickFraction; 
-            start.Z = -0.5f;
-            switch (m_camera.Quadrant) {
-                case CameraQuadrant.TopLeftFront:
-                    start.X = -0.5f - tickLen;
-                    start.Y = 0.5f + tickLen;
-                    break;
-                case CameraQuadrant.TopLeftBack:
-                    start.X = 0.5f + tickLen;
-                    start.Y = 0.5f + tickLen;
-                    break;
-                case CameraQuadrant.TopRightBack:
-                    start.X = 0.5f + tickLen;
-                    start.Y = -0.5f - tickLen;
-                    break;
-                case CameraQuadrant.TopRightFront:
-                    start.X = -0.5f - tickLen;
-                    start.Y = -0.5f - tickLen;
-                    break;
-                case CameraQuadrant.BottomLeftFront:
-                    start.X = -0.5f - tickLen;
-                    start.Y = 0.5f + tickLen;
-                    break;
-                case CameraQuadrant.BottomLeftBack:
-                    start.X = 0.5f + tickLen;
-                    start.Y = 0.5f + tickLen;
-                    break;
-                case CameraQuadrant.BottomRightBack:
-                    start.X = 0.5f + tickLen;
-                    start.Y = -0.5f - tickLen;
-                    break;
-                case CameraQuadrant.BottomRightFront:
-                    start.X = -0.5f - tickLen;
-                    start.Y = -0.5f - tickLen;
-                    break;
-                default:
-                    break;
-            }
-            end = start;
-            end.Z = 0.5f;
-            World2Screen(start,end,out start2D,out end2D); 
-            start2D.X -= ticks.Padding; 
-            end2D.X -= ticks.Padding; 
-            return align;
-        }
 
         /// <summary>
         /// Transform two coordinates for a line from world to screen coordinates
@@ -1232,23 +873,38 @@ namespace ILNumerics.Drawing.Controls {
         public abstract void World2Screen(ILPoint3Df start, ILPoint3Df end, out Point start2D, out Point end2D);
 
         /// <summary>
-        /// Transform from a point on screen into world coordinates
+        /// Transform from a point on screen into world coordinates [depricated]
         /// </summary>
         /// <param name="x">screen x</param>
         /// <param name="y">screen y: GL viewport coord! -> (0,0) is lower left corner!</param>
         /// <returns>world coordinate point</returns>
         public abstract ILPoint3Df Screen2World2D(int x, int y);
+        /// <summary>
+        /// gives the line in world coords, a specific point on screen lays on
+        /// </summary>
+        /// <param name="x">screen x</param>
+        /// <param name="y">screen y: GL viewport coord! -> (0,0) is lower left corner</param>
+        /// <param name="farClip">far end point of the resulting line in world coords</param>
+        /// <param name="nearClip">near end point of the resulting line in world coords</param>
         public abstract void Screen2World(int x, int y, out ILPoint3Df nearClip, out ILPoint3Df farClip); 
         
         /// <summary>
-        /// Transform world coordinates to screen coordinates under current transformation
+        /// Transform world coordinate to screen coordinate under current transformation
         /// </summary>
-        /// <param name="worldPoint">input: world coordinates</param>
+        /// <param name="worldPoint">world coordinate</param>
         /// <returns>screen location</returns>
         /// <remarks>the actual transform is carried out in the derived specialized class,
         /// where the current transformation matrices are known</remarks>
-        public abstract Point Transform(ILPoint3Df worldPoint); 
-        public abstract Point Transform(ILPoint3Df center, double[] modelview); 
+        public abstract Point World2Screen(ILPoint3Df worldPoint);
+        /// <summary>
+        /// Transform world coordinate to screen coordinate, provide (custom) modelview matrix
+        /// </summary>
+        /// <param name="worldPoint"></param>
+        /// <param name="modelview">(custom) model view matrix. The parameter must match the format required by the deriving concrete ILPanel class. ILOGLPanel: double[16]</param>
+        /// <returns>screen location</returns>
+        /// <remarks>the actual transform is carried out in the derived specialized class,
+        /// where the current transformation matrices are known</remarks>
+        public abstract Point World2Screen(ILPoint3Df worldPoint, double[] modelview); 
 
         /// <summary>
         /// Draws content of this subfigure into predefined bitmap
@@ -1289,7 +945,6 @@ namespace ILNumerics.Drawing.Controls {
             points[2] = new Point(endPoint.X - (endPoint.X - m_mouseStart.X) / 4, m_mouseStart.Y);
             g.DrawLines(pen, points);
         }
-
         public static short StippleFromLineStyle(LineStyle style, ref int stipFactr) {
             short ret = 1; 
             switch (style) {
@@ -1316,453 +971,882 @@ namespace ILNumerics.Drawing.Controls {
             }
             return ret; 
         }
+        private void calculateDefaultView(bool setPositions, bool setDirection) {
+            m_defaultView.EventingSuspend();
+            if (setPositions) {
+                m_defaultView.LookAt = m_graphs.Limits.CenterF;
+                m_defaultView.Distance = m_clippingView.SphereRadius * 2f;
+            }
+            if (setDirection) {
+                m_defaultView.Phi = 0; // -(float)Math.PI / 2;
+                m_defaultView.Rho = 0;
+            }
+            m_defaultView.EventingResume(false);
+        }
+        #endregion
 
-        internal void computeLayoutData (ILRenderProperties p) {
-            // compute size of viewport/ projection 
-            float xSize, ySize;
-            GetTransformedSize(out xSize, out ySize);   // returns world coords: cube + ticks
-            
-            // add label's size to increase margin
-            Size ticksSize = m_axes.MeasureMaxTickLabelSize(p.Graphics); 
-            Size xLabelSize = m_axes.XAxis.Label.Size;  
-            Size yLabelSize = m_axes.YAxis.Label.Size;
-            int padX, padY; 
-            if (m_axes.XAxis.Visible) {
-                padX = m_axes[0].LabeledTicks.Padding + m_axes[0].Label.Padding * 2;
-                m_cubeMargin = xLabelSize.Height + padX; 
-            
+        #region private rendering setup helper
+        protected void helperUpdateMatrices(float width2D, float height2D, out float worldSceneWidth, out float worldSceneHeight, out ILPoint3Df top, out ILPoint3Df moveOffset)
+        {
+            float localPlotCubeScreenRectLeft;
+            float localPlotCubeScreenRectWidth;
+
+            float localPlotCubeScreenRectTop;
+            float localPlotCubeScreenRectHeight;
+
+            float offsetX;
+            float offsetY;
+
+            localPlotCubeScreenRectHeight = m_plotBoxScreenRectF.Height;
+            localPlotCubeScreenRectWidth = m_plotBoxScreenRectF.Width;
+            localPlotCubeScreenRectTop = m_plotBoxScreenRectF.Top;
+            localPlotCubeScreenRectLeft = m_plotBoxScreenRectF.Left;
+
+            if (AspectRatio == AspectRatioMode.StretchToFill)
+            {
+                worldSceneWidth = width2D / localPlotCubeScreenRectWidth;
+                worldSceneHeight = height2D / localPlotCubeScreenRectHeight;
             }
-            if (m_axes.YAxis.Visible) {
-                padY = m_axes[1].LabeledTicks.Padding + m_axes[1].Label.Padding * 2; 
-                int yHeight = yLabelSize.Height + padY; 
-                if (m_cubeMargin < yHeight) 
-                    m_cubeMargin = yHeight; 
-            }
-            if (m_axes.ZAxis.Visible && m_camera.SinRho > 1e-5) {
-                int padZ = m_axes[2].LabeledTicks.Padding + m_axes[2].Label.Padding * 2; 
-                int zHeight =  m_axes.ZAxis.Label.Size.Height + padZ; 
-                if (m_cubeMargin < zHeight) {
-                    m_cubeMargin = zHeight;
+            else
+            { //if (RenderAspectRatioMode == RenderAspectRatioMode.MaintainRatios) {
+                float plotCubeScreenRectAspectRatio =
+                    (m_plotBoxScreenRectF.Width * ClientSize.Width)
+                    / (m_plotBoxScreenRectF.Height * ClientSize.Height);
+                float dataAspectRatio = width2D / height2D;
+                if (plotCubeScreenRectAspectRatio > dataAspectRatio)
+                {
+                    // width > height
+                    worldSceneHeight = height2D;
+                    worldSceneWidth = worldSceneHeight * dataAspectRatio;
+                    // enlarge the scene, so we have rendering margin outside the data cube
+                    worldSceneHeight /= localPlotCubeScreenRectHeight;
+                    worldSceneWidth /= (localPlotCubeScreenRectWidth * (dataAspectRatio / plotCubeScreenRectAspectRatio));
+                }
+                else
+                {
+                    // height >= width
+                    worldSceneWidth = width2D;
+                    worldSceneHeight = worldSceneWidth / dataAspectRatio;
+                    // enlarge the scene, so we have rendering margin outside the data cube
+                    worldSceneWidth /= localPlotCubeScreenRectWidth;
+                    worldSceneHeight /= (localPlotCubeScreenRectHeight / (dataAspectRatio / plotCubeScreenRectAspectRatio));
                 }
             }
-            ticksSize.Width += m_cubeMargin; 
-            ticksSize.Height += m_cubeMargin; 
-            //m_cubeWidth = 1.0f / (xSize * ((ClientSize.Width-2) - 2 * ticksSize.Width) / (ClientSize.Width-2));
-            //m_cubeHeight = 1.0f / (ySize * ((ClientSize.Height-2) - 2 * ticksSize.Height) / (ClientSize.Height-2));
-            m_cubeWidth = ((xSize * (ClientSize.Width-2)) / ((ClientSize.Width-2) - 2 * ticksSize.Width));
-            m_cubeHeight = ((ySize * (ClientSize.Height-2)) / ((ClientSize.Height-2) - 2 * ticksSize.Height));
-            //m_cubeHeight = ySize; m_cubeWidth = xSize; 
-            // setup matrices (must do before world2screen is called in OptimalTickLabelLine()!) 
-            UpdateMatrices(); 
-            // determine tick label lines
-            ILTickCollection ticks = m_axes[2].LabeledTicks; 
-            ticks.m_alignment = GetZTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd); 
-            ticks = m_axes[1].LabeledTicks; 
-            ticks.m_alignment = GetYTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd); 
-            ticks = m_axes[0].LabeledTicks; 
-            ticks.m_alignment = GetXTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd);
+            // one more pixel please...
+            worldSceneHeight = (worldSceneHeight / ClientSize.Height * (ClientSize.Height + 1));
+            worldSceneWidth = (worldSceneWidth / ClientSize.Width * (ClientSize.Width + 1));
+            // if PlotCubeScreenRect is not centered, we move the scene out of center accordingly (..further down)
+            top = new ILPoint3Df(-m_camera.SinPhi * m_camera.CosRho, m_camera.CosPhi * m_camera.CosRho, m_camera.SinRho);
+            ILPoint3Df moveX = ILPoint3Df.crossN(m_camera.Position - m_camera.LookAt, top);
+            offsetX = -(localPlotCubeScreenRectLeft + (localPlotCubeScreenRectWidth / 2f) - 0.5f) * worldSceneWidth;
+            offsetY = -(localPlotCubeScreenRectTop + (localPlotCubeScreenRectHeight / 2f) - 0.5f) * worldSceneHeight;
+            moveOffset = top * offsetY + moveX * offsetX;
+        }
+        protected virtual void RenderScene(ILRenderProperties p) {
+            System.Diagnostics.Debug.Print("m_camera:{0}", m_camera); 
+            int countRenderPasses = 2; 
+            if (!DesignMode) {
+                lock (m_sortingCacheList) {
+                    iRenderingState1(p); //make current 
+                    // configure axes (determine tick labels in mode 'auto')
+                    m_axes.XAxis.Configure(p);
+                    m_axes.YAxis.Configure(p);
+                    m_axes.ZAxis.Configure(p);
 
-            #region determine axis label position & limits 
-            positionZAxisLabel(m_axes[2]); 
-            switch (m_camera.Quadrant) {
-                case CameraQuadrant.TopRightFront:
-                    axisLabel_TopLeftBottomRight(m_axes[0]);
-                    // special case: 2D view? 
-                    if (m_camera.SinPhi < 1e-5 && m_camera.SinRho < 1e-5) {
-                        axisLabelVertical2D(m_axes[1]); 
-                    } else {
-                        axisLabel_BottomLeftTopRight(m_axes[1]);
+
+                    //computeLayoutData(p);
+                    float rotatedViewLimitX, rotatedViewLimitY, rotatedViewLimitZ;
+                    GetTransformedSize(out rotatedViewLimitX, out rotatedViewLimitY, out rotatedViewLimitZ);
+
+                    // determine needed margins according to current tic label collections (which are left over from last rendering run or empty) 
+                    Size ticLabelsMargins = GetMaxTicLabelSize(p.Graphics);
+                    updatePlotCubeScreenRect(rotatedViewLimitX, rotatedViewLimitY, ticLabelsMargins);
+                    p.PassCount = 0;
+                    for (; p.PassCount < MAXRENDERPASSES; p.PassCount++) {
+                        UpdateMatrices(rotatedViewLimitX, rotatedViewLimitY, rotatedViewLimitZ);
+
+                        updateTickLabelLines();
+                        updateLabelPositions(p);
+                        if (p.PassCount == 0) {
+                        }
+                        iRenderingState2(p);  // do the actual drawing
+                        //iRenderingState3(p); 
+                        #region check if we can fit the plot cube more precisely
+                        if (m_plotBoxScreenSizeMode == PlotBoxScreenSizeMode.StrictOptimal) {
+                            float t = m_plotBoxScreenRectF.Top;
+                            float l = m_plotBoxScreenRectF.Left;
+                            float r = m_plotBoxScreenRectF.Right;
+                            float b = m_plotBoxScreenRectF.Bottom, tmp;
+                            bool resize = false;
+                            tmp = (float)p.MinX / ClientSize.Width;
+                            if (tmp < l) {
+                                if (p.MinX != 0) {
+                                    l -= tmp;
+                                    resize = true;
+                                }
+                            } else if (l > 0) {
+                                l = 0;
+                                resize = true;
+                            }
+                            tmp = (float)p.MaxX / ClientSize.Width;
+                            if (tmp > r) {
+                                if (p.MaxX != (ClientSize.Width - 1)) {
+                                    r += (1 - tmp);
+                                    resize = true;
+                                }
+                            } else if (r < 1) {
+                                r = (float)(ClientSize.Width - 1) / ClientSize.Width;
+                                resize = true;
+                            }
+                            tmp = (float)p.MinY / ClientSize.Height;
+                            if (tmp < t) {
+                                if (p.MinY != 0) {
+                                    t -= tmp;
+                                    resize = true;
+                                }
+                            } else if (t > 0) {
+                                t = 0;
+                                resize = true;
+                            }
+                            tmp = (float)p.MaxY / ClientSize.Height;
+                            if (tmp > b) {
+                                if (p.MaxY != (ClientSize.Height - 1)) {
+                                    b += (1 - tmp);
+                                    resize = true;
+                                }
+                            } else if (b < 1) {
+                                b = (float)(ClientSize.Height - 1) / ClientSize.Height;
+                                resize = true;
+                            }
+                            if (resize) {
+                                // ... there is still room left we can use for enlarging the render cube
+                                m_plotBoxScreenRectF = new RectangleF(l, t, r - l, b - t);
+                                p.Reason = RenderReason.RecalcLabels;
+                                p.MaxY = int.MinValue;
+                                p.MaxX = int.MinValue;
+                                p.MinY = int.MaxValue;
+                                p.MinX = int.MaxValue;
+                            }
+                            continue;
+                        }
+                        #endregion
+                        break;
                     }
-                    break;
-                case CameraQuadrant.TopRightBack:
-                    axisLabel_TopRightBottomLeft(m_axes[0]);
-                    axisLabel_TopLeftBottomRight(m_axes[1]);
-                    break; 
+                    iRenderingState3(p);
+                }
+
+            }
+        }
+        protected abstract void iRenderingState1(ILRenderProperties p); 
+        /// <summary>
+        /// [internal] Configure this panel, to make it ready for output, set "m_ready = true" at end!
+        /// </summary>
+        protected virtual void Configure() {
+            foreach (ILGraph graph in m_graphs) {
+                graph.Configure();
+            }
+            // update clipping view 
+            m_clipplanes[0] = -1.0; m_clipplanes[3] = m_clippingView.Max.X;
+            m_clipplanes[4] = 1.0; m_clipplanes[7] = -m_clippingView.Min.X;
+            m_clipplanes[9] = -1.0; m_clipplanes[11] = m_clippingView.Max.Y;
+            m_clipplanes[13] = 1.0; m_clipplanes[15] = -m_clippingView.Min.Y;
+            m_clipplanes[18] = -1.0; m_clipplanes[19] = m_clippingView.Max.Z;
+            m_clipplanes[22] = 1.0; m_clipplanes[23] = -m_clippingView.Min.Z;
+
+            m_ready = true;
+        }
+        /// <summary>
+        /// draw the scene: all axes, graphs, background etc. (device dependant)
+        /// </summary>
+        /// <param name="p"></param>
+        protected abstract void iRenderingState2(ILRenderProperties p);
+        protected abstract void iRenderingState3(ILRenderProperties p);
+        protected abstract void UpdateMatrices(float width2D, float height2D, float depth2D);
+        /// <summary>
+        /// initialize all device specific classes, first called after the panel has been created
+        /// </summary>
+        /// <remarks>derived types should init all devices here</remarks>
+        protected virtual void Initialize() { }
+        protected PointF GetXTickLabelLine(out Point start2D, out Point end2D) {
+            PointF anchor = new PointF(0,0); // TickLabelAlign.left;
+            ILPoint3Df start = new ILPoint3Df(), end = new ILPoint3Df();
+            ILTickCollection ticks = m_axes[0].LabeledTicks;
+            float tickLen = (ticks.Direction == TickDirection.Outside) ?
+                             ticks.TickFraction : 0f;
+            float padX = ticks.Padding, padY = padX;
+            switch (m_camera.Quadrant) {
                 case CameraQuadrant.TopLeftFront:
-                    axisLabel_BottomLeftTopRight(m_axes[0]);
-                    axisLabel_BottomRightTopLeft(m_axes[1]);
+                    start.X = m_clippingView.Min.X;
+                    start.Y = m_clippingView.Min.Y - tickLen;
+                    start.Z = m_clippingView.Min.Z;
+                    end.X = m_clippingView.Max.X;
+                    end.Y = start.Y;
+                    end.Z = start.Z;
+                    anchor = new PointF(0,0); //TickLabelAlign.left | TickLabelAlign.top;
+                    padX = -m_camera.SinPhi * padX;
+                    padY = (m_camera.CosPhi - m_camera.SinRho * m_camera.SinPhi) * (padY) + m_camera.SinPhi * ticks.Font.Height / 2;
                     break;
                 case CameraQuadrant.TopLeftBack:
-                    axisLabel_BottomRightTopLeft(m_axes[0]);
-                    axisLabel_TopRightBottomLeft(m_axes[1]);
+                    start.X = m_clippingView.Min.X;
+                    start.Y = m_clippingView.Max.Y + tickLen;
+                    start.Z = m_clippingView.Min.Z;
+                    end.X = m_clippingView.Max.X;
+                    end.Y = start.Y;
+                    end.Z = start.Z;
+                    anchor = new PointF(1,0); //TickLabelAlign.right | TickLabelAlign.top;
+                    padX *= m_camera.SinPhi;
+                    padY = (-m_camera.CosPhi - m_camera.SinRho * m_camera.SinPhi) * padY + m_camera.SinPhi * ticks.Font.Height / 2;
+                    break;
+                case CameraQuadrant.TopRightBack:
+                    start.X = m_clippingView.Min.X;
+                    start.Y = m_clippingView.Max.Y + tickLen;
+                    start.Z = m_clippingView.Min.Z;
+                    end.X = m_clippingView.Max.X;
+                    end.Y = start.Y;
+                    end.Z = start.Z;
+                    anchor = new PointF(0,0); //TickLabelAlign.left | TickLabelAlign.top;
+                    padX *= m_camera.SinPhi;
+                    padY = (-m_camera.CosPhi + m_camera.SinRho * m_camera.SinPhi) * padY - m_camera.SinPhi * ticks.Font.Height / 2;
+                    break;
+                case CameraQuadrant.TopRightFront:
+                    start.X = m_clippingView.Min.X;
+                    start.Y = m_clippingView.Min.Y - tickLen;
+                    start.Z = m_clippingView.Min.Z;
+                    end.X = m_clippingView.Max.X;
+                    end.Y = start.Y;
+                    end.Z = start.Z;
+                    if (m_camera.Is2DView) {
+                        anchor = new PointF(.5f, 0); //TickLabelAlign.center | TickLabelAlign.top;
+                    } else {
+                        anchor = new PointF(1,0); //TickLabelAlign.right | TickLabelAlign.top;
+                    }
+                    padX *= -m_camera.SinPhi;
+                    padY = (m_camera.CosPhi + m_camera.SinRho * m_camera.SinPhi) * padY - m_camera.SinPhi * ticks.Font.Height / 2;
                     break;
                 case CameraQuadrant.BottomLeftFront:
-                    axisLabel_TopLeftBottomRight(m_axes[0]);
-                    axisLabel_TopRightBottomLeft(m_axes[1]); 
+                    start.X = m_clippingView.Min.X;
+                    start.Y = m_clippingView.Max.Y + tickLen;
+                    start.Z = m_clippingView.Min.Z;
+                    end.X = m_clippingView.Max.X;
+                    end.Y = start.Y;
+                    end.Z = start.Z;
+                    anchor = new PointF(1,0); //TickLabelAlign.right | TickLabelAlign.top;
+                    padX *= m_camera.SinPhi;
+                    padY = (m_camera.CosPhi - m_camera.SinRho * m_camera.SinPhi) * padY + m_camera.SinPhi * ticks.Font.Height / 2;
                     break;
                 case CameraQuadrant.BottomLeftBack:
-                    axisLabel_TopRightBottomLeft(m_axes[0]);
-                    axisLabel_BottomRightTopLeft(m_axes[1]);
+                    start.X = m_clippingView.Min.X;
+                    start.Y = m_clippingView.Min.Y - tickLen;
+                    start.Z = m_clippingView.Min.Z;
+                    end.X = m_clippingView.Max.X;
+                    end.Y = start.Y;
+                    end.Z = start.Z;
+                    anchor = new PointF(0,0); //TickLabelAlign.left | TickLabelAlign.top;
+                    padX *= -m_camera.SinPhi;
+                    padY = (-m_camera.CosPhi - m_camera.SinRho * m_camera.SinPhi) * padY + m_camera.SinPhi * ticks.Font.Height / 2;
                     break;
                 case CameraQuadrant.BottomRightBack:
-                    axisLabel_BottomRightTopLeft(m_axes[0]);
-                    axisLabel_BottomLeftTopRight(m_axes[1]);
-                    break; 
+                    start.X = m_clippingView.Min.X;
+                    start.Y = m_clippingView.Min.Y - tickLen;
+                    start.Z = m_clippingView.Min.Z;
+                    end.X = m_clippingView.Max.X;
+                    end.Y = start.Y;
+                    end.Z = start.Z;
+                    anchor = new PointF(1,0); //TickLabelAlign.right | TickLabelAlign.top;
+                    padX *= -m_camera.SinPhi;
+                    padY = (-m_camera.CosPhi + m_camera.SinRho * m_camera.SinPhi) * padY - m_camera.SinPhi * ticks.Font.Height / 2;
+                    break;
+                default:    // BottomRightFront
+                    start.X = m_clippingView.Min.X;
+                    start.Y = m_clippingView.Max.Y + tickLen;
+                    start.Z = m_clippingView.Min.Z;
+                    end.X = m_clippingView.Max.X;
+                    end.Y = start.Y;
+                    end.Z = start.Z;
+                    anchor = new PointF(0,0); //TickLabelAlign.left | TickLabelAlign.top;
+                    padX *= m_camera.SinPhi;
+                    padY = (m_camera.CosPhi + m_camera.SinRho * m_camera.SinPhi) * padY - m_camera.SinPhi * ticks.Font.Height / 2;
+                    break;
+            }
+            World2Screen(start, end, out start2D, out end2D);
+            // align in screen coords 
+            int offY = (int)((m_camera.SinRho - (m_camera.SinPhi % Math.PI))
+                        * m_axes[0].LabeledTicks.Font.Height / 2
+                        + padY);
+            // add padding 
+            //System.Diagnostics.Debug.WriteLine(m_camera.Phi); 
+            start2D.Y += (int)padY + 1;
+            end2D.Y += (int)padY + 1;
+            start2D.X += (int)(padX + 1);
+            end2D.X += (int)(padX + 1);
+            return anchor;
+        }
+        protected PointF GetYTickLabelLine(out Point start2D, out Point end2D) {
+            PointF anchor; // = new PointF(0,0); // TickLabelAlign.left;
+            ILPoint3Df start = new ILPoint3Df(), end = new ILPoint3Df();
+            ILTickCollection ticks = m_axes[1].LabeledTicks;
+            float tickLen = (ticks.Direction == TickDirection.Outside) ?
+                ticks.TickFraction : 0f;
+            float padX = ticks.Padding, padY = padX;
+            if (m_camera.Is2DView) {
+                start.X = m_clippingView.Min.X - tickLen;
+                start.Y = m_clippingView.Min.Y;
+                start.Z = m_clippingView.Min.Z;
+                end.X = start.X;
+                end.Y = m_clippingView.Max.Y;
+                end.Z = start.Z;
+                anchor = new PointF(1, 0); // TickLabelAlign.right | TickLabelAlign.top;
+                padX *= -m_camera.CosPhi;
+                padY = (-m_camera.SinPhi + m_camera.SinRho * m_camera.CosPhi) * padY - m_camera.CosPhi * ticks.Font.Height / 2;
+            } else {
+                switch (m_camera.Quadrant) {
+                    case CameraQuadrant.TopLeftFront:
+                        start.X = m_clippingView.Min.X - tickLen;
+                        start.Y = m_clippingView.Min.Y;
+                        start.Z = m_clippingView.Min.Z;
+                        end.X = start.X;
+                        end.Y = m_clippingView.Max.Y;
+                        end.Z = start.Z;
+                        anchor = new PointF(1, 0); // TickLabelAlign.right | TickLabelAlign.top;
+                        padX *= -m_camera.CosPhi;
+                        padY = (-m_camera.SinPhi + m_camera.SinRho * m_camera.CosPhi) * padY - m_camera.CosPhi * ticks.Font.Height / 2;
+                        break;
+                    case CameraQuadrant.TopLeftBack:
+                        start.X = m_clippingView.Min.X - tickLen;
+                        start.Y = m_clippingView.Min.Y;
+                        start.Z = m_clippingView.Min.Z;
+                        end.X = start.X;
+                        end.Y = m_clippingView.Max.Y;
+                        end.Z = start.Z;
+                        anchor = new PointF(0, 0); // TickLabelAlign.left | TickLabelAlign.top;
+                        padX *= -m_camera.CosPhi;
+                        padY = (-m_camera.SinPhi - m_camera.SinRho * m_camera.CosPhi) * padY + m_camera.CosPhi * ticks.Font.Height / 2;
+                        break;
+                    case CameraQuadrant.TopRightBack:
+                        start.X = m_clippingView.Max.X + tickLen;
+                        start.Y = m_clippingView.Min.Y;
+                        start.Z = m_clippingView.Min.Z;
+                        end.X = start.X;
+                        end.Y = m_clippingView.Max.Y;
+                        end.Z = start.Z;
+                        anchor = new PointF(1,0); // TickLabelAlign.right | TickLabelAlign.top;
+                        padX *= m_camera.CosPhi;
+                        padY = (m_camera.SinPhi - m_camera.SinRho * m_camera.CosPhi) * padY + m_camera.CosPhi * ticks.Font.Height / 2;
+                        break;
+                    case CameraQuadrant.TopRightFront:
+                        start.X = m_clippingView.Max.X + tickLen;
+                        start.Y = m_clippingView.Min.Y;
+                        start.Z = m_clippingView.Min.Z;
+                        end.X = start.X;
+                        end.Y = m_clippingView.Max.Y;
+                        end.Z = start.Z;
+                        anchor = new PointF(0,0); // TickLabelAlign.left | TickLabelAlign.top;
+                        padX *= m_camera.CosPhi;
+                        padY = (m_camera.SinPhi + m_camera.SinRho * m_camera.CosPhi) * padY - m_camera.CosPhi * ticks.Font.Height / 2;
+                        break;
+                    case CameraQuadrant.BottomLeftFront:
+                        start.X = m_clippingView.Max.X + tickLen;
+                        start.Y = m_clippingView.Min.Y;
+                        start.Z = m_clippingView.Min.Z;
+                        end.X = start.X;
+                        end.Y = m_clippingView.Max.Y;
+                        end.Z = start.Z;
+                        anchor = new PointF(0,0); //  TickLabelAlign.left | TickLabelAlign.top;
+                        padX *= m_camera.CosPhi;
+                        padY = (-m_camera.SinPhi + m_camera.SinRho * m_camera.CosPhi) * padY - m_camera.CosPhi * ticks.Font.Height / 2;
+                        break;
+                    case CameraQuadrant.BottomLeftBack:
+                        start.X = m_clippingView.Max.X + tickLen;
+                        start.Y = m_clippingView.Min.Y;
+                        start.Z = m_clippingView.Min.Z;
+                        end.X = start.X;
+                        end.Y = m_clippingView.Max.Y;
+                        end.Z = start.Z;
+                        anchor = new PointF(1,0); // TickLabelAlign.right | TickLabelAlign.top;
+                        padX *= m_camera.CosPhi;
+                        padY = (-m_camera.SinPhi - m_camera.SinRho * m_camera.CosPhi) * padY + m_camera.CosPhi * ticks.Font.Height / 2;
+                        break;
+                    case CameraQuadrant.BottomRightBack:
+                        start.X = m_clippingView.Min.X - tickLen;
+                        start.Y = m_clippingView.Min.Y;
+                        start.Z = m_clippingView.Min.Z;
+                        end.X = start.X;
+                        end.Y = m_clippingView.Max.Y;
+                        end.Z = start.Z;
+                        anchor = new PointF(0,0); // TickLabelAlign.left | TickLabelAlign.top;
+                        padX *= -m_camera.CosPhi;
+                        padY = (m_camera.SinPhi - m_camera.SinRho * m_camera.CosPhi) * padY + m_camera.CosPhi * ticks.Font.Height / 2;
+                        break;
+                    default:    // BottomRightFront
+                        start.X = m_clippingView.Min.X - tickLen;
+                        start.Y = m_clippingView.Min.Y;
+                        start.Z = m_clippingView.Min.Z;
+                        end.X = start.X;
+                        end.Y = m_clippingView.Max.Y;
+                        end.Z = start.Z;
+                        anchor = new PointF(1,0); // TickLabelAlign.right | TickLabelAlign.top;
+                        padX *= -m_camera.CosPhi;
+                        padY = (m_camera.SinPhi + m_camera.SinRho * m_camera.CosPhi) * padY - m_camera.CosPhi * ticks.Font.Height / 2;
+                        break;
+                }
+            }
+            World2Screen(start, end, out start2D, out end2D);
+            // align in screen coords 
+            //int offY = (int)(Math.Abs(m_camera.CosPhi) * ticks.Font.Height / 2);
+            //offY -= (int)(Math.Sin(m_camera.Rho) * ticks.Font.Height / 2); 
+            start2D.Y += (int)padY;
+            end2D.Y += (int)padY;
+            start2D.X += (int)padX;
+            end2D.X += (int)padX;
+            return anchor;
+        }
+        protected PointF GetZTickLabelLine(out Point start2D, out Point end2D) {
+            PointF anchor = new PointF(1, .5f); // TickLabelAlign.vertCenter | TickLabelAlign.right;
+            ILPoint3Df start = new ILPoint3Df(), end = new ILPoint3Df();
+            ILTickCollection ticks = m_axes[2].LabeledTicks;
+            float tickLen = 0;
+            if (ticks.Direction == TickDirection.Outside)
+                tickLen = ticks.TickFraction;
+            start.Z = m_clippingView.Min.Z;
+            switch (m_camera.Quadrant) {
+                case CameraQuadrant.TopLeftFront:
+                    start.X = m_clippingView.Min.X - tickLen;
+                    start.Y = m_clippingView.Max.Y + tickLen;
+                    break;
+                case CameraQuadrant.TopLeftBack:
+                    start.X = m_clippingView.Max.X + tickLen;
+                    start.Y = m_clippingView.Max.Y + tickLen;
+                    break;
+                case CameraQuadrant.TopRightBack:
+                    start.X = m_clippingView.Max.X + tickLen;
+                    start.Y = m_clippingView.Min.Y - tickLen;
+                    break;
+                case CameraQuadrant.TopRightFront:
+                    start.X = m_clippingView.Min.X - tickLen;
+                    start.Y = m_clippingView.Min.Y - tickLen;
+                    break;
+                case CameraQuadrant.BottomLeftFront:
+                    start.X = m_clippingView.Min.X - tickLen;
+                    start.Y = m_clippingView.Max.Y + tickLen;
+                    break;
+                case CameraQuadrant.BottomLeftBack:
+                    start.X = m_clippingView.Max.X + tickLen;
+                    start.Y = m_clippingView.Max.Y + tickLen;
+                    break;
+                case CameraQuadrant.BottomRightBack:
+                    start.X = m_clippingView.Max.X + tickLen;
+                    start.Y = m_clippingView.Min.Y - tickLen;
+                    break;
                 case CameraQuadrant.BottomRightFront:
-                    axisLabel_BottomLeftTopRight(m_axes[0]);
-                    axisLabel_TopLeftBottomRight(m_axes[1]);
+                    start.X = m_clippingView.Min.X - tickLen;
+                    start.Y = m_clippingView.Min.Y - tickLen;
                     break;
                 default:
                     break;
             }
-            #endregion
-            System.Diagnostics.Debug.WriteLine(m_camera.Quadrant); 
+            end = start;
+            end.Z = m_clippingView.Max.Z;
+            World2Screen(start, end, out start2D, out end2D);
+            start2D.X -= (ticks.Padding - 1);
+            end2D.X -= (ticks.Padding - 1);
+            return anchor;
+        }
+        /// <summary>
+        /// Get size of projected view cube - after (!) rotation but before projection -> world space
+        /// includes the bounding box, tightly enclosing the current view limits setting 
+        /// No labels, No ticks included!! Just the data cube with roatation!
+        /// </summary>
+        /// <param name="x">out, screen size for X</param>
+        /// <param name="y">out, screen size for Y</param>
+        /// <param name="z">out, screen size for Z</param>
+        protected virtual void GetTransformedSize(out float x, out float y, out float z) {
+            float xSize = m_clippingView.WidthF;   // the unrotated width - without labels size
+            float ySize = m_clippingView.HeightF;  // dito for height
+            float zSize = m_clippingView.DepthF;
+            if (m_camera.Rho != 0.0f || m_camera.Phi != 0.0f) { // standard 2D view?
+                float cosPhi = Math.Abs(m_camera.CosPhi);
+                float sinPhi = Math.Abs(m_camera.SinPhi);
+                x = (cosPhi * xSize + sinPhi * ySize); //zSize * Math.Abs(m_camera.SinRho) + (Math.Abs(m_camera.CosRho) * 
+                y = zSize * Math.Abs(m_camera.SinRho)
+                          + (Math.Abs(m_camera.CosRho) * (sinPhi * xSize + cosPhi * ySize));
+                z = zSize * Math.Abs(m_camera.CosRho)
+                          + (Math.Abs(m_camera.SinRho) * (sinPhi * xSize + cosPhi * ySize));
+            } else {
+                x = xSize;
+                y = ySize;
+                z = zSize;
+            }
         }
 
         private void axisLabelVertical2D(ILAxis axis) {
-            ILLabel label = axis.Label; 
-            ILTickCollection ticks = axis.LabeledTicks; 
+            ILLabel label = axis.Label;
+            ILTickCollection ticks = axis.LabeledTicks;
             Size tickSize = ticks.Size, labelSize = label.Size;
+            label.Orientation = TextOrientation.Vertical;
+            label.Anchor = new PointF(.5f, 0); 
+            label.m_position.X = ticks.m_lineEnd.X - tickSize.Width - ticks.Padding - label.Padding;
             switch (label.Alignment) {
                 case LabelAlign.Center:
-                    label.Orientation = TextOrientation.Vertical;
-                    label.m_position.X = ticks.m_lineEnd.X + tickSize.Width;
                     label.m_position.Y = (ticks.m_lineEnd.Y + ticks.m_lineStart.Y) / 2;
-                    label.m_position.Y -= (int)(0.5 * labelSize.Width);
-                    if (label.m_position.Y < ticks.m_lineEnd.Y) {
-                        label.m_position.Y = ticks.m_lineEnd.Y;
-                    }
-                    if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                        label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                    }
                     break;
                 case LabelAlign.Upper:
-                    label.Orientation = TextOrientation.Vertical;
-                    label.m_position.X = ticks.m_lineEnd.X + tickSize.Width;
-                    label.m_position.Y = ticks.m_lineEnd.Y;
-                    if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                        label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                    }
+                    label.m_position.Y = ticks.m_lineEnd.Y + labelSize.Width / 2;
                     break;
                 default:        // lower 
-                    label.Orientation = TextOrientation.Vertical;
-                    label.m_position.X = ticks.m_lineEnd.X + tickSize.Width;
-                    label.m_position.Y = ticks.m_lineStart.Y - labelSize.Width;
-                    if (label.m_position.Y < ticks.m_lineEnd.Y) {
-                        label.m_position.Y = ticks.m_lineEnd.Y;
-                    }
-                    if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                        label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                    }
+                    label.m_position.Y = ticks.m_lineStart.Y - labelSize.Width / 2;
                     break;
+            }
+            if (label.m_position.Y < labelSize.Width / 2) {
+                label.m_position.Y = labelSize.Width / 2;
+            }
+            if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width / 2) {
+                label.m_position.Y = ClientSize.Height - 1 - labelSize.Width / 2;
             }
         }
         private void positionZAxisLabel(ILAxis axis) {
-            ILLabel label = axis.Label; 
-            ILTickCollection ticks = axis.LabeledTicks; 
-            Size tickSize = ticks.Size, labelSize = label.Size; 
+            ILLabel label = axis.Label;
+            ILTickCollection ticks = axis.LabeledTicks;
+            Size tickSize = ticks.Size, labelSize = label.Size;
             label.Orientation = TextOrientation.Vertical;
-            label.m_position.X = ticks.m_lineStart.X - tickSize.Width - labelSize.Height - label.Padding * 2; 
+            label.Anchor = new PointF(.5f, 0); 
             switch (label.Alignment) {
                 case LabelAlign.Center:
-                    label.m_position.Y = (ticks.m_lineStart.Y + ticks.m_lineEnd.X ) / 2;
-                    break; 
+                    label.m_position.Y = (ticks.m_lineStart.Y + ticks.m_lineEnd.Y) / 2;
+                    break;
                 case LabelAlign.Upper:
-                    label.m_position.Y = ticks.m_lineEnd.Y - tickSize.Width;
+                    label.m_position.Y = ticks.m_lineEnd.Y - labelSize.Width / 2;
                     break;
                 default:        // lower 
-                    label.m_position.Y = ticks.m_lineStart.Y;
+                    label.m_position.Y = ticks.m_lineStart.Y + labelSize.Width / 2 ;
                     break;
             }
-            if (label.m_position.Y + labelSize.Width >  ticks.m_lineStart.Y ) {
-                label.m_position.Y = ticks.m_lineStart.Y - labelSize.Width;
+            label.m_position.X = ticks.m_lineStart.X - tickSize.Width - ticks.Padding - label.Padding;
+            if (label.m_position.Y < labelSize.Width / 2) {
+                label.m_position.Y = labelSize.Width / 2; 
             }
-            if (label.m_position.Y < label.Padding) {
-                label.Orientation = TextOrientation.Horizontal; 
-                label.m_position.X = label.Padding; 
-                label.m_position.Y = label.Padding; 
+            if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width / 2) {
+                label.m_position.Y = ClientSize.Height - 1 - labelSize.Width / 2;
+                //label.Orientation = TextOrientation.Horizontal;
+                //label.m_position.X = label.Padding;
+                //label.m_position.Y = label.Padding;
             }
         }
-        private void axisLabel_BottomRightTopLeft(ILAxis axis) {
-            #region Bottom Right -> Top Left
-            ILLabel label = axis.Label; 
-            ILTickCollection ticks = axis.LabeledTicks; 
-            Size tickSize = ticks.Size, labelSize = label.Size; 
-            switch (label.Alignment) {
-                case LabelAlign.Center:
-                    label.m_position.X = (ticks.m_lineStart.X + ticks.m_lineEnd.X) / 2;
-                    label.m_position.Y = ticks.m_lineStart.Y + tickSize.Height;
-                    if (axis.Index == 0) { // X Axis
-                        label.m_position.X -= (int)Math.Round((0.5 + 0.5 * Math.Sin(m_camera.Phi % Math.PI)) * labelSize.Width);
-                    } else if (axis.Index == 1) {
-                        if (m_camera.Rho <= pi05) 
-                            label.m_position.X -= (int)Math.Round((0.5 - 0.5 * Math.Cos(m_camera.Phi % Math.PI)) * labelSize.Width);
-                        else 
-                            label.m_position.X -= (int)Math.Round((0.5 + 0.5 * Math.Cos(m_camera.Phi % Math.PI)) * labelSize.Width);
-                    } 
-                    if (label.m_position.X < label.Padding) {
-                        label.Orientation = TextOrientation.Vertical;
-                        label.m_position.X = ticks.m_lineEnd.X - tickSize.Width - labelSize.Height;
+        private void axisLabel_BottomRightTopLeft(ILRenderProperties p, ILAxis axis) {
+            ILLabel label = axis.Label;
+            ILTickCollection ticks = axis.LabeledTicks;
+            Size tickSize = ticks.Size, labelSize = label.Size;
+            label.Anchor = new PointF(.5f, 0);
+            bool horiz = decideLabelHorizontalOrientation(p, m_camera, axis);
+            if (horiz) {
+                #region Horizontal
+                label.Orientation = TextOrientation.Horizontal;
+                switch (label.Alignment) {
+                    case LabelAlign.Center:
+                        label.m_position.X = (ticks.m_lineStart.X + ticks.m_lineEnd.X) / 2;
+                        break;
+                    case LabelAlign.Upper:
+                        label.m_position.X = ticks.m_lineEnd.X + labelSize.Width / 2;
+                        break;
+                    default:        // lower 
+                        label.m_position.X = ticks.m_lineStart.X - labelSize.Width / 2;
+                        break;
+                }
+                label.m_position.Y = ticks.m_lineStart.Y + tickSize.Height + ticks.Padding + label.Padding;
+                if (label.m_position.X < labelSize.Width / 2) {
+                    label.m_position.X = labelSize.Width / 2; 
+                }
+                #endregion
+            } else {
+                #region Vertical
+                label.Orientation = TextOrientation.Vertical; 
+                switch (label.Alignment) {
+                    case LabelAlign.Center:
                         label.m_position.Y = (ticks.m_lineStart.Y + ticks.m_lineEnd.Y) / 2;
-                        label.m_position.Y -= (int)(0.5 * labelSize.Width);
-                        if (label.m_position.Y < ticks.m_lineEnd.Y) {
-                            label.m_position.Y = ticks.m_lineEnd.Y;
-                        }
-                        if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                            label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                        }
-                    } else {
-                        label.Orientation = TextOrientation.Horizontal;
-                    }
-                    break;
-                case LabelAlign.Upper:
-                    label.m_position.X = ticks.m_lineEnd.X;
-                    label.m_position.Y = ticks.m_lineStart.Y
-                                            + tickSize.Height + label.Padding;
-                    if (label.m_position.X + labelSize.Width > ticks.m_lineStart.X) {
-                        label.m_position.X = ticks.m_lineStart.X - labelSize.Width;
-                    }
-                    if (label.m_position.X < label.Padding) {
-                        // vertical 
-                        label.Orientation = TextOrientation.Vertical;
-                        label.m_position.X = ticks.m_lineEnd.X - tickSize.Width - labelSize.Height;
-                        label.m_position.Y = ticks.m_lineEnd.Y;
-                        if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                            label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                        }
-                    } else {
-                        label.Orientation = TextOrientation.Horizontal;
-                    }
-                    break;
-                default:        // lower 
-                    label.m_position.X = ticks.m_lineStart.X - labelSize.Width;
-                    label.m_position.Y = ticks.m_lineStart.Y
-                                            + tickSize.Height + label.Padding;
-                    label.Orientation = TextOrientation.Horizontal;
-                    if (label.m_position.X < label.Padding) {
-                        // vertical 
-                        label.Orientation = TextOrientation.Vertical;
-                        label.m_position.X = ticks.m_lineEnd.X - tickSize.Width - labelSize.Height;
-                        label.m_position.Y = ticks.m_lineStart.Y - labelSize.Width;
-                        if (label.m_position.Y < ticks.m_lineEnd.Y) {
-                            label.m_position.Y = ticks.m_lineEnd.Y;
-                        }
-                        if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                            label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                        }
-                    }
-                    break;
+                        break;
+                    case LabelAlign.Upper:
+                        label.m_position.Y = ticks.m_lineEnd.Y + labelSize.Width / 2;
+                        break;
+                    default:        // lower 
+                        label.m_position.Y = ticks.m_lineStart.Y - labelSize.Width / 2;
+                        break;
+                }
+                label.m_position.X = ticks.m_lineEnd.X - tickSize.Width - label.Padding - ticks.Padding;
+                if (label.m_position.Y < labelSize.Width / 2)
+                    label.m_position.Y = labelSize.Width / 2;
+                if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width / 2) {
+                    label.m_position.Y = ClientSize.Height - 1 - labelSize.Width / 2;
+                }
+                #endregion
             }
-            #endregion
         }
-        private void axisLabel_BottomLeftTopRight(ILAxis axis) {
-            ILLabel label = axis.Label; 
-            ILTickCollection ticks = axis.LabeledTicks; 
+        private void axisLabel_BottomLeftTopRight(ILRenderProperties p,  ILAxis axis) {
+            ILLabel label = axis.Label;
+            ILTickCollection ticks = axis.LabeledTicks;
             Size tickSize = ticks.Size, labelSize = label.Size;
-            switch (label.Alignment) {
-                case LabelAlign.Center:
-                    label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
-                    label.m_position.Y = ticks.m_lineStart.Y + tickSize.Height;
-                    if (axis.Index == 0) { // X Axis
-                        label.m_position.X -= (int)Math.Round((0.5 - 0.5 * Math.Sin(m_camera.Phi % Math.PI)) * labelSize.Width);
-                    } else if (axis.Index == 1) {
-                        if (m_camera.Rho <= pi05) 
-                            label.m_position.X -= (int)Math.Round((0.5 - 0.5 * Math.Cos(m_camera.Phi % Math.PI)) * labelSize.Width);
-                        else 
-                            label.m_position.X -= (int)Math.Round((0.5 + 0.5 * Math.Cos(m_camera.Phi % Math.PI)) * labelSize.Width);
-                    } 
-                    if (label.m_position.X > ClientSize.Width - label.Padding - labelSize.Width) {
-                        label.Orientation = TextOrientation.Vertical;
-                        label.m_position.X = ticks.m_lineEnd.X + tickSize.Width;
+            bool horiz = decideLabelHorizontalOrientation(p, m_camera, axis);
+            if (horiz) {
+                #region Horizontal
+                label.Orientation = TextOrientation.Horizontal;
+                label.Anchor = new PointF(0.5f,0); 
+                switch (label.Alignment) {
+                    case LabelAlign.Center:
+                        label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
+                        break;
+                    case LabelAlign.Upper:
+                        label.m_position.X = ticks.m_lineEnd.X - label.Size.Width / 2;
+                        break;
+                    default:        // lower 
+                        label.m_position.X = ticks.m_lineStart.X + label.Size.Width / 2;
+                        break;
+                }
+                label.m_position.Y = ticks.m_lineStart.Y + tickSize.Height + ticks.Padding + label.Padding;
+                if (label.m_position.X > ClientSize.Width - labelSize.Width / 2) {
+                    label.m_position.X = ClientSize.Width - labelSize.Width / 2;
+                }
+                #endregion
+            } else {
+                #region Vertical
+                label.Orientation = TextOrientation.Vertical;
+                label.Anchor = new PointF(0.5f, 1);
+                switch (label.Alignment) {
+                    case LabelAlign.Center:
                         label.m_position.Y = (ticks.m_lineEnd.Y + ticks.m_lineStart.Y) / 2;
-                        label.m_position.Y -= (int)(0.5 * labelSize.Width);
-                        if (label.m_position.Y < ticks.m_lineEnd.Y) {
-                            label.m_position.Y = ticks.m_lineEnd.Y;
-                        }
-                        if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                            label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                        }
-                    } else {
-                        label.Orientation = TextOrientation.Horizontal;
-                    }
-                    break;
-                case LabelAlign.Upper:
-                    label.m_position.X = ticks.m_lineEnd.X - labelSize.Width;
-                    label.m_position.Y = ticks.m_lineStart.Y
-                                            + tickSize.Height + label.Padding;
-                    if (label.m_position.X < ticks.m_lineStart.X) {
-                        label.m_position.X = ticks.m_lineStart.X;
-                    }
-                    label.Orientation = TextOrientation.Horizontal;
-                    if (label.m_position.X > ClientSize.Width - 1 - label.Padding - labelSize.Width) {
-                        // vertical 
-                        label.Orientation = TextOrientation.Vertical;
-                        label.m_position.X = ticks.m_lineEnd.X + tickSize.Width;
-                        label.m_position.Y = ticks.m_lineEnd.Y;
-                        if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                            label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                        }
-                    }
-                    break;
-                default:        // lower 
-                    label.m_position.X = ticks.m_lineStart.X;
-                    label.m_position.Y = ticks.m_lineStart.Y
-                                            + tickSize.Height + label.Padding;
-                    if (label.m_position.X > ClientSize.Width - label.Padding - labelSize.Width) {
-                        // vertical 
-                        label.Orientation = TextOrientation.Vertical;
-                        label.m_position.X = ticks.m_lineEnd.X + tickSize.Width;
-                        label.m_position.Y = ticks.m_lineStart.Y - labelSize.Width;
-                        if (label.m_position.Y < ticks.m_lineEnd.Y) {
-                            label.m_position.Y = ticks.m_lineEnd.Y;
-                        }
-                        if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                            label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                        }
-                    } else {
-                        label.Orientation = TextOrientation.Horizontal;
-                    }
-                    break;
+                        break;
+                    case LabelAlign.Upper:
+                        label.m_position.Y = ticks.m_lineEnd.Y + labelSize.Width / 2;
+                        break;
+                    default:        // lower 
+                        label.m_position.Y = ticks.m_lineStart.Y - labelSize.Width / 2;
+                        break;
+                }
+                label.m_position.X = ticks.m_lineEnd.X + tickSize.Width + ticks.Padding + label.Padding;
+                if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width / 2) {
+                    label.m_position.Y = ClientSize.Height - 1 - labelSize.Width / 2;
+                }
+                #endregion
             }
         }
-        private void axisLabel_TopRightBottomLeft(ILAxis axis) {
-            ILLabel label = axis.Label; 
-            ILTickCollection ticks = axis.LabeledTicks; 
+        private void axisLabel_TopRightBottomLeft(ILRenderProperties p, ILAxis axis) {
+            ILLabel label = axis.Label;
+            ILTickCollection ticks = axis.LabeledTicks;
             Size tickSize = ticks.Size, labelSize = label.Size;
-            switch (label.Alignment) {
-                case LabelAlign.Center:
-                    label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
-                    label.m_position.Y = ticks.m_lineEnd.Y + tickSize.Height;
-                    //System.Diagnostics.Debug.WriteLine(m_camera.Quadrant + " - " + m_camera.SinPhi); 
-                    if (axis.Index == 0)
-                        label.m_position.X -= (int)Math.Round((0.5 - 0.5 * Math.Sin(m_camera.Phi % Math.PI)) * labelSize.Width);
-                    else {    
-                        if (m_camera.Rho <= pi05) 
-                            label.m_position.X -= (int)Math.Round((0.5 - 0.5 * Math.Cos(m_camera.Phi % Math.PI)) * labelSize.Width);
-                        else 
-                            label.m_position.X -= (int)Math.Round((0.5 + 0.5 * Math.Cos(m_camera.Phi % Math.PI)) * labelSize.Width);
-                        //System.Diagnostics.Debug.WriteLine( Math.Cos(m_camera.Phi % Math.PI)); 
-                    }
-                    if (label.m_position.X > ClientSize.Width - label.Padding - labelSize.Width) {
-                        label.Orientation = TextOrientation.Vertical;
-                        label.m_position.X = ticks.m_lineStart.X + tickSize.Width;
-                        label.m_position.Y = (ticks.m_lineEnd.Y + ticks.m_lineStart.Y - labelSize.Width) / 2;
-                        if (label.m_position.Y < ticks.m_lineStart.Y) {
-                            label.m_position.Y = ticks.m_lineStart.Y;
-                        }
-                        if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                            label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                        }
-                    } else {
-                        axis.Label.Orientation = TextOrientation.Horizontal;
-                    }
-                    break;
-                case LabelAlign.Upper:
-                    label.m_position.X = ticks.m_lineEnd.X;
-                    label.m_position.Y = ticks.m_lineEnd.Y
-                                            + tickSize.Height + label.Padding;
-                    if (label.m_position.X > ClientSize.Width - label.Padding - labelSize.Width) {
-                        // vertical 
-                        label.Orientation = TextOrientation.Vertical;
-                        label.m_position.X = ticks.m_lineStart.X + tickSize.Width;
-                        label.m_position.Y = ticks.m_lineEnd.Y - labelSize.Width;
-                        if (label.m_position.Y < ticks.m_lineStart.Y) {
-                            label.m_position.Y = ticks.m_lineStart.Y;
-                        }
-                        if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                            label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                        }
-                    } else {
-                        label.Orientation = TextOrientation.Horizontal;
-                    }
-                    break;
-                default:        // lower 
-                    label.m_position.X = ticks.m_lineStart.X - labelSize.Width;
-                    label.m_position.Y = ticks.m_lineEnd.Y
-                                            + tickSize.Height + label.Padding;
-                    label.Orientation = TextOrientation.Horizontal;
-                    if (label.m_position.X < ticks.m_lineEnd.X) {
-                        // move left until bound is reached
-                        label.m_position.X = ticks.m_lineEnd.X;
-                        if (label.m_position.X > ClientSize.Width - label.Padding - labelSize.Width) {
-                            // vertical 
-                            label.Orientation = TextOrientation.Vertical;
-                            label.m_position.X = ticks.m_lineStart.X + tickSize.Width;
-                            label.m_position.Y = ticks.m_lineStart.Y;
-                            if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                                label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                            }
-                        }
-                    }
-                    break;
-            }
-        }
-        private void axisLabel_TopLeftBottomRight(ILAxis axis) {
-            ILLabel label = axis.Label; 
-            ILTickCollection ticks = axis.LabeledTicks; 
-            Size tickSize = ticks.Size, labelSize = label.Size;
-            switch (label.Alignment) {
-                case LabelAlign.Center:
-                    label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
-                    label.m_position.Y = ticks.m_lineEnd.Y + tickSize.Height;
-                    //System.Diagnostics.Debug.WriteLine(Math.Sin(m_camera.Phi %Math.PI));
-                    if (axis.Index == 0)
-                        label.m_position.X -= (int)Math.Round((0.5 + 0.5 * Math.Sin(m_camera.Phi % Math.PI)) * labelSize.Width);
-                    else if (axis.Index == 1) {
-                        if (m_camera.Rho <= pi05) 
-                            label.m_position.X -= (int)Math.Round((0.5 - 0.5 * Math.Cos(m_camera.Phi % Math.PI)) * labelSize.Width);
-                        else 
-                            label.m_position.X -= (int)Math.Round((0.5 + 0.5 * Math.Cos(m_camera.Phi % Math.PI)) * labelSize.Width);
-                    }
-                    if (label.m_position.X < label.Padding) {
-                        label.Orientation = TextOrientation.Vertical;
-                        label.m_position.X = ticks.m_lineStart.X - tickSize.Width - labelSize.Height;
+            bool horiz = decideLabelHorizontalOrientation(p, m_camera, axis);
+            label.Anchor = new PointF(.5f, 0); 
+            if (horiz) {
+                #region Horizontal
+                label.Orientation = TextOrientation.Horizontal;
+                switch (label.Alignment) {
+                    case LabelAlign.Center:
+                        label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
+                        break;
+                    case LabelAlign.Upper:
+                        label.m_position.X = ticks.m_lineEnd.X + labelSize.Width / 2;
+                        break;
+                    default:        // lower 
+                        label.m_position.X = ticks.m_lineStart.X - labelSize.Width / 2;
+                        break;
+                }
+                label.m_position.Y = ticks.m_lineEnd.Y + tickSize.Height + ticks.Padding + label.Padding;
+                if (label.m_position.X < labelSize.Width / 2)
+                    label.m_position.X = labelSize.Width / 2; 
+                if (label.m_position.X > ClientSize.Width - labelSize.Width / 2 - 1)
+                    label.m_position.X = ClientSize.Width - labelSize.Width / 2 - 1; 
+                #endregion
+            } else {
+                #region Vertical 
+                label.Orientation = TextOrientation.Vertical; 
+                switch (label.Alignment) {
+                    case LabelAlign.Center:
                         label.m_position.Y = (ticks.m_lineEnd.Y + ticks.m_lineStart.Y) / 2;
-                        label.m_position.Y -= (int)(0.5 * labelSize.Width);
-                        if (label.m_position.Y < ticks.m_lineStart.Y) {
-                            label.m_position.Y = ticks.m_lineStart.Y;
-                        }
-                        if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) { 
-                            label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                        }
-                    } else {
-                        axis.Label.Orientation = TextOrientation.Horizontal;
-                    }
+                        break;
+                    case LabelAlign.Upper:
+                        label.m_position.Y = ticks.m_lineEnd.Y - labelSize.Width / 2;
+                        break;
+                    default:        // lower 
+                        label.m_position.Y = ticks.m_lineStart.Y + labelSize.Width / 2; 
+                        break;
+                }
+                label.m_position.X = ticks.m_lineStart.X + tickSize.Width + ticks.Padding + label.Padding;
+                if (label.m_position.Y < labelSize.Width / 2) {
+                    label.m_position.Y = labelSize.Width / 2;
+                }
+                if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width  / 2) {
+                    label.m_position.Y = ClientSize.Height - 1 - labelSize.Width  / 2;
+                }
+                #endregion
+            }
+        }
+        private void axisLabel_TopLeftBottomRight(ILRenderProperties p, ILAxis axis) {
+            ILLabel label = axis.Label;
+            ILTickCollection ticks = axis.LabeledTicks;
+            Size tickSize = ticks.Size, labelSize = label.Size;
+            bool horiz = decideLabelHorizontalOrientation(p, m_camera, axis);
+            label.Anchor = new PointF(.5f, 0); 
+            if (horiz) {
+                #region Horizontal
+                label.Orientation = TextOrientation.Horizontal;
+                switch (label.Alignment) {
+                    case LabelAlign.Center:
+                        label.m_position.X = (ticks.m_lineEnd.X + ticks.m_lineStart.X) / 2;
+                        break;
+                    case LabelAlign.Upper:
+                        label.m_position.X = ticks.m_lineEnd.X - labelSize.Width / 2;
+                        break;
+                    default:        // lower 
+                        label.m_position.X = ticks.m_lineStart.X + labelSize.Width / 2;
+                        break;
+                }
+                label.m_position.Y = ticks.m_lineEnd.Y + tickSize.Height + ticks.Padding + label.Padding;
+                if (label.m_position.X < labelSize.Width / 2) {
+                    label.m_position.X = labelSize.Width / 2;
+                }
+                #endregion
+            } else {
+                #region Vertical
+                label.Orientation = TextOrientation.Vertical;
+                switch (label.Alignment) {
+                    case LabelAlign.Center:
+                        label.m_position.Y = (ticks.m_lineEnd.Y + ticks.m_lineStart.Y) / 2;
+                        break;
+                    case LabelAlign.Upper:
+                        label.m_position.Y = ticks.m_lineEnd.Y - labelSize.Width / 2;
+                        break;
+                    default:        // lower 
+                        label.m_position.Y = ticks.m_lineStart.Y + labelSize.Width / 2;
+                        break;
+                }
+                label.m_position.X = ticks.m_lineStart.X - tickSize.Width - ticks.Padding - label.Padding;
+                if (label.m_position.Y < labelSize.Width / 2) {
+                    label.m_position.Y = labelSize.Width / 2;
+                }
+                if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width / 2) {
+                    label.m_position.Y = ClientSize.Height - 1 - labelSize.Width / 2;
+                }
+                #endregion
+            }
+        }
+
+        // return true if the label needs horizontal orientation
+        private bool decideLabelHorizontalOrientation(ILRenderProperties p, ILCamera m_camera, ILAxis axis) {
+            if (p.Reason == RenderReason.RecalcLabels) {
+                return axis.Label.Orientation == TextOrientation.Horizontal; 
+            }
+            float offX = axis.LabeledTicks.m_lineStart.X - axis.LabeledTicks.m_lineEnd.X;
+            float offY = axis.LabeledTicks.m_lineStart.Y - axis.LabeledTicks.m_lineEnd.Y;
+            return offY * offY < offX * offX;  
+            //if (axis.Index == 0) {
+            //    b = (float)((1.0 - m_camera.SinRho * 0.9) * Math.Sin(m_camera.Phi * 2.0f)); 
+            //} else if (axis.Index == 1) {
+
+            //}
+            //return (m_camera.SinRho >= LABELS_VERTICAL_MIN_RHO
+            //    || Math.Sign(Math.Cos(m_camera.Phi * 2.0)) != (axis.Index * 2 - 1));
+        }
+        private int GetMargin4OptimalLabelX() {
+            return 0; 
+        }
+        private int GetMargin4OptimalLabelY() {
+            return 0;
+        }
+        private Size GetMaxTicLabelSize(Graphics gr) {
+            Size ret = m_axes.MeasureMaxTickLabelSize(gr);    
+            // add label sizes 
+            int maxHeight = 0; 
+            if (m_axes[0].Label.Visible && !String.IsNullOrEmpty(m_axes[0].Label.Text)) {
+                maxHeight = m_axes[0].Label.Size.Height;
+            }
+            if (m_axes[1].Label.Visible && !String.IsNullOrEmpty(m_axes[1].Label.Text)) {
+                if (maxHeight < m_axes[1].Label.Size.Height)
+                    maxHeight = m_axes[1].Label.Size.Height;
+            }
+            if (m_axes[2].Label.Visible && !String.IsNullOrEmpty(m_axes[2].Label.Text)) {
+                if (maxHeight < m_axes[2].Label.Size.Height)
+                    maxHeight = m_axes[2].Label.Size.Height;
+            }
+            ret = new Size(ret.Width + maxHeight, ret.Height + maxHeight); 
+            return ret; 
+        }
+
+        /// <summary>
+        /// calculate the real pixels of the plot cube rectangle for drawing into
+        /// </summary>
+        /// <param name="xSize"></param>
+        /// <param name="ySize"></param>
+        private void updatePlotCubeScreenRect(float xSize, float ySize, Size tickLabelMargins) {
+            switch (PlotBoxScreenSizeMode) {
+                //case PlotCubeScreenSizeMode.Maximum: // <- will be done in PlotCubeScreenSizeMode.set()
+                //    m_plotCubeScreenRectF = new RectangleF(0.0f, 0.0f, 1.0f, 1.0f); 
+                //    break;
+                case PlotBoxScreenSizeMode.Optimal:
+                case PlotBoxScreenSizeMode.StrictOptimal:
+                    float saveX, saveY;
+                    saveX = ((float)tickLabelMargins.Width / ClientSize.Width);
+                    if (saveX < 0) saveX = 0;
+                    if (saveX > 1) saveX = 1;
+                    saveY = ((float)tickLabelMargins.Height / ClientSize.Height);
+                    if (saveY < 0) saveY = 0;
+                    if (saveY > 1) saveY = 1; 
+                    m_plotBoxScreenRectF = new RectangleF(saveX, saveY, 1f - (2 * saveX), 1f - (2 * saveY));
                     break;
-                case LabelAlign.Upper:
-                    label.m_position.X = ticks.m_lineEnd.X - labelSize.Width;
-                    label.m_position.Y = ticks.m_lineEnd.Y
-                                            + tickSize.Height + label.Padding;
-                    if (label.m_position.X < label.Padding) {
-                        // vertical 
-                        label.Orientation = TextOrientation.Vertical;
-                        label.m_position.X = ticks.m_lineStart.X - tickSize.Width - labelSize.Height;
-                        label.m_position.Y = ticks.m_lineEnd.Y - labelSize.Width + tickSize.Height;
-                        if (label.m_position.Y < ticks.m_lineStart.Y) {
-                            label.m_position.Y = ticks.m_lineStart.Y;
-                        }
-                        if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                            label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                        }
-                    } else {
-                        label.Orientation = TextOrientation.Horizontal;
-                    }
-                    break;
-                default:        // lower 
-                    label.m_position.X = ticks.m_lineStart.X;
-                    label.m_position.Y = ticks.m_lineEnd.Y
-                                            + tickSize.Height + label.Padding;
-                    label.Orientation = TextOrientation.Horizontal;
-                    if (label.m_position.X + labelSize.Width > ticks.m_lineEnd.X) {
-                        // move left until bound is reached
-                        label.m_position.X = ticks.m_lineEnd.X - labelSize.Width;
-                        if (label.m_position.X < label.Padding) {
-                            // vertical 
-                            label.Orientation = TextOrientation.Vertical;
-                            label.m_position.X = ticks.m_lineStart.X - tickSize.Width - labelSize.Height;
-                            label.m_position.Y = ticks.m_lineStart.Y;
-                            if (label.m_position.Y < ticks.m_lineStart.Y) {
-                                label.m_position.Y = ticks.m_lineStart.Y;
-                            }
-                            if (label.m_position.Y > ClientSize.Height - 1 - labelSize.Width - label.Padding) {
-                                label.m_position.Y = ClientSize.Height - 1 - labelSize.Width - label.Padding;
-                            }
-                        }
-                    }
+                default: // manual: use predefined PlotCubeScreenRectF
                     break;
             }
         }
 
+        private void updateLabelPositions(ILRenderProperties p) {
+            positionZAxisLabel(m_axes[2]);
+            switch (m_camera.Quadrant) {
+                case CameraQuadrant.TopRightFront:
+                    axisLabel_TopLeftBottomRight(p, m_axes[0]);
+                    // special case: 2D view? 
+                    if (m_camera.SinPhi < 1e-5 && m_camera.SinRho < 1e-5) {
+                        axisLabelVertical2D(m_axes[1]);
+                    } else {
+                        axisLabel_BottomLeftTopRight(p, m_axes[1]);
+                    }
+                    break;
+                case CameraQuadrant.TopRightBack:
+                    axisLabel_TopRightBottomLeft(p, m_axes[0]);
+                    axisLabel_TopLeftBottomRight(p, m_axes[1]);
+                    break;
+                case CameraQuadrant.TopLeftFront:
+                    axisLabel_BottomLeftTopRight(p, m_axes[0]);
+                    axisLabel_BottomRightTopLeft(p, m_axes[1]);
+                    break;
+                case CameraQuadrant.TopLeftBack:
+                    axisLabel_BottomRightTopLeft(p, m_axes[0]);
+                    axisLabel_TopRightBottomLeft(p, m_axes[1]);
+                    break;
+                case CameraQuadrant.BottomLeftFront:
+                    axisLabel_TopLeftBottomRight(p, m_axes[0]);
+                    axisLabel_TopRightBottomLeft(p, m_axes[1]);
+                    break;
+                case CameraQuadrant.BottomLeftBack:
+                    axisLabel_TopRightBottomLeft(p, m_axes[0]);
+                    axisLabel_BottomRightTopLeft(p, m_axes[1]);
+                    break;
+                case CameraQuadrant.BottomRightBack:
+                    axisLabel_BottomRightTopLeft(p, m_axes[0]);
+                    axisLabel_BottomLeftTopRight(p, m_axes[1]);
+                    break;
+                case CameraQuadrant.BottomRightFront:
+                    axisLabel_BottomLeftTopRight(p, m_axes[0]);
+                    axisLabel_TopLeftBottomRight(p, m_axes[1]);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void updateTickLabelLines() {
+            // determine tick label lines
+            ILTickCollection ticks = m_axes[2].LabeledTicks;
+            ticks.m_anchor = GetZTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd);
+            ticks = m_axes[1].LabeledTicks;
+            ticks.m_anchor = GetYTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd);
+            ticks = m_axes[0].LabeledTicks;
+            ticks.m_anchor = GetXTickLabelLine(out ticks.m_lineStart, out ticks.m_lineEnd);
+        }
         #endregion
 
         #region factory member
@@ -1816,5 +1900,7 @@ namespace ILNumerics.Drawing.Controls {
         /// <remarks>derived types may return GL dependend factory</remarks>
         public abstract IILCreationFactory GetCreationFactory(); 
         #endregion
+
+
     }
 }

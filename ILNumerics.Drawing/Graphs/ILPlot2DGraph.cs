@@ -88,7 +88,8 @@ namespace ILNumerics.Drawing.Graphs {
         /// <summary>
         /// Invalidate the graph after vertex data have been changed.
         /// </summary>
-        public void Invalidate() {
+        public override void Invalidate() {
+            base.Invalidate(); 
             updateClipping();  
             OnChanged("Data"); 
         }
@@ -248,6 +249,19 @@ namespace ILNumerics.Drawing.Graphs {
         /// (re-)configure vertex ressources etc.</remarks>
         protected virtual void m_properties_Changed(object sender, EventArgs e) {
             m_isReady = false;
+        }
+        public override bool Is3DGraph() {
+            return false;
+        }
+        #endregion
+
+        #region IILPanelConfigurator
+        public override void ConfigurePanel(ILPanel panel) {
+            panel.InteractiveMode = InteractiveModes.ZoomRectangle;
+            panel.AspectRatio = AspectRatioMode.StretchToFill;
+            panel.PlotBoxScreenSizeMode = PlotBoxScreenSizeMode.StrictOptimal;
+            panel.ClipViewData = true;
+            panel.DefaultView.Set(0f, 0f, panel.DefaultView.Distance);
         }
         #endregion
 

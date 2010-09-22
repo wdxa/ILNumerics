@@ -211,31 +211,33 @@ namespace ILNumerics.Drawing.Collections {
             }
         }
         internal Size MeasureMaxTickLabelSize(Graphics gr) {
-            Size max = m_maximumSize; 
+            Size max = new Size(); 
             for (int i = 0; i < m_axes.Length; i++) {
                 if (m_axes[i].Visible) {
-                    Size tmp = m_axes[i].LabeledTicks.Size; 
-                    if (tmp.Height > max.Height) {
-                        max.Height = tmp.Height; 
+                    int pad = 2 * m_axes[i].LabeledTicks.Padding; 
+                    int x = m_axes[i].LabeledTicks.Size.Width + pad;
+                    int y = m_axes[i].LabeledTicks.Size.Height + pad; 
+                    if (y > max.Height) {
+                        max.Height = y; 
                     }
-                    if (tmp.Width > max.Width) {
-                        max.Width = tmp.Width; 
+                    if (x > max.Width) {
+                        max.Width = x; 
                     }
                 }
             }
-            if (max.Width > m_maximumSize.Width || max.Height > m_maximumSize.Height) {
-                m_maximumSize = max; 
-                m_optimizeCounter = 0; 
-                return max; 
-            } else if (max.Width < m_maximumSize.Width 
-                || max.Height < m_maximumSize.Height) {
-                if (++m_optimizeCounter > 10) {
-                    m_maximumSize = max; 
-                    m_optimizeCounter = 0; 
-                    return max; 
-                } 
-            }
-            return m_maximumSize;
+            //if (max.Width > m_maximumSize.Width || max.Height > m_maximumSize.Height) {
+            //    m_maximumSize = max; 
+            //    m_optimizeCounter = 0; 
+            //    return max; 
+            //} else if (max.Width < m_maximumSize.Width 
+            //    || max.Height < m_maximumSize.Height) {
+            //    if (++m_optimizeCounter > 10) {
+            //        m_maximumSize = max; 
+            //        m_optimizeCounter = 0; 
+            //        return max; 
+            //    } 
+            //}
+            return max;
         }
         #endregion
     }

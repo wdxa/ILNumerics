@@ -26,7 +26,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading; 
+using System.Threading;
+using ILNumerics.Drawing.Controls; 
 
 namespace ILNumerics.Drawing.Misc {
     public class ILZoomAction : ILAction {
@@ -37,21 +38,21 @@ namespace ILNumerics.Drawing.Misc {
         ILPoint3Df m_MaxCornerEnd; 
         ILActionRamp m_ramp; 
         int m_currentStep; 
-        ILClippingData m_target; 
+        ILPanel m_panel; 
 
         public ILZoomAction(ILPoint3Df MinCornerStart,
                             ILPoint3Df MinCornerEnd,
                             ILPoint3Df MaxCornerStart,
                             ILPoint3Df MaxCornerEnd, 
                             ILActionRamp ramp,
-                            ILClippingData target) 
+                            ILPanel panel) 
         : base () {
             m_MaxCornerEnd = ILPoint3Df.Max(MinCornerEnd,MaxCornerEnd);
             m_MaxCornerStart = ILPoint3Df.Max(MinCornerStart,MaxCornerStart); 
             m_MinCornerEnd = ILPoint3Df.Min(MinCornerEnd,MaxCornerEnd);
             m_MinCornerStart = ILPoint3Df.Min(MinCornerStart,MaxCornerStart);
             m_ramp = ramp; 
-            m_target = target; 
+            m_panel = panel; 
         }
 
         protected override void RunInternal(object parameter) {
@@ -77,7 +78,8 @@ namespace ILNumerics.Drawing.Misc {
                             x2 + aMaxX * elem.Value,
                             y2 + aMaxY * elem.Value,
                             z2 + aMaxZ * elem.Value); 
-                m_target.Set(min,max); 
+                m_panel.Limits.Set(min,max);
+                m_panel.Refresh(); 
                 if (m_canceled) return; 
                 Thread.Sleep((int)(elem.Duration * 1000)); 
             }

@@ -24,23 +24,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics; 
 using System.Drawing;
-using System.Drawing.Imaging; 
-using System.Data;
-using System.Text;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 using ILNumerics.Exceptions;
 using ILNumerics.Drawing.Controls;
-using ILNumerics.BuiltInFunctions; 
-using ILNumerics.Drawing.Graphs; 
-using ILNumerics.Drawing.Platform.OpenGL; 
+using ILNumerics.Drawing.Graphs;
 using ILNumerics.Drawing.Lighting; 
-using ILNumerics.Drawing.Interfaces; 
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Graphics.OpenGL.Enums;
+using ILNumerics.Drawing.Interfaces;
 using OpenTK.Graphics;
 using OpenTK.Platform; 
 using OpenTK;
@@ -62,12 +53,11 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         private const float Sqrt2 = 1.4142135623730950488016887242097f;
         double[] m_projMatrix = new double[16]; 
         double[] m_modelViewMatrix = new double[16];
-        double[] m_clipplanes = new double[24]; 
         int[] m_viewMatrix = new int[16]; 
         float[] m_selectionVertices = new float[32];  // V2F format, interleaved
         int m_errorCount = 0; 
         private readonly int MAXERRORLOGCOUNT = 100; 
-        protected bool m_polyOffsetEnable = true; 
+        protected bool m_polyOffsetEnable = true;
         /// <summary>
         /// Gets an interface to the underlying GraphicsContext used by this GLControl.
         /// </summary>
@@ -117,12 +107,6 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             m_format = GraphicsMode.Default;
-            m_clipplanes[0] = -1.0; m_clipplanes[3] = 0.5; 
-            m_clipplanes[4] = 1.0; m_clipplanes[7] = 0.5;
-            m_clipplanes[9] = 1.0; m_clipplanes[11] = 0.5;
-            m_clipplanes[13] = -1.0; m_clipplanes[15] = 0.5;
-            m_clipplanes[18] = 1; m_clipplanes[19] = 0.5;
-            m_clipplanes[22] = -1.0; m_clipplanes[23] = 0.5;
 
             if (Configuration.RunningOnWindows)
                 m_implementation = new OpenTK.Platform.Windows.WinGLControl(m_format, this);
@@ -196,52 +180,67 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// <summary>
         /// set up viewport, projection and modelview matrices
         /// </summary>
-        protected override void UpdateMatrices() {
-            MakeCurrent();
+        protected override void UpdateMatrices(float width2D, float height2D, float zDepth) {
+            if (ClientSize.IsEmpty) return;
+            if (m_plotBoxScreenRectF.Size.IsEmpty) return;
+
+            float worldSceneWidth;
+            float worldSceneHeight;
+            ILPoint3Df camPos = m_camera.Position;
+            ILPoint3Df top;
+            ILPoint3Df moveOffset;
+            helperUpdateMatrices(width2D, height2D, out worldSceneWidth, out worldSceneHeight, out top, out moveOffset);
+            
             #region projection 
             GL.MatrixMode(MatrixMode.Projection); 
-            GL.LoadIdentity(); 
-            // at this point, the semi-global layout data's object cubeWorld parameter must have been updated already!!
+            GL.LoadIdentity();
+
+            float nearPlane = Math.Max(0.1f, m_camera.Distance - m_clippingView.SphereRadius);
+            float farPlane = m_camera.Distance + m_clippingView.SphereRadius;
             if (m_projection == Projection.Perspective) {
-                float angle = (float)Math.Atan2(m_cubeHeight / 2.0f, (m_camera.Distance - 0.5)) * 2.0f;
-                Glu.Perspective( angle / Math.PI * 180, (double) m_cubeWidth / m_cubeHeight,
-                                 0.01,m_camera.Distance+2.0f); 
-                //GL.Frustum(-xSize/2.0,xSize/2.0,-ySize/2.0,ySize/2.0,0.0,2.0);
-                //Glu.LookAt(new Vector3(0f,0f,2f),new Vector3(0f,0f,0f),new Vector3(0f,1f,0f));
+                float angle = (float)Math.Atan2(worldSceneHeight / 2.0f, m_camera.Distance - (zDepth / 2)) * 2.0f;
+                Glu.Perspective(angle / Math.PI * 180, (double)worldSceneWidth / worldSceneHeight,
+                                 nearPlane, farPlane); 
             } else {
-                GL.Ortho(-m_cubeWidth/2.0 ,m_cubeWidth/2.0
-                    ,-m_cubeHeight/2.0 ,m_cubeHeight/2.0
-                    ,-10.0,12.0);
+                GL.Ortho(
+                      -worldSceneWidth / 2.0, worldSceneWidth / 2.0
+                    , -worldSceneHeight / 2.0, worldSceneHeight / 2.0
+                    , nearPlane, farPlane);
             }
             GL.GetDouble(GetPName.ProjectionMatrix,m_projMatrix);
             // set viewport 
             GL.Viewport(0,0,ClientSize.Width,ClientSize.Height);
             GL.GetInteger(GetPName.Viewport,m_viewMatrix);
             #endregion
+
             #region modelview
-            GL.MatrixMode(MatrixMode.Modelview); 
+            MakeCurrent();
+            GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
-            GL.Translate(0.0f,0.0f,-m_camera.Distance); 
-            GL.Rotate(-m_camera.Rho/Math.PI * 180,1.0,0.0,0.0); 
-            // 0° for cameras phi equals to 0° for OpenGL !! (90° rel. to X-axis CW)
-            GL.Rotate(-m_camera.Phi/Math.PI * 180,0.0,0.0,1.0);  
-            //GL.Scale(1.0f,1.0f,1.0f); 
-            GL.GetDouble(GetPName.ModelviewMatrix,m_modelViewMatrix); 
+            //top = ILPoint3Df.normalize(top);
+            Glu.LookAt(camPos.X, camPos.Y, camPos.Z
+                      , m_camera.LookAt.X, m_camera.LookAt.Y, m_camera.LookAt.Z
+                      , m_camera.Top.X, m_camera.Top.Y, m_camera.Top.Z);
+            GL.Translate(moveOffset.X,moveOffset.Y,moveOffset.Z); 
+            GL.GetDouble(GetPName.ModelviewMatrix, m_modelViewMatrix);
             #endregion
+
         }
-        
+
+        protected override void iRenderingState1(ILRenderProperties p) {
+            MakeCurrent();
+        }
         /// <summary>
         /// Render the OpenGL scene
         /// </summary>
         /// <param name="g"></param>
-        protected override void RenderScene(ILRenderProperties p) {
-            MakeCurrent(); 
-            base.RenderScene(p);  // update layoutData object + call UpdateMatrices() 
+        protected override void iRenderingState2(ILRenderProperties p) {
+
             if (m_context == null || (!m_active && !m_drawHidden))
                 return;
             try {
-                System.Diagnostics.Debug.WriteLine(String.Format("ILOGLPanel{0}: RenderScene, Thread={1}"
-                        ,this.GetHashCode(), System.Threading.Thread.CurrentThread.GetHashCode())); 
+                //System.Diagnostics.Debug.WriteLine(String.Format("ILOGLPanel{0}: RenderScene, Thread={1}"
+                //        ,this.GetHashCode(), System.Threading.Thread.CurrentThread.GetHashCode())); 
                 // draw background
                 GL.ClearColor(m_backColor);
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -250,8 +249,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 if (m_fillBackground)
                     renderBackground(); 
                 GL.Enable(EnableCap.Blend);
-                GL.MatrixMode(MatrixMode.Modelview);
-                GL.PushMatrix();
+                //GL.MatrixMode(MatrixMode.Modelview);
+                //GL.PushMatrix();
                 if (m_polyOffsetEnable) {
                     GL.Enable(EnableCap.PolygonOffsetFill); 
                 } else {
@@ -264,74 +263,88 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 if (m_camera.SinRho > 1e-5)
                     m_axes.ZAxis.RenderState1(p);
 
-                #region enable clipping planes
-                if (m_renderProperties.Clipping) {
-                    unsafe { fixed (double* pClip = m_clipplanes) {
-                        GL.ClipPlane(ClipPlaneName.ClipPlane0,pClip);
-                        GL.ClipPlane(ClipPlaneName.ClipPlane1,pClip+4);
-                        GL.ClipPlane(ClipPlaneName.ClipPlane2,pClip+8);
-                        GL.ClipPlane(ClipPlaneName.ClipPlane3,pClip+12);
-                        GL.ClipPlane(ClipPlaneName.ClipPlane4,pClip+16);
-                        GL.ClipPlane(ClipPlaneName.ClipPlane5,pClip+20);
-                        GL.Enable(EnableCap.ClipPlane0); 
-                        GL.Enable(EnableCap.ClipPlane1); 
-                        GL.Enable(EnableCap.ClipPlane2); 
-                        GL.Enable(EnableCap.ClipPlane3);
-                        GL.Enable(EnableCap.ClipPlane4); 
-                        GL.Enable(EnableCap.ClipPlane5);
-                    }} 
-                }
-                #endregion
-                // draw all graphs
-                GL.MatrixMode(MatrixMode.Modelview);
-                ILPoint3Df ab = m_clippingView.CenterToUnitCube();
-                GL.Translate(ab.X, ab.Y, ab.Z);
-                ab = m_clippingView.ScaleToUnitCube();
-                GL.Scale(ab.X, ab.Y, ab.Z); //Identity; //RotationZ(m_cameraPhi); 
+                if ((m_plotBoxScreenSizeMode != PlotBoxScreenSizeMode.StrictOptimal)
+                    || (p.PassCount > 0)) {
 
-                #region lighting
-                if (m_mustReconfigureLight) {
-                    m_mustReconfigureLight = false;
-                    if (m_lights.Enabled) {
-                        float[] tmpF = new float[4]; tmpF[3] = 1.0f;
-                        foreach (ILLight light in m_lights) {
-                            EnableCap lightID = EnableCap.Light0 + light.Index;
-                            if (!light.Enabled) {
-                                GL.Disable(lightID);
-                                continue;
+                    #region enable clipping planes
+                    if (m_renderProperties.Clipping) {
+                        unsafe {
+                            fixed (double* pClip = m_clipplanes) {
+                                if (m_clippingView.WidthF > 0) {
+                                    GL.ClipPlane(ClipPlaneName.ClipPlane0, pClip);
+                                    GL.ClipPlane(ClipPlaneName.ClipPlane1, pClip + 4);
+                                    GL.Enable(EnableCap.ClipPlane0);
+                                    GL.Enable(EnableCap.ClipPlane1);
+                                }
+                                if (m_clippingView.HeightF > 0) {
+                                    GL.ClipPlane(ClipPlaneName.ClipPlane2, pClip + 8);
+                                    GL.ClipPlane(ClipPlaneName.ClipPlane3, pClip + 12);
+                                    GL.Enable(EnableCap.ClipPlane2);
+                                    GL.Enable(EnableCap.ClipPlane3);
+                                }
+                                if (m_clippingView.DepthF > 0) {
+                                    GL.ClipPlane(ClipPlaneName.ClipPlane4, pClip + 16);
+                                    GL.ClipPlane(ClipPlaneName.ClipPlane5, pClip + 20);
+                                    GL.Enable(EnableCap.ClipPlane4);
+                                    GL.Enable(EnableCap.ClipPlane5);
+                                }
                             }
-                            GL.Enable(lightID);
-                            tmpF[0] = light.Position.X;
-                            tmpF[1] = light.Position.Y;
-                            tmpF[2] = light.Position.Z;
-                            GL.Lightv((LightName)lightID, LightParameter.Position, tmpF);
-                            tmpF[0] = (float)light.Ambient.R / 255;
-                            tmpF[1] = (float)light.Ambient.G / 255;
-                            tmpF[2] = (float)light.Ambient.B / 255;
-                            GL.Lightv((LightName)lightID, LightParameter.Ambient, tmpF);
-                            tmpF[0] = (float)light.Specular.R / 255;
-                            tmpF[1] = (float)light.Specular.G / 255;
-                            tmpF[2] = (float)light.Specular.B / 255;
-                            GL.Lightv((LightName)lightID, LightParameter.Specular, tmpF);
-                            tmpF[0] = (float)light.Diffuse.R / 255;
-                            tmpF[1] = (float)light.Diffuse.G / 255;
-                            tmpF[2] = (float)light.Diffuse.B / 255;
-                            GL.Lightv((LightName)lightID, LightParameter.Diffuse, tmpF);
                         }
                     }
-                }
-                #endregion
+                    #endregion
+                    // draw all graphs
+                    //GL.MatrixMode(MatrixMode.Modelview);
+                    //ILPoint3Df ab = m_clippingView.CenterToUnitCube();
+                    //GL.Translate(ab.X, ab.Y, ab.Z);
+                    //ab = m_clippingView.ScaleToUnitCube();
+                    //GL.Scale(ab.X, ab.Y, ab.Z); //Identity; //RotationZ(m_cameraPhi); 
 
+                    #region lighting
+                    if (m_mustReconfigureLight) {
+                        m_mustReconfigureLight = false;
+                        if (m_lights.Enabled) {
+                            float[] tmpF = new float[4]; tmpF[3] = 1.0f;
+                            foreach (ILLight light in m_lights) {
+                                EnableCap lightID = EnableCap.Light0 + light.Index;
+                                if (!light.Enabled) {
+                                    GL.Disable(lightID);
+                                    continue;
+                                }
+                                GL.Enable(lightID);
+                                tmpF[0] = light.Position.X;
+                                tmpF[1] = light.Position.Y;
+                                tmpF[2] = light.Position.Z;
+                                GL.Lightv((LightName)lightID, LightParameter.Position, tmpF);
+                                tmpF[0] = (float)light.Ambient.R / 255;
+                                tmpF[1] = (float)light.Ambient.G / 255;
+                                tmpF[2] = (float)light.Ambient.B / 255;
+                                GL.Lightv((LightName)lightID, LightParameter.Ambient, tmpF);
+                                tmpF[0] = (float)light.Specular.R / 255;
+                                tmpF[1] = (float)light.Specular.G / 255;
+                                tmpF[2] = (float)light.Specular.B / 255;
+                                GL.Lightv((LightName)lightID, LightParameter.Specular, tmpF);
+                                tmpF[0] = (float)light.Diffuse.R / 255;
+                                tmpF[1] = (float)light.Diffuse.G / 255;
+                                tmpF[2] = (float)light.Diffuse.B / 255;
+                                GL.Lightv((LightName)lightID, LightParameter.Diffuse, tmpF);
+                            }
+                        }
+                    }
+                    #endregion
 
-                // Easy sorting - this expects a few graphs in the collection only.
-                // For situations, where a large number of graphs need to be sorted here, 
-                // one may implement sorting in the way it is done in ILSceneGraph 
-                // (via ILNumerics.ILArray and ILMath.sort). 
-                m_graphs.Sort(new ILNumerics.Drawing.Misc.ILGraphComparer(m_camera.Position)); 
-                foreach (ILGraph graph in m_graphs) {
-                    try {
-                        graph.Draw(p);
-                    } catch (Exception e) {
+                    #region graph rendering
+                    // Easy sorting - this expects a few graphs in the collection only.
+                    // For situations, where a large number of graphs need to be sorted here, 
+                    // one may implement sorting in the way it is done in ILSceneGraph 
+                    // (via ILNumerics.ILArray and ILMath.sort). 
+                    
+                    //m_graphs.Sort(new ILNumerics.Drawing.Misc.ILGraphComparer());
+                    m_sortingCacheList.Clear(); 
+                    m_graphs.GetSortedList4Render(m_camera, m_sortingCacheList);
+                    foreach (ILGraph graph in m_sortingCacheList) {
+                        try {
+                            graph.Draw(p);
+                        } catch (Exception e) {
 #if TRACE
                         m_errorCount++; 
                         if (m_errorCount < MAXERRORLOGCOUNT) {
@@ -340,36 +353,51 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                             System.Diagnostics.Trace.TraceError(String.Format("(more than {0} errors. Further reporting disabled.)",m_errorCount)); 
                         }
 #endif
+                        }
                     }
+                    #endregion
+
+                    #region world label test, please delete me
+                    //ILNumerics.Drawing.Labeling.ILLabel label = new ILNumerics.Drawing.Labeling.ILLabel(this); 
+                    //label.Position = new Point(0,0); 
+                    //label.Text = "World"; 
+                    //label.Renderer = TextRendererManager.GetDefault(CoordSystem.World3D); 
+                    //label.Draw(g); 
+                    #endregion
+
+                    #region disable clipping planes
+                    GL.Disable(EnableCap.ClipPlane0);
+                    GL.Disable(EnableCap.ClipPlane1);
+                    GL.Disable(EnableCap.ClipPlane2);
+                    GL.Disable(EnableCap.ClipPlane3);
+                    GL.Disable(EnableCap.ClipPlane4);
+                    GL.Disable(EnableCap.ClipPlane5);
+                    #endregion disable clipping planes
+
                 }
-
-                #region world label test, please delete me
-                //ILNumerics.Drawing.Labeling.ILLabel label = new ILNumerics.Drawing.Labeling.ILLabel(this); 
-                //label.Position = new Point(0,0); 
-                //label.Text = "World"; 
-                //label.Renderer = TextRendererManager.GetDefault(CoordSystem.World3D); 
-                //label.Draw(g); 
-                #endregion
-
-                #region disable clipping planes 
-                GL.Disable(EnableCap.ClipPlane0); 
-                GL.Disable(EnableCap.ClipPlane1); 
-                GL.Disable(EnableCap.ClipPlane2); 
-                GL.Disable(EnableCap.ClipPlane3); 
-                GL.Disable(EnableCap.ClipPlane4); 
-                GL.Disable(EnableCap.ClipPlane5); 
-                #endregion disable clipping planes
                 // render front axis 
-                GL.MatrixMode(MatrixMode.Modelview); 
-                GL.PopMatrix(); 
+                //GL.MatrixMode(MatrixMode.Modelview); 
+                //GL.PopMatrix(); 
                 GL.Enable(EnableCap.Blend);
                 GL.Enable(EnableCap.LineSmooth);
                 m_axes.XAxis.RenderState2(p);
                 m_axes.YAxis.RenderState2(p);
                 if (m_camera.SinRho > 1e-5)
                     m_axes.ZAxis.RenderState2(p);
-                p.Graphics = null; 
-                m_legend.Draw(p, Rectangle.Empty); 
+
+            } catch (Exception e) { 
+                // TODO: implement exception handling 
+            } 
+        }
+        /// <summary>
+        /// swap buffers and finalize rendering
+        /// </summary>
+        /// <param name="p"></param>
+        protected override void iRenderingState3(ILRenderProperties p) {
+
+            try {
+                p.Graphics = null;
+                m_legend.Draw(p, Rectangle.Empty);
 
                 #region screen label test, please delete me
                 //label = new ILNumerics.Drawing.Labeling.ILLabel(this); 
@@ -379,15 +407,42 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 //label.Draw(g); 
                 #endregion
 
-                GL.MatrixMode(MatrixMode.Modelview);
-                if (m_selectingMode == InteractiveModes.ZoomRectangle && m_isMoving) 
+                //GL.MatrixMode(MatrixMode.Modelview);
+                if (m_selectingMode == InteractiveModes.ZoomRectangle && m_isMoving)
                     drawSelectionRect(PointToClient(MousePosition));
+
+#if DRAWPLOTCUBESCREENRECT
+                #region
+                float[] viewport = new float[4];
+                GL.GetFloat(GetPName.Viewport, viewport);
+                GL.MatrixMode(MatrixMode.Projection);
+                GL.PushMatrix();
+                GL.LoadIdentity();
+                GL.Ortho(viewport[0], viewport[2], viewport[3], viewport[1], -1.0, 1.0);
+                GL.MatrixMode(MatrixMode.Modelview);
+                GL.PushMatrix();
+                GL.LoadIdentity();
+                GL.Color3(Color.LightGray);
+                GL.LineWidth(1f);
+                GL.Begin(BeginMode.LineLoop);
+                GL.Vertex2(m_plotBoxScreenRectF.Left * ClientSize.Width, m_plotBoxScreenRectF.Top * ClientSize.Height);
+                GL.Vertex2(m_plotBoxScreenRectF.Right * ClientSize.Width, m_plotBoxScreenRectF.Top * ClientSize.Height);
+                GL.Vertex2(m_plotBoxScreenRectF.Right * ClientSize.Width, m_plotBoxScreenRectF.Bottom * ClientSize.Height);
+                GL.Vertex2(m_plotBoxScreenRectF.Left * ClientSize.Width, m_plotBoxScreenRectF.Bottom * ClientSize.Height);
+                GL.End();
+                GL.PopMatrix();
+                GL.MatrixMode(MatrixMode.Projection);
+                GL.PopMatrix();
+                #endregion
+
+#endif
                 //GL.Finish();
                 // update model matrix (to be avilable for zooming etc.)
-                GL.GetDouble(GetPName.ModelviewMatrix,m_modelViewMatrix);
+                //GL.GetDouble(GetPName.ModelviewMatrix,m_modelViewMatrix);
 
-                #region DEBUG texture drawing
+
 #if DRAWTEXTURESHEET
+                #region
                 // prepare GL
                 float[] viewport = new float[4]; 
                 GL.GetFloat(GetPName.Viewport, viewport);
@@ -414,8 +469,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 GL.TexCoord2(1,1); 
                 GL.Vertex2(ClientSize.Width,ClientSize.Height/2);      // tr
                 GL.End();
-#endif
                 #endregion
+#endif
 
                 SwapBuffers();
                 m_axes.XAxis.RenderState3(p);
@@ -424,15 +479,14 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     m_axes.ZAxis.RenderState3(p);
 
                 if (false) {
-                    p.Graphics.DrawLine(new Pen(new SolidBrush(Color.Red)),m_axes[0].Label.m_position,m_axes[0].Label.m_position);  
-                    p.Graphics.DrawLine(new Pen(new SolidBrush(Color.Green)),m_axes[1].Label.m_position,m_axes[0].Label.m_position);  
-                    p.Graphics.DrawLine(new Pen(new SolidBrush(Color.Blue)),m_axes[2].Label.m_position,m_axes[0].Label.m_position);  
+                    p.Graphics.DrawLine(new Pen(new SolidBrush(Color.Red)), m_axes[0].Label.m_position, m_axes[0].Label.m_position);
+                    p.Graphics.DrawLine(new Pen(new SolidBrush(Color.Green)), m_axes[1].Label.m_position, m_axes[0].Label.m_position);
+                    p.Graphics.DrawLine(new Pen(new SolidBrush(Color.Blue)), m_axes[2].Label.m_position, m_axes[0].Label.m_position);
                 }
-            } catch (Exception e) { 
-                // TODO: implement exception handling 
-            } 
+            } catch (Exception exc) {
+                // todo: exception handling
+            }
         }
-
         /// <summary>
         /// draws the selection rectangle va OpenGL (rather than GDI in base class)
         /// </summary>
@@ -519,8 +573,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 m_context.MakeCurrent(m_implementation.WindowInfo);
         }
 
-        public override void DrawToBitmap(Bitmap bitmap, Rectangle bounds) {
-            RenderScene(null);
+        public override void DrawToBitmap(Bitmap bitmap, Rectangle bounds) {   
+            RenderScene(m_renderProperties);
             BitmapData bmpData = bitmap.LockBits(bounds,ImageLockMode.ReadWrite,
                                  System.Drawing.Imaging.PixelFormat.Format24bppRgb); 
             // reset any changes to pixel store
@@ -638,7 +692,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Triangles);
                     ret.UseLight = true;
                 } else if (shape is ILLitSphere) {
-                    ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Quads);
+                    ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Triangles);
                     ret.UseLight = true;
                 } else if (shape is ILLitTriangles) {
                     ret = new ILOGLVertexRendererC4fN3fV3f(BeginMode.Triangles);
@@ -659,23 +713,17 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
 
         #region public methods
 
-        public override Point Transform(ILPoint3Df world) {
+        public override Point World2Screen(ILPoint3Df world) {
             Vector3 w = new Vector3(world.X, world.Y, world.Z);
             Vector3 screen;
             Glu.Project(w,m_modelViewMatrix, m_projMatrix, m_viewMatrix, out screen);
             return new Point((int)screen.X,(int)(ClientSize.Height - screen.Y));
         }
-        public override Point Transform(ILPoint3Df world, double[] modelview) {
+        public override Point World2Screen(ILPoint3Df world, double[] modelview) {
             Vector3 w = new Vector3(world.X, world.Y, world.Z);
             Vector3 screen;
             Glu.Project(w,modelview, m_projMatrix, m_viewMatrix, out screen);
             return new Point((int)screen.X,(int)(ClientSize.Height - screen.Y));
-        }
-        protected override void Configure() {
-            foreach (ILGraph graph in m_graphs) {
-                graph.Configure(); 
-            }
-            m_ready = true; 
         }
 
         public static void SetupLineStyle(ILLineProperties wireprops) {
@@ -728,16 +776,16 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         public override void Screen2World(int x, int y, out ILPoint3Df nearClip, out ILPoint3Df farClip) {
             // TODO: check the Z coord values. 0.68 here was result of trial only! 
             Vector3 far,near; 
-            Glu.UnProject(new Vector3(x, y, 1.0f),m_modelViewMatrix, m_projMatrix, m_viewMatrix, out near);
-            Glu.UnProject(new Vector3(x, y, 0.0f),m_modelViewMatrix, m_projMatrix, m_viewMatrix, out far);
+            Glu.UnProject(new Vector3(x, y, 0.0f),m_modelViewMatrix, m_projMatrix, m_viewMatrix, out near);
+            Glu.UnProject(new Vector3(x, y, 1.0f),m_modelViewMatrix, m_projMatrix, m_viewMatrix, out far);
             // transform back from unit cube to clipping view
-            farClip = m_clippingView.Map(far.X, far.Y, far.Z);
-            nearClip = m_clippingView.Map(near.X, near.Y, near.Z);
+            farClip = new ILPoint3Df(far.X,far.Y,far.Z);  //m_clippingView.Map(far.X, far.Y, far.Z);
+            nearClip = new ILPoint3Df(near.X, near.Y, near.Z); //m_clippingView.Map(near.X, near.Y, near.Z);
         }
         public override ILPoint3Df Screen2World2D(int x, int y) {
             Vector3 tmp;
             Glu.UnProject(new Vector3(x, y, 0), m_modelViewMatrix, m_projMatrix, m_viewMatrix, out tmp);
-            return m_clippingView.Map(tmp.X, tmp.Y, m_clippingView.CenterF.Z);
+            return new ILPoint3Df(tmp.X, tmp.Y, m_clippingView.CenterF.Z); 
         }
         
         #endregion
@@ -747,48 +795,54 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             //determine, which edges are in the back, fill with cube background color
             GL.Begin(BeginMode.TriangleStrip);
             GL.Color3(m_cubeBGColor);
+            float xmin = m_clippingView.XMin;
+            float xmax = m_clippingView.XMax;
+            float ymin = m_clippingView.YMin;
+            float ymax = m_clippingView.YMax;
+            float zmin = m_clippingView.ZMin;
+            float zmax = m_clippingView.ZMax;
             if (!m_camera.LooksFromLeft) {
                 if (m_camera.LooksFromFront) {
                     // left & back border
-                    GL.Vertex3(-0.5f,-0.5f,-0.5f);       
-                    GL.Vertex3(-0.5f,-0.5f,0.5f);       
-                    GL.Vertex3(-0.5f,0.5f,-0.5f);       
-                    GL.Vertex3(-0.5f,0.5f,0.5f);       
-                    GL.Vertex3(0.5f,0.5f,-0.5f);       
-                    GL.Vertex3(0.5f,0.5f,0.5f);       
+                    GL.Vertex3(xmin,ymin,zmin);       
+                    GL.Vertex3(xmin,ymin,zmax);       
+                    GL.Vertex3(xmin,ymax,zmin);       
+                    GL.Vertex3(xmin,ymax,zmax);       
+                    GL.Vertex3(xmax,ymax,zmin);       
+                    GL.Vertex3(xmax,ymax,zmax);       
                 } else {
-                    GL.Vertex3(-0.5f,0.5f,-0.5f);    //   
-                    GL.Vertex3(-0.5f,0.5f,0.5f);       
-                    GL.Vertex3(-0.5f,-0.5f,-0.5f);       
-                    GL.Vertex3(-0.5f,-0.5f,0.5f);       
-                    GL.Vertex3(0.5f,-0.5f,-0.5f);       
-                    GL.Vertex3(0.5f,-0.5f,0.5f);       
+                    GL.Vertex3(xmin,ymax,zmin);    //   
+                    GL.Vertex3(xmin,ymax,zmax);       
+                    GL.Vertex3(xmin,ymin,zmin);       
+                    GL.Vertex3(xmin,ymin,zmax);       
+                    GL.Vertex3(xmax,ymin,zmin);       
+                    GL.Vertex3(xmax,ymin,zmax);       
                 }
             } else {
                 if (!m_camera.LooksFromFront) {
-                    GL.Vertex3(-0.5f,-0.5f,-0.5f);       
-                    GL.Vertex3(-0.5f,-0.5f,0.5f);       
-                    GL.Vertex3(0.5f,-0.5f,-0.5f);       
-                    GL.Vertex3(0.5f,-0.5f,0.5f);       
-                    GL.Vertex3(0.5f,0.5f,-0.5f);       
-                    GL.Vertex3(0.5f,0.5f,0.5f);       
+                    GL.Vertex3(xmin,ymin,zmin);       
+                    GL.Vertex3(xmin,ymin,zmax);       
+                    GL.Vertex3(xmax,ymin,zmin);       
+                    GL.Vertex3(xmax,ymin,zmax);       
+                    GL.Vertex3(xmax,ymax,zmin);       
+                    GL.Vertex3(xmax,ymax,zmax);       
                 } else {
-                    GL.Vertex3(-0.5f,0.5f,-0.5f);       
-                    GL.Vertex3(-0.5f,0.5f,0.5f);       
-                    GL.Vertex3(0.5f,0.5f,-0.5f);       
-                    GL.Vertex3(0.5f,0.5f,0.5f);       
-                    GL.Vertex3(0.5f,-0.5f,-0.5f);       
-                    GL.Vertex3(0.5f,-0.5f,0.5f);       
+                    GL.Vertex3(xmin,ymax,zmin);       
+                    GL.Vertex3(xmin,ymax,zmax);       
+                    GL.Vertex3(xmax,ymax,zmin);       
+                    GL.Vertex3(xmax,ymax,zmax);       
+                    GL.Vertex3(xmax,ymin,zmin);       
+                    GL.Vertex3(xmax,ymin,zmax);       
                 }
             }
             GL.End();
             // draw bottom 
             if (m_camera.LooksFromTop) {
                 GL.Begin(BeginMode.TriangleStrip); 
-                GL.Vertex3(-0.5f,-0.5f,-0.5f); 
-                GL.Vertex3(0.5f,-0.5f,-0.5f); 
-                GL.Vertex3(-0.5f,0.5f,-0.5f); 
-                GL.Vertex3(0.5f,0.5f,-0.5f); 
+                GL.Vertex3(xmin,ymin,zmin); 
+                GL.Vertex3(xmax,ymin,zmin); 
+                GL.Vertex3(xmin,ymax,zmin); 
+                GL.Vertex3(xmax,ymax,zmin); 
                 GL.End(); 
             }
         }

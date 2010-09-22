@@ -100,7 +100,7 @@ namespace ILNumerics.Drawing.Lighting {
         public ILLight (int index) {
             m_enabled = index == 0; 
             m_index = index; 
-            Position = new ILPoint3Df(-10f,-100f,200);
+            Position = new ILPoint3Df(100f,100f,100);
             Specular = Color.FromArgb(255,255,255);
             Ambient = Color.FromArgb(90,90,90); 
             Diffuse = Color.FromArgb(160,160,160);  

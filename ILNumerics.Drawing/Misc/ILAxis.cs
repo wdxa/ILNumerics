@@ -35,7 +35,7 @@ using ILNumerics.Drawing.Controls;
 
 namespace ILNumerics.Drawing {
     /// <summary>
-    /// Axis object for subfigures - Do not directly instantiate this class!
+    /// Axis object for ILPanel
     /// </summary>
     public abstract class ILAxis : IDisposable {
 
@@ -54,10 +54,19 @@ namespace ILNumerics.Drawing {
         protected bool m_visible = true; 
         protected bool m_invalidated = true; 
         protected ILLayoutData m_layoutData; 
-        private ILLabeledTickProvider m_labelProvider; 
+        private ILLabeledTickProvider m_labelProvider;
+        protected ILPanel m_panel; 
         #endregion 
 
         #region properties
+
+        /// <summary>
+        /// Panel hosting the axis (readonly)
+        /// </summary>
+        ILPanel Panel {
+            get { return m_panel; }
+        }
+
         /// <summary>
         /// Used to retrieve/specify the delegate computing nice labels for axis
         /// </summary>
@@ -217,6 +226,7 @@ namespace ILNumerics.Drawing {
         /// created by the derived ILPanel object (ILDXPanel or ILOGLPanel).</remarks>
         public ILAxis (AxisNames name, ILClippingData clippingView,
                        ILLayoutData layoutData,ILPanel panel) {
+            m_panel = panel; 
             m_axisName = name; 
             m_labeledTicks = new ILTickCollection(panel,m_axisName);
             m_layoutData = layoutData; 
@@ -281,9 +291,11 @@ namespace ILNumerics.Drawing {
         /// draw this axis in the back (behind the graphs)
         /// </summary>
         /// <remarks>This method is used internally. There should be no need to call it directly.</remarks>
-        public virtual void RenderState1(ILRenderProperties p) {
-            if (m_invalidated) 
-                Configure(p); 
+        internal virtual void RenderState1(ILRenderProperties p) {
+            if (m_invalidated) {
+                Configure(p);
+                p.Canceled = true;
+            }
             if (!m_labeledTicks.Renderer.DrawAfterBufferSwapped)
                 iDrawTickLabels(p); 
             if (!m_label.Renderer.DrawAfterBufferSwapped) 
@@ -295,8 +307,8 @@ namespace ILNumerics.Drawing {
         /// </summary>
         /// <param name="g"></param>
         public virtual void RenderState2(ILRenderProperties p) {
-            if (m_invalidated) 
-                Configure(p); 
+            //if (m_invalidated) 
+            //    Configure(p); 
             iDrawAxis(p,false); 
         }
         /// <summary>
@@ -315,8 +327,9 @@ namespace ILNumerics.Drawing {
         /// </summary>
         /// <remarks>This method is used internally. There should be no need to call it directly.</remarks>
         internal virtual void Configure(ILRenderProperties p) {
+            if (p.PassCount > 0) return;
             if (m_labeledTicks.Mode == TickMode.Auto) {
-                int tickCount = GetOptimalTickNumber(p); 
+                int tickCount = GetMaxTickCount(p); 
                 if (m_labelProvider != null) {
                     string format = String.Format("g{0}",m_labeledTicks.Precision); 
                     m_labeledTicks.Replace(
@@ -344,8 +357,8 @@ namespace ILNumerics.Drawing {
         /// number of ticks optimally fitting on screen 
         /// </summary>
         /// <returns>optimal number of ticks for this axis</returns>
-        internal int GetOptimalTickNumber(ILRenderProperties p) {
-            System.Diagnostics.Debug.Assert(m_labeledTicks.Mode == TickMode.Auto); 
+        internal int GetMaxTickCount(ILRenderProperties p) {
+            //System.Diagnostics.Debug.Assert(m_labeledTicks.Mode == TickMode.Auto); 
             SizeF rect = m_labeledTicks.Size; 
             Point s = new Point(),e = new Point();
             s = m_labeledTicks.m_lineStart; 

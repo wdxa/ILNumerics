@@ -39,7 +39,7 @@ namespace ILNumerics.Drawing.Graphs {
     /// graph for drawings into ILPanel
     /// </summary>
     /// <remarks>Use the ILGraphCollection returned from ILPanel.Graphs and its Add... functions to create new graphs.</remarks>
-    public abstract class ILGraph : IDisposable {
+    public abstract class ILGraph : IDisposable, IILPanelConfigurator {
 
         #region events 
         
@@ -104,7 +104,7 @@ namespace ILNumerics.Drawing.Graphs {
             // store incoming data arrays as ILArray<float>
             //m_sourceArray = sourceArray.CreateReference();
             m_label = new ILLabel(m_panel);
-            m_label.Color = Color.White; 
+            m_label.Color = Color.Black; 
             m_label.Changed += new EventHandler(m_label_Changed);
             m_isReady = false;
         }
@@ -115,15 +115,7 @@ namespace ILNumerics.Drawing.Graphs {
         #region event handler 
         
         protected virtual void m_localClipping_Changed(object sender, ClippingChangedEventArgs e) {
-            //// update global clipping if local clipping have changed
-            //if (AutoFitContent) {
-            //    // .. fit to panel
-            //    m_globalClipping.Set(e.ClippingData.Min, e.ClippingData.Max);
-            //    m_panel.ResetView(false);
-            //} else {
-            //    // only make areas outside current view cube visible
-            //    m_globalClipping.Update(e.ClippingData);
-            //}
+            // override this event in derived class, if neccessary
         }
         protected virtual void m_globalClipping_Changed(object sender, ClippingChangedEventArgs e) {
             // override this event in derived class, if neccessary
@@ -160,6 +152,18 @@ namespace ILNumerics.Drawing.Graphs {
                 m_label.Dispose(); 
             }
         }
+        /// <summary>
+        /// determine general type of graph (2D/3D) 
+        /// </summary>
+        /// <returns>true for 3D graphs (f.e. surf, scene graph) and false for 2D graphs (plot2D)</returns>
+        public abstract bool Is3DGraph();
+
+        /// <summary>
+        /// configure cetain (optionally) properties when adding this graph 
+        /// </summary>
+        /// <param name="panel">the panel to get configured by the graph</param>
+        public abstract void ConfigurePanel(ILPanel panel); 
+
         #endregion
 
     }

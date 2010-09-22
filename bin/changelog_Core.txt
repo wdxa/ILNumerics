@@ -1,3 +1,15 @@
+Changes in version 1.4.09
+=========================
+* switched to .NET 3.5/ VS2008
+* refinements to complex.ToString() (contributed)
+* refinements to ILArray.ToString() (contributed)
+* made public internal QuickSort public
+* bugfix: sequential index access on reference arrays failed in certain situations
+
+Changes in version 1.4.08
+==========================
+(skipped)
+
 Changes in version 1.4.07
 ==========================
 * added builtin function: atan2

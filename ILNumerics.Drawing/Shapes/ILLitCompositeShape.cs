@@ -55,7 +55,7 @@ namespace ILNumerics.Drawing.Shapes {
                     throw new InvalidOperationException(
                             "'auto normals' needs at least 3 vertices per primitive!"); 
                 m_autoNormals = value;
-                if (value) Configure(); 
+                if (value) Invalidate(); 
             }
         }
         #endregion
@@ -111,7 +111,7 @@ namespace ILNumerics.Drawing.Shapes {
         #region private helpers
         #endregion
 
-        private class Computation : ILMath {
+        protected class Computation : ILMath {
 
             public static Dictionary<int, List<int>> CreateShapeIndicesIndex(ILArray<int> shapeIndices) {
                 Dictionary<int, List<int>> ret = new Dictionary<int, List<int>>();
@@ -155,15 +155,15 @@ namespace ILNumerics.Drawing.Shapes {
                 DateTime startSorting = DateTime.Now; 
                 System.Diagnostics.Debug.WriteLine("Normals Calculation: cross products in " + crossDone.TotalMilliseconds.ToString() + "ms"); 
 #endif
-                // find all shapes using this vertex
+                // find all facettes using this vertex
                 for (int i = 0; i < vertices.Length; i++) {
                     if (!shapeIndicesIndex.ContainsKey(i)) continue;  
                     ILPoint3Df normal = new ILPoint3Df(); 
                     foreach (int shapeIdx in shapeIndicesIndex[i]) {
                         normal += snormals[shapeIdx];                         
                     }
-                    // we let OpenGL normalize the normals...
-                    vertices[i].Normal = normal; // / (float)Math.Sqrt(normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z);
+                    // or should we let OpenGL normalize the normals...?
+                    vertices[i].Normal = ILPoint3Df.normalize(normal);
 
                     //System.Diagnostics.Debug.Assert(
                     //    Math.Abs(Math.Sqrt(

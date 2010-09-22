@@ -80,6 +80,7 @@ namespace ILNumerics.Drawing.Collections {
         #endregion
 
         #region attributes
+        private int m_ticksAllowOverlap = 10; 
         private List<LabeledTick> m_ticks; 
         private TickDisplay m_tickDisplay; 
         private AxisNames m_axisName;
@@ -98,6 +99,14 @@ namespace ILNumerics.Drawing.Collections {
         #endregion
 
         #region properties
+        /// <summary>
+        /// determine the max number of pixels allowing a tic labels to be rendered inside the padding area of the next label 
+        /// </summary>
+        public int TicksAllowOverlap {
+            get { return m_ticksAllowOverlap; }
+            set { m_ticksAllowOverlap = value; }
+        }
+
         /// <summary>
         /// Get the prefered placement for tick labels or sets it
         /// </summary>
@@ -266,7 +275,7 @@ namespace ILNumerics.Drawing.Collections {
             m_ticks = new List<LabeledTick>(); 
             m_axisName = axisName; 
             m_precision = 4;
-            m_padding = 8; 
+            m_padding = 5; 
             m_tickColorFar = Color.Black; 
             m_tickColorNear = Color.Black; 
             m_tickDisplay = TickDisplay.LabelSide; 
@@ -382,6 +391,7 @@ namespace ILNumerics.Drawing.Collections {
         /// <param name="tickCount">maximum number of ticks</param>
         public void CreateAuto(float min, float max, int tickCount) {
             float dist = max - min;
+            tickCount = 50;
             string format = String.Format("g{0}",m_precision); 
             // find the range for values we are dealing with.
             // ( 'ex' is the power of 10, which should be varied )
@@ -458,9 +468,10 @@ namespace ILNumerics.Drawing.Collections {
             return ret; 
         }
 
-        public void  Draw(ILRenderProperties p, float min, float max) {
+        public void Draw(ILRenderProperties p, float min, float max) {
             m_renderer.Begin(p); 
             float clipRange = max - min; 
+            
             ILPoint3Df mult = new ILPoint3Df(
                         ((float)(m_lineEnd.X - m_lineStart.X) / clipRange),
                         ((float)(m_lineEnd.Y - m_lineStart.Y) / clipRange),
@@ -482,13 +493,32 @@ namespace ILNumerics.Drawing.Collections {
                     newHSize.Y = (int)(lt.Queue.Size.Height / 2.0f);
                     newMidPoint.X = point.X + newHSize.X; 
                     newMidPoint.Y = point.Y + newHSize.Y; 
-                    if (m_tickMode != TickMode.Auto || 
-                        ( Math.Abs(newMidPoint.X + newHSize.X - oldMidPoint.X - oldHSize.X) > m_padding || 
-                          Math.Abs(newMidPoint.Y + newHSize.Y - oldMidPoint.Y - oldHSize.Y) > m_padding)) {
-                            m_renderer.Draw(lt.Queue,point,m_orientation,m_color); 
-                            oldMidPoint = newMidPoint; 
-                            oldHSize = newHSize; 
-                    } 
+                    // check distance to last drawn label for tickmode auto (padding)
+                    if (m_tickMode == TickMode.Auto) {
+                        if (oldMidPoint.X != int.MinValue 
+                            && oldMidPoint.Y != int.MinValue) {
+
+                            float distX = Math.Abs(newMidPoint.X - oldMidPoint.X);
+                            float distY = Math.Abs(newMidPoint.Y - oldMidPoint.Y);
+                            if (distX < (m_padding + oldHSize.X + newHSize.X) - m_ticksAllowOverlap &&
+                                distY < (m_padding + oldHSize.Y + newHSize.Y) - m_ticksAllowOverlap) {
+                                //m_ticks.Remove(lt); 
+                                continue;
+                            }
+                        } 
+                        // bookmark outer rendering limits 
+                        if (newMidPoint.X - newHSize.X < p.MinX)
+                            p.MinX = newMidPoint.X - newHSize.X;
+                        if (newMidPoint.Y - newHSize.Y < p.MinY)
+                            p.MinY = newMidPoint.Y - newHSize.Y;
+                        if (newMidPoint.X + newHSize.X > p.MaxX)
+                            p.MaxX = newMidPoint.X + newHSize.X;
+                        if (newMidPoint.Y + newHSize.Y > p.MaxY)
+                            p.MaxY = newMidPoint.Y + newHSize.Y;
+                    }
+                    m_renderer.Draw(lt.Queue, point, m_orientation, m_color);
+                    oldMidPoint = newMidPoint;
+                    oldHSize = newHSize;
                 }
             } 
             m_renderer.End(p); 
@@ -653,10 +683,12 @@ namespace ILNumerics.Drawing.Collections {
         private static double niceNumber(double val, bool round) {
             int expv; 
             double f;                                /* fractional part of x */
-            double nf;                                /* nice, rounded fraction */
+            double nf;                               /* nice, rounded fraction */
+            double aval = Math.Abs(val); 
+            double sign = Math.Sign(val); 
 
-            expv = (int)Math.Floor(Math.Log10(val));
-            f = val/Math.Pow(10, expv);                /* between 1 and 10 */
+            expv = (int)Math.Floor(Math.Log10(aval));
+            f = aval/Math.Pow(10, expv);                /* between 1 and 10 */
             if (round) {
                 if (f<1.5) nf = 1;
                 else if (f<3) nf = 2;
@@ -668,10 +700,9 @@ namespace ILNumerics.Drawing.Collections {
                 else if (f<=5) nf = 5;
                 else nf = 10;
             }
-            return (nf* Math.Pow(10, expv));
+            return (nf * Math.Pow(10, expv) * sign);
         }
         private static List<float> loose_label(float min,float max, int numberTicks) {
-            int nfrac;
             double d;                                /* tick mark spacing */
             double graphmin, graphmax;                /* graph range min and max */
             double range, x;
@@ -679,12 +710,14 @@ namespace ILNumerics.Drawing.Collections {
             /* we expect min!=max */
             range = niceNumber(max-min, false);
             d = niceNumber(range/(Math.Min(numberTicks,10)-1), true);
-            graphmin = Math.Floor(min/d)*d;
-            graphmax = Math.Ceiling(max/d)*d;
-            nfrac = (int)Math.Max(-Math.Floor(Math.Log10(d)), 0);
-            List<float> ticks = new List<float>(); 
+            double exp = Math.Pow(10,Math.Floor(Math.Log10(max - min)));
+            graphmin = Math.Floor(min / exp) * exp;  
+
+                // Math.Min(niceNumber(min - d,true),niceNumber(min - d,false));
+            //graphmax = Math.Min(niceNumber(max - d, true), niceNumber(max + d, false));
+            List<float> ticks = new List<float>();  
             //ticks.Add(nfrac);
-            for (x=graphmin; x<graphmax+.5*d; x=(float)(Math.Round((x+d)/d)*d)) {
+            for (x = graphmin; x <= max; x = (float)(Math.Round((x + d) / d) * d)) {
                 //x = (float)(Math.Round(x/d)*d); 
                 ticks.Add((float)x);
                 if (ticks.Count > 20) break; //emergency exit if range is in floating point range

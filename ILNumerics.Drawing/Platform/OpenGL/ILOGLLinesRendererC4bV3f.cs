@@ -64,10 +64,9 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             }
 
         }
-        public override void Draw(ILRenderProperties props, ILShape shape, ILArray<int> indices) {
-            System.Diagnostics.Debug.Assert(indices != null && indices.IsVector); 
+        public override void Draw(ILRenderProperties props, ILShape shape, int[] indices) {
+            System.Diagnostics.Debug.Assert(indices != null); 
             GL.Enable(EnableCap.DepthTest);
-            if (indices.IsReference) indices.Detach(); 
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc (BlendingFactorSrc.SrcAlpha,
                           BlendingFactorDest.OneMinusSrcAlpha); 
@@ -76,7 +75,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 ILOGLPanel.SetupLineStyle((cShape as ILLines).Properties);
                 GL.Disable(EnableCap.DepthTest); 
             } 
-            fixed (int* pIndices = indices.InternalArray4Experts) 
+            fixed (int* pIndices = indices) 
             fixed (C4bV3f* pVertices = cShape.Vertices) {
                 GL.InterleavedArrays(InterleavedArrayFormat.C4ubV3f, 0, (IntPtr)pVertices);
                 if (cShape.Shading == ShadingStyles.Interpolate)

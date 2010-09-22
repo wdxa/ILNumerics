@@ -143,7 +143,7 @@ namespace ILNumerics.Drawing.Plots {
              //m_topLabel.Font = new Font("Arial", 10, FontStyle.Bold);
              string tval = max.Z.ToString("F2");
              m_topLabel.Text =  String.Format("{0}",tval);
-             m_topLabel.Alignment = TickLabelAlign.bottom | TickLabelAlign.center; 
+             m_topLabel.Anchor = new PointF(0.5f, 1); 
 
              m_topColor = topColor;
 

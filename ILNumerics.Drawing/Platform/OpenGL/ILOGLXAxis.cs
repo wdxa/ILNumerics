@@ -62,9 +62,15 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             // create vertex data: main axis and ticks 
             if (m_visible) { 
                 int count = 8; float tickLen;
-                float scale,offse,x,y,z;
-                tickLen = m_labeledTicks.TickFraction 
-                    * ((m_labeledTicks.Direction == TickDirection.Inside)? 1.0f : -1.0f);
+                float scale,offse,x,y,z
+                    ,xmin = m_clipping.XMin
+                    ,xmax = m_clipping.XMax
+                    ,ymin = m_clipping.YMin
+                    ,ymax = m_clipping.YMax
+                    ,zmin = m_clipping.ZMin
+                    ,zmax = m_clipping.ZMax;
+                tickLen = m_labeledTicks.TickFraction
+                    * ((m_labeledTicks.Direction == TickDirection.Inside) ? m_clipping.HeightF : -m_clipping.HeightF);
                 // must draw ticks? 
                 bool drawticks = false, drawLines = false; 
                 if (m_labeledTicks.Display == TickDisplay.BothSides) {
@@ -73,20 +79,20 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                     drawticks = (background && !m_layoutData.CameraPosition.LooksFromTop) 
                               ||(!background && m_layoutData.CameraPosition.LooksFromTop);  
                 }
-                x = -0.5f; z = -0.5f; 
+                x = xmin; z = zmin; 
                 // determine which axis to draw: find front
                 if (!m_layoutData.CameraPosition.LooksFromFront) {
                     tickLen *= -1.0f; 
-                    y = 0.5f; 
+                    y = ymax; 
                 } else {
-                    y = -0.5f; 
+                    y = ymin; 
                 }
                 if (background) {
                     if (m_farLines.Visible) {
                         ILOGLPanel.SetupLineStyle(m_farLines);
                         drawLines = true;
                     }
-                    y *= -1.0f; 
+                    if (y == ymax) y = ymin; else y = ymax; 
                     GL.Disable(EnableCap.DepthTest);
                     tickLen *= -1.0f;
                 } else {
@@ -98,12 +104,12 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 if (drawLines) {
                     GL.Begin(BeginMode.Lines); 
                     GL.Vertex3(x,y,z); 
-                    x = 0.5f;
+                    x = xmax;
                     GL.Vertex3(x,y,z); 
                     if (m_layoutData.CameraPosition.SinRho > 1e-5) {
-                        z = 0.5f; 
+                        z = zmax; 
                         GL.Vertex3(x,y,z); 
-                        x = -0.5f;
+                        x = xmin;
                         GL.Vertex3(x,y,z); 
                     }
                     GL.End();
@@ -125,19 +131,23 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                             GL.Color3(m_labeledTicks.NearColor); 
 
                     }
-                    scale = m_clipping.ScaleToUnitCube().X; 
-                    offse = m_clipping.CenterToUnitCube().X; 
+                    //scale = m_clipping.ScaleToUnitCube().X; 
+                    //offse = m_clipping.CenterToUnitCube().X; 
                     GL.Disable(EnableCap.LineStipple); 
                     GL.Begin(BeginMode.Lines);
                     foreach (LabeledTick tick in m_labeledTicks) {
-                        if (tick.Position >= m_clipping.XMin 
-                            && tick.Position <= m_clipping.XMax) {
-                            x = tick.Position * scale + offse; 
-                            z = 0.5f; 
-                            GL.Vertex3(x,y,z); 
-                            y += tickLen; 
-                            GL.Vertex3(x,y,z); 
-                            z = -0.5f; 
+                        if (tick.Position >= xmin 
+                            && tick.Position <= xmax) {
+                            x = tick.Position;
+                            if (m_layoutData.CameraPosition.SinRho > 1e-5) {
+                                z = zmax;
+                                GL.Vertex3(x, y, z);
+                                y += tickLen;
+                                GL.Vertex3(x, y, z);
+                            } else {
+                                y += tickLen;
+                            }
+                            z = zmin; 
                             GL.Vertex3(x,y,z); 
                             y -= tickLen; 
                             GL.Vertex3(x,y,z);
@@ -156,32 +166,37 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// </summary>
         protected override void drawGrid() {
             float x,y,z;
-            float scale, offset; 
+            float zmax = m_clipping.ZMax;
+            float zmin = m_clipping.ZMin;
+            float ymin = m_clipping.YMin;
+            float ymax = m_clipping.YMax;
             bool drawBottom = m_layoutData.CameraPosition.LooksFromTop; 
             ILOGLPanel.SetupLineStyle(m_grid); 
             GL.Disable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend); 
             GL.Begin(BeginMode.Lines);
             if (m_layoutData.CameraPosition.LooksFromFront) {
-                y = 0.5f; 
+                y = ymax; 
             } else {
-                y = -0.5f; 
+                y = ymin; 
             }
-            scale = m_clipping.ScaleToUnitCube().X; 
-            offset = m_clipping.CenterToUnitCube().X; 
             foreach (LabeledTick tick in m_labeledTicks) {
                 if (tick.Position > m_clipping.XMin 
                     && tick.Position < m_clipping.XMax) {
-                    x = tick.Position * scale + offset; 
-                    z = 0.5f; 
-                    GL.Vertex3(x,y,z); 
-                    z = -0.5f; 
-                    GL.Vertex3(x,y,z);
+                    x = tick.Position;
+                    if (!m_layoutData.CameraPosition.Is2DView) {
+                        z = zmax;
+                        GL.Vertex3(x, y, z);
+                        z = zmin;
+                        GL.Vertex3(x, y, z);
+                    } else {
+                        z = zmin; 
+                    }
                     if (drawBottom) {
                         GL.Vertex3(x,y,z);
-                        y *= -1.0f; 
-                        GL.Vertex3(x,y,z); 
-                        y *= -1.0f; 
+                        if (y == ymin) y = ymax; else y = ymin; 
+                        GL.Vertex3(x,y,z);
+                        if (y == ymin) y = ymax; else y = ymin; 
                     }
                 }
             }            

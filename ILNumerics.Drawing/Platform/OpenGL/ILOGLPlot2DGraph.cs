@@ -142,8 +142,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL
             //GL.Vertex2(sampleArea.Right,sampleArea.Bottom); 
             //GL.Vertex2(sampleArea.Left,sampleArea.Bottom); 
             m_label.m_position.X = labelArea.X + labelArea.Width / 2;
-            m_label.m_position.Y = labelArea.Y + labelArea.Height / 2; 
-            m_label.m_alignment = TickLabelAlign.center | TickLabelAlign.vertCenter; 
+            m_label.m_position.Y = labelArea.Y + labelArea.Height / 2;
+            m_label.Anchor = new PointF(.5f, .5f);  //  = TickLabelAlign.center | TickLabelAlign.vertCenter; 
             m_label.Draw(p); 
         }
         #endregion

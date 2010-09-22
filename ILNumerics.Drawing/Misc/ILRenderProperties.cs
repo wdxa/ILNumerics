@@ -6,7 +6,7 @@
 //  Copyright (C) 2007, H. Kutschbach, http://ilnumerics.net 
 //
 //  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
+//  it under the terms of the GNU General Public License as published by 
 //  the Free Software Foundation, either version 3 of the License, or
 //  any later version.
 //
@@ -37,6 +37,23 @@ namespace ILNumerics.Drawing {
     public class ILRenderProperties {  
         public ILCamera Camera; 
         public bool Clipping; 
-        public System.Drawing.Graphics Graphics; 
+        public System.Drawing.Graphics Graphics;
+        public bool Canceled = false;
+        internal RenderReason Reason;
+        public int MinX;
+        public int MaxX;
+        public int MinY;
+        public int MaxY;
+        public int PassCount = 0;
+
+        public ILRenderProperties Reset() {
+            PassCount = 0;
+            Reason = RenderReason.PaintEvent;
+            MinX = int.MaxValue;
+            MinY = int.MaxValue;
+            MaxX = int.MinValue;
+            MaxY = int.MinValue;
+            return this; 
+        }
     }
 }

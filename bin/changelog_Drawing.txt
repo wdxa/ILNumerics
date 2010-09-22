@@ -1,8 +1,31 @@
-Changes in version 0.12.13
+Changes in version 0.13.01
 ===========================
 * hides labeled ticks also when hiding axis main lines
 * ILLitSurface: option to update X and Y values as well
 * added line properties for ILLines also
+* hides edge tick lines in 2D mode
+* renamed ILPanel.Transform -> ILPanel.World2Screen
+* added new shape: ILLitSphere via triangularization
+* ILLabel.Anchor, repl. ILTickLabelAlign
+* bugfix: ILPanel.DrawToBitmap()
+* Zoom actions more robust
+* lots of documentation
+* added ILPanel.PlotBoxScreenRect
+* added ILPanel.PlotBoxScreenSizeMode
+* added ILPanel.AspectRatio
+* switched to .NET 3.5/ VS2008
+* improved sorting of graphs for rendering
+* general performance tunings
+* added ILTickCollection.TicksAllowOverlap
+* some tick label tuning
+* added DefaultView handling for ILPanel (AutoDefaultView)
+* rebuilt rendering section (ILPanel,ILRenderProperties)
+* added ILLabel.Visible property
+* added ILCamera.Top
+* added ILCamera.LookAt
+
+
+
 
 Changes in version 0.12.12
 ===========================

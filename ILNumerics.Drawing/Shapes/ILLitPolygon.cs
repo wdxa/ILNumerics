@@ -26,14 +26,26 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing; 
+using ILNumerics.Drawing; 
 using ILNumerics.Drawing.Controls; 
+using ILNumerics.Drawing.Misc;
+using ILNumerics.Drawing.Graphs;  
 using ILNumerics.Drawing.Interfaces; 
+using ILNumerics.Drawing.Shapes; 
 
 namespace ILNumerics.Drawing.Shapes {
-    public abstract class ILVertexRenderer {
-        public abstract void Draw(ILRenderProperties props, ILShape shape); 
-        public abstract void Draw(ILRenderProperties props, ILShape shape, int[] indices); 
-        public bool UseLight = false; 
-        public bool CloseLines = true; 
+    /// <summary>
+    /// A simple lit polygon, rendering arbitrary number of corners, bordered, supports light
+    /// </summary>
+    public class ILLitPolygon : ILLitBorderedShape<C4bV3f> {
+
+        #region constructors
+        public ILLitPolygon (ILPanel panel, int numVertices) 
+            : base (panel,numVertices) { 
+            
+        }
+        #endregion
+
     }
 }

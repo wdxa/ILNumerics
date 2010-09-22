@@ -118,5 +118,8 @@ namespace ILNumerics.Drawing.Shapes {
                 }
             }
         }
+        protected override void IntConfigure() {
+            // nothing to do ...
+        }
     }
 }

@@ -69,8 +69,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 float s05x; 
                 float s05y; 
                 //if (m_marker.)
-                s05x = Math.Abs(marker.Size * clip.WidthF / (m_panel.ClientSize.Width - m_panel.m_cubeMargin * 2)); 
-                s05y = Math.Abs(marker.Size * clip.HeightF / (m_panel.ClientSize.Height - m_panel.m_cubeMargin * 2)); 
+                s05x = Math.Abs(marker.Size * clip.WidthF / (m_panel.ClientSize.Width)); 
+                s05y = Math.Abs(marker.Size * clip.HeightF / (m_panel.ClientSize.Height)); 
 
                 #endregion
                 // draw all markers using quads. 

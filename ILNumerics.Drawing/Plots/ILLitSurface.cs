@@ -36,7 +36,7 @@ using ILNumerics.Drawing.Misc;
 using ILNumerics.BuiltInFunctions; 
 using ILNumerics.Drawing.Labeling;
 
-namespace ILNumerics.Drawing.Graphs {
+namespace ILNumerics.Drawing.Plots {
     /// <summary>
     /// Surface graph supporting light and transparency
     /// </summary>
@@ -46,8 +46,19 @@ namespace ILNumerics.Drawing.Graphs {
         protected ILArray<float> m_xVals;
         protected ILArray<float> m_yVals; 
         protected ILArray<float> m_zVals;
+        protected byte m_opacity = 255;  
         ILLitQuads m_quads;
 
+        /// <summary>
+        /// Overall opacity for the surface 
+        /// </summary>
+        public byte Opacity {
+            get { return m_opacity; }
+            set { 
+                m_opacity = value;
+                Invalidate(); 
+            }
+        }
         /// <summary>
         /// colormap used for coloring the surface 
         /// </summary>
@@ -130,6 +141,7 @@ namespace ILNumerics.Drawing.Graphs {
         public ILLitQuads Quads {
             get { return m_quads; }
         }
+
         /// <summary>
         /// create new lit surface, provide data array Z
         /// </summary>
@@ -141,6 +153,7 @@ namespace ILNumerics.Drawing.Graphs {
             if (Z == null || Z.Dimensions[0] < 2 || Z.Dimensions[1] < 2)
                 throw new ArgumentException("invalid parameter size: Z");
             m_quads = new ILLitQuads(panel, Z.Dimensions.NumberOfElements);
+            m_quads.Label.Text = ""; 
             m_quads.Shading = ShadingStyles.Interpolate;
             Add(m_quads);
             m_colorMap = colormap;
@@ -164,12 +177,13 @@ namespace ILNumerics.Drawing.Graphs {
             if (Y == null || !Y.Dimensions.IsSameSize(Z.Dimensions))
                 throw new ArgumentException("invalid parameter size: Y");
             m_quads = new ILLitQuads(panel, Z.Dimensions.NumberOfElements);
+            m_quads.Label.Text = ""; 
             m_quads.Shading = ShadingStyles.Interpolate;
             Add(m_quads);
             m_colorMap = colormap;
+            ZValues = Z; 
             XValues = X;
             YValues = Y;
-            ZValues = Z; 
 
             Invalidate();
         }
@@ -185,7 +199,7 @@ namespace ILNumerics.Drawing.Graphs {
             if (m_invalidated) {
                 m_quads.Indices = Computation.configureVertices(
                                 m_xVals,m_yVals,
-                                m_zVals, m_colorMap, m_quads.Vertices);
+                                m_zVals, m_colorMap, m_quads.Vertices, m_opacity);
                 m_quads.Invalidate();
                 m_quads.Configure();
                 m_invalidated = false; 
@@ -196,7 +210,7 @@ namespace ILNumerics.Drawing.Graphs {
         private class Computation : ILMath {
             public static ILArray<int> configureVertices(
                     ILArray<float> xVals, ILArray<float> yVals,
-                    ILArray<float> zVals, ILColormap cmap, C4fN3fV3f[] Vertices) {
+                    ILArray<float> zVals, ILColormap cmap, C4fN3fV3f[] Vertices, byte opacity) {
                 int i = 0, x, y;
                 float minZ, maxZ;
                 if (!zVals.GetLimits(out minZ, out maxZ))
@@ -216,7 +230,7 @@ namespace ILNumerics.Drawing.Graphs {
                     byte r, g, b;
                     cmap.Map(colors.GetValue(i), out r, out g, out b);
                     v.Color = Color.FromArgb(255, r, g, b);
-                    v.Alpha = 255; 
+                    v.Alpha = opacity; 
                     Vertices[i++] = v;
                     // set next position
                     y--;
@@ -235,10 +249,10 @@ namespace ILNumerics.Drawing.Graphs {
                 mult = mult[":"].T; 
 
                 ret["0;:"] = mult;
-                ret["3;:"] = mult + 1;
+                ret["1;:"] = mult + 1;
                 mult = mult + zVals.Dimensions.SequentialIndexDistance(1); 
                 ret["2;:"] = mult + 1;
-                ret["1;:"] = mult; 
+                ret["3;:"] = mult; 
                 return toint32(ret); 
             }
         }

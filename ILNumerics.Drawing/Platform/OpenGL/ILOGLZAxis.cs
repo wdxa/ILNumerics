@@ -61,10 +61,16 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             // create vertex data: main axis and ticks 
             if (!m_visible) return;  
             int count = 8; float tickLen;
-            float scale,offse,x,y,z;
-            tickLen = m_labeledTicks.TickFraction 
-                * ((m_labeledTicks.Direction == TickDirection.Inside)? 1.0f : -1.0f);
-            ConfigureOGLLineProperties(LineStyle.Solid,1); 
+            float scale, offse, x, y, z
+                    , xmin = m_clipping.XMin
+                    , xmax = m_clipping.XMax
+                    , ymin = m_clipping.YMin
+                    , ymax = m_clipping.YMax
+                    , zmin = m_clipping.ZMin
+                    , zmax = m_clipping.ZMax;
+            tickLen = m_labeledTicks.TickFraction
+                * ((m_labeledTicks.Direction == TickDirection.Inside) ? m_clipping.WidthF : -m_clipping.WidthF);
+            //ConfigureOGLLineProperties(LineStyle.Solid,1); 
             // must draw ticks? 
             bool drawticks,drawlines = false; 
             if (m_labeledTicks.Display == TickDisplay.BothSides) {
@@ -73,49 +79,49 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 drawticks = (background && !m_layoutData.CameraPosition.LooksFromTop) 
                           ||(!background && m_layoutData.CameraPosition.LooksFromTop);  
             }
-            x = -0.5f; y = -0.5f; z = -0.5f; 
+            x = xmin; y = ymin; z = zmin; 
             float x2, y2, tickLen2 = tickLen;
             switch (m_layoutData.CameraPosition.Quadrant) {
                 case CameraQuadrant.TopLeftFront: // Q1
                 case CameraQuadrant.BottomLeftFront:
-                    x = -0.5f;
-                    x2 = -0.5f; 
-                    y = 0.5f; 
-                    y2 = -0.5f;
+                    x = xmin;
+                    x2 = xmin; 
+                    y = ymax; 
+                    y2 = ymin;
                     //tickLen2 *= -1.0f; 
                     break;
                 case CameraQuadrant.TopLeftBack:  // Q2
                 case CameraQuadrant.BottomLeftBack: 
-                    x = 0.5f;
-                    y = 0.5f; 
-                    x2 = -0.5f; 
-                    y2 = 0.5f; 
+                    x = xmax;
+                    y = ymax; 
+                    x2 = xmin; 
+                    y2 = ymax; 
                     tickLen *= -1.0f; 
                     break;
                 case CameraQuadrant.TopRightBack:   // Q3
                 case CameraQuadrant.BottomRightBack:
-                    x = 0.5f;
-                    x2 = 0.5f; 
-                    y = -0.5f; 
-                    y2 = 0.5f;
+                    x = xmax;
+                    x2 = xmax; 
+                    y = ymin; 
+                    y2 = ymax;
                     tickLen *= -1.0f; 
                     tickLen2 *= -1.0f;
                     break;
                 case CameraQuadrant.TopRightFront:
                 case CameraQuadrant.BottomRightFront:  // Q4
                 default:
-                    x = -0.5f; 
-                    x2 = 0.5f; 
-                    y = -0.5f; 
-                    y2 = -0.5f; 
+                    x = xmin; 
+                    x2 = xmax; 
+                    y = ymin; 
+                    y2 = ymin; 
                     tickLen2 *= -1.0f; 
                     break;
             }
             if (background) {
-                x *= -1.0f; 
-                y *= -1.0f; 
-                x2 *= -1.0f; 
-                y2 *= -1.0f; 
+                if (x == xmin) x = xmax; else x = xmin;
+                if (y == ymin) y = ymax; else y = ymin;
+                if (x2 == xmin) x2 = xmax; else x2 = xmin;
+                if (y2 == ymin) y2 = ymax; else y2 = ymin; 
                 GL.Disable(EnableCap.DepthTest);
                 if (m_farLines.Visible) {
                     drawlines = true; 
@@ -130,17 +136,15 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             if (drawlines) {
                 GL.Begin(BeginMode.Lines);
                 GL.Vertex3(x,y,z); 
-                z = 0.5f; 
+                z = zmax; 
                 GL.Vertex3(x,y,z); 
                 GL.Vertex3(x2,y2,z); 
-                z = -0.5f; 
+                z = zmin; 
                 GL.Vertex3(x2,y2,z);
                 GL.End();
             }
             if (m_labeledTicks.Display == TickDisplay.BothSides || (!background && drawlines)) {
                 #region create ticks 
-                scale = m_clipping.ScaleToUnitCube().Z; 
-                offse = m_clipping.CenterToUnitCube().Z;
                 GL.Enable(EnableCap.DepthTest);
                 if (background) {
                     GL.Color3(m_labeledTicks.FarColor);
@@ -153,7 +157,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 foreach (LabeledTick tick in m_labeledTicks) {
                     if (tick.Position >= m_clipping.ZMin 
                         && tick.Position <= m_clipping.ZMax) {
-                        z = tick.Position * scale + offse; 
+                        z = tick.Position; 
                         GL.Vertex3(x,y,z); 
                         x += tickLen; 
                         GL.Vertex3(x,y,z); 
@@ -176,48 +180,50 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// </summary>
         protected override void drawGrid() {
             float x1,y1,z;
-            float x2,y2,x3,y3;  
-            float scale, offset; 
+            float x2,y2,x3,y3;
+            float xmin = m_clipping.XMin;
+            float ymin = m_clipping.YMin;
+            float xmax = m_clipping.XMax;
+            float ymax = m_clipping.YMax; 
+
             ILOGLPanel.SetupLineStyle(m_grid);
             GL.Disable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend); 
             GL.Begin(BeginMode.Lines);
-            scale = m_clipping.ScaleToUnitCube().Z; 
-            offset = m_clipping.CenterToUnitCube().Z;
             #region determine which side to draw on
             switch (m_layoutData.CameraPosition.Quadrant)
 	        {
 		        case CameraQuadrant.TopLeftFront:
                 case CameraQuadrant.BottomLeftFront:
-                    x1 = -0.5f; y1 = 0.5f; 
-                    x2 = 0.5f; y2 = 0.5f; 
-                    x3 = 0.5f; y3 = -0.5f; 
+                    x1 = xmin; y1 = ymax;
+                    x2 = xmax; y2 = ymax;
+                    x3 = xmax; y3 = ymin; 
                     break;
                 case CameraQuadrant.TopLeftBack:
                 case CameraQuadrant.BottomLeftBack:
-                    x1 = 0.5f; y1 = 0.5f; 
-                    x2 = 0.5f; y2 = -0.5f; 
-                    x3 = -0.5f; y3 = -0.5f; 
+                    x1 = xmax; y1 = ymax;
+                    x2 = xmax; y2 = ymin;
+                    x3 = xmin; y3 = ymin; 
                     break;
                 case CameraQuadrant.TopRightBack:
                 case CameraQuadrant.BottomRightBack:
-                    x1 = 0.5f; y1 = -0.5f; 
-                    x2 = -0.5f; y2 = -0.5f; 
-                    x3 = -0.5f; y3 = 0.5f; 
+                    x1 = xmax; y1 = ymin;
+                    x2 = xmin; y2 = ymin;
+                    x3 = xmin; y3 = ymax; 
                     break;
                 default:
                 case CameraQuadrant.TopRightFront:
                 case CameraQuadrant.BottomRightFront:
-                    x1 = -0.5f; y1 = -0.5f; 
-                    x2 = -0.5f; y2 = 0.5f; 
-                    x3 = 0.5f; y3 = 0.5f; 
+                    x1 = xmin; y1 = ymin;
+                    x2 = xmin; y2 = ymax;
+                    x3 = xmax; y3 = ymax; 
                     break;
 	        }
             #endregion
             foreach (LabeledTick tick in m_labeledTicks) {
                 if (tick.Position >= m_clipping.ZMin 
                     && tick.Position <= m_clipping.ZMax) {
-                    z = tick.Position * scale + offset; 
+                    z = tick.Position; 
                     GL.Vertex3(x1,y1,z); 
                     GL.Vertex3(x2,y2,z);
                     GL.Vertex3(x2,y2,z);

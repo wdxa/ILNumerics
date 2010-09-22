@@ -524,7 +524,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -551,7 +551,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -578,7 +578,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -608,7 +608,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 
@@ -638,7 +638,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -665,7 +665,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -692,7 +692,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -722,7 +722,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 
@@ -749,7 +749,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -776,7 +776,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -803,7 +803,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -833,7 +833,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 
@@ -860,7 +860,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -887,7 +887,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -914,7 +914,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -944,7 +944,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 
@@ -971,7 +971,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -998,7 +998,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -1025,7 +1025,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -1055,7 +1055,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 
@@ -1082,7 +1082,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -1109,7 +1109,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -1136,7 +1136,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -1166,7 +1166,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 
@@ -1193,7 +1193,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -1220,7 +1220,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -1247,7 +1247,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -1277,7 +1277,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 
@@ -1304,7 +1304,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -1331,7 +1331,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -1358,7 +1358,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -1388,7 +1388,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 
@@ -1415,7 +1415,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -1442,7 +1442,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -1469,7 +1469,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -1499,7 +1499,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 
@@ -1526,7 +1526,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -1553,7 +1553,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -1580,7 +1580,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -1610,7 +1610,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 
@@ -1637,7 +1637,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -1664,7 +1664,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -1691,7 +1691,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -1721,7 +1721,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 
@@ -1748,7 +1748,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[(int)indices.GetValue(i)]; 
                 }
@@ -1775,7 +1775,7 @@ namespace ILNumerics {
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen--);
             int outPos = 0, outInc = dim.SequentialIndexDistance(dim.NumberOfDimensions - shift); 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[outPos] = m_data[(int)indices.GetValue(i)];
                     outPos += outInc; 
@@ -1802,7 +1802,7 @@ namespace ILNumerics {
             ILDimension dim = indices.m_dimensions; 
             int outLen = dim.NumberOfElements; 
             BaseT[] outdata = ILMemoryPool.Pool.New< BaseT> (outLen);
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i < outLen; i++) {
                     outdata[i] = m_data[getBaseIndex((int)indices.GetValue(i))]; 
                 }
@@ -1832,7 +1832,7 @@ namespace ILNumerics {
             // improves performance by optimizing increments 
             if (outInc == dim.NumberOfElements)
                 outInc = 1; 
-            if (!indices.IsReference) {
+            if (indices.IsReference) {
                 for (int i = 0; i <= outLen; i++) {
                     outdata[outPos] = m_data[getBaseIndex((int)indices.GetValue(i))];
                     outPos += outInc; 

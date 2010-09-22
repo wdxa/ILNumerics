@@ -40,10 +40,17 @@ namespace ILNumerics.Drawing.Labeling {
         private int m_padding; 
         private LabelAlign m_align; 
         internal Point m_position = new Point();
+        private bool m_visible; 
         #endregion
 
         #region properties 
-        
+        /// <summary>
+        /// get/set visibility for the label
+        /// </summary>
+        public bool Visible {
+            get { return m_visible; }
+            set { m_visible = value; }
+        }
         /// <summary>
         /// get/ set the position for the label
         /// </summary>
@@ -67,7 +74,6 @@ namespace ILNumerics.Drawing.Labeling {
                 OnChanged(); 
             }
         }
-
         /// <summary>
         /// Get/ set the padding used to seperate the label from the elements around it
         /// </summary>
@@ -89,7 +95,8 @@ namespace ILNumerics.Drawing.Labeling {
         public ILLabel (ILPanel panel) 
             : base(panel,new Font(FontFamily.GenericSansSerif,10.0f),Color.DarkBlue) {
             m_align = LabelAlign.Center; 
-            m_padding = 3; 
+            m_padding = 3;
+            m_visible = true; 
         }
         #endregion
 
@@ -99,11 +106,12 @@ namespace ILNumerics.Drawing.Labeling {
         /// draws the whole rendering queue
         /// </summary>
         public override void Draw(ILRenderProperties p) {
+            if (!m_visible || String.IsNullOrEmpty(m_expression)) return; 
             if (m_expression != m_cachedExpression) 
                 interprete(m_expression); 
             m_renderer.Begin(p);
-            offsetAlignment(m_size,ref m_position);
-            m_renderer.Draw(m_renderQueue,m_position,m_orientation,m_color); 
+            Point renderPoint = offsetAlignment(m_size, m_position);
+            m_renderer.Draw(m_renderQueue, renderPoint ,m_orientation, m_color); 
             m_renderer.End(p); 
         }
 

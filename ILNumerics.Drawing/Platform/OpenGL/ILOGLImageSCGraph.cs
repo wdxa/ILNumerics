@@ -256,10 +256,9 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             }
             m_label.m_position.X = labelRect.X + labelRect.Width / 2;
             m_label.m_position.Y = labelRect.Y + labelRect.Height / 2; 
-            m_label.m_alignment = TickLabelAlign.center | TickLabelAlign.vertCenter; 
+            m_label.Anchor = new PointF(.5f,.5f);  //  TickLabelAlign.center | TickLabelAlign.vertCenter; 
             m_label.Draw(null); 
         }
-
         #endregion 
 
     }
