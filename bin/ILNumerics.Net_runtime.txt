@@ -1,0 +1,12 @@
+ILCPUID.dll
+ILNumerics.Net.dll
+ILNumerics.Net.xml
+ILNumerics.Net.dll.config
+lapack_gen.dll
+ILNumerics.Core_license.txt
+ILNumerics.Net_runtime.txt
+changelog_Core.txt
+libguide40.dll
+mkl_custom.dll
+msvcr80.dll
+
