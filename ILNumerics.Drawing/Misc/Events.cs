@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing; 
 using ILNumerics.Drawing.Graphs;
+using ILNumerics.Drawing.Interfaces;
 
 namespace ILNumerics.Drawing {
 
@@ -113,11 +114,17 @@ namespace ILNumerics.Drawing {
         /// <summary>
         /// description of element changed (in some cases)
         /// </summary>
-        public readonly ILGraphChangedEventArgs GraphArguments; 
-        public ILGraphCollectionChangedEventArgs (ILGraph graph, GraphCollectionChangeReason reason, ILGraphChangedEventArgs GraphArguments) {
+        public readonly IILPanelConfigurator Configurator;
+        /// <summary>
+        /// arguments for GraphCollectionChanged events
+        /// </summary>
+        /// <param name="graph">the graph who was changed, for ILPlot: the scene graph</param>
+        /// <param name="reason">reason</param>
+        /// <param name="configurator"> instance of IILPanelConfigurator or null</param>
+        public ILGraphCollectionChangedEventArgs(ILGraph graph, GraphCollectionChangeReason reason, IILPanelConfigurator configurator) {
             this.Graph = graph; 
             this.Reason = reason; 
-            this.GraphArguments = GraphArguments; 
+            this.Configurator = configurator; 
         }
     }
     /// <summary>
@@ -172,5 +179,25 @@ namespace ILNumerics.Drawing {
     /// <param name="sender"></param>
     /// <param name="args"></param>
     public delegate void AxisChangedEventHandler (object sender, ILAxisChangedEventArgs args); 
+
+    /// <summary>
+    /// event argument for SceneGraphNodeAdded events
+    /// </summary>
+    public class ILSceneGraphNodeEventArgs : EventArgs {
+        /// <summary>
+        /// Node which was added to the scene graph
+        /// </summary>
+        public ILSceneGraphNode Node;
+
+        public ILSceneGraphNodeEventArgs(ILSceneGraphNode node) {
+            Node = node; 
+        }
+    }
+    /// <summary>
+    /// used for events fired once a SceneGraphNode was added
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="?"></param>
+    public delegate void SceneGraphNodeHandler (object sender, ILSceneGraphNodeEventArgs args);  
 
 }

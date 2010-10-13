@@ -175,9 +175,11 @@ namespace ILNumerics.Drawing.Controls {
                     m_panel.Graphs.AddSurfGraph(ILSpecialData.sinc(14,20));
 #if TRACE             
                     Trace.TraceInformation("{0},{1} ILSubfigure.OnLoad:DesignMode: SurfGraph added",DateTime.Now,Environment.TickCount); 
+#else 
+                } catch (Exception) {
 #endif
-                } catch (Exception exc) {
 #if TRACE             
+                } catch (Exception exc) {
                     Trace.TraceWarning("{0},{1} ILSubfigure.OnLoad:DesignMode: failure added surf graph: {2}",DateTime.Now,Environment.TickCount,exc.ToString()); 
 #endif
                 }

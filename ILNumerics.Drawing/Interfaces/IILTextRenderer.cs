@@ -38,7 +38,7 @@ namespace ILNumerics.Drawing.Interfaces {
     /// </summary>
     /// <remarks>class definitions should also implement the ILRendererAttribute. See <see cref="ILNumerics.Drawing.Platform.OpenGL.ILOGLRenderer"/> for an example.</remarks>
     /// <seealso cref="ILNumerics.Drawing.Platform.OpenGL.ILOGLRenderer"/>
-    public interface IILRenderer {
+    public interface IILTextRenderer {
         /// <summary>
         /// The name of the TextRenderer instance (implementation dependent)
         /// </summary>
@@ -69,21 +69,24 @@ namespace ILNumerics.Drawing.Interfaces {
         /// begins drawing, to be called before Draw()!
         /// </summary>
         /// <param name="p">extended render properties</param>
-        void Begin (ILRenderProperties p); 
+        void Begin (ILRenderProperties p);
         /// <summary>
-        /// begins drawing & queries current model view matrix also
+        /// begins drawing and queries current model view matrix also
         /// </summary>
         /// <param name="p">extended render properties</param>
-        void Begin (ILRenderProperties p, ref double[] modelview); 
+        /// <param name="modelview">current modelviewmatrix</param>
+        void Begin (ILRenderProperties p, ref double[] modelview);
         /// <summary>
-        /// Draw the text (screen coords) 
+        /// Draw the text (screen coords)
         /// </summary>
         /// <param name="renderQueue">contains items to be drawn</param>
         /// <param name="position">position relative to surface, starting point for drawing</param>
         /// <param name="orientation">orientation for item</param>
+        /// <param name="color">initial or default color</param>
         /// <remarks>
-        /// <para>Before calling Draw(), the TextRenderer must have been initialized with Begin(g)!</para>
-        /// <para>use this function if drawing in screen coords, the size for render output will be taken from the Size member of the render queue (pixels).</para>
+        /// 	<para>Before calling Draw(), the TextRenderer must have been initialized with Begin(g)!</para>
+        /// 	<para>use this function if drawing in screen coords, the size for render
+        /// output will be taken from the Size member of the render queue (pixels).</para>
         /// </remarks>
         /// <exception cref="InvalidOperationException">on attempt to draw any text without previous initialization</exception>
         void Draw (ILRenderQueue renderQueue, System.Drawing.Point position, TextOrientation orientation, Color color); 

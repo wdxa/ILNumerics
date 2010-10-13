@@ -75,10 +75,12 @@ namespace ILNumerics.Drawing.Shapes {
 
         #region public
         public override void Configure() {
-            base.Configure();
-            if (m_mustCalcNormals && m_autoNormals) {
-                Computation.CalculateNormals(m_vertices);
+            if (m_visible) {
+                if (m_mustCalcNormals && m_autoNormals) {
+                    Computation.CalculateNormals(m_vertices);
+                }
             }
+            base.Configure();
         }
         public override void Invalidate() {
             base.Invalidate();

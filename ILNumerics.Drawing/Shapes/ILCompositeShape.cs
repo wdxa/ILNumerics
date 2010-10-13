@@ -78,30 +78,12 @@ namespace ILNumerics.Drawing.Shapes {
         /// </summary>
         /// <param name="panel">scene hosting the scene</param>
         /// <param name="numVertices">number of overall vertices for the shape</param>
+        /// <param name="verticesPerShape">Number of vertices per shape</param>
         public ILCompositeShape (ILPanel panel, int numVertices, int verticesPerShape) 
             : base(panel,numVertices,verticesPerShape) {
             Opacity = 255; 
             m_shapeIndices = ILMath.toint32(
                 ILMath.counter(0.0,1.0,VerticesPerShape,numVertices / VerticesPerShape)); 
-        }
-        /// <summary>
-        /// create composite shape 
-        /// </summary>
-        /// <param name="panel">hosting panel</param>
-        /// <param name="verticesPerShape">number of vertices per shape</param>
-        /// <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-        /// <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-        /// <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
-        /// <param name="mapping">Composes shapes out of vertices. Matrix having [verticesPerShape] rows.
-        /// Every element in a column specifies the index of a vertex according to its position in X,Y,Z.#
-        /// The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
-        /// get used arbitrary times (or not at all). All elements must be positive integer values in 
-        /// range 0...[vertCount-1].</param>
-        public ILCompositeShape (ILPanel panel, int verticesPerShape, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping) 
-            : base (panel,X.Length,verticesPerShape) {
-            Update(X, Y, Z, mapping);
-            Opacity = 255; 
-            m_shading = ShadingStyles.Interpolate; 
         }
 
         /// <summary>
@@ -109,11 +91,12 @@ namespace ILNumerics.Drawing.Shapes {
         /// </summary>
         /// <param name="panel">hosting panel</param>
         /// <param name="verticesPerShape">number of vertices per shape</param>
-        /// <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-        /// <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-        /// <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
+        /// <param name="X">x coordinates vector </param>
+        /// <param name="Y">y coordinates vector </param>
+        /// <param name="Z">z coordinates vector </param>
         /// <remarks>The constructor creates a new composite shape out of all vertices specified in X,Y and Z.
-        /// Every vertex is only used once. Every shape uses [verticesPerShape] vertices one after another.</remarks>
+        /// Every vertex is only used once. Every shape uses 
+        /// <see cref="ILNumerics.Drawing.Shapes.ILShape&lt;T>.VerticesPerShape"/> vertices one after another.</remarks>
         public ILCompositeShape (ILPanel panel, int verticesPerShape, ILBaseArray X, ILBaseArray Y, ILBaseArray Z) 
             : base (panel,X.Length,verticesPerShape) {
             Update(X, Y, Z);
@@ -128,20 +111,43 @@ namespace ILNumerics.Drawing.Shapes {
         /// </summary>
         /// <param name="panel">hosting panel</param>
         /// <param name="verticesPerShape">number of vertices per shape</param>
-        /// <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-        /// <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-        /// <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
-        /// <param name="colors">matrix with [vertCount] rows, 3 columns for (R,G,B) or 4 columns for 
+        /// <param name="X">x coordinates vector </param>
+        /// <param name="Y">y coordinates vector </param>
+        /// <param name="Z">z coordinates vector </param>
+        /// <param name="mapping">Mapping of shapes, composes shapes out of vertices. Matrix having  
+        /// <see cref="ILNumerics.Drawing.Shapes.ILShape&lt;T>.VerticesPerShape"/> rows.
+        /// Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+        /// The <see cref="ILNumerics.Drawing.Shapes.ILShape&lt;T>.VerticesPerShape"/> elements in a column therefore 
+        /// compose a single shape. Vertices may get used arbitrary times (or not at all). All elements must be 
+        /// positive integer values in range 0...[<see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        public ILCompositeShape (ILPanel panel, int verticesPerShape, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping) 
+            : base (panel,X.Length,verticesPerShape) {
+            Update(X, Y, Z, mapping);
+            Opacity = 255; 
+            m_shading = ShadingStyles.Interpolate; 
+        }
+
+        /// <summary>
+        /// create composite shape 
+        /// </summary>
+        /// <param name="panel">hosting panel</param>
+        /// <param name="verticesPerShape">number of vertices per shape</param>
+        /// <param name="X">x coordinates vector </param>
+        /// <param name="Y">y coordinates vector </param>
+        /// <param name="Z">z coordinates vector </param>
+        /// <param name="colors">matrix with <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/> 
+        /// rows, 3 columns for (R,G,B) or 4 columns for 
         /// (A,R,G,B) for every vertex specified by X,Y,Z. Elements must range from 0..255. If colors 
-        /// has 3 columns only, an alpha value of 255 is used as default.</param>
-        /// <param name="mapping">Composes shapes out of vertices. Matrix having [verticesPerShape] rows.
-        /// Every element in a column specifies the index of a vertex according to its position in X,Y,Z.#
-        /// The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
-        /// get used arbitrary times (or not at all). All elements must be positive integer values in 
-        /// range 0...[vertCount-1].</param>
+        /// has 3 columns only, alpha values of 255 are used as default.</param>
+        /// <param name="mapping">Mapping of shapes, composes shapes out of vertices. Matrix having  
+        /// <see cref="ILNumerics.Drawing.Shapes.ILShape&lt;T>.VerticesPerShape"/> rows.
+        /// Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+        /// The <see cref="ILNumerics.Drawing.Shapes.ILShape&lt;T>.VerticesPerShape"/> elements in a column therefore 
+        /// compose a single shape. Vertices may get used arbitrary times (or not at all). All elements must be 
+        /// positive integer values in range 0...[<see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         public ILCompositeShape (ILPanel panel, int verticesPerShape, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray colors, ILBaseArray mapping) 
             : base (panel,X.Length,verticesPerShape) {
-            Update(X, Y, Z, colors, mapping);
+            Update(X, Y, Z, mapping, colors);
             Opacity = 255;
             m_shading = ShadingStyles.Interpolate; 
         }
@@ -149,6 +155,42 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion
 
         #region public interface 
+        /// <summary>
+        /// update composite shape 
+        /// </summary>
+        /// <param name="X">x coordinates, vector of length <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+        /// <param name="Y">y coordinates, vector of length <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+        /// <param name="Z">z coordinates, vector of length <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+        /// <remarks>All vertices of the shape are updated with the data specified in X,Y and Z. Neither the mapping of shapes 
+        /// nor the colors or any other data of vertices are changed. The shape is invalidated than. </remarks>
+        public void Update(ILBaseArray X, ILBaseArray Y, ILBaseArray Z) {
+            if (!X.IsVector || !Y.IsVector || !Z.IsVector || X.Length != Y.Length || Y.Length != Z.Length) {
+                throw new ILArgumentException("numeric vectors of same length expected for: X, Y and Z");
+            }
+            ILArray<float> fX = ILMath.tosingle(X);
+            ILArray<float> fY = ILMath.tosingle(Y);
+            ILArray<float> fZ = ILMath.tosingle(Z);
+            for (int i = 0; i < m_vertices.Length; i++) {
+                m_vertices[i].XPosition = fX.GetValue(i);
+                m_vertices[i].YPosition = fY.GetValue(i);
+                m_vertices[i].ZPosition = fZ.GetValue(i);
+            }
+            Invalidate();
+        }
+        /// <summary>
+        /// update composite shape
+        /// </summary>
+        /// <param name="X">x coordinates, vector of length <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+        /// <param name="Y">y coordinates, vector of length <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+        /// <param name="Z">z coordinates, vector of length <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+        /// <param name="mapping">Mapping of shapes, composes shapes out of vertices. Matrix having  
+        /// <see cref="ILNumerics.Drawing.Shapes.ILShape&lt;T>.VerticesPerShape"/> rows.
+        /// Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+        /// The <see cref="ILNumerics.Drawing.Shapes.ILShape&lt;T>.VerticesPerShape"/> elements in a column therefore 
+        /// compose a single shape. Vertices may get used arbitrary times (or not at all). All elements must be 
+        /// positive integer values in range 0...[<see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        /// <remarks>All vertices of the shape are updated with the data specified in X,Y and Z. Neither the colors or any 
+        /// other data of vertices are changed. The shape is invalidated for reconfiguration at next redraw. </remarks>
         public void Update(ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping) {
             if (!X.IsVector || !Y.IsVector || !Z.IsVector || X.Length != Y.Length || Y.Length != Z.Length) {
                 throw new ILArgumentException("numeric vectors of same length expected for: X, Y and Z");
@@ -169,21 +211,22 @@ namespace ILNumerics.Drawing.Shapes {
             }
             Invalidate();
         }
-        public void Update(ILBaseArray X, ILBaseArray Y, ILBaseArray Z) {
-            if (!X.IsVector || !Y.IsVector || !Z.IsVector || X.Length != Y.Length || Y.Length != Z.Length) {
-                throw new ILArgumentException("numeric vectors of same length expected for: X, Y and Z");
-            }
-            ILArray<float> fX = ILMath.tosingle(X);
-            ILArray<float> fY = ILMath.tosingle(Y);
-            ILArray<float> fZ = ILMath.tosingle(Z);
-            for (int i = 0; i < m_vertices.Length; i++) {
-                m_vertices[i].XPosition = fX.GetValue(i);
-                m_vertices[i].YPosition = fY.GetValue(i);
-                m_vertices[i].ZPosition = fZ.GetValue(i);
-            }
-            Invalidate();
-        }
-        public void Update(ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray colors, ILBaseArray mapping) {
+        /// <summary>
+        /// update composite shape
+        /// </summary>
+        /// <param name="X">x coordinates, vector of length <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+        /// <param name="Y">y coordinates, vector of length <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+        /// <param name="Z">z coordinates, vector of length <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+        /// <param name="mapping">Mapping of shapes, composes shapes out of vertices. Matrix having
+        /// <see cref="ILNumerics.Drawing.Shapes.ILShape&lt;T>.VerticesPerShape"/> rows.
+        /// Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+        /// The <see cref="ILNumerics.Drawing.Shapes.ILShape&lt;T>.VerticesPerShape"/> elements in a column therefore
+        /// compose a single shape. Vertices may get used arbitrary times (or not at all). All elements must be
+        /// positive integer values in range 0...[<see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        /// <param name="colors">The colors.</param>
+        /// <remarks>All vertices of the shape are updated with the data specified in X,Y and Z. Neither the colors or any
+        /// other data of vertices are changed. The shape is invalidated for reconfiguration at next redraw. </remarks>
+        public void Update(ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping, ILBaseArray colors) {
             if (!VertexDefinition.StoresColor)
                 throw new NotSupportedException("The underlying vertex type cannot store individual color values! Use another shape or flat shading!");
             if (!X.IsVector || !Y.IsVector || !Z.IsVector || X.Length != Y.Length || Y.Length != Z.Length) {
@@ -233,7 +276,11 @@ namespace ILNumerics.Drawing.Shapes {
                 // draw from back to front
                 if (m_oldCameraPosition != m_panel.Camera.Position
                     || m_renderIndices == null) {
-                    sortPrimitives(); 
+                    if (m_shading == ShadingStyles.Flat && m_fillColor.A == byte.MaxValue) {
+                        m_shapeIndices.ExportValues(ref m_renderIndices); 
+                    } else {
+                        sortPrimitives();
+                    }
                 }
                 m_renderer.Draw(props,this,m_renderIndices);
             }
@@ -251,11 +298,26 @@ namespace ILNumerics.Drawing.Shapes {
             }
         }
         protected override void  ComputeLimits() {
- 	         base.ComputeLimits();
-             updateVertexPositions(Vertices, ref m_vertexPositions);
-        }
-        protected override void IntConfigure() {
-            // nothing to do here ...
+            // only consider used(!) vertices (having indices in mapping)         
+ 	        ILPoint3Df cent = new ILPoint3Df();
+            if (m_shapeIndices.IsEmpty) {
+                // fast exit
+                m_positionCenter = cent;
+                m_positionMin = cent;
+                m_positionMax = cent;
+                return;
+            }
+            ILPoint3Df max = ILPoint3Df.MinValue, min = ILPoint3Df.MaxValue, cur;
+            foreach (int vertexID in m_shapeIndices.Values) {
+                cur = m_vertices[vertexID].Position;
+                cent = cent + cur;
+                max = ILPoint3Df.Max(max, cur);
+                min = ILPoint3Df.Min(min, cur);
+            }
+            m_positionCenter = cent / m_vertices.Length;
+            m_positionMax = max;
+            m_positionMin = min;
+            updateVertexPositions(Vertices, ref m_vertexPositions);
         }
         #endregion
 
@@ -324,7 +386,7 @@ namespace ILNumerics.Drawing.Shapes {
                     float tmpX = vertPositions[vPos++] - camx;
                     float tmpY = vertPositions[vPos++] - camy;
                     float tmpZ = vertPositions[vPos++] - camz;
-                    dist[distPos] = tmpX * tmpX + tmpY * tmpY + tmpZ * tmpZ;
+                    dist[distPos] = (tmpX * tmpX + tmpY * tmpY + tmpZ * tmpZ);
                 }
 #if DEBUG
                 //ILArray<double> indDeb; 
@@ -336,7 +398,7 @@ namespace ILNumerics.Drawing.Shapes {
 #endif
                 dist = sum(new ILArray<float>(dist, 1, dist.Length)[shapeIndices], 0).InternalArray4Experts;
                 double[] idx = counter(0.0, 1.0, 1, dist.Length).InternalArray4Experts;
-                Algorithms.ILQuickSort.QuickSortAscSolidIDX(dist, idx, 0, dist.Length - 1, 1);
+                Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(dist, idx, 0, dist.Length - 1, 1);
                 // ind: indices into shapeIndices' columns 
                 shapeIndices[null, (ILArray<double>)idx].ExportValues(ref renderIndices);
             }

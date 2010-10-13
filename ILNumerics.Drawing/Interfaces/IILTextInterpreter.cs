@@ -42,13 +42,13 @@ namespace ILNumerics.Drawing.Interfaces {
         /// <param name="expression">item text expression, defines the visual output content</param>
         /// <param name="font">font used for rendering the text</param>
         /// <param name="color">initial color, unless overridden, used for items in expression</param>
-        /// <param name="renderer">IILRenderer implementation, used for caching the element(s)</param>
+        /// <param name="renderer">IILTextRenderer implementation, used for caching the element(s)</param>
         /// <returns>renderer queue, contains item keys and the size of transformed item expression</returns>
         /// <remarks>The implementation should use the general caching capabilities 
         /// of the renderer class. Therefore the item's elements must be cached subsequently
         /// into the renderer before drawing. The render queue returned may be 
         /// used for rendering in the same renderer than.</remarks>
         ILRenderQueue Transform(
-                string expression, Font font, Color color, IILRenderer renderer);  
+                string expression, Font font, Color color, IILTextRenderer renderer);  
     }
 }

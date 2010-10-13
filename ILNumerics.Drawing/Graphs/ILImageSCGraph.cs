@@ -35,7 +35,7 @@ namespace ILNumerics.Drawing.Graphs {
     /// class rendering plain color-coded area graphs
     /// </summary>
     /// <remarks>This class derives from ILFilledGraph and adds a ZPosition property.</remarks>
-    public abstract class ILImageSCGraph : ILFilledGraph, IILLegendRenderer {
+    public abstract class ILImageSCGraph : ILFilledGraph, IILLegendRenderer, IILPanelConfigurator {
 
         #region attributes 
         protected float m_zPosition;
@@ -74,7 +74,6 @@ namespace ILNumerics.Drawing.Graphs {
             // defaults
             m_zPosition = float.NegativeInfinity;
         }
-        public abstract void DrawToLegend(ILRenderProperties p, Rectangle sampleRect, Rectangle labelRect);         
         #endregion
 
         public override bool Is3DGraph() {
@@ -82,7 +81,7 @@ namespace ILNumerics.Drawing.Graphs {
         }
 
         #region IILPanelConfigurator
-        public override void ConfigurePanel(ILPanel panel) {
+        public void ConfigurePanel(ILPanel panel) {
             panel.InteractiveMode = InteractiveModes.ZoomRectangle;
             panel.AspectRatio = AspectRatioMode.StretchToFill;
             panel.PlotBoxScreenSizeMode = PlotBoxScreenSizeMode.StrictOptimal;
@@ -91,7 +90,10 @@ namespace ILNumerics.Drawing.Graphs {
         }
         #endregion
 
-
+        #region IILRenderToLegend
+        public abstract void DrawToLegend(ILRenderProperties p, Rectangle sampleRect, Rectangle labelRect);
+        public Size LabelSize { get { return m_label.Size; } }
+        #endregion
 
     }
 }

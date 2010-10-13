@@ -217,12 +217,14 @@ namespace ILNumerics.Drawing {
 
         #region constructor
         /// <summary>
-        /// construct ILAxis object. This contructor is not to be called directly. 
+        /// construct ILAxis object. This contructor is not to be called directly.
         /// </summary>
         /// <param name="name">type of the axis: XAxis,YAxis,ZAxis</param>
         /// <param name="clippingView">Clipping data to be registered into the axis.</param>
-        /// <remarks>ILAxis objects are created GL-device dependend by use of a device dependend ILPanel instance's 
-        /// member ILPanel.CreateAxis(). This acts like a factory pattern. The specific axis derivate will be 
+        /// <param name="layoutData">additional layout data, does currently only contain the camera [depricated]</param>
+        /// <param name="panel">panel hosting the scene</param>
+        /// <remarks>ILAxis objects are created GL-device dependend by use of a device dependend ILPanel instance's
+        /// member ILPanel.CreateAxis(). This acts like a factory pattern. The specific axis derivate will be
         /// created by the derived ILPanel object (ILDXPanel or ILOGLPanel).</remarks>
         public ILAxis (AxisNames name, ILClippingData clippingView,
                        ILLayoutData layoutData,ILPanel panel) {
@@ -259,17 +261,14 @@ namespace ILNumerics.Drawing {
         /// <summary>
         /// this function does the drawing of the axis lines 
         /// </summary>
-        /// <param name="g">current System.Drawings.Graphics object. Use this with care! Some 
-        /// graphics devices (like D3D) may block rendering surface exclusively.</param>
+        /// <param name="p">render properties</param>
         /// <param name="background">true: draw background only, false: draw foreground only</param>
-        /// <param name="camera">current camera paremeter, may needed to determine which axis are front/back</param>
         /// <remarks>This function is called in the general rendering algorithm. I.e. <b>before</b> the surface buffers has been swapped.</remarks>
         protected abstract void iDrawAxis(ILRenderProperties p, bool background); 
         /// <summary>
-        /// do the drawing of axis' label 
+        /// (internal use) do the drawing of axis' label 
         /// </summary>
-        /// <param name="g">current System.Drawings.Graphics object. Use this with care! Some 
-        /// graphics devices (like D3D) may block rendering surface exclusively.</param>
+        /// <param name="p">render properties</param>
         /// <remarks>When this function is called, depends on the DrawAfterBufferSwaped setting 
         /// of the current TextRenderer.</remarks>
         protected virtual void iDrawLabel(ILRenderProperties p) {
@@ -277,6 +276,10 @@ namespace ILNumerics.Drawing {
                 m_label.Draw(p);
         }
 
+        /// <summary>
+        /// (internal use) draw tick labels
+        /// </summary>
+        /// <param name="p">render properties</param>
         protected virtual void iDrawTickLabels(ILRenderProperties p) {
             if (m_visible)
                 m_labeledTicks.Draw(p,m_clipping.Min[Index],m_clipping.Max[Index]); 
@@ -284,12 +287,12 @@ namespace ILNumerics.Drawing {
         /// <summary>
         /// Do all rendering for the grid of the axis
         /// </summary>
-        /// <param name="camera">current camera settings</param>
-        protected abstract void drawGrid(); 
+        protected abstract void drawGrid();
 
         /// <summary>
         /// draw this axis in the back (behind the graphs)
         /// </summary>
+        /// <param name="p">render properties</param>
         /// <remarks>This method is used internally. There should be no need to call it directly.</remarks>
         internal virtual void RenderState1(ILRenderProperties p) {
             if (m_invalidated) {
@@ -305,7 +308,7 @@ namespace ILNumerics.Drawing {
         /// <summary>
         /// Do rendering of foreground (before the graphs)
         /// </summary>
-        /// <param name="g"></param>
+        /// <param name="p">render properties</param>
         public virtual void RenderState2(ILRenderProperties p) {
             //if (m_invalidated) 
             //    Configure(p); 
@@ -314,19 +317,21 @@ namespace ILNumerics.Drawing {
         /// <summary>
         /// do rendering after the buffers have been swapped
         /// </summary>
-        /// <param name="g"></param>
+        /// <param name="p">render properties</param>
         public virtual void RenderState3(ILRenderProperties p) {
             if (m_labeledTicks.Renderer.DrawAfterBufferSwapped)
                 iDrawTickLabels(p); 
             if (m_label.Renderer.DrawAfterBufferSwapped) 
                 iDrawLabel(p); 
         }
- 
+
         /// <summary>
         /// update axis (recalculate number &amp; position of labels in auto mode, recreate vertices)
         /// </summary>
+        /// <param name="p">render properties</param>
         /// <remarks>This method is used internally. There should be no need to call it directly.</remarks>
         internal virtual void Configure(ILRenderProperties p) {
+            if (m_clipping.Min.IsEmtpy() || m_clipping.Max.IsEmtpy()) return; 
             if (p.PassCount > 0) return;
             if (m_labeledTicks.Mode == TickMode.Auto) {
                 int tickCount = GetMaxTickCount(p); 
@@ -345,17 +350,20 @@ namespace ILNumerics.Drawing {
         /// <summary>
         /// recreate vertices
         /// </summary>
+        /// <param name="p">render properties</param>
         public abstract void PrepareMeshes(ILRenderProperties p);
         /// <summary>
         /// recreate labels
         /// </summary>
+        /// <param name="p">render properties</param>
         public virtual void PrepareLabels(ILRenderProperties p) {
             // prepare textrenderer
         }
 
         /// <summary>
-        /// number of ticks optimally fitting on screen 
+        /// number of ticks optimally fitting on screen
         /// </summary>
+        /// <param name="p">render properties</param>
         /// <returns>optimal number of ticks for this axis</returns>
         internal int GetMaxTickCount(ILRenderProperties p) {
             //System.Diagnostics.Debug.Assert(m_labeledTicks.Mode == TickMode.Auto); 
@@ -378,14 +386,14 @@ namespace ILNumerics.Drawing {
         }
 
         /// <summary>
-        /// Invalidate this axis, leads to recreation on next render
+        /// Invalidate this axis, causes recreation on next render
         /// </summary>
         public virtual void Invalidate() {
             m_invalidated = true; 
         }
 
         /// <summary>
-        /// dispose off this axis' elements
+        /// (internal use) dispose off this axis' elements
         /// </summary>
         public virtual void Dispose() {
             if (m_labeledTicks != null) 

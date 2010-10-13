@@ -32,7 +32,7 @@ using ILNumerics.Drawing.Misc;
 using ILNumerics.BuiltInFunctions; 
 using ILNumerics.Drawing.Interfaces; 
 using ILNumerics.Drawing.Graphs;
-using ILNumerics.Drawing.Misc;
+using ILNumerics.Drawing.Plots;
 
 namespace ILNumerics.Drawing.Collections {
     /// <summary>
@@ -47,15 +47,15 @@ namespace ILNumerics.Drawing.Collections {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="reason"></param>
-        void OnChange (ILGraph sender, GraphCollectionChangeReason reason, ILGraphChangedEventArgs graphArgs ) {
-            if (CollectionChanged != null) 
-                CollectionChanged(this, new ILGraphCollectionChangedEventArgs((ILGraph)sender,reason,graphArgs));
+        void OnChange (ILGraph graph, GraphCollectionChangeReason reason, IILPanelConfigurator configurator) {
+            if (CollectionChanged != null)
+                CollectionChanged(this, new ILGraphCollectionChangedEventArgs((ILGraph)graph, reason, configurator));
         }
         /// <summary>
         /// triggers GraphChanged event, bubbles from single graph
         /// </summary>
         /// <param name="graphArgs">event arguments from graph</param>
-        protected void OnGraphChanged(ILGraph sender, ILGraphChangedEventArgs graphArgs) {
+        void OnGraphChanged(ILGraph sender, ILGraphChangedEventArgs graphArgs) {
             if (GraphChanged != null) {
                 GraphChanged(sender,graphArgs); 
             }
@@ -164,18 +164,33 @@ namespace ILNumerics.Drawing.Collections {
             return (ILSurfaceGraph)Add(data,GraphType.Surf)[0]; 
         }
         /// <summary>
+        /// add a plot to a new scene graph
+        /// </summary> 
+        /// <param name="plot">plot to be added to the panel</param>
+        /// <returns>newly created scene graph</returns>
+        public ILSceneGraph AddPlot(ILPlot plot) {
+            ILSceneGraph scene = AddSceneGraph();
+            scene.AddNode(plot);
+            return scene; 
+        }
+        /// <summary>
         /// Add a new scene graph to collection
         /// </summary>
-        /// <param name="data">matrix holding data to be plotted</param>
         /// <returns>reference to newly created surface graph</returns>
         public ILSceneGraph AddSceneGraph() {
             ILSceneGraph newGraph = m_graphFact.CreateSceneGraph();  
             Add(newGraph); 
             newGraph.Changed += new ILGraphChangedEvent(GraphChanged);
             newGraph.Limits.Changed += new ILClippingDataChangedEvent(Limits_Changed);
-            // the scene graph is added as empty - no limits yet
-            //m_clippingData.Update(newGraph.Limits); 
+            newGraph.NodeAdded += new SceneGraphNodeHandler(sceneGraph_NodeAdded);
+            OnChange(newGraph, GraphCollectionChangeReason.Added, null);
             return newGraph;
+        }
+
+        void sceneGraph_NodeAdded(object sender, ILSceneGraphNodeEventArgs args) {
+            if (args.Node != null && args.Node is IILPanelConfigurator) {
+                OnChange(sender as ILGraph, GraphCollectionChangeReason.Added, args.Node as IILPanelConfigurator); 
+            }
         }
         /// <summary>
         /// add an newly created scene graph instance to the collection of graphs 
@@ -191,6 +206,7 @@ namespace ILNumerics.Drawing.Collections {
             Add(sceneGraph); 
             sceneGraph.Changed += new ILGraphChangedEvent(GraphChanged);
             sceneGraph.Limits.Changed += new ILClippingDataChangedEvent(Limits_Changed);
+            OnChange(sceneGraph, GraphCollectionChangeReason.Added, null);
         }
 
         /// <summary>

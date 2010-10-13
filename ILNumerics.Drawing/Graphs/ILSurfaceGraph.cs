@@ -34,7 +34,7 @@ namespace ILNumerics.Drawing.Graphs {
     /// <summary>
     /// Surface graph
     /// </summary>
-    public abstract class ILSurfaceGraph : ILFilledGraph, IILLegendRenderer {
+    public abstract class ILSurfaceGraph : ILFilledGraph, IILLegendRenderer, IILPanelConfigurator {
 
         #region attributes
         protected ShadingStyles m_shading;
@@ -138,11 +138,12 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region IILLegendRenderer
-        public abstract void DrawToLegend(ILRenderProperties p, Rectangle sampleRect, Rectangle labelRect); 
+        public abstract void DrawToLegend(ILRenderProperties p, Rectangle sampleRect, Rectangle labelRect);
+        public Size LabelSize { get { return m_label.Size; } }
         #endregion 
 
         #region IILPanelConfigurator
-        public override void ConfigurePanel(ILPanel panel) {
+        public void ConfigurePanel(ILPanel panel) {
             panel.InteractiveMode = InteractiveModes.Rotating;
             panel.DefaultView.Set(5.8f, 1.17f, panel.DefaultView.Distance); 
         }

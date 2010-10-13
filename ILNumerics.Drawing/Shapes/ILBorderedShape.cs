@@ -48,7 +48,9 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion
 
         #region properties 
-
+        /// <summary>
+        /// get reference to the properties of the shapes border 
+        /// </summary>
         public ILLineProperties Border {
             get {
                 return m_border; 
@@ -56,6 +58,11 @@ namespace ILNumerics.Drawing.Shapes {
         }
         #endregion
 
+        /// <summary>
+        /// create new bordered shape
+        /// </summary>
+        /// <param name="panel">panel hosting the scene</param>
+        /// <param name="numVertices">number of vertices, this bordered shape will be made out of</param>
         public ILBorderedShape (ILPanel panel, int numVertices) 
             : base(panel,numVertices,numVertices) {
             m_border = new ILLineProperties();
@@ -67,38 +74,58 @@ namespace ILNumerics.Drawing.Shapes {
             m_shading = ShadingStyles.Flat; 
             m_vertexStoresColor = false; 
         }
+        /// <summary>
+        /// create new bordered shape, provide initial vertex data
+        /// </summary>
+        /// <param name="panel">panel hosting the scene</param>
+        /// <param name="X">X coordinates, vector of length 'VertexCount'</param>
+        /// <param name="Y">Y coordinates, vector of length 'VertexCount'</param>
+        /// <param name="Z">Z coordinates, vector of length 'VertexCount'</param>
         public ILBorderedShape(ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z) 
             : this(panel, (X != null && X.IsVector) ? X.Length 
                            : (Y != null && Y.IsVector) ? Y.Length
                            : (Z != null && Z.IsVector) ? Z.Length
                            : 0) {
-            ILArray<float> x = null,y = null,z = null;
-            int minLen = 0; 
-            if (X != null) {
+            Update(X, Y, Z);
+        }
+        /// <summary>
+        /// update vertices of the shape
+        /// </summary>
+        /// <param name="X">X positions vector</param>
+        /// <param name="Y">Y positions vector</param>
+        /// <param name="Z">Z positions vector</param>
+        /// <remarks>Updates are made to the positions of the vectors only. X, Y and Z must be 
+        /// vectors of length <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>.</remarks>
+        public virtual void Update(ILBaseArray X, ILBaseArray Y, ILBaseArray Z) {
+            ILArray<double> x = null, y = null, z = null;
+            int minLen = 0;
+            if (X != null) { 
                 if (!X.IsVector)
                     throw new ILArgumentException("X must be vector!");
-                x = ILNumerics.BuiltInFunctions.ILMath.tosingle(X);
-                minLen = X.Length; 
-            } 
+                x = ILNumerics.BuiltInFunctions.ILMath.todouble(X);
+                minLen = X.Length;
+            }
             if (Y != null) {
                 if (!Y.IsVector)
                     throw new ILArgumentException("Y must be vector!");
-                y = ILNumerics.BuiltInFunctions.ILMath.tosingle(Y);
-                minLen = Math.Min(minLen, Y.Length); 
-            } 
+                y = ILNumerics.BuiltInFunctions.ILMath.todouble(Y);
+                minLen = Math.Min(minLen, Y.Length);
+            }
             if (Z != null) {
                 if (!Z.IsVector)
                     throw new ILArgumentException("Z must be vector!");
-                z = ILNumerics.BuiltInFunctions.ILMath.tosingle(Z);
-                minLen = Math.Min(minLen, Z.Length); 
+                z = ILNumerics.BuiltInFunctions.ILMath.todouble(Z);
+                minLen = Math.Min(minLen, Z.Length);
             }
             for (int i = 0; i < Vertices.Length && i < minLen; i++) {
-                VertexType v = new VertexType();
-                if (x != null) v.XPosition = x.GetValue(i);
-                if (y != null) v.YPosition = y.GetValue(i);
-                if (z != null) v.ZPosition = z.GetValue(i);
-                Vertices[i] = v; 
+                Vertices[i].Position = new ILPoint3Df(x.GetValue(i),y.GetValue(i),z.GetValue(i)); 
+                //VertexType v = new VertexType();
+                //if (x != null) v.XPosition = x.GetValue(i);
+                //if (y != null) v.YPosition = y.GetValue(i);
+                //if (z != null) v.ZPosition = z.GetValue(i);
+                //Vertices[i] = v;
             }
+            Invalidate();
         }
 
 
@@ -117,9 +144,6 @@ namespace ILNumerics.Drawing.Shapes {
                     m_label.Draw(props, cent / 2); 
                 }
             }
-        }
-        protected override void IntConfigure() {
-            // nothing to do ...
         }
     }
 }

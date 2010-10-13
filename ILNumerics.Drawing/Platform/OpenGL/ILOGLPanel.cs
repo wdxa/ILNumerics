@@ -195,17 +195,17 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             GL.MatrixMode(MatrixMode.Projection); 
             GL.LoadIdentity();
 
-            float nearPlane = Math.Max(0.1f, m_camera.Distance - m_clippingView.SphereRadius);
-            float farPlane = m_camera.Distance + m_clippingView.SphereRadius;
+            float nearPlane = 0.2f; //Math.Max(0.0f, m_camera.Distance - m_clippingView.SphereRadius);
+            float farPlane = m_camera.Distance + m_clippingView.SphereRadius * 100;
             if (m_projection == Projection.Perspective) {
                 float angle = (float)Math.Atan2(worldSceneHeight / 2.0f, m_camera.Distance - (zDepth / 2)) * 2.0f;
                 Glu.Perspective(angle / Math.PI * 180, (double)worldSceneWidth / worldSceneHeight,
-                                 nearPlane, farPlane); 
+                    nearPlane, farPlane);
             } else {
                 GL.Ortho(
                       -worldSceneWidth / 2.0, worldSceneWidth / 2.0
                     , -worldSceneHeight / 2.0, worldSceneHeight / 2.0
-                    , nearPlane, farPlane);
+                    ,nearPlane, farPlane);
             }
             GL.GetDouble(GetPName.ProjectionMatrix,m_projMatrix);
             // set viewport 
@@ -408,7 +408,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
                 #endregion
 
                 //GL.MatrixMode(MatrixMode.Modelview);
-                if (m_selectingMode == InteractiveModes.ZoomRectangle && m_isMoving)
+                if (m_selectingMode == InteractiveModes.ZoomRectangle && m_isDragging)
                     drawSelectionRect(PointToClient(MousePosition));
 
 #if DRAWPLOTCUBESCREENRECT
@@ -648,7 +648,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             } 
         }
         /// <summary>
-        /// create a new device dependant scene graph for hosting ILPrimitives
+        /// create a new device dependent scene graph for hosting ILShapes, internally used
         /// </summary>
         /// <returns>scene graph</returns>
         public ILSceneGraph CreateSceneGraph() {

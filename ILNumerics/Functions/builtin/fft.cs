@@ -715,7 +715,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="A">input array, n-D</param>
         /// <param name="dims">transformation lengths, specifies the length of the dimensions 
-        /// for the transformation array. The length of dims must be &ge; the number of 
+        /// for the transformation array. The length of dims must be &gt; or equal to the number of 
         /// dimensions of A. For elements in dim beeing smaller than corresponding dimension 
         /// length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
         /// <returns>transformation result of size specified by 'dims' parameter, complex hermitian</returns>
@@ -754,7 +754,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="A">input array, n-D</param>
         /// <param name="dims">transformation lengths, specifies the length of the dimensions 
-        /// for the transformation array. The length of dims must be &ge; the number of 
+        /// for the transformation array. The length of dims must be &gt; or equal to  the number of 
         /// dimensions of A. For elements in dim beeing smaller than corresponding dimension 
         /// length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
         /// <returns>transformation result of size specified by 'dims' parameter</returns>
@@ -793,7 +793,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="A">input array, n-D</param>
         /// <param name="dims">transformation lengths, specifies the length of the dimensions 
-        /// for the transformation array. The length of dims must be &ge; the number of 
+        /// for the transformation array. The length of dims must be &gt; or equal to  the number of 
         /// dimensions of A. For elements in dim beeing smaller than corresponding dimension 
         /// length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
         /// <returns>transformation result of size specified by 'dims' parameter</returns>
@@ -832,7 +832,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="A">complex hermitian input array, n-D</param>
         /// <param name="dims">transformation lengths, specifies the length of the dimensions 
-        /// for the transformation array. The length of dims must be &ge; the number of 
+        /// for the transformation array. The length of dims must be &gt; or equal to  the number of 
         /// dimensions of A. For elements in dim beeing smaller than corresponding dimension 
         /// length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
         /// <returns>transformation result, real array of the size specified by the 'dims' parameter</returns>
@@ -1531,7 +1531,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="A">input array, n-D</param>
         /// <param name="dims">transformation lengths, specifies the length of the dimensions 
-        /// for the transformation array. The length of dims must be &ge; the number of 
+        /// for the transformation array. The length of dims must be &gt; or equal to the number of 
         /// dimensions of A. For elements in dim beeing smaller than corresponding dimension 
         /// length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
         /// <returns>transformation result of size specified by 'dims' parameter, complex hermitian</returns>
@@ -1570,7 +1570,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="A">input array, n-D</param>
         /// <param name="dims">transformation lengths, specifies the length of the dimensions 
-        /// for the transformation array. The length of dims must be &ge; the number of 
+        /// for the transformation array. The length of dims must be &gt; or equal to  the number of 
         /// dimensions of A. For elements in dim beeing smaller than corresponding dimension 
         /// length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
         /// <returns>transformation result of size specified by 'dims' parameter</returns>
@@ -1609,7 +1609,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="A">input array, n-D</param>
         /// <param name="dims">transformation lengths, specifies the length of the dimensions 
-        /// for the transformation array. The length of dims must be &ge; the number of 
+        /// for the transformation array. The length of dims must be &gt; or equal to  the number of 
         /// dimensions of A. For elements in dim beeing smaller than corresponding dimension 
         /// length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
         /// <returns>transformation result of size specified by 'dims' parameter</returns>
@@ -1648,7 +1648,7 @@ namespace ILNumerics.BuiltInFunctions  {
         /// </summary>
         /// <param name="A">complex hermitian input array, n-D</param>
         /// <param name="dims">transformation lengths, specifies the length of the dimensions 
-        /// for the transformation array. The length of dims must be &ge; the number of 
+        /// for the transformation array. The length of dims must be &gt; or equal to  the number of 
         /// dimensions of A. For elements in dim beeing smaller than corresponding dimension 
         /// length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
         /// <returns>transformation result, real array of the size specified by the 'dims' parameter</returns>
@@ -1696,7 +1696,7 @@ namespace ILNumerics.BuiltInFunctions  {
         #region private helper
         internal static ILArray<T> resize4Transform<T>(ILArray<T> A, params int[] size) {
             if (size == null || size.Length < A.Dimensions.NumberOfDimensions) 
-                throw new ILArgumentException("length of output dimensions must be &ge; number of dimensions of input array!"); 
+                throw new ILArgumentException("length of output dimensions must be &gt; or equal to number of dimensions of input array!"); 
             if (A.Dimensions.IsSameShape(new ILDimension(size))) {
                 return A;
             } else {

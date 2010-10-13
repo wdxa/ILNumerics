@@ -53,7 +53,7 @@ namespace ILNumerics.Drawing.Controls {
         protected ILGraphCollection m_graphs;
         protected ILTextureManager m_textureManager; 
         protected Point m_mouseStart; 
-        protected bool m_isMoving; 
+        protected bool m_isDragging; 
         protected bool m_active = false; 
         protected bool m_drawHidden = true; 
         protected bool m_ready = false; 
@@ -62,6 +62,8 @@ namespace ILNumerics.Drawing.Controls {
         protected ILCamera m_defaultView;
         protected bool m_autoDefaultView = true; 
         protected InteractiveModes m_selectingMode = InteractiveModes.Rotating; 
+        protected InteractiveModes m_oldSelectingMode; 
+        protected bool m_isCtrlKeyDown; 
         protected ILPoint3Df m_scaling;
         protected Projection m_projection = Projection.Orthographic; 
         protected Color m_backColor = Color.FromKnownColor(KnownColor.Control);
@@ -71,11 +73,10 @@ namespace ILNumerics.Drawing.Controls {
         protected ZoomModes m_zoomMode = ZoomModes.RollHard; 
         protected ILZoomAction m_zoomAction; 
         protected float m_zoomOffset = 50f;
-        protected float m_zoomFactor = 1.0f;
         protected GraphicDeviceType m_graphicsDevice; 
         protected ILLineProperties m_selectionRectangle; 
         protected bool m_fillBackground = true; 
-        private bool m_autoZoomContent = true; 
+        private AutoZoomOptions m_autoZoomOptions = AutoZoomOptions.OnDataChanges; 
         protected ILLayoutData m_layoutData = new ILLayoutData(); 
         protected ILLightCollection m_lights = new ILLightCollection(); 
         protected ILRenderProperties m_renderProperties; 
@@ -269,10 +270,11 @@ namespace ILNumerics.Drawing.Controls {
             } 
             set {
                 m_selectingMode = value;
-                if (value == InteractiveModes.Rotating)
-                    m_axes[AxisNames.ZAxis].Visible = true;
-                else if (value == InteractiveModes.ZoomRectangle) 
-                    m_axes[AxisNames.ZAxis].Visible = false; 
+                m_oldSelectingMode = value;
+                //if (value == InteractiveModes.Rotating)
+                //    m_axes[AxisNames.ZAxis].Visible = true;
+                //else if (value == InteractiveModes.ZoomRectangle) 
+                //    m_axes[AxisNames.ZAxis].Visible = false; 
             }
         }
         /// <summary>
@@ -344,14 +346,14 @@ namespace ILNumerics.Drawing.Controls {
             }
         }
         /// <summary>
-        /// true: on graph size changes, view cube will adapt automatically
+        /// Options for the view cube adapting data limit changes 
         /// </summary>
-        public bool AutoZoomContent {
+        public AutoZoomOptions AutoZoomContent {
             get {
-                return m_autoZoomContent; 
+                return m_autoZoomOptions; 
             }
             set {
-                m_autoZoomContent = value;
+                m_autoZoomOptions = value;
             }
         }
         /// <summary>
@@ -407,7 +409,8 @@ namespace ILNumerics.Drawing.Controls {
             m_colormap = new ILColormap();
             m_colormap.Changed += new EventHandler(m_colormap_Changed);
             Padding = new Padding(5);
-            BackColor = Color.White; 
+            BackColor = Color.White;
+            Dock = DockStyle.Fill; 
             m_legend = ILLegend.Create(this);
             m_legend.Changed += new EventHandler(m_legend_Changed);
             m_active = false;
@@ -586,9 +589,9 @@ namespace ILNumerics.Drawing.Controls {
             base.OnMouseMove(e);
             if (m_selectingMode == InteractiveModes.Rotating) {
                 #region rotation
-                if (m_isMoving || (e.Button == System.Windows.Forms.MouseButtons.Left 
+                if (m_isDragging || (e.Button == System.Windows.Forms.MouseButtons.Left 
                     && Math.Sqrt(Math.Pow(Math.Abs(e.X - m_mouseStart.X),2) + Math.Pow(Math.Abs(e.Y - m_mouseStart.Y),2)) > 3.0)) {
-                    m_isMoving = true; 
+                    m_isDragging = true; 
                     m_camera.EventingSuspend(); 
                     int distX = e.Location.X - m_mouseStart.X; 
                     int distY = e.Location.Y - m_mouseStart.Y;
@@ -614,20 +617,40 @@ namespace ILNumerics.Drawing.Controls {
                 }
                 #endregion
             } else if (m_selectingMode == InteractiveModes.ZoomRectangle) {
-                if (m_isMoving || (e.Button == System.Windows.Forms.MouseButtons.Left 
+                #region selection rectangle
+                if (m_isDragging || (e.Button == System.Windows.Forms.MouseButtons.Left 
                     && Math.Sqrt(Math.Pow(Math.Abs(e.X - m_mouseStart.X),2) + Math.Pow(Math.Abs(e.Y - m_mouseStart.Y),2)) > 3.0)) {
-                    m_isMoving = true; 
+                    m_isDragging = true; 
+                    Cursor = Cursors.Cross; 
                     Refresh();
                 }
+                #endregion
+            } else if (m_selectingMode == InteractiveModes.Translating) {
+                if (m_isDragging || (e.Button == System.Windows.Forms.MouseButtons.Left 
+                    && Math.Sqrt(Math.Pow(Math.Abs(e.X - m_mouseStart.X),2) + Math.Pow(Math.Abs(e.Y - m_mouseStart.Y),2)) > 1.0)) {
+                    ILPoint3Df p1,p2,dummy; 
+                    Screen2World(m_mouseStart.X,Height - m_mouseStart.Y, out p1, out dummy);
+                    Screen2World(e.X, Height - e.Y, out p2, out dummy);
+                    if (m_projection == Projection.Perspective) {
+                        p1 = ILPoint3Df.normalize(p1 - m_camera.Position) * m_camera.Distance;
+                        p2 = ILPoint3Df.normalize(p2 - m_camera.Position) * m_camera.Distance;
+                    }
+                    p1 = p2 - p1; 
+                    m_camera.LookAt -= p1;  
+                    m_mouseStart = e.Location; 
+                    Refresh(); 
+                }
+            
             }
         }
         protected override void OnMouseUp(MouseEventArgs e) {
             base.OnMouseUp(e);
             //System.Diagnostic.Debug.WriteLine("MouseUp");
-            if (m_selectingMode == InteractiveModes.ZoomRectangle && m_isMoving) {
+            if (m_selectingMode == InteractiveModes.ZoomRectangle && m_isDragging) {
                 Zoom(Screen2World2D(m_mouseStart.X,Height - m_mouseStart.Y),Screen2World2D(e.X, Height - e.Y));
             }
-            m_isMoving = false; 
+            m_isDragging = false; 
+            Cursor = Cursors.Default; 
         }
         protected override void OnMouseDown(MouseEventArgs e) {
             base.OnMouseDown(e);
@@ -636,7 +659,7 @@ namespace ILNumerics.Drawing.Controls {
         protected override void OnMouseClick(MouseEventArgs e) {
             base.OnMouseClick(e);
             //System.Diagnostic.Debug.WriteLine("Click");
-            if (m_isMoving == false && (m_selectingMode == InteractiveModes.ZoomRectangle 
+            if (m_isDragging == false && (m_selectingMode == InteractiveModes.ZoomRectangle 
                 || m_selectingMode == InteractiveModes.Rotating)) {
                 // determine new center coords
                 ILPoint3Df near, far; 
@@ -653,7 +676,27 @@ namespace ILNumerics.Drawing.Controls {
             ResetView(true);
             Refresh(); 
         }
-
+        protected override void OnKeyDown(KeyEventArgs e) {
+            if (e.Control && !m_isCtrlKeyDown) {
+                m_oldSelectingMode = m_selectingMode; 
+                m_selectingMode = InteractiveModes.Translating; 
+                m_isCtrlKeyDown = true; 
+                Cursor = Cursors.NoMove2D; 
+                //m_isDragging = false; 
+            }
+            base.OnKeyDown(e);
+        }
+        protected override void OnKeyUp(KeyEventArgs e) {
+            if (!e.Control) {
+                if (m_isCtrlKeyDown) {
+                    m_isCtrlKeyDown = false; 
+                    m_selectingMode = m_oldSelectingMode; 
+                }
+                Cursor = Cursors.Default; 
+                //m_isDragging = false; 
+            }
+            base.OnKeyUp(e);
+        }
         protected override void OnPaint(System.Windows.Forms.PaintEventArgs e) {
             if (DesignMode) {
                 e.Graphics.Clear(Color.LightGray); 
@@ -687,7 +730,7 @@ namespace ILNumerics.Drawing.Controls {
                     Trace.Indent(); 
 #endif
                     Configure();
-                    if (m_isStartingUp) {
+                    if (m_isStartingUp && (m_autoZoomOptions != AutoZoomOptions.Never)) {
                         ResetView(true);
                     }
 #if TRACE 
@@ -734,8 +777,8 @@ namespace ILNumerics.Drawing.Controls {
         }
         protected void m_graphs_OnCollectionChanged(object sender, ILGraphCollectionChangedEventArgs args) {
             if (args.Reason == GraphCollectionChangeReason.Added) {
-                if (AutoDefaultView) {
-                    args.Graph.ConfigurePanel(this);
+                if (AutoDefaultView && (args.Configurator != null)) {
+                    args.Configurator.ConfigurePanel(this);
                 }
             }
        }
@@ -752,9 +795,9 @@ namespace ILNumerics.Drawing.Controls {
         protected void m_dataLimits_Changed(object sender, ClippingChangedEventArgs e) {
             m_defaultView.EventingSuspend();
             m_defaultView.LookAt = m_graphs.Limits.CenterF;
-            m_defaultView.Distance = m_graphs.Limits.SphereRadius * 10f;
+            m_defaultView.Distance = m_graphs.Limits.SphereRadius * 2;
             m_defaultView.EventingResume(false);
-            if (m_autoZoomContent) 
+            if (m_autoZoomOptions == AutoZoomOptions.OnDataChanges) 
                 ResetView(false); 
             OnDataLimitsChanged(e);  
         }
@@ -1043,7 +1086,7 @@ namespace ILNumerics.Drawing.Controls {
             moveOffset = top * offsetY + moveX * offsetX;
         }
         protected virtual void RenderScene(ILRenderProperties p) {
-            System.Diagnostics.Debug.Print("m_camera:{0}", m_camera); 
+            //System.Diagnostics.Debug.Print("m_camera:{0}", m_camera); 
             int countRenderPasses = 2; 
             if (!DesignMode) {
                 lock (m_sortingCacheList) {

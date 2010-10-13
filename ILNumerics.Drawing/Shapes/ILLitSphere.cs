@@ -103,17 +103,19 @@ namespace ILNumerics.Drawing.Shapes {
 
         private new class Computation : ILMath {
 
-            private static Dictionary<int, ILCell> s_vertexCache = new Dictionary<int, ILCell>(); 
+            private static Dictionary<int, ILCell> s_vertexCache = new Dictionary<int, ILCell>();
             /// <summary>
             /// increase the number of triangles by doubling existing triangles
             /// </summary>
             /// <param name="vertices">vertices</param>
-            /// <param name="indices">triangle index definitions</param>
-            /// <returns>increased number of vertices and triangles</returns>
-            /// <remarks><para>Incoming triangles are expected not to be degenerated. This means: 
-            /// Every edge is used only twice at most. No triangle shares more than 2 
+            /// <param name="triangles">triangle index definitions</param>
+            /// <param name="iterations">number of iterations. On each iteration, 4 triangles will replace every single triangle!</param>
+            /// <param name="outVertices">The out vertices.</param>
+            /// <param name="outTriangles">The out triangles.</param>
+            /// <remarks><para>Incoming triangles are expected not to be degenerated. This means:
+            /// Every edge is used only twice at most. No triangle shares more than 2
             /// corners with some other triangle. </para>
-            /// <para>Incoming arrays will not be altered.</para></remarks>
+            /// 	<para>Incoming arrays will not be altered.</para></remarks>
             public static void Triangularize(ILArray<float> vertices, ILArray<int> triangles,
                                             int iterations,
                                             out ILArray<float> outVertices, 

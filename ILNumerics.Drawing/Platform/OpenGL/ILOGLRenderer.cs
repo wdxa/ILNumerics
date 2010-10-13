@@ -40,11 +40,11 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
     /// OpenGL text renderer in screen coords
     /// </summary>
     [ILRenderer(GraphicDeviceType.OpenGL,"Outline","OpenGL cached, outlined textures",true,CoordSystem.Screen)] 
-    public class ILOGLRenderer : IILRenderer {
+    public class ILOGLRenderer : IILTextRenderer {
 
         #region event handling
         /// <summary>
-        /// (IILRenderer) Event firing if the texture storage has been cleared 
+        /// (IILTextRenderer) Event firing if the texture storage has been cleared 
         /// </summary>
         public event EventHandler CacheCleared; 
         void m_textureManager_TextureCacheCleared(object sender, EventArgs e) {
@@ -169,7 +169,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         }
         #endregion
 
-        #region IILRenderer Member
+        #region IILTextRenderer Member
         /// <summary>
         /// Place a new item into the texture cache 
         /// </summary>
@@ -238,7 +238,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             m_textureManager.Reset(); 
             w = 0.5f; h = 0.5f; 
             int lineHeight = 0;
-            float drawPosX, drawPosY;
+            float drawPosY;
             float xMin = float.MaxValue; // relative to label (include rotation)
             float yMin = float.MaxValue;
             float xMax = float.MinValue;

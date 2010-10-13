@@ -30,7 +30,8 @@ using System.Drawing;
 using System.Windows.Forms; 
 using ILNumerics.Exceptions;
 using ILNumerics.Drawing.Internal;
-using ILNumerics.Drawing.Collections; 
+using ILNumerics.Drawing.Collections;
+using ILNumerics.Drawing.Plots; 
 
 namespace ILNumerics.Drawing.Controls {
     /// <summary>
@@ -56,6 +57,14 @@ namespace ILNumerics.Drawing.Controls {
             Text = "Figure " + m_key.ToString();
             m_wasMaximumSized = (WindowState == FormWindowState.Maximized);
             Tile(1,1,0);
+            this.Show(); 
+        }
+        /// <summary>
+        /// create a new figure and initialize it with a given plot
+        /// </summary>
+        /// <param name="plot">the plot to be shown in the figure</param>
+        public ILFigure(ILPlot plot) :this () {
+            this.ActiveSubfigure.Panel.Graphs.AddPlot(plot); 
         }
         #endregion
 

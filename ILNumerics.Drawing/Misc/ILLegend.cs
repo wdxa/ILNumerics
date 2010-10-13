@@ -141,13 +141,13 @@ namespace ILNumerics.Drawing.Misc {
             m_panel = panel; 
             m_size = Size.Empty; 
             m_border = new ILLineProperties();
-            m_border.Antialiasing = false; 
-            m_border.Color = Color.FromArgb(0x9f,0x9f,0xaf); 
+            m_border.Antialiasing = false;
+            m_border.Color = Color.FromKnownColor(KnownColor.WindowFrame);  
             m_border.Style = LineStyle.Solid; 
             m_border.Width = 2; 
             m_border.Changed += new EventHandler(m_border_Changed);
             m_location = Point.Empty;
-            m_bgColor = Color.FromArgb(200, 233, 254, 225); 
+            m_bgColor = Color.FromArgb(200, Color.FromKnownColor (KnownColor.ControlLight)); 
             m_opacity = 0.9f; 
             m_padding = new Padding(5);
             m_visible = false; 
@@ -169,10 +169,10 @@ namespace ILNumerics.Drawing.Misc {
         /// <summary>
         /// Draw the legend onto a predefined bitmap or into GL context
         /// </summary>
-        /// <param name="bitmap">destination bitmap, size must correspond to area. If this 
-        /// parameter is null on input, the legend will be output into current GL device context (if any).</param>
+        /// <param name="p">render properties</param>
         /// <param name="area">rectangle area defines region to draw legend contents into.</param>
-        /// <remarks>The case bitmap == null is handled by derived class implementations.</remarks>
+        /// <remarks>This function does only render to a predefined bitmap, which must be given in p. Rendering to 
+        /// (dvice dependent) graphic contexts is done in derived implementations.</remarks>
         public virtual void Draw(ILRenderProperties p, Rectangle area) {
             if (m_panel == null || m_panel.Graphs == null) return; 
             if (p.Graphics == null) {
@@ -220,9 +220,9 @@ namespace ILNumerics.Drawing.Misc {
                 IILLegendRenderer rend = graph as IILLegendRenderer; 
                 if (rend != null) {
                     ret.Add(rend); 
-                    if (rend.Label.Size.Width > labelSize.Width) 
-                        labelSize.Width = rend.Label.Size.Width; 
-                    labelSize.Height += rend.Label.Size.Height; 
+                    if (rend.LabelSize.Width > labelSize.Width) 
+                        labelSize.Width = rend.LabelSize.Width; 
+                    labelSize.Height += rend.LabelSize.Height; 
                 }
             }
             return ret; 

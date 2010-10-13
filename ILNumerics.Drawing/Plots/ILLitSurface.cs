@@ -38,17 +38,20 @@ using ILNumerics.Drawing.Labeling;
 
 namespace ILNumerics.Drawing.Plots {
     /// <summary>
-    /// Surface graph supporting light and transparency
+    /// surface plot supporting light and transparency
     /// </summary>
-    public class ILLitSurface : ILSceneGraphInnerNode {
+    public class ILLitSurface : ILPlot, Interfaces.IILPanelConfigurator {
 
+        #region attributes
         protected ILColormap m_colorMap;
         protected ILArray<float> m_xVals;
         protected ILArray<float> m_yVals; 
         protected ILArray<float> m_zVals;
         protected byte m_opacity = 255;  
         ILLitQuads m_quads;
+        #endregion
 
+        #region properties
         /// <summary>
         /// Overall opacity for the surface 
         /// </summary>
@@ -56,6 +59,7 @@ namespace ILNumerics.Drawing.Plots {
             get { return m_opacity; }
             set { 
                 m_opacity = value;
+                m_quads.Opacity = value; 
                 Invalidate(); 
             }
         }
@@ -141,13 +145,15 @@ namespace ILNumerics.Drawing.Plots {
         public ILLitQuads Quads {
             get { return m_quads; }
         }
+        #endregion
 
+        #region constructors
         /// <summary>
-        /// create new lit surface, provide data array Z
+        /// create new lit surface, provide data heights (Z values)
         /// </summary>
-        /// <param name="panel">the panel hosting the scene</param>
-        /// <param name="Z">data matrix, at lease 2 rows, 2 columns</param>
-        /// <param name="colormap">colormap used for auto coloring surface</param>
+        /// <param name="panel">panel hosting the scene</param>
+        /// <param name="Z">data matrix, at least 2 rows, 2 columns</param>
+        /// <param name="colormap">colormap used for auto coloring the surface</param>
         public ILLitSurface(ILPanel panel, ILBaseArray Z, ILColormap colormap)
             : base(panel) {
             if (Z == null || Z.Dimensions[0] < 2 || Z.Dimensions[1] < 2)
@@ -166,8 +172,8 @@ namespace ILNumerics.Drawing.Plots {
         /// <param name="panel">the panel hosting the scene</param>
         /// <param name="X">X coordinates matrix, same size as Z or null</param>
         /// <param name="Y">Y coordinates matrix, same size as Z or null</param>
-        /// <param name="Z">Z data matrix, at lease 2 rows, 2 columns</param>
-        /// <param name="colormap">colormap used for auto coloring surface</param>
+        /// <param name="Z">Z data matrix, at least 2 rows, 2 columns</param>
+        /// <param name="colormap">colormap used for auto coloring the surface</param>
         public ILLitSurface(ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILColormap colormap)
             : base(panel) {
             if (Z == null || Z.Dimensions[0] < 2 || Z.Dimensions[1] < 2)
@@ -188,13 +194,18 @@ namespace ILNumerics.Drawing.Plots {
             Invalidate();
         }
         /// <summary>
-        /// create new lit surface, provide data array A
+        /// create new lit surface, provide heights (Z values)
         /// </summary>
         /// <param name="panel">the panel hosting the scene</param>
-        /// <param name="A">data matrix, at lease 2 rows, 2 columns</param>
-        public ILLitSurface(ILPanel panel, ILBaseArray A)
-            : this(panel, A, new ILColormap(Colormaps.ILNumerics)) { }
+        /// <param name="Z">data matrix, at least 2 rows, 2 columns</param>
+        public ILLitSurface(ILPanel panel, ILBaseArray Z)
+            : this(panel, Z, new ILColormap(Colormaps.ILNumerics)) { }
+        #endregion
 
+        #region public interface
+        /// <summary>
+        /// (re)configure the plot, causes a recreation of all quads due to changed parameters
+        /// </summary>
         public override void Configure() {
             if (m_invalidated) {
                 m_quads.Indices = Computation.configureVertices(
@@ -206,26 +217,28 @@ namespace ILNumerics.Drawing.Plots {
             }
             base.Configure();
         }
+        #endregion
 
+        #region private helper
         private class Computation : ILMath {
             public static ILArray<int> configureVertices(
                     ILArray<float> xVals, ILArray<float> yVals,
                     ILArray<float> zVals, ILColormap cmap, C4fN3fV3f[] Vertices, byte opacity) {
-                int i = 0, x, y;
+                int i = 0, x, y, y0 = zVals.Dimensions[0] - 1;
                 float minZ, maxZ;
-                if (!zVals.GetLimits(out minZ, out maxZ))
+                if (!zVals.GetLimits(out minZ, out maxZ,false))
                     minZ = maxZ = 1.0f;
                 x = 0;
-                y = zVals.Dimensions[0] - 1;
+                y = 0;
                 ILArray<float> colors = (tosingle((zVals - minZ) / (maxZ - minZ)))[":"] * (cmap.Length - 1);
                 colors[isnan(colors)] = 0;
                 bool useXvals = (xVals != null && !xVals.IsEmpty);
                 bool useYvals = (yVals != null && !yVals.IsEmpty);
                 foreach (float a in zVals.Values) {
-                    C4fN3fV3f v = new C4fN3fV3f();
+                    C4fN3fV3f v = Vertices[i];
                     v.Position = new ILPoint3Df(
                          (useXvals)? xVals.GetValue(y,x): x 
-                        ,(useYvals)? yVals.GetValue(y,x): y
+                        ,(useYvals)? yVals.GetValue(y,x): y0 - y
                         , a);
                     byte r, g, b;
                     cmap.Map(colors.GetValue(i), out r, out g, out b);
@@ -233,10 +246,9 @@ namespace ILNumerics.Drawing.Plots {
                     v.Alpha = opacity; 
                     Vertices[i++] = v;
                     // set next position
-                    y--;
-                    if (y < 0) {
+                    if (++y >= zVals.Dimensions[0]) {
                         x++;
-                        y = zVals.Dimensions[0] - 1;
+                        y = 0;
                     }
                 }
 
@@ -249,12 +261,24 @@ namespace ILNumerics.Drawing.Plots {
                 mult = mult[":"].T; 
 
                 ret["0;:"] = mult;
-                ret["1;:"] = mult + 1;
+                ret["3;:"] = mult + 1;
                 mult = mult + zVals.Dimensions.SequentialIndexDistance(1); 
                 ret["2;:"] = mult + 1;
-                ret["3;:"] = mult; 
+                ret["1;:"] = mult; 
                 return toint32(ret); 
             }
         }
+        #endregion
+
+
+        #region IILPanelConfigurator Members
+
+        public void ConfigurePanel(ILPanel panel) {
+            panel.InteractiveMode = InteractiveModes.Rotating; 
+            panel.DefaultView.SetDeg(-25,45,100);
+            panel.BackgroundFilled = false; 
+        }
+
+        #endregion
     }
 }

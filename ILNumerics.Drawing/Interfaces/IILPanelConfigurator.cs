@@ -4,7 +4,7 @@ using System.Text;
 using ILNumerics.Drawing.Controls; 
 
 namespace ILNumerics.Drawing.Interfaces {
-    interface IILPanelConfigurator {
+    public interface IILPanelConfigurator {
         /// <summary>
         /// Implemented by custom graph objects, configures the hosting panel according to requirements of specific plot type
         /// </summary>

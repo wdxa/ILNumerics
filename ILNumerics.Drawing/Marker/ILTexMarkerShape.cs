@@ -41,7 +41,7 @@ namespace ILNumerics.Drawing.Marker {
         protected Font m_font; 
         protected int m_maxLabelsDrawn; 
         protected string m_valueFormat;
-        protected IILRenderer m_renderer; 
+        protected IILTextRenderer m_renderer; 
         #endregion
 
         #region constructors 

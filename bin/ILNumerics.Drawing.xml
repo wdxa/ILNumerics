@@ -6,11 +6,67 @@
     <members>
         <member name="T:ILNumerics.Drawing.ILRenderProperties">
             <summary>
-            extended drawing properties 
+            extended drawing properties
             </summary>
-            <remarks>the class collects flags for special 
-            rendering states (vector exports, picking). 
+            <remarks>the class collects flags for special
+            rendering states (vector exports, picking).
             </remarks>
+        </member>
+        <member name="F:ILNumerics.Drawing.ILRenderProperties.Camera">
+            <summary>
+            current camera 
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.ILRenderProperties.Clipping">
+            <summary>
+            current clipping (view limits) data
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.ILRenderProperties.Graphics">
+            <summary>
+            if not null, the rendering should be done offscreen via this graphics object
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.ILRenderProperties.Canceled">
+            <summary>
+            if set to true while rendering, the render process will be cancelled 
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.ILRenderProperties.Reason">
+            <summary>
+            inform content object of the reason for rendering, see the <see cref="T:ILNumerics.Drawing.RenderReason">enumeration</see> for possible values.
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.ILRenderProperties.MinX">
+            <summary>
+            measures the absolute used up region while rendering, initiallized to int.MaxValue
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.ILRenderProperties.MaxX">
+            <summary>
+            measures the absolute used up region while rendering, initiallized to int.MinValue
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.ILRenderProperties.MinY">
+            <summary>
+            measures the absolute used up region while rendering, initiallized to int.MaxValue
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.ILRenderProperties.MaxY">
+            <summary>
+            measures the absolute used up region while rendering, initiallized to int.MinValue
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.ILRenderProperties.PassCount">
+            <summary>
+            Some rendering settings require multiple rendering passes. Those are counted here.
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.ILRenderProperties.Reset">
+            <summary>
+            Resets this instance.
+            </summary>
+            <returns>Instance reset to default values.</returns>
         </member>
         <member name="T:ILNumerics.Drawing.Labeling.ILTextureStorage">
             <summary>
@@ -60,6 +116,8 @@
             </summary>
             <param name="key">unique key for item</param>
             <param name="data">item bitmap data</param>
+            <param name="rect">rectangle used in data bitmap</param>
+            <returns>true on success</returns>
         </member>
         <member name="M:ILNumerics.Drawing.Labeling.ILTextureStorage.Store(System.String,System.Drawing.Bitmap,System.Drawing.RectangleF)">
             <summary>
@@ -79,7 +137,8 @@
             store item in texture sheet in GL
             </summary>
             <param name="data">new item bitmap data</param>
-            <param name="rect">rectangle specifying area to store the data into, 
+            <param name="location">area in bitmap data to be stored</param>
+            <param name="rect">rectangle specifying area to store the data into,
             texture coords: range from 0...1.0</param>
         </member>
         <member name="M:ILNumerics.Drawing.Labeling.ILTextureStorage.MakeCurrent">
@@ -129,6 +188,237 @@
             <remarks>This code is a slightly modified version of the OpenTK.Utilities framework
             TextPrinter/TextureStorage classes. See http://opentk.com for details.</remarks>
         </member>
+        <member name="T:ILNumerics.Drawing.Plots.ILVectorField2D">
+            <summary>
+            visualizes 2D vector fields
+            </summary>
+        </member>
+        <member name="T:ILNumerics.Drawing.Plots.ILPlot">
+            <summary>
+            (abstract) base class for all higher level plot objects
+            </summary>
+        </member>
+        <member name="T:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode">
+            <summary>
+            scene graph inner node, collection of children
+            </summary>
+        </member>
+        <member name="T:ILNumerics.Drawing.Graphs.ILSceneGraphNode">
+            <summary>
+            abstract base class for all scene graph nodes
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.EventingSuspend">
+            <summary>
+            stop firing events from this node
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.EventingResume">
+            <summary>
+            resume firing events from this node
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Invalidate">
+            <summary>
+            invalidate geometry cache for this and all nodes up to root
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Configure">
+            <summary>
+            recompute the size spanned by this node, may fires Changed() event
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Draw(ILNumerics.Drawing.ILRenderProperties)">
+            <summary>
+            draw all children contained in this node
+            </summary>
+            <param name="props">extended rendering properties</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.ComputeNodeLimits">
+            <summary>
+            compute limits of the cube tightly enclosing the branch below this node
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.GetEnumerator">
+            <summary>
+            Create &amp; returns a typed enumerator
+            </summary>
+            <returns>enumerator of all scene graph nodes below this node</returns>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Create and return untyped enumerator
+            </summary>
+            <returns>IEnumerator of all scene graph nodes below this node</returns>
+        </member>
+        <member name="E:ILNumerics.Drawing.Graphs.ILSceneGraphNode.SizeChanged">
+            <summary>
+            fires when the size of the cube tigthly enclosing the shape has changed
+            </summary>
+        </member>
+        <member name="E:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Invalidated">
+            <summary>
+            fires when the (size)cache of the node was invalidated
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Visible">
+            <summary>
+            Get/set visiblility for the scene graph branch 
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Parent">
+            <summary>
+            reference to the scene graph node this node is a child of
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphNode.PositionMin">
+            <summary>
+            the minimum coordinate of a cube tightly enclosing the node (and all childs) 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphNode.PositionMax">
+            <summary>
+            the maximum coordinate of a cube tightly enclosing the node (and all childs) 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Center">
+            <summary>
+            current geometric center according of scene graph branch
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Configure">
+            <summary>
+            recompute the size spanned by this node, may fires Changed() event
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.ComputeNodeLimits">
+            <summary>
+            compute limits of the cube tightly enclosing the branch below this node
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Add(ILNumerics.Drawing.Graphs.ILSceneGraphNode)">
+            <summary>
+            add a single node to the end of child collection
+            </summary>
+            <param name="item">node to add </param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Clear">
+            <summary>
+            wipe all nodes from the collection 
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Contains(ILNumerics.Drawing.Graphs.ILSceneGraphNode)">
+            <summary>
+            Determine, if this collection contains a specific node item
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Remove(ILNumerics.Drawing.Graphs.ILSceneGraphNode)">
+            <summary>
+            remove a single child node from the collection
+            </summary>
+            <param name="item">node to be removed</param>
+            <returns>true</returns>
+        </member>
+        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Count">
+            <summary>
+            Number of children contained in this node
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.IsReadOnly">
+            <summary>
+            determine if this collection is readonly, (returns 'false')
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Computation.GetSortedIndices(ILNumerics.ILArray{System.Single},ILNumerics.Drawing.ILPoint3Df)">
+            <summary>
+            compute distance to camera and return sorted indices for rendering
+            </summary>
+            <param name="centers">current primitive centers</param>
+            <param name="position">current camera position</param>
+            <returns>sorted indices of primitives in descending order</returns>
+        </member>
+        <member name="M:ILNumerics.Drawing.Interfaces.IILPanelConfigurator.ConfigurePanel(ILNumerics.Drawing.Controls.ILPanel)">
+            <summary>
+            Implemented by custom graph objects, configures the hosting panel according to requirements of specific plot type
+            </summary>
+            <param name="panel">the panel to be configured</param>
+        </member>
+        <member name="F:ILNumerics.Drawing.Plots.ILVectorField2D.m_colormap">
+            <summary>
+            Colormap used to map values to colors
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILVectorField2D.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.Drawing.Misc.ILColormap,System.Collections.Generic.ICollection{System.String},System.Collections.Generic.ICollection{System.String})">
+            <summary>
+            create new vector field (2D) plot 
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+            <param name="data">3d data array: :;:;0 - X coords of vectors, :;:;1 - Y coords</param>
+            <param name="colormap">Colormap used for coloring, on null: Colormaps.ILNumerics is used as default</param>
+            <param name="XLabels">labels for X axis, on null: auto labeling</param>
+            <param name="YLabels">labels for Y axis, on null: auto labeling</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILVectorField2D.Configure">
+            <summary>
+            (internal use) reconfigures the plot after changes
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILVectorField2D.ConfigurePanel(ILNumerics.Drawing.Controls.ILPanel)">
+            <summary>
+            configure the panel, called after the plot was added to the scene
+            </summary>
+            <param name="panel"></param>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILVectorField2D.Data">
+            <summary>
+            gets reference to data of all vectors or sets it (restricted to same size)
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILVectorField2D.Colormap">
+            <summary>
+            get the colormap used for coloring the arrows or sets it
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILVectorField2D.ArrowHeadAngle">
+            <summary>
+            opening angle for the arrow heads, default: 5 deg
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILVectorField2D.ArrowScale">
+            <summary>
+            Scaling of arrow length, 1.0: full size; default: 0.9
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILVectorField2D.LinesShape">
+            <summary>
+            enables access to the lines composite shape used for rendering
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILVectorField2D.XLabels">
+            <summary>
+            collection of label texts for x axis
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILVectorField2D.YLabels">
+            <summary>
+            collection of label texts for y axis
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILVectorField2D.Computation.CreateTestData(System.Int32,System.Int32,System.Single)">
+            <summary>
+            create data for a simple vector field for demonstration purposes
+            </summary>
+            <param name="numRows">number of rows</param>
+            <param name="numCols">number of colums</param>
+            <param name="offs">offset, linearly varing values lets the field 'roll'</param>
+            <returns>three dimensional data array</returns>
+        </member>
         <member name="T:ILNumerics.Drawing.Platform.OpenGL.ILOGLXAxis">
             <summary>
             OpenGL implementation of ILAxis (X axis)
@@ -158,77 +448,86 @@
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.#ctor(ILNumerics.Drawing.AxisNames,ILNumerics.Drawing.ILClippingData,ILNumerics.Drawing.ILLayoutData,ILNumerics.Drawing.Controls.ILPanel)">
             <summary>
-            construct ILAxis object. This contructor is not to be called directly. 
+            construct ILAxis object. This contructor is not to be called directly.
             </summary>
             <param name="name">type of the axis: XAxis,YAxis,ZAxis</param>
             <param name="clippingView">Clipping data to be registered into the axis.</param>
-            <remarks>ILAxis objects are created GL-device dependend by use of a device dependend ILPanel instance's 
-            member ILPanel.CreateAxis(). This acts like a factory pattern. The specific axis derivate will be 
+            <param name="layoutData">additional layout data, does currently only contain the camera [depricated]</param>
+            <param name="panel">panel hosting the scene</param>
+            <remarks>ILAxis objects are created GL-device dependend by use of a device dependend ILPanel instance's
+            member ILPanel.CreateAxis(). This acts like a factory pattern. The specific axis derivate will be
             created by the derived ILPanel object (ILDXPanel or ILOGLPanel).</remarks>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.iDrawAxis(ILNumerics.Drawing.ILRenderProperties,System.Boolean)">
             <summary>
             this function does the drawing of the axis lines 
             </summary>
-            <param name="g">current System.Drawings.Graphics object. Use this with care! Some 
-            graphics devices (like D3D) may block rendering surface exclusively.</param>
+            <param name="p">render properties</param>
             <param name="background">true: draw background only, false: draw foreground only</param>
-            <param name="camera">current camera paremeter, may needed to determine which axis are front/back</param>
             <remarks>This function is called in the general rendering algorithm. I.e. <b>before</b> the surface buffers has been swapped.</remarks>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.iDrawLabel(ILNumerics.Drawing.ILRenderProperties)">
             <summary>
-            do the drawing of axis' label 
+            (internal use) do the drawing of axis' label 
             </summary>
-            <param name="g">current System.Drawings.Graphics object. Use this with care! Some 
-            graphics devices (like D3D) may block rendering surface exclusively.</param>
+            <param name="p">render properties</param>
             <remarks>When this function is called, depends on the DrawAfterBufferSwaped setting 
             of the current TextRenderer.</remarks>
+        </member>
+        <member name="M:ILNumerics.Drawing.ILAxis.iDrawTickLabels(ILNumerics.Drawing.ILRenderProperties)">
+            <summary>
+            (internal use) draw tick labels
+            </summary>
+            <param name="p">render properties</param>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.drawGrid">
             <summary>
             Do all rendering for the grid of the axis
             </summary>
-            <param name="camera">current camera settings</param>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.RenderState1(ILNumerics.Drawing.ILRenderProperties)">
             <summary>
             draw this axis in the back (behind the graphs)
             </summary>
+            <param name="p">render properties</param>
             <remarks>This method is used internally. There should be no need to call it directly.</remarks>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.RenderState2(ILNumerics.Drawing.ILRenderProperties)">
             <summary>
             Do rendering of foreground (before the graphs)
             </summary>
-            <param name="g"></param>
+            <param name="p">render properties</param>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.RenderState3(ILNumerics.Drawing.ILRenderProperties)">
             <summary>
             do rendering after the buffers have been swapped
             </summary>
-            <param name="g"></param>
+            <param name="p">render properties</param>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.Configure(ILNumerics.Drawing.ILRenderProperties)">
             <summary>
             update axis (recalculate number &amp; position of labels in auto mode, recreate vertices)
             </summary>
+            <param name="p">render properties</param>
             <remarks>This method is used internally. There should be no need to call it directly.</remarks>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.PrepareMeshes(ILNumerics.Drawing.ILRenderProperties)">
             <summary>
             recreate vertices
             </summary>
+            <param name="p">render properties</param>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.PrepareLabels(ILNumerics.Drawing.ILRenderProperties)">
             <summary>
             recreate labels
             </summary>
+            <param name="p">render properties</param>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.GetMaxTickCount(ILNumerics.Drawing.ILRenderProperties)">
             <summary>
-            number of ticks optimally fitting on screen 
+            number of ticks optimally fitting on screen
             </summary>
+            <param name="p">render properties</param>
             <returns>optimal number of ticks for this axis</returns>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.countPrimitves">
@@ -239,12 +538,12 @@
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.Invalidate">
             <summary>
-            Invalidate this axis, leads to recreation on next render
+            Invalidate this axis, causes recreation on next render
             </summary>
         </member>
         <member name="M:ILNumerics.Drawing.ILAxis.Dispose">
             <summary>
-            dispose off this axis' elements
+            (internal use) dispose off this axis' elements
             </summary>
         </member>
         <member name="P:ILNumerics.Drawing.ILAxis.Panel">
@@ -323,7 +622,7 @@
             <summary>
             draw all lines for the x axis 
             </summary>
-            <param name="g">graphics object (ignored)</param>
+            <param name="p">render properties</param>
             <param name="background">true: draw lines in the back only, false: draw foreground lines</param>
         </member>
         <member name="M:ILNumerics.Drawing.Platform.OpenGL.ILOGLXAxis.drawGrid">
@@ -394,6 +693,7 @@
             return offset according to current setting of m_alignment
             </summary>
             <param name="size">size of an element to align</param>
+            <param name="p">point inside rectangle of size 'size'</param>
             <returns>offset according to Alignment property</returns>
         </member>
         <member name="M:ILNumerics.Drawing.Labeling.ILLabelingElement.interprete(System.String)">
@@ -456,7 +756,7 @@
             <param name="p">render properties</param>
             <param name="center">center position for the label</param>
         </member>
-        <member name="M:ILNumerics.Drawing.Labeling.ILShapeLabel.drawFringed(ILNumerics.Drawing.Interfaces.IILRenderer,System.Object,System.Drawing.Point,ILNumerics.Drawing.TextOrientation,System.Drawing.Color)">
+        <member name="M:ILNumerics.Drawing.Labeling.ILShapeLabel.drawFringed(ILNumerics.Drawing.Interfaces.IILTextRenderer,System.Object,System.Drawing.Point,ILNumerics.Drawing.TextOrientation,System.Drawing.Color)">
             <summary>
             draws a fringe around the render output in fringe color
             </summary>
@@ -478,12 +778,6 @@
             <summary>
             get/set the color used for drawing a fringe around glyphs, empty: no fringe
             </summary>
-        </member>
-        <member name="M:ILNumerics.Drawing.Interfaces.IILPanelConfigurator.ConfigurePanel(ILNumerics.Drawing.Controls.ILPanel)">
-            <summary>
-            Implemented by custom graph objects, configures the hosting panel according to requirements of specific plot type
-            </summary>
-            <param name="panel">the panel to be configured</param>
         </member>
         <member name="T:ILNumerics.Drawing.Shapes.ILLitTriangle">
             <summary>
@@ -514,11 +808,6 @@
             abstract base class for all shapes 
             </summary>
         </member>
-        <member name="F:ILNumerics.Drawing.Shapes.ILShape.m_vertCount">
-            <summary>
-            panel hosting the scene (for current camera position and size updates)
-            </summary>
-        </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILShape.Dispose">
             <summary>
             may be overwritten in derived classes to clean up ressources
@@ -528,35 +817,35 @@
             <summary>
             Query single vertex via IILVertexDefinition interface 
             </summary>
-            <param name="i">index of vertex in vertex array</param>
+            <param name="id">index of vertex in vertex array</param>
             <returns>vertex definition</returns>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILShape.SetColor(System.Int32,System.Drawing.Color)">
             <summary>
             set color for single vertex (color only, no alpha!)
             </summary>
-            <param name="vertexID">index of vertex in vertex array</param>
+            <param name="id">index of vertex in vertex array</param>
             <param name="color">new color</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILShape.SetPosition(System.Int32,ILNumerics.Drawing.ILPoint3Df)">
             <summary>
             set position if single vertex 
             </summary>
-            <param name="vertexID">index of vertex in vertex array</param>
+            <param name="id">index of vertex in vertex array</param>
             <param name="position">new position </param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILShape.SetNormal(System.Int32,ILNumerics.Drawing.ILPoint3Df)">
             <summary>
             set normal vector for single vertex
             </summary>
-            <param name="vertexID">index of vertex in vertex array</param>
+            <param name="id">index of vertex in vertex array</param>
             <param name="normal">new normal vector</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILShape.SetVertex(System.Int32,ILNumerics.Drawing.Interfaces.IILVertexDefinition)">
             <summary>
             alter single vertex via IILVertexDefinition interface
             </summary>
-            <param name="vertexIdx">index of vertex in vertex array</param>
+            <param name="vertexID">index of vertex in vertex array</param>
             <param name="vertex">new vertex definition</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILShape.Translate(ILNumerics.Drawing.ILPoint3Df)">
@@ -583,11 +872,6 @@
             Invalidates this shape, needed after altering any vertex data
             </summary>
         </member>
-        <member name="M:ILNumerics.Drawing.Shapes.ILShape.IntConfigure">
-            <summary>
-            Internal Configure: prepare the shape for rendering (vertex creation, sorting etc.)
-            </summary>
-        </member>
         <member name="E:ILNumerics.Drawing.Shapes.ILShape.Changed">
             <summary>
             fires, when any properties of the shape have changed
@@ -596,6 +880,11 @@
         <member name="E:ILNumerics.Drawing.Shapes.ILShape.SizeChanged">
             <summary>
             fires when the size of the shape has changed
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Shapes.ILShape.Visible">
+            <summary>
+            Gets visibility of the shape or sets it
             </summary>
         </member>
         <member name="P:ILNumerics.Drawing.Shapes.ILShape.SceneGraphNode">
@@ -678,14 +967,14 @@
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILShape`1.SetPosition(System.Int32,ILNumerics.Drawing.ILPoint3Df)">
             <summary>
-            set position if single vertex 
+            set position of single vertex 
             </summary>
             <param name="vertexID">index of vertex in vertex array</param>
             <param name="position">new position </param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILShape`1.SetNormal(System.Int32,ILNumerics.Drawing.ILPoint3Df)">
             <summary>
-            set normal vector for single vertex
+            set normal vector of single vertex
             </summary>
             <param name="vertexID">index of vertex in vertex array</param>
             <param name="normal">new normal vector</param>
@@ -725,6 +1014,37 @@
             internal vertex definition (readonly)
             </summary>
         </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILBorderedShape`1.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32)">
+            <summary>
+            create new bordered shape
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+            <param name="numVertices">number of vertices, this bordered shape will be made out of</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILBorderedShape`1.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            create new bordered shape, provide initial vertex data
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+            <param name="X">X coordinates, vector of length 'VertexCount'</param>
+            <param name="Y">Y coordinates, vector of length 'VertexCount'</param>
+            <param name="Z">Z coordinates, vector of length 'VertexCount'</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILBorderedShape`1.Update(ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            update vertices of the shape
+            </summary>
+            <param name="X">X positions vector</param>
+            <param name="Y">Y positions vector</param>
+            <param name="Z">Z positions vector</param>
+            <remarks>Updates are made to the positions of the vectors only. X, Y and Z must be 
+            vectors of length <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>.</remarks>
+        </member>
+        <member name="P:ILNumerics.Drawing.Shapes.ILBorderedShape`1.Border">
+            <summary>
+            get reference to the properties of the shapes border 
+            </summary>
+        </member>
         <member name="T:ILNumerics.Drawing.Shapes.ILLitQuad">
             <summary>
             A single simple bordered quad supporting light
@@ -751,21 +1071,7 @@
             </summary>
             <param name="panel">scene hosting the scene</param>
             <param name="numVertices">number of overall vertices for the shape</param>
-        </member>
-        <member name="M:ILNumerics.Drawing.Shapes.ILCompositeShape`1.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
-            <summary>
-            create composite shape 
-            </summary>
-            <param name="panel">hosting panel</param>
-            <param name="verticesPerShape">number of vertices per shape</param>
-            <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="mapping">Composes shapes out of vertices. Matrix having [verticesPerShape] rows.
-            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.#
-            The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
-            get used arbitrary times (or not at all). All elements must be positive integer values in 
-            range 0...[vertCount-1].</param>
+            <param name="verticesPerShape">Number of vertices per shape</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILCompositeShape`1.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
             <summary>
@@ -773,11 +1079,28 @@
             </summary>
             <param name="panel">hosting panel</param>
             <param name="verticesPerShape">number of vertices per shape</param>
-            <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
             <remarks>The constructor creates a new composite shape out of all vertices specified in X,Y and Z.
-            Every vertex is only used once. Every shape uses [verticesPerShape] vertices one after another.</remarks>
+            Every vertex is only used once. Every shape uses 
+            <see cref="P:ILNumerics.Drawing.Shapes.ILShape`1.VerticesPerShape"/> vertices one after another.</remarks>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILCompositeShape`1.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            create composite shape 
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="verticesPerShape">number of vertices per shape</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+            <param name="mapping">Mapping of shapes, composes shapes out of vertices. Matrix having  
+            <see cref="P:ILNumerics.Drawing.Shapes.ILShape`1.VerticesPerShape"/> rows.
+            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The <see cref="P:ILNumerics.Drawing.Shapes.ILShape`1.VerticesPerShape"/> elements in a column therefore 
+            compose a single shape. Vertices may get used arbitrary times (or not at all). All elements must be 
+            positive integer values in range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILCompositeShape`1.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
             <summary>
@@ -785,17 +1108,62 @@
             </summary>
             <param name="panel">hosting panel</param>
             <param name="verticesPerShape">number of vertices per shape</param>
-            <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="colors">matrix with [vertCount] rows, 3 columns for (R,G,B) or 4 columns for 
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+            <param name="colors">matrix with <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/> 
+            rows, 3 columns for (R,G,B) or 4 columns for 
             (A,R,G,B) for every vertex specified by X,Y,Z. Elements must range from 0..255. If colors 
-            has 3 columns only, an alpha value of 255 is used as default.</param>
-            <param name="mapping">Composes shapes out of vertices. Matrix having [verticesPerShape] rows.
-            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.#
-            The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
-            get used arbitrary times (or not at all). All elements must be positive integer values in 
-            range 0...[vertCount-1].</param>
+            has 3 columns only, alpha values of 255 are used as default.</param>
+            <param name="mapping">Mapping of shapes, composes shapes out of vertices. Matrix having  
+            <see cref="P:ILNumerics.Drawing.Shapes.ILShape`1.VerticesPerShape"/> rows.
+            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The <see cref="P:ILNumerics.Drawing.Shapes.ILShape`1.VerticesPerShape"/> elements in a column therefore 
+            compose a single shape. Vertices may get used arbitrary times (or not at all). All elements must be 
+            positive integer values in range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILCompositeShape`1.Update(ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            update composite shape 
+            </summary>
+            <param name="X">x coordinates, vector of length <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+            <param name="Y">y coordinates, vector of length <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+            <param name="Z">z coordinates, vector of length <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+            <remarks>All vertices of the shape are updated with the data specified in X,Y and Z. Neither the mapping of shapes 
+            nor the colors or any other data of vertices are changed. The shape is invalidated than. </remarks>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILCompositeShape`1.Update(ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            update composite shape
+            </summary>
+            <param name="X">x coordinates, vector of length <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+            <param name="Y">y coordinates, vector of length <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+            <param name="Z">z coordinates, vector of length <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+            <param name="mapping">Mapping of shapes, composes shapes out of vertices. Matrix having  
+            <see cref="P:ILNumerics.Drawing.Shapes.ILShape`1.VerticesPerShape"/> rows.
+            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The <see cref="P:ILNumerics.Drawing.Shapes.ILShape`1.VerticesPerShape"/> elements in a column therefore 
+            compose a single shape. Vertices may get used arbitrary times (or not at all). All elements must be 
+            positive integer values in range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+            <remarks>All vertices of the shape are updated with the data specified in X,Y and Z. Neither the colors or any 
+            other data of vertices are changed. The shape is invalidated for reconfiguration at next redraw. </remarks>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILCompositeShape`1.Update(ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            update composite shape
+            </summary>
+            <param name="X">x coordinates, vector of length <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+            <param name="Y">y coordinates, vector of length <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+            <param name="Z">z coordinates, vector of length <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/></param>
+            <param name="mapping">Mapping of shapes, composes shapes out of vertices. Matrix having
+            <see cref="P:ILNumerics.Drawing.Shapes.ILShape`1.VerticesPerShape"/> rows.
+            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The <see cref="P:ILNumerics.Drawing.Shapes.ILShape`1.VerticesPerShape"/> elements in a column therefore
+            compose a single shape. Vertices may get used arbitrary times (or not at all). All elements must be
+            positive integer values in range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+            <param name="colors">The colors.</param>
+            <remarks>All vertices of the shape are updated with the data specified in X,Y and Z. Neither the colors or any
+            other data of vertices are changed. The shape is invalidated for reconfiguration at next redraw. </remarks>
         </member>
         <member name="P:ILNumerics.Drawing.Shapes.ILCompositeShape`1.Indices">
             <summary>
@@ -820,7 +1188,7 @@
         </member>
         <member name="M:ILNumerics.Drawing.Graphs.ILGraph.Invalidate">
             <summary>
-            if called, the graph will execute Configure() right before next draw
+            invalidate and recalculate this graphs data, this must be called after changes to relevant graph properties
             </summary>
         </member>
         <member name="M:ILNumerics.Drawing.Graphs.ILGraph.Draw(ILNumerics.Drawing.ILRenderProperties)">
@@ -840,15 +1208,14 @@
             </summary>
             <returns>true for 3D graphs (f.e. surf, scene graph) and false for 2D graphs (plot2D)</returns>
         </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILGraph.ConfigurePanel(ILNumerics.Drawing.Controls.ILPanel)">
-            <summary>
-            configure cetain (optionally) properties when adding this graph 
-            </summary>
-            <param name="panel">the panel to get configured by the graph</param>
-        </member>
         <member name="P:ILNumerics.Drawing.Graphs.ILGraph.Label">
             <summary>
-             retrieve reference of the label for the graph
+             the label of the graph (readonly)
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Graphs.ILGraph.Limits">
+            <summary>
+            data limits of the graphs current data (readonly)
             </summary>
         </member>
         <member name="P:ILNumerics.Drawing.Graphs.ILGraph.Type">
@@ -869,9 +1236,9 @@
             <param name="sampleArea">area to draw the line + marker into</param>
             <param name="labelArea">area to draw corresponding label into</param>
         </member>
-        <member name="P:ILNumerics.Drawing.Interfaces.IILLegendRenderer.Label">
+        <member name="P:ILNumerics.Drawing.Interfaces.IILLegendRenderer.LabelSize">
             <summary>
-            Read access to label element
+            Size of text label
             </summary>
         </member>
         <member name="M:ILNumerics.Drawing.Graphs.ILPlot2DGraph.Invalidate">
@@ -883,7 +1250,7 @@
             <summary>
             draws a small example of the visual output 
             </summary>
-            <param name="g">graphics object, if this is null, drawing into current GL context</param>
+            <param name="p">render properties</param>
             <param name="sampleArea">area to draw the line + marker into</param>
             <param name="labelArea">area to draw corresponding label into</param>
             <remarks>derived classes implement this for current device contexts</remarks>
@@ -892,6 +1259,7 @@
             <summary>
             [internal] constructor - do not use this! Use ILPanel.Graphs.Add...() instead!
             </summary>
+            <param name="panel">panel hosting the scene</param>
             <param name="sourceArray">data array</param>
             <param name="clippingContainer">hosting panels clipping data</param>
         </member>
@@ -899,6 +1267,7 @@
             <summary>
             [internal] constructor - do not use this! Use ILPanel.Graphs.Add...() instead!
             </summary>
+            <param name="panel">panel hosting the scene</param>
             <param name="XData">x data array</param>
             <param name="YData">y data array</param>
             <param name="clippingContainer">hosting panels clipping data</param>
@@ -942,6 +1311,12 @@
             </summary>
             <remarks><para>after altering vertex data, one must call 
             Invalidate() to signal those changes.</para></remarks>
+        </member>
+        <member name="P:ILNumerics.Drawing.Graphs.ILPlot2DGraph.LabelSize">
+            <summary>
+            Size of label
+            </summary>
+            <value>size</value>
         </member>
         <member name="T:ILNumerics.Drawing.Interfaces.IILVertexDefinition">
             <summary>
@@ -1077,142 +1452,12 @@
             Get all subfigures as value collection
             </summary>
         </member>
-        <member name="T:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode">
-            <summary>
-            scene graph inner node, collection of children
-            </summary>
-        </member>
-        <member name="T:ILNumerics.Drawing.Graphs.ILSceneGraphNode">
-            <summary>
-            abstract base class for all scene graph nodes
-            </summary>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Invalidate">
-            <summary>
-            invalidate geometry cache for this and all nodes up to root
-            </summary>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Configure">
-            <summary>
-            recompute the size spanned by this node, may fires Changed() event
-            </summary>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Draw(ILNumerics.Drawing.ILRenderProperties)">
-            <summary>
-            draw all children contained in this node
-            </summary>
-            <param name="props">extended rendering properties</param>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.ComputeNodeLimits">
-            <summary>
-            compute limits of the cube tightly enclosing the branch below this node
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.GetEnumerator">
-            <summary>
-            Create &amp; returns a typed enumerator
-            </summary>
-            <returns>enumerator of all scene graph nodes below this node</returns>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphNode.System#Collections#IEnumerable#GetEnumerator">
-            <summary>
-            Create and return untyped enumerator
-            </summary>
-            <returns>IEnumerator of all scene graph nodes below this node</returns>
-        </member>
-        <member name="E:ILNumerics.Drawing.Graphs.ILSceneGraphNode.SizeChanged">
-            <summary>
-            fires when the size of the cube tigthly enclosing the shape has changed
-            </summary>
-        </member>
-        <member name="E:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Invalidated">
-            <summary>
-            fires when the (size)cache of the node was invalidated
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Visible">
-            <summary>
-            Get/set visiblility for the scene graph branch 
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Parent">
-            <summary>
-            reference to the scene graph node this node is a child of
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphNode.PositionMin">
-            <summary>
-            the minimum coordinate of a cube tightly enclosing the node (and all childs) 
-            </summary>
-            <returns></returns>
-        </member>
-        <!-- Badly formed XML comment ignored for member "P:ILNumerics.Drawing.Graphs.ILSceneGraphNode.PositionMax" -->
-        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphNode.Center">
-            <summary>
-            current geometric center according of scene graph branch
-            </summary>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Configure">
-            <summary>
-            recompute the size spanned by this node, may fires Changed() event
-            </summary>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.ComputeNodeLimits">
-            <summary>
-            compute limits of the cube tightly enclosing the branch below this node
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Add(ILNumerics.Drawing.Graphs.ILSceneGraphNode)">
-            <summary>
-            add a single node to the end of child collection
-            </summary>
-            <param name="item">node to add </param>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Clear">
-            <summary>
-            wipe all nodes from the collection 
-            </summary>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Contains(ILNumerics.Drawing.Graphs.ILSceneGraphNode)">
-            <summary>
-            Determine, if this collection contains a specific node item
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Remove(ILNumerics.Drawing.Graphs.ILSceneGraphNode)">
-            <summary>
-            remove a single child node from the collection
-            </summary>
-            <param name="item">node to be removed</param>
-            <returns>true</returns>
-        </member>
-        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Count">
-            <summary>
-            Number of childs this node contains
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.IsReadOnly">
-            <summary>
-            determine if this collection is readonly, (returns 'false')
-            </summary>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode.Computation.GetSortedIndices(ILNumerics.ILArray{System.Single},ILNumerics.Drawing.ILPoint3Df)">
-            <summary>
-            compute distance to camera and return sorted indices for rendering
-            </summary>
-            <param name="centers">current primitive centers</param>
-            <param name="position">current camera position</param>
-            <returns>sorted indices of primitives in descending order</returns>
-        </member>
         <member name="T:ILNumerics.Drawing.Platform.OpenGL.ILOGLWorldRenderer">
             <summary>
-            Basic OpenGL implementation for IILRenderer
+            Basic OpenGL implementation for IILTextRenderer
             </summary>
         </member>
-        <member name="T:ILNumerics.Drawing.Interfaces.IILRenderer">
+        <member name="T:ILNumerics.Drawing.Interfaces.IILTextRenderer">
             <summary>
             interface for all classes capable of renderung (device 
             dependend) texts into plot panels 
@@ -1220,27 +1465,35 @@
             <remarks>class definitions should also implement the ILRendererAttribute. See <see cref="T:ILNumerics.Drawing.Platform.OpenGL.ILOGLRenderer"/> for an example.</remarks>
             <seealso cref="T:ILNumerics.Drawing.Platform.OpenGL.ILOGLRenderer"/>
         </member>
-        <member name="M:ILNumerics.Drawing.Interfaces.IILRenderer.Begin(ILNumerics.Drawing.ILRenderProperties)">
+        <member name="M:ILNumerics.Drawing.Interfaces.IILTextRenderer.Begin(ILNumerics.Drawing.ILRenderProperties)">
             <summary>
             begins drawing, to be called before Draw()!
             </summary>
             <param name="p">extended render properties</param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:ILNumerics.Drawing.Interfaces.IILRenderer.Begin(ILNumerics.Drawing.ILRenderProperties,System.Double[]@)" -->
-        <member name="M:ILNumerics.Drawing.Interfaces.IILRenderer.Draw(ILNumerics.Drawing.Labeling.ILRenderQueue,System.Drawing.Point,ILNumerics.Drawing.TextOrientation,System.Drawing.Color)">
+        <member name="M:ILNumerics.Drawing.Interfaces.IILTextRenderer.Begin(ILNumerics.Drawing.ILRenderProperties,System.Double[]@)">
             <summary>
-            Draw the text (screen coords) 
+            begins drawing and queries current model view matrix also
+            </summary>
+            <param name="p">extended render properties</param>
+            <param name="modelview">current modelviewmatrix</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Interfaces.IILTextRenderer.Draw(ILNumerics.Drawing.Labeling.ILRenderQueue,System.Drawing.Point,ILNumerics.Drawing.TextOrientation,System.Drawing.Color)">
+            <summary>
+            Draw the text (screen coords)
             </summary>
             <param name="renderQueue">contains items to be drawn</param>
             <param name="position">position relative to surface, starting point for drawing</param>
             <param name="orientation">orientation for item</param>
+            <param name="color">initial or default color</param>
             <remarks>
-            <para>Before calling Draw(), the TextRenderer must have been initialized with Begin(g)!</para>
-            <para>use this function if drawing in screen coords, the size for render output will be taken from the Size member of the render queue (pixels).</para>
+            	<para>Before calling Draw(), the TextRenderer must have been initialized with Begin(g)!</para>
+            	<para>use this function if drawing in screen coords, the size for render
+            output will be taken from the Size member of the render queue (pixels).</para>
             </remarks>
             <exception cref="T:System.InvalidOperationException">on attempt to draw any text without previous initialization</exception>
         </member>
-        <member name="M:ILNumerics.Drawing.Interfaces.IILRenderer.Draw(ILNumerics.Drawing.Labeling.ILRenderQueue,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Drawing.Color)">
+        <member name="M:ILNumerics.Drawing.Interfaces.IILTextRenderer.Draw(ILNumerics.Drawing.Labeling.ILRenderQueue,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Drawing.Color)">
             <summary>
             Draws the text in world coords 
             </summary>
@@ -1259,12 +1512,12 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">on attempt to draw any text without previous initialization</exception>
         </member>
-        <member name="M:ILNumerics.Drawing.Interfaces.IILRenderer.End(ILNumerics.Drawing.ILRenderProperties)">
+        <member name="M:ILNumerics.Drawing.Interfaces.IILTextRenderer.End(ILNumerics.Drawing.ILRenderProperties)">
             <summary>
             finalizes the drawing (must prepare it again before drawing!)
             </summary>
         </member>
-        <member name="M:ILNumerics.Drawing.Interfaces.IILRenderer.Cache(System.String,System.Drawing.Bitmap,System.Drawing.RectangleF)">
+        <member name="M:ILNumerics.Drawing.Interfaces.IILTextRenderer.Cache(System.String,System.Drawing.Bitmap,System.Drawing.RectangleF)">
             <summary>
             Cache single item into the renderer cache. 
             </summary>
@@ -1272,14 +1525,14 @@
             <param name="bmp">item bitmap data</param>
             <param name="rect">section in bmp to be transfered into the cache</param>
         </member>
-        <member name="M:ILNumerics.Drawing.Interfaces.IILRenderer.ExistsKey(System.String)">
+        <member name="M:ILNumerics.Drawing.Interfaces.IILTextRenderer.ExistsKey(System.String)">
             <summary>
             test if an item for a specific key is already cached
             </summary>
             <param name="key"></param>
             <returns></returns>
         </member>
-        <member name="M:ILNumerics.Drawing.Interfaces.IILRenderer.TryGetSize(System.String,System.Drawing.Size@)">
+        <member name="M:ILNumerics.Drawing.Interfaces.IILTextRenderer.TryGetSize(System.String,System.Drawing.Size@)">
             <summary>
             test if the key exists and return the size of corresponding item on success
             </summary>
@@ -1287,45 +1540,45 @@
             <param name="size">if the key was found: the size of the corresponding item</param>
             <returns>true, if the key exist, false otherwise</returns>
         </member>
-        <member name="P:ILNumerics.Drawing.Interfaces.IILRenderer.Name">
+        <member name="P:ILNumerics.Drawing.Interfaces.IILTextRenderer.Name">
             <summary>
             The name of the TextRenderer instance (implementation dependent)
             </summary>
         </member>
-        <member name="P:ILNumerics.Drawing.Interfaces.IILRenderer.NameLong">
+        <member name="P:ILNumerics.Drawing.Interfaces.IILTextRenderer.NameLong">
             <summary>
             A more descriptive name to be displayed into GUI's (implementation dependent)
             </summary>
         </member>
-        <member name="P:ILNumerics.Drawing.Interfaces.IILRenderer.DeviceType">
+        <member name="P:ILNumerics.Drawing.Interfaces.IILTextRenderer.DeviceType">
             <summary>
             Get the graphics device type this TextRenderer instance 
             is capable to use for drawing 
             </summary>
         </member>
-        <member name="P:ILNumerics.Drawing.Interfaces.IILRenderer.DrawAfterBufferSwapped">
+        <member name="P:ILNumerics.Drawing.Interfaces.IILTextRenderer.DrawAfterBufferSwapped">
             <summary>
             Determine, if the text is to be drawn after the rendering 
             backbuffer has been swapped and presented to the screen. (implementation dependent)
             </summary>
         </member>
-        <member name="P:ILNumerics.Drawing.Interfaces.IILRenderer.Cached">
+        <member name="P:ILNumerics.Drawing.Interfaces.IILTextRenderer.Cached">
             <summary>
             Determine, if this renderer chaches the output (implementation dependent) 
             </summary>
         </member>
-        <member name="P:ILNumerics.Drawing.Interfaces.IILRenderer.CoordSystem">
+        <member name="P:ILNumerics.Drawing.Interfaces.IILTextRenderer.CoordSystem">
             <summary>
             Determine the coord system this renderer is specialized to draw in
             </summary>
         </member>
-        <member name="P:ILNumerics.Drawing.Interfaces.IILRenderer.ColorOverride">
+        <member name="P:ILNumerics.Drawing.Interfaces.IILTextRenderer.ColorOverride">
             <summary>
             if set to a color (not Color.Empty), that color will be used for all renderings. 
             The color contained in the rendering queue is ignored than.
             </summary>
         </member>
-        <member name="E:ILNumerics.Drawing.Interfaces.IILRenderer.CacheCleared">
+        <member name="E:ILNumerics.Drawing.Interfaces.IILTextRenderer.CacheCleared">
             <summary>
             for cached renderers, fires if the internal cache was cleared
             </summary>
@@ -1398,6 +1651,26 @@
             return next color and increase internal pointer
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:ILNumerics.Drawing.AutoZoomOptions">
+            <summary>
+            Options for adapting ILPanel view limits 
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.AutoZoomOptions.Never">
+            <summary>
+            never adapt automatically, the view limits are handled by the user
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.AutoZoomOptions.OnStartup">
+            <summary>
+            Only adapt view limits once at startup, later changes of the data limits will not affect the view limits
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.AutoZoomOptions.OnDataChanges">
+            <summary>
+            View limits will automatically adapt changes of data limits. (Default)
+            </summary>
         </member>
         <member name="T:ILNumerics.Drawing.AspectRatioMode">
             <summary>
@@ -2004,14 +2277,14 @@
             </summary>
             <seealso cref="T:ILNumerics.Drawing.Labeling.ILSimpleTexInterpreter"/>
         </member>
-        <member name="M:ILNumerics.Drawing.Interfaces.IILTextInterpreter.Transform(System.String,System.Drawing.Font,System.Drawing.Color,ILNumerics.Drawing.Interfaces.IILRenderer)">
+        <member name="M:ILNumerics.Drawing.Interfaces.IILTextInterpreter.Transform(System.String,System.Drawing.Font,System.Drawing.Color,ILNumerics.Drawing.Interfaces.IILTextRenderer)">
             <summary>
             transform text element (text) into bitmap for rendering
             </summary>
             <param name="expression">item text expression, defines the visual output content</param>
             <param name="font">font used for rendering the text</param>
             <param name="color">initial color, unless overridden, used for items in expression</param>
-            <param name="renderer">IILRenderer implementation, used for caching the element(s)</param>
+            <param name="renderer">IILTextRenderer implementation, used for caching the element(s)</param>
             <returns>renderer queue, contains item keys and the size of transformed item expression</returns>
             <remarks>The implementation should use the general caching capabilities 
             of the renderer class. Therefore the item's elements must be cached subsequently
@@ -2041,14 +2314,14 @@
             <param name="size">[output] size of the rendered item</param>
             <returns>bitmap containing the item</returns>
         </member>
-        <member name="M:ILNumerics.Drawing.Labeling.ILSimpleInterpreter.Transform(System.String,System.Drawing.Font,System.Drawing.Color,ILNumerics.Drawing.Interfaces.IILRenderer)">
+        <member name="M:ILNumerics.Drawing.Labeling.ILSimpleInterpreter.Transform(System.String,System.Drawing.Font,System.Drawing.Color,ILNumerics.Drawing.Interfaces.IILTextRenderer)">
             <summary>
             Transforms an expression into render queue definition
             </summary>
             <param name="expression">expression to be transformed</param>
             <param name="font">font may used for transformation</param>
             <param name="color">standard color used for transformation</param>
-            <param name="renderer">IILRenderer instance used for caching (and later rendering)</param>
+            <param name="renderer">IILTextRenderer instance used for caching (and later rendering)</param>
             <returns>render queue, later used to render the visual representation of the expression</returns>
             <remarks>the expression may contain markups. See the online help at http://ilnumerics.net
             for a detailed descriptioin of known symbols and their syntax.</remarks>
@@ -2114,7 +2387,7 @@
         </member>
         <member name="E:ILNumerics.Drawing.Platform.OpenGL.ILOGLRenderer.CacheCleared">
             <summary>
-            (IILRenderer) Event firing if the texture storage has been cleared 
+            (IILTextRenderer) Event firing if the texture storage has been cleared 
             </summary>
         </member>
         <member name="T:ILNumerics.Drawing.Platform.OpenGL.ILOGLLineRendererC4bV3f">
@@ -2155,10 +2428,10 @@
             <summary>
             Draw the legend onto a predefined bitmap or into GL context
             </summary>
-            <param name="bitmap">destination bitmap, size must correspond to area. If this 
-            parameter is null on input, the legend will be output into current GL device context (if any).</param>
+            <param name="p">render properties</param>
             <param name="area">rectangle area defines region to draw legend contents into.</param>
-            <remarks>The case bitmap == null is handled by derived class implementations.</remarks>
+            <remarks>This function does only render to a predefined bitmap, which must be given in p. Rendering to 
+            (dvice dependent) graphic contexts is done in derived implementations.</remarks>
         </member>
         <member name="P:ILNumerics.Drawing.Misc.ILLegend.Visible">
             <summary>
@@ -2194,7 +2467,7 @@
             <summary>
             draw legend into opengl context
             </summary>
-            <param name="g">if not null, rendering into that graphics object</param>
+            <param name="p">rendering properties</param>
             <param name="area">area to draw the content into, if g is null, this will be ignored also</param>
         </member>
         <member name="T:ILNumerics.Drawing.Controls.ILSubfigure">
@@ -2348,8 +2621,8 @@
             <summary>
             store item in texture sheet in GL
             </summary>
-            <param name="bmp">new item bitmap data, Argb format</param>
-            <param name="bmpRect">used rectangle in bitmap</param>
+            <param name="bmp">new item bitmap data, ARGB format</param>
+            <param name="bmpRectF">rectangle used in bitmap</param>
             <param name="rect">rectangle specifying area to store the data into the texture sheet, 
             integer pixels coords: range from 0...m_width|m_height (i.e. '512' f.e.)</param>
         </member>
@@ -2418,18 +2691,161 @@
             the computed center of contained shape 
             </summary>
         </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILTriangles.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32)">
+            <summary>
+            create triangles, for delayed vertex definition
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="numVertices">number of vertices to create. Vertices must be filled 
+            with data manually afterwards.</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILTriangles.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            create triangles 
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILTriangles.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            create triangles, indexed storage
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+            <param name="mapping">Mapping of shapes, composes triangles out of vertices. Matrix having  
+            3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 3 elements in a column therefore compose a single triangle. Vertices may 
+            get used arbitrary times (or not at all). All elements must be positive integer values in 
+            range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILTriangles.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,System.Drawing.Color,ILNumerics.ILBaseArray)">
+            <summary>
+            create triangles, flat shading
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+            <param name="color">Fill color for all shapes.</param>
+            <param name="mapping">Mapping of shapes, composes lit triangles out of vertices. Matrix having  
+            3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 3 elements in a column therefore compose a single lit triangle. Vertices may 
+            get used arbitrary times (or not at all). All elements must be positive integer values in 
+            range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILTriangles.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            create lit triangles, interpolated shading
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+            <param name="colors">matrix with <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/> 
+            rows, 3 columns for (R,G,B) or 4 columns for 
+            (A,R,G,B) for every vertex specified by X,Y,Z. Elements must range from 0..255. If colors 
+            has 3 columns only, alpha values of 255 are used as default.</param>
+            <param name="mapping">Mapping of shapes, composes triangles out of vertices. Matrix having  
+            3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 3 elements in a column therefore compose a single triangle. Vertices may 
+            get used arbitrary times (or not at all). All elements must be positive integer values in 
+            range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLitCompositeShape`1.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32,System.Int32)">
+            <summary>
+            create light composite shape
+            </summary>
+            <param name="panel">scene hosting the scene</param>
+            <param name="numVertices">number of overall vertices for the shape</param>
+            <param name="verticesPerShape">Number of vertices per shape</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLitCompositeShape`1.Computation.CreateShapeIndicesIndex(ILNumerics.ILArray{System.Int32})">
+            <summary>
+            Creates the index of the shape indices.
+            </summary>
+            <param name="shapeIndices">The shape indices.</param>
+            <returns>index of shape indices</returns>
+            <remarks>The index of shape indices is used for fast facette lookup while (auto) creating
+            the normal vectors for the vertices. Therefore, the index of every vertex used in the shape
+            serves as index for a list of those facettes, where that vertex occures.
+            <para>TODO: may be replaced by a custom data structure in order to decrease memory requirements?</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLitCompositeShape`1.Computation.CalculateNormals(`0[],ILNumerics.ILArray{System.Int32},System.Collections.Generic.Dictionary{System.Int32,System.Collections.Generic.List{System.Int32}})">
+            <summary>
+            Calculates the normals.
+            </summary>
+            <param name="vertices">vertex array of the shape</param>
+            <param name="shapeIndices">The shape mapping indices.</param>
+            <param name="shapeIndicesIndex">Index of the shape indices.</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLitSphere.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.Drawing.ILPoint3Df,System.Single,System.Drawing.Color)">
+            <summary>
+            create new lit sphere, resolution of 3 
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+            <param name="center">center position</param>
+            <param name="radius">radius of the sphere</param>
+            <param name="color">color of the sphere</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLitSphere.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.Drawing.ILPoint3Df,System.Single,System.Drawing.Color,System.Int32)">
+            <summary>
+            create new lit sphere for a scene graph
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+            <param name="center">center position</param>
+            <param name="radius">radius of the sphere</param>
+            <param name="color">color of the sphere</param>
+            <param name="detail">number of triangularization iterations, typical: 0..4</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLitSphere.Computation.Triangularize(ILNumerics.ILArray{System.Single},ILNumerics.ILArray{System.Int32},System.Int32,ILNumerics.ILArray{System.Single}@,ILNumerics.ILArray{System.Int32}@)">
+            <summary>
+            increase the number of triangles by doubling existing triangles
+            </summary>
+            <param name="vertices">vertices</param>
+            <param name="triangles">triangle index definitions</param>
+            <param name="iterations">number of iterations. On each iteration, 4 triangles will replace every single triangle!</param>
+            <param name="outVertices">The out vertices.</param>
+            <param name="outTriangles">The out triangles.</param>
+            <remarks><para>Incoming triangles are expected not to be degenerated. This means:
+            Every edge is used only twice at most. No triangle shares more than 2
+            corners with some other triangle. </para>
+            	<para>Incoming arrays will not be altered.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLitSphere.Computation.CreateVertices(ILNumerics.Drawing.ILPoint3Df,System.Single,System.Int32,System.Int32,ILNumerics.ILArray{System.Int32}@)">
+            <summary>
+            create vertex data [unevenly distributed, depricated]
+            </summary>
+            <param name="center"></param>
+            <param name="radius"></param>
+            <param name="horRes"></param>
+            <param name="vertRes"></param>
+            <param name="indices"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLitSphere.Computation.CreateVerticesTri(System.Int32,ILNumerics.ILArray{System.Int32}@)">
+            <summary>
+            create vertices by triangularization, starting from icosahedron and subseq. creating finer grained details
+            </summary>
+            <param name="detail">number of iterations for triangularization</param>
+            <param name="indices">out param: return triangles</param>
+            <returns>vertex data</returns>
+        </member>
         <member name="T:ILNumerics.Drawing.Plots.ILLitSurface">
             <summary>
-            Surface graph supporting light and transparency
+            surface plot supporting light and transparency
             </summary>
         </member>
         <member name="M:ILNumerics.Drawing.Plots.ILLitSurface.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.Drawing.Misc.ILColormap)">
             <summary>
-            create new lit surface, provide data array Z
+            create new lit surface, provide data heights (Z values)
             </summary>
-            <param name="panel">the panel hosting the scene</param>
-            <param name="Z">data matrix, at lease 2 rows, 2 columns</param>
-            <param name="colormap">colormap used for auto coloring surface</param>
+            <param name="panel">panel hosting the scene</param>
+            <param name="Z">data matrix, at least 2 rows, 2 columns</param>
+            <param name="colormap">colormap used for auto coloring the surface</param>
         </member>
         <member name="M:ILNumerics.Drawing.Plots.ILLitSurface.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.Drawing.Misc.ILColormap)">
             <summary>
@@ -2438,15 +2854,20 @@
             <param name="panel">the panel hosting the scene</param>
             <param name="X">X coordinates matrix, same size as Z or null</param>
             <param name="Y">Y coordinates matrix, same size as Z or null</param>
-            <param name="Z">Z data matrix, at lease 2 rows, 2 columns</param>
-            <param name="colormap">colormap used for auto coloring surface</param>
+            <param name="Z">Z data matrix, at least 2 rows, 2 columns</param>
+            <param name="colormap">colormap used for auto coloring the surface</param>
         </member>
         <member name="M:ILNumerics.Drawing.Plots.ILLitSurface.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray)">
             <summary>
-            create new lit surface, provide data array A
+            create new lit surface, provide heights (Z values)
             </summary>
             <param name="panel">the panel hosting the scene</param>
-            <param name="A">data matrix, at lease 2 rows, 2 columns</param>
+            <param name="Z">data matrix, at least 2 rows, 2 columns</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitSurface.Configure">
+            <summary>
+            (re)configure the plot, causes a recreation of all quads due to changed parameters
+            </summary>
         </member>
         <member name="P:ILNumerics.Drawing.Plots.ILLitSurface.Opacity">
             <summary>
@@ -2488,63 +2909,6 @@
             get reference to IILLitQuads lit composite shape used for rendering the surface
             </summary>
         </member>
-        <member name="M:ILNumerics.Drawing.Shapes.ILLitCompositeShape`1.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32,System.Int32)">
-            <summary>
-            create light composite shape
-            </summary>
-            <param name="panel">scene hosting the scene</param>
-            <param name="numVertices">number of overall vertices for the shape</param>
-        </member>
-        <member name="M:ILNumerics.Drawing.Shapes.ILLitSphere.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.Drawing.ILPoint3Df,System.Single,System.Drawing.Color)">
-            <summary>
-            create new lit sphere, resolution of 3 
-            </summary>
-            <param name="panel">panel hosting the scene</param>
-            <param name="center">center position</param>
-            <param name="radius">radius of the sphere</param>
-            <param name="color">color of the sphere</param>
-        </member>
-        <member name="M:ILNumerics.Drawing.Shapes.ILLitSphere.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.Drawing.ILPoint3Df,System.Single,System.Drawing.Color,System.Int32)">
-            <summary>
-            create new lit sphere for a scene graph
-            </summary>
-            <param name="panel">panel hosting the scene</param>
-            <param name="center">center position</param>
-            <param name="radius">radius of the sphere</param>
-            <param name="color">color of the sphere</param>
-            <param name="detail">number of triangularization iterations, typical: 0..4</param>
-        </member>
-        <member name="M:ILNumerics.Drawing.Shapes.ILLitSphere.Computation.Triangularize(ILNumerics.ILArray{System.Single},ILNumerics.ILArray{System.Int32},System.Int32,ILNumerics.ILArray{System.Single}@,ILNumerics.ILArray{System.Int32}@)">
-            <summary>
-            increase the number of triangles by doubling existing triangles
-            </summary>
-            <param name="vertices">vertices</param>
-            <param name="indices">triangle index definitions</param>
-            <returns>increased number of vertices and triangles</returns>
-            <remarks><para>Incoming triangles are expected not to be degenerated. This means: 
-            Every edge is used only twice at most. No triangle shares more than 2 
-            corners with some other triangle. </para>
-            <para>Incoming arrays will not be altered.</para></remarks>
-        </member>
-        <member name="M:ILNumerics.Drawing.Shapes.ILLitSphere.Computation.CreateVertices(ILNumerics.Drawing.ILPoint3Df,System.Single,System.Int32,System.Int32,ILNumerics.ILArray{System.Int32}@)">
-            <summary>
-            create vertex data [unevenly distributed, depricated]
-            </summary>
-            <param name="center"></param>
-            <param name="radius"></param>
-            <param name="horRes"></param>
-            <param name="vertRes"></param>
-            <param name="indices"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ILNumerics.Drawing.Shapes.ILLitSphere.Computation.CreateVerticesTri(System.Int32,ILNumerics.ILArray{System.Int32}@)">
-            <summary>
-            create vertices by triangularization, starting from icosahedron and subseq. creating finer grained details
-            </summary>
-            <param name="detail">number of iterations for triangularization</param>
-            <param name="indices">out param: return triangles</param>
-            <returns>vertex data</returns>
-        </member>
         <member name="T:ILNumerics.Drawing.Platform.OpenGL.ILOGLYAxis">
             <summary>
             OpenGL implementation of ILAxis (X axis)
@@ -2555,14 +2919,14 @@
             Constructor - this class should be created only from within ILNumerics assemblies! 
             </summary>
             <param name="clippingView">panels clipping view</param>
-            <param name="layout">instance with layout informations</param>
+            <param name="layoutData">instance with layout informations</param>
             <param name="panel">the panel containing the axis</param>
         </member>
         <member name="M:ILNumerics.Drawing.Platform.OpenGL.ILOGLYAxis.iDrawAxis(ILNumerics.Drawing.ILRenderProperties,System.Boolean)">
             <summary>
             draw all lines for the axis 
             </summary>
-            <param name="g">graphics object (ignored)</param>
+            <param name="p">render properties</param>
             <param name="background">true: draw lines in the back only, false: draw foreground lines</param>
         </member>
         <member name="M:ILNumerics.Drawing.Platform.OpenGL.ILOGLYAxis.drawGrid">
@@ -2683,10 +3047,18 @@
             arguments for ILGraphCollectionChanged events
             </summary>
         </member>
-        <member name="F:ILNumerics.Drawing.ILGraphCollectionChangedEventArgs.GraphArguments">
+        <member name="F:ILNumerics.Drawing.ILGraphCollectionChangedEventArgs.Configurator">
             <summary>
             description of element changed (in some cases)
             </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.ILGraphCollectionChangedEventArgs.#ctor(ILNumerics.Drawing.Graphs.ILGraph,ILNumerics.Drawing.GraphCollectionChangeReason,ILNumerics.Drawing.Interfaces.IILPanelConfigurator)">
+            <summary>
+            arguments for GraphCollectionChanged events
+            </summary>
+            <param name="graph">the graph who was changed, for ILPlot: the scene graph</param>
+            <param name="reason">reason</param>
+            <param name="configurator"> instance of IILPanelConfigurator or null</param>
         </member>
         <member name="T:ILNumerics.Drawing.ILGraphCollectionChangedEvent">
             <summary>
@@ -2730,6 +3102,23 @@
             <param name="sender"></param>
             <param name="args"></param>
         </member>
+        <member name="T:ILNumerics.Drawing.ILSceneGraphNodeEventArgs">
+            <summary>
+            event argument for SceneGraphNodeAdded events
+            </summary>
+        </member>
+        <member name="F:ILNumerics.Drawing.ILSceneGraphNodeEventArgs.Node">
+            <summary>
+            Node which was added to the scene graph
+            </summary>
+        </member>
+        <member name="T:ILNumerics.Drawing.SceneGraphNodeHandler">
+            <summary>
+            used for events fired once a SceneGraphNode was added
+            </summary>
+            <param name="sender"></param>
+            <param name="?"></param>
+        </member>
         <member name="T:ILNumerics.Drawing.Labeling.ILHashCreator">
             <summary>
             Helper class used to create hashes for renderable items (currently text only)
@@ -2764,50 +3153,56 @@
             create composite shape, consisting out of lit quads 
             </summary>
             <param name="panel">hosting panel</param>
-            <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
+            <param name="X">x coordinates vector</param>
+            <param name="Y">y coordinates vector</param>
+            <param name="Z">z coordinates vector</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILLitQuads.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
             <summary>
             create composite shape, consisting out of lit quads 
             </summary>
             <param name="panel">hosting panel</param>
-            <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="mapping">Composes shapes out of vertices. Matrix having [verticesPerShape] rows.
-            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.#
-            The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
-            get used arbitrary times (or not at all). All elements must be positive integer values in 
-            range 0...[vertCount-1].</param>
+            <param name="X">x coordinates vector</param>
+            <param name="Y">y coordinates vector</param>
+            <param name="Z">z coordinates vector</param>
+            <param name="mapping">Mapping of shapes, composes quads out of vertices. Matrix having 4 rows.
+            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 4 elements in a column therefore compose a single quad. Vertices may get used arbitrary 
+            times (or not at all). All elements must be positive integer values in range 
+            0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILLitQuads.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,System.Drawing.Color,ILNumerics.ILBaseArray)">
             <summary>
-            create composite shape, consisting out of lit quads 
+            create lit quads, flat shading
             </summary>
             <param name="panel">hosting panel</param>
             <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
             <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
             <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="color">Color to fille all quads with</param>
+            <param name="color">Color to fill all quads with.</param>
+            <param name="mapping">Mapping of shapes, composes quads out of vertices. Matrix having 4 rows.
+            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 4 elements in a column therefore compose a single quad. Vertices may get used arbitrary 
+            times (or not at all). All elements must be positive integer values in range 
+            0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILLitQuads.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
             <summary>
-            create composite shape, consisting out of lit quads 
+            create lit quads, interpolated shading
             </summary>
             <param name="panel">hosting panel</param>
             <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
             <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
             <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="colors">matrix with [vertCount] rows, 3 columns for (R,G,B) or 4 columns for 
+            <param name="colors">matrix with <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/> 
+            rows, 3 columns for (R,G,B) or 4 columns for 
             (A,R,G,B) for every vertex specified by X,Y,Z. Elements must range from 0..255. If colors 
-            has 3 columns only, an alpha value of 255 is used as default.</param>
-            <param name="mapping">Composes shapes out of vertices. Matrix having [verticesPerShape] rows.
-            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.#
-            The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
-            get used arbitrary times (or not at all). All elements must be positive integer values in 
-            range 0...[vertCount-1].</param>
+            has 3 columns only, alpha values of 255 are used as default.</param>
+            <param name="mapping">Mapping of shapes, composes quads out of vertices. Matrix having 4 rows.
+            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 4 elements in a column therefore compose a single quad. Vertices may get used arbitrary 
+            times (or not at all). All elements must be positive integer values in range 
+            0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         </member>
         <member name="T:ILNumerics.Drawing.Platform.OpenGL.ILOGLLinesRendererC4bV3f">
             <summary>
@@ -2949,23 +3344,23 @@
         </member>
         <member name="M:ILNumerics.Drawing.Labeling.ILRendererManager.GetDefault(ILNumerics.Drawing.CoordSystem)">
             <summary>
-            Create the default instance of IILRenderer for 
+            Create the default instance of IILTextRenderer for 
             the current graphics device and a coord system
             </summary>
             <param name="coords">coord system, the renderer is 
             specialized and the default renderer for</param>
-            <returns>default IILRenderer object</returns>
+            <returns>default IILTextRenderer object</returns>
         </member>
         <member name="M:ILNumerics.Drawing.Labeling.ILRendererManager.queryAddRenderer(System.Type)">
             <summary>
-            iterate over types attribute, select IILRenderer attribute, 
+            iterate over types attribute, select IILTextRenderer attribute, 
             register for later reference, add/overwrite default renderers
             </summary>
-            <param name="t">IILRenderer type</param>
+            <param name="t">IILTextRenderer type</param>
         </member>
         <member name="P:ILNumerics.Drawing.Labeling.ILRendererManager.RendererNames">
             <summary>
-            Get a collection of all IILRenderer types and corresponding displayNames available
+            Get a collection of all IILTextRenderer types and corresponding displayNames available
             </summary>
         </member>
         <member name="M:ILNumerics.Drawing.Marker.ILTexMarkerShape.Draw(ILNumerics.Drawing.ILRenderProperties,ILNumerics.Drawing.Marker.ILMarker,ILNumerics.Drawing.Shapes.C4bV3f[],System.Int32,System.Int32)">
@@ -3011,6 +3406,14 @@
             <summary>
             A simple lit polygon, rendering arbitrary number of corners, bordered, supports light
             </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLitPolygon.Update(ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            update vertices, may also alter number of edges 
+            </summary>
+            <param name="X">X coordinates</param>                   
+            <param name="Y">Y coordinates</param>
+            <param name="Z">Z coordinates</param>
         </member>
         <member name="T:ILNumerics.Drawing.Labeling.ILTextureData">
             <summary>
@@ -3148,56 +3551,6 @@
             </summary>
             <param name="type">underlying vertex type (value type)</param>
             <returns>vertex renderer</returns>
-        </member>
-        <member name="T:ILNumerics.Drawing.Plots.ILVectorField">
-            <summary>
-            Class used to visualize a vector field in 2D
-            </summary>
-        </member>
-        <member name="M:ILNumerics.Drawing.Plots.ILVectorField.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.Drawing.Misc.ILColormap,System.Collections.Generic.ICollection{System.String},System.Collections.Generic.ICollection{System.String})">
-            <summary>
-            create new vector field plot
-            </summary>
-            <param name="panel">panel hosting the scene</param>
-            <param name="data">3d data array: :;:;0 - X coords of vectors, :;:;1 - Y coords</param>
-            <param name="colormap">Colormap used for coloring, on null: Colormaps.ILNumerics is used as default</param>
-            <param name="XLabels">labels for X axis, on null: auto labeling</param>
-            <param name="YLabels">labels for Y axis, on null: auto labeling</param>
-        </member>
-        <member name="P:ILNumerics.Drawing.Plots.ILVectorField.Data">
-            <summary>
-            get reference to data of all vectors or alter data (restricted to same size)
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Plots.ILVectorField.Colormap">
-            <summary>
-            get the colormap used for coloring the arrows or sets it
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Plots.ILVectorField.ArrowHeadAngle">
-            <summary>
-            opening angle for the arrow heads, default: 5 deg
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Plots.ILVectorField.ArrowScale">
-            <summary>
-            Scaling of arrow length, 1.0: full size; default: 0.9
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Plots.ILVectorField.LinesShape">
-            <summary>
-            enables access to the lines composite shape used for rendering
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Plots.ILVectorField.XLabels">
-            <summary>
-            collection of label texts for x axis
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Plots.ILVectorField.YLabels">
-            <summary>
-            collection of label texts for y axis
-            </summary>
         </member>
         <member name="T:ILNumerics.Drawing.Platform.OpenGL.ILOGLVertexRendererC4fN3fV3f">
             <summary>
@@ -3452,62 +3805,92 @@
             </summary>
             <remarks>'NonZeroVolumne' means, non of Depth,Width nor Heigth are allowed to be zero. If some edge of the cube is set to zero, the class expands this edge by 1 in each direction.</remarks>
         </member>
-        <member name="T:ILNumerics.Drawing.Graphs.ILBarGraph2D">
-            <summary>
-            simple updatable bar graph implementation, fixed number of bars
-            </summary>
-        </member>
-        <member name="T:ILNumerics.Drawing.Graphs.ILSceneGraph">
-            <summary>
-            The class implementes a scene graph (tree), capable 
-            of holding, managing and drawing all kinds of shapes.
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraph.Root">
-            <summary>
-            access to the root node of the scene
-            </summary>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILBarGraph2D.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray)">
-            <summary>
-            create new 2D bar graph
-            </summary>
-            <param name="panel">hosting panel</param>
-            <param name="data">numeric vector data, heights + number of bars</param>
-        </member>
-        <member name="M:ILNumerics.Drawing.Graphs.ILBarGraph2D.Queue(System.Single)">
-            <summary>
-            add 'new' bar with new value and remove oldest bar
-            </summary>
-            <param name="value">height of new bar</param>
-            <returns>discarded value</returns>
-        </member>
-        <member name="P:ILNumerics.Drawing.Graphs.ILBarGraph2D.BarWidth">
-            <summary>
-            padding between graphs 
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Graphs.ILBarGraph2D.Count">
-            <summary>
-            number of bars in the graph
-            </summary>
-        </member>
-        <member name="P:ILNumerics.Drawing.Graphs.ILBarGraph2D.Item(System.Int32)">
-            <summary>
-            return reference to single bar (ILQuad) by index
-            </summary>
-            <param name="index">index of the bar</param>
-            <returns>the bar shape as ILQuad</returns>
-        </member>
         <member name="T:ILNumerics.Drawing.Shapes.ILTriangle">
             <summary>
             A simple bordered triangle
             </summary>
         </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILQuads.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32)">
+            <summary>
+            create quads, for delayed vertex definition
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="numVertices">number of vertices to create. Vertices must be filled 
+            with data manually afterwards.</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILQuads.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            create quads, define vertex positions 
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILQuads.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            create quads, indexed storage
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+            <param name="mapping">Mapping of shapes, composes quads out of vertices. Matrix having  
+            4 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 4 elements in a column therefore compose a single quad. Vertices may 
+            get used arbitrary times (or not at all). All elements must be positive integer values in 
+            range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILQuads.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,System.Drawing.Color,ILNumerics.ILBaseArray)">
+            <summary>
+            create lit triangles, flat shading
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+            <param name="color">Fill color for all shapes.</param>
+            <param name="mapping">Composes shapes out of given vertices. Matrix having [verticesPerShape] rows.
+            Every element in a column specifies the index of a vertex according to its position in X,Y,Z. 
+            The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
+            get used arbitrary times (or not at all). All elements must be positive integer values in 
+            range 0...[vertCount-1].</param>
+            <param name="mapping">Mapping of shapes, composes lit triangles out of vertices. Matrix having  
+            3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 3 elements in a column therefore compose a single lit triangle. Vertices may 
+            get used arbitrary times (or not at all). All elements must be positive integer values in 
+            range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILQuads.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            create quads, interpolated shading
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+            <param name="colors">matrix with <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/> 
+            rows, 3 columns for (R,G,B) or 4 columns for 
+            (A,R,G,B) for every vertex specified by X,Y,Z. Elements must range from 0..255. If colors 
+            has 3 columns only, alpha values of 255 are used as default.</param>
+            <param name="mapping">Mapping of shapes, composes quads out of vertices. Matrix having  
+            4 rows. Every element in a column references a vertex according to its position index in vectors X,Y,Z.
+            The 4 elements in a column therefore compose a single quad. Vertices may 
+            get used arbitrary times (or not at all). All elements must be positive integer values in 
+            range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        </member>
         <member name="T:ILNumerics.Drawing.Shapes.ILPolygon">
             <summary>
             A simple polygon, rendering arbitrary number of corners, bordered
             </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILPolygon.Update(ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            update vertices, may also alter number of edges 
+            </summary>
+            <param name="X">X coordinates</param>                   
+            <param name="Y">Y coordinates</param>
+            <param name="Z">Z coordinates</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILLines.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32)">
             <summary>
@@ -3521,9 +3904,9 @@
             create new lines composite shape
             </summary>
             <param name="panel">panel hosting the scene</param>
-            <param name="X">X coords vector</param>
-            <param name="Y">Y coords vector</param>
-            <param name="Z">Z coords vector</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILLines.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
             <summary>
@@ -3533,24 +3916,29 @@
             <param name="X">X coords vector</param>
             <param name="Y">Y coords vector</param>
             <param name="Z">Z coords vector</param>
-            <param name="mapping">matrix defining line ends as indices into vertex array, 2 rows, every column a line</param>
+            <param name="mapping">Mapping of shapes, composes shapes out of vertices. Matrix having  
+            2 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 2 elements in a column therefore compose a single line. Vertices may get used arbitrary times 
+            (or not at all). All elements must be positive integer values in range 
+            0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILLines.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
             <summary>
             create lines composite shape 
             </summary>
             <param name="panel">hosting panel</param>
-            <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="colors">matrix with [vertCount] rows, 3 columns for (R,G,B) or 4 columns for 
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+            <param name="colors">matrix with <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/> 
+            rows, 3 columns for (R,G,B) or 4 columns for 
             (A,R,G,B) for every vertex specified by X,Y,Z. Elements must range from 0..255. If colors 
-            has 3 columns only, an alpha value of 255 is used as default.</param>
-            <param name="mapping">Composes shapes out of vertices. Matrix having 2 rows.
-            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.#
-            The 2 elements in a column therefore compose a single line. Vertices may 
-            get used arbitrary times (or not at all). All elements must be positive integer values in 
-            range 0...[vertCount-1].</param>
+            has 3 columns only, alpha values of 255 are used as default.</param>
+            <param name="mapping">Mapping of shapes, composes shapes out of vertices. Matrix having  
+            2 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 2 elements in a column therefore compose a single line. Vertices may get used arbitrary times 
+            (or not at all). All elements must be positive integer values in range 
+            0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         </member>
         <member name="P:ILNumerics.Drawing.Shapes.ILLines.Properties">
             <summary>
@@ -3592,6 +3980,36 @@
             A simple single line
             </summary>
         </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLine.#ctor(ILNumerics.Drawing.Controls.ILPanel)">
+            <summary>
+            create new simple line with 2 ends
+            </summary>
+            <param name="panel"></param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLine.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32)">
+            <summary>
+            create new line, determine number of vertices
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+            <param name="numVertices">number of vertices for the line</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLine.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            create new line, give vertices positions also
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+            <param name="X">X coordinates</param>
+            <param name="Y">Y coordinates</param>
+            <param name="Z">Z coordinates</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILLine.Update(ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
+            <summary>
+            update vertices, may also alter number of line segments 
+            </summary>
+            <param name="X">X coordinates</param>                   
+            <param name="Y">Y coordinates</param>
+            <param name="Z">Z coordinates</param>
+        </member>
         <member name="P:ILNumerics.Drawing.Shapes.ILLine.Properties">
             <summary>
             [deprecated] line properties, use individual properties of ILLine instead
@@ -3626,6 +4044,52 @@
             <summary>
             line width (pixels)
             </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Shapes.ILLine.FillColor">
+            <summary>
+            inner color of the line
+            </summary>
+        </member>
+        <member name="T:ILNumerics.Drawing.Plots.ILBarGraph2D">
+            <summary>
+            simple updatable bar graph implementation, fixed number of bars, simple example implementation derived from ILSceneGraph
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILBarGraph2D.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray)">
+            <summary>
+            create new 2D bar graph
+            </summary>
+            <param name="panel">hosting panel</param>
+            <param name="data">numeric vector data, heights of bars</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILBarGraph2D.Queue(System.Single)">
+            <summary>
+            add 'new' bar with new value and remove oldest bar
+            </summary>
+            <param name="value">height of new bar</param>
+            <returns>discarded value</returns>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILBarGraph2D.OpacityOldest">
+            <summary>
+            Sets the opacity for the 'oldest' bar. May be used as 'Fading-Out' effect. (Default: 255)
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILBarGraph2D.BarWidth">
+            <summary>
+            padding between graphs 
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILBarGraph2D.Count">
+            <summary>
+            number of bars in the graph
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILBarGraph2D.Item(System.Int32)">
+            <summary>
+            return reference to single bar (ILQuad) by index
+            </summary>
+            <param name="index">index of the bar</param>
+            <returns>the bar shape as ILQuad</returns>
         </member>
         <member name="T:ILNumerics.Drawing.ILCamera">
             <summary>
@@ -3813,14 +4277,13 @@
             </summary>
             <param name="panel">panel hosting the scene graph</param>
             <param name="data">numeric matrix with 1,2 or 3 rows, holding X,Y and Z values respectively</param>
-            <param name="sizes">numeric vector with sizes for each point</param>
             <param name="colors">3 rowed matrix with RGB values in columns. Values must lay in range 0...255. 
-            If a 4th row is provided, it specifies the alpha value for the point (0...255). Otherwise the point will
+            If a 4th row is provided, it specifys the alpha value for the points (0...255). Otherwise the points will
             be fully opaque. </param>
         </member>
         <member name="P:ILNumerics.Drawing.Shapes.ILPoints.Width">
             <summary>
-            point size (for all points)
+            size (of all points)
             </summary>
         </member>
         <member name="T:ILNumerics.Drawing.Platform.OpenGL.ILOGLPlot2DGraph">
@@ -3832,6 +4295,48 @@
             <summary>
             (re)create vertex buffer, line-, texture objects
             </summary>
+        </member>
+        <member name="T:ILNumerics.Drawing.Plots.ILBarGraph3D">
+            <summary>
+            Simple 3D Bar Graph - plot
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILBarGraph3D.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray)">
+            <summary>
+            create a new 3D Bar Graph plot, provide data matrix
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+            <param name="data">data matrix, at least 2x2 entries</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILBarGraph3D.SetLabels(ILNumerics.Drawing.Controls.ILPanel,System.String,System.String,System.String,System.Collections.Generic.ICollection{System.String},System.Collections.Generic.ICollection{System.String})">
+            <summary>
+            set axes labels and tick labels at once
+            </summary>
+            <param name="panel">panel hosting the plot</param>
+            <param name="xlabel">label text for x axis</param>
+            <param name="ylabel">label text for y axis</param>
+            <param name="zlabel">label text for z axis</param>
+            <param name="xtickLabels">collection of strings for columns labels (x-direction)</param>
+            <param name="ytickLabels">collection of strings for row labels (x-direction)</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILBarGraph3D.ConfigurePanel(ILNumerics.Drawing.Controls.ILPanel)">
+            <summary>
+            configure default view of panel, called when adding the plot to the panel
+            </summary>
+            <param name="panel">panel hosting the plot</param>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILBarGraph3D.Opacity">
+            <summary>
+            get/set opacity of the bars
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILBarGraph3D.Item(System.Int32,System.Int32)">
+            <summary>
+            individual access to each bar (ILLitBox) 
+            </summary>
+            <param name="row">row index, 0 based</param>
+            <param name="col">column index, 0 based</param>
+            <returns>lit box shape at specified position</returns>
         </member>
         <member name="T:ILNumerics.Drawing.Platform.OpenGL.ILOGLVertexRendererC4bV3f">
             <summary>
@@ -3883,7 +4388,7 @@
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILLitTriangles.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Int32)">
             <summary>
-            create composite shape, consisting out of lit triangles 
+            create lit triangles, for delayed vertex definition
             </summary>
             <param name="panel">hosting panel</param>
             <param name="numVertices">number of vertices to create. Vertices must be filled 
@@ -3891,58 +4396,59 @@
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILLitTriangles.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
             <summary>
-            create composite shape, consisting out of lit triangles 
+            create lit triangles 
             </summary>
             <param name="panel">hosting panel</param>
-            <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILLitTriangles.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
             <summary>
-            create composite shape, consisting out of lit triangles 
+            create lit triangles, indexed storage
             </summary>
             <param name="panel">hosting panel</param>
-            <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="mapping">Composes shapes out of vertices. Matrix having [verticesPerShape] rows.
-            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.#
-            The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+            <param name="mapping">Mapping of shapes, composes lit triangles out of vertices. Matrix having  
+            3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 3 elements in a column therefore compose a single lit triangle. Vertices may 
             get used arbitrary times (or not at all). All elements must be positive integer values in 
-            range 0...[vertCount-1].</param>
+            range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILLitTriangles.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,System.Drawing.Color,ILNumerics.ILBaseArray)">
             <summary>
-            create composite shape, consisting out of lit triangles 
+            create lit triangles, flat shading
             </summary>
             <param name="panel">hosting panel</param>
-            <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
             <param name="color">Fill color for all shapes.</param>
-            <param name="mapping">Composes shapes out of given vertices. Matrix having [verticesPerShape] rows.
-            Every element in a column specifies the index of a vertex according to its position in X,Y,Z. 
-            The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
+            <param name="mapping">Mapping of shapes, composes lit triangles out of vertices. Matrix having  
+            3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 3 elements in a column therefore compose a single lit triangle. Vertices may 
             get used arbitrary times (or not at all). All elements must be positive integer values in 
-            range 0...[vertCount-1].</param>
+            range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILLitTriangles.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray)">
             <summary>
-            create composite shape, consisting out of lit triangles 
+            create lit triangles, interpolated shading
             </summary>
             <param name="panel">hosting panel</param>
-            <param name="X">x coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Y">y coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="Z">z coordinates (true world coords), vector with [vertCount] values</param>
-            <param name="colors">matrix with [vertCount] rows, 3 columns for (R,G,B) or 4 columns for 
+            <param name="X">x coordinates vector </param>
+            <param name="Y">y coordinates vector </param>
+            <param name="Z">z coordinates vector </param>
+            <param name="colors">matrix with <see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/> 
+            rows, 3 columns for (R,G,B) or 4 columns for 
             (A,R,G,B) for every vertex specified by X,Y,Z. Elements must range from 0..255. If colors 
-            has 3 columns only, an alpha value of 255 is used as default.</param>
-            <param name="mapping">Composes shapes out of vertices. Matrix having [verticesPerShape] rows.
-            Every element in a column specifies the index of a vertex according to its position in X,Y,Z.#
-            The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
+            has 3 columns only, alpha values of 255 are used as default.</param>
+            <param name="mapping">Mapping of shapes, composes lit triangles out of vertices. Matrix having  
+            3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 3 elements in a column therefore compose a single lit triangle. Vertices may 
             get used arbitrary times (or not at all). All elements must be positive integer values in 
-            range 0...[vertCount-1].</param>
+            range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         </member>
         <member name="T:ILNumerics.Drawing.Resources.Images">
             <summary>
@@ -3960,6 +4466,99 @@
               resource lookups using this strongly typed resource class.
             </summary>
         </member>
+        <member name="T:ILNumerics.Drawing.Plots.ILLitSink">
+            <summary>
+            ILNumerics.Drawing plot demonstration, supports multiple shapes, dynamic shape management, light and transparency
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitSink.m_timer_Tick(System.Object,System.EventArgs)">
+            <summary>
+            timer tick event handler, called for updates of the interval timer
+            </summary>
+            <param name="sender">(not used) always this sink plot itself</param>
+            <param name="e">(not used)</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitSink.#ctor(ILNumerics.Drawing.Controls.ILPanel)">
+            <summary>
+            create new lit sink plot, assign default values 
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitSink.#ctor(ILNumerics.Drawing.Controls.ILPanel,System.Single,System.Int32)">
+            <summary>
+            create new lit sink
+            </summary>
+            <param name="max">lenght of the squared ground</param>
+            <param name="panel">panel hosting the scene</param>
+            <param name="resolution">horizontal and vertical resolution</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitSink.Configure">
+            <summary>
+            called once before rendering the frame, (re)configures the shapes after changes have been made to them
+            </summary>
+            <remarks><para>ILPlot plots can (not must) override this method. It is called, right before the scene is 
+            rendered on screen. Since the containing shapes are independently configured, here (in ILPlot) we
+            do only need to (re)configure those content of the plot, which must be recreated after changes have been 
+            applied. In ILSink, f.e., changes to the sphere and the ground (ILLitSurface) are directly distributed 
+            to the related shapes respectively. This happens, when calling any ILShape.Update() overload or after 
+            ILShape.Invalidate() has been called. Those shapes will than reconfigure itself and must not be handled here. </para> 
+            <para>In contrast to that, the (moving) grid lines of the sink plot are constantly created and removed.</para>
+            </remarks>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitSink.ConfigurePanel(ILNumerics.Drawing.Controls.ILPanel)">
+            <summary>
+            configure the panel according to default settings of this plot
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+            <remarks>In order to force a custom configuration of the panel, 
+            the plot implements the IILPanelConfigurator interface. For every plot 
+            implementing this interface, the panel will be configured by this 
+            function once the plot was added to the scene/ to the panel graphs collection.
+            If the plot does not implement this interface, the panel settings will 
+            not be altered.</remarks>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitSink.Interval">
+            <summary>
+            get/ set the interval for updates of the moving grid lines [ms]
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitSink.Opacity">
+            <summary>
+            Overall opacity for the ground 
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitSink.Colormap">
+            <summary>
+            colormap used for coloring the ground
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitSink.Sphere">
+            <summary>
+            get reference to the lit sphere 
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitSink.Ground">
+            <summary>
+            get reference to ILLitSurface (i.e. the ground)
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitSink.LinesPositionOffset">
+            <summary>
+            offset for the grid lines (for moving effect) 
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitSink.Computation.CreateMesh(System.Single,System.Single,System.Single,System.Single,System.Int32)">
+            <summary>
+            create data needed to create the ground (ILLitSurface)
+            </summary>
+            <param name="Min">minimum (x and y)</param>
+            <param name="Max">maximum (x and y)</param>
+            <param name="cut">minimum sinkhole level</param>
+            <param name="zNiveau">overall zero level</param>
+            <param name="resol">horizontal and vertical resolution</param>
+            <returns>list of X,Y and Z arrays</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:ILNumerics.Drawing.Plots.ILLitSink.Computation.CreateLines(System.Single,System.Single,System.Single,System.Single,System.Int32,System.Single,System.Single)" -->
         <member name="T:ILNumerics.Drawing.Platform.OpenGL.ILOGLZAxis">
             <summary>
             OpenGL implementation of ILAxis (X axis)
@@ -4265,34 +4864,69 @@
             Get/ set the padding used to seperate the label from the elements around it
             </summary>
         </member>
-        <member name="T:ILNumerics.Drawing.Plots.ILLitBox3D">
+        <member name="T:ILNumerics.Drawing.Graphs.ILSceneGraph">
             <summary>
-            scene graph node, displying a colored lit 3D box
+            The class implements a scene graph (tree), capable 
+            of holding, managing and drawing all kinds of shapes.
             </summary>
         </member>
-        <member name="M:ILNumerics.Drawing.Plots.ILLitBox3D.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.Drawing.ILPoint3Df,ILNumerics.Drawing.ILPoint3Df,System.Drawing.Color,System.Drawing.Color)">
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraph.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.Drawing.ILClippingData)">
             <summary>
-            create new lit 3D box
+            (internal) create new scene graph 
             </summary>
             <param name="panel">panel hosting the scene</param>
-            <param name="min">minimum coordinates defining the box' dimensions (x,y,z)</param>
-            <param name="max">minimum coordinates defining the box' dimensions (x,y,z)</param>
-            <param name="fillColor">overall color for the box</param>
-            <param name="topColor">color used to color the top edges of the box</param>
+            <param name="clipping">clipping data object, usually member of the panel</param>
         </member>
-        <member name="P:ILNumerics.Drawing.Plots.ILLitBox3D.GradientColor">
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraph.Is3DGraph">
             <summary>
-            the color used at one corner for each quad to generate a simple gradient effect 
+            Determines if this graph renders in 3D, may overridden in derived class
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraph.Draw(ILNumerics.Drawing.ILRenderProperties)">
+            <summary>
+            (internal use) draws the whole scene graph
+            </summary>
+            <param name="p"></param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraph.Configure">
+            <summary>
+            (internal use) configures and prepares the scene graph for rendering
             </summary>
         </member>
-        <member name="P:ILNumerics.Drawing.Plots.ILLitBox3D.ValueLabel">
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraph.AddNode(ILNumerics.Drawing.Graphs.ILSceneGraphNode)">
             <summary>
-            reference to the label which renders the current z-value onto the top area (world coords)
+            add new node to root node
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraph.AddNode(ILNumerics.Drawing.Shapes.ILShape)">
+            <summary>
+            add a shape to the root node
+            </summary>
+            <param name="shape"></param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraph.AddNode(ILNumerics.Drawing.Graphs.ILSceneGraphNode,ILNumerics.Drawing.Graphs.ILSceneGraphInnerNode)">
+            <summary>
+            add new node as child of another node
+            </summary>
+            <param name="node"></param>
+            <param name="parent"></param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Graphs.ILSceneGraph.GetAllShapes">
+            <summary>
+            collect all shapes contained in any scene graph nodes
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="E:ILNumerics.Drawing.Graphs.ILSceneGraph.NodeAdded">
+            <summary>
+            fires, once somewhere in the graph a node was added
             </summary>
         </member>
-        <member name="P:ILNumerics.Drawing.Plots.ILLitBox3D.TopLabel">
+        <member name="P:ILNumerics.Drawing.Graphs.ILSceneGraph.Root">
             <summary>
-            label drawn in screen coords on top of the lit box
+            root node of the scene graph
             </summary>
         </member>
         <member name="T:ILNumerics.Drawing.Labeling.ILRenderQueueItem">
@@ -4336,7 +4970,7 @@
         </member>
         <member name="T:ILNumerics.Drawing.Labeling.ILRendererAttribute">
             <summary>
-            attribute used to identify IILRenderer types within assemblies 
+            attribute used to identify IILTextRenderer types within assemblies 
             </summary>
         </member>
         <member name="F:ILNumerics.Drawing.Labeling.ILRendererAttribute.GraphicDeviceType">
@@ -4428,7 +5062,7 @@
             Collection of graph objects - all graphs currently contained in a subfigure
             </summary>
         </member>
-        <member name="M:ILNumerics.Drawing.Collections.ILGraphCollection.OnChange(ILNumerics.Drawing.Graphs.ILGraph,ILNumerics.Drawing.GraphCollectionChangeReason,ILNumerics.Drawing.ILGraphChangedEventArgs)">
+        <member name="M:ILNumerics.Drawing.Collections.ILGraphCollection.OnChange(ILNumerics.Drawing.Graphs.ILGraph,ILNumerics.Drawing.GraphCollectionChangeReason,ILNumerics.Drawing.Interfaces.IILPanelConfigurator)">
             <summary>
             triggers the ILGraphCollectionChanged event
             </summary>
@@ -4479,11 +5113,17 @@
             <param name="data">matrix holding data to be plotted</param>
             <returns>reference to newly created surface graph</returns>
         </member>
+        <member name="M:ILNumerics.Drawing.Collections.ILGraphCollection.AddPlot(ILNumerics.Drawing.Plots.ILPlot)">
+            <summary>
+            add a plot to a new scene graph
+            </summary> 
+            <param name="plot">plot to be added to the panel</param>
+            <returns>newly created scene graph</returns>
+        </member>
         <member name="M:ILNumerics.Drawing.Collections.ILGraphCollection.AddSceneGraph">
             <summary>
             Add a new scene graph to collection
             </summary>
-            <param name="data">matrix holding data to be plotted</param>
             <returns>reference to newly created surface graph</returns>
         </member>
         <member name="M:ILNumerics.Drawing.Collections.ILGraphCollection.AddSceneGraph(ILNumerics.Drawing.Graphs.ILSceneGraph)">
@@ -4556,6 +5196,89 @@
             Clippping volume for data in all graphs of the collection
             </summary>
             <remarks>This gives back the real ILClippingData object (no copy)</remarks>
+        </member>
+        <member name="T:ILNumerics.Drawing.Plots.ILLitBox3D">
+            <summary>
+            plot, displaying a simple colored lit 3D box
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitBox3D.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.Drawing.ILPoint3Df,ILNumerics.Drawing.ILPoint3Df,System.Drawing.Color,System.Drawing.Color)">
+            <summary>
+            create new lit 3D box
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+            <param name="min">minimum coordinates defining the box' dimensions (x,y,z)</param>
+            <param name="max">minimum coordinates defining the box' dimensions (x,y,z)</param>
+            <param name="fillColor">overall color for the box</param>
+            <param name="topColor">color used to color the top edges of the box</param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitBox3D.Draw(ILNumerics.Drawing.ILRenderProperties)">
+            <summary>
+            (internally used) draws the plot 
+            </summary>
+            <param name="props"></param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitBox3D.m_lineProperties_Changed(System.Object,System.EventArgs)">
+            <summary>
+            update all quad borders with new settings
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitBox3D.updateColors">
+            <summary>
+            distribute changed color settings to all quads 
+            </summary>
+        </member>
+        <member name="M:ILNumerics.Drawing.Plots.ILLitBox3D.SetColorGradient(ILNumerics.Drawing.Shapes.ILLitQuad,System.Drawing.Color,System.Drawing.Color,System.Drawing.Color,System.Drawing.Color)">
+            <summary>
+            color settings helper
+            </summary>
+            <param name="quad">quad index</param>
+            <param name="col0">color 1</param>
+            <param name="col1">color 2</param>
+            <param name="col2">color 3</param>
+            <param name="col3">color 4</param>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitBox3D.Opacity">
+            <summary>
+            get the opacity for the box or set it
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitBox3D.GradientColor">
+            <summary>
+            the color used at one corner for each quad to generate a simple gradient effect 
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitBox3D.Edges">
+            <summary>
+            properties of the edge lines 
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitBox3D.FillColor">
+            <summary>
+            overall fill color (bottom and lower area of color gradient) 
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitBox3D.TopColor">
+            <summary>
+            top color (top and upper area of color gradient)
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitBox3D.ValueLabel">
+            <summary>
+            reference to the label which renders the current z-value onto the top area (world coords)
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitBox3D.TopLabel">
+            <summary>
+            label drawn in screen coords on top of the lit box
+            </summary>
+        </member>
+        <member name="T:ILNumerics.Drawing.Plots.ILLitBox3D.QuadIndices">
+            <summary>
+            enum for all 
+            </summary>
         </member>
         <member name="T:ILNumerics.Drawing.Labeling.ILWorldLabel">
             <summary>
@@ -4911,7 +5634,7 @@
         </member>
         <member name="P:ILNumerics.Drawing.Controls.ILPanel.AutoZoomContent">
             <summary>
-            true: on graph size changes, view cube will adapt automatically
+            Options for the view cube adapting data limit changes 
             </summary>
         </member>
         <member name="P:ILNumerics.Drawing.Controls.ILPanel.ZoomMode">
@@ -5225,6 +5948,12 @@
             create new ILFigure form
             </summary>
         </member>
+        <member name="M:ILNumerics.Drawing.Controls.ILFigure.#ctor(ILNumerics.Drawing.Plots.ILPlot)">
+            <summary>
+            create a new figure and initialize it with a given plot
+            </summary>
+            <param name="plot">the plot to be shown in the figure</param>
+        </member>
         <member name="M:ILNumerics.Drawing.Controls.ILFigure.Tile(System.Int32,System.Int32,System.Int32)">
             <summary>
             Tile this figure into rows and columns to display multiple subfigures 
@@ -5347,7 +6076,7 @@
         </member>
         <member name="M:ILNumerics.Drawing.Platform.OpenGL.ILOGLPanel.CreateSceneGraph">
             <summary>
-            create a new device dependant scene graph for hosting ILPrimitives
+            create a new device dependent scene graph for hosting ILShapes, internally used
             </summary>
             <returns>scene graph</returns>
         </member>

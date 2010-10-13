@@ -137,6 +137,8 @@ namespace ILNumerics.Drawing.Labeling {
         /// </summary>
         /// <param name="key">unique key for item</param>
         /// <param name="data">item bitmap data</param>
+        /// <param name="rect">rectangle used in data bitmap</param>
+        /// <returns>true on success</returns>
         public virtual bool Store (string key, Bitmap data, Rectangle rect) {
             if (data.Height > m_height || data.Width > m_width) 
                 throw new ArgumentException("texture size is too large for this packer!");
@@ -205,7 +207,8 @@ namespace ILNumerics.Drawing.Labeling {
         /// store item in texture sheet in GL
         /// </summary>
         /// <param name="data">new item bitmap data</param>
-        /// <param name="rect">rectangle specifying area to store the data into, 
+        /// <param name="location">area in bitmap data to be stored</param>
+        /// <param name="rect">rectangle specifying area to store the data into,
         /// texture coords: range from 0...1.0</param>
         protected abstract void Store(Bitmap data, RectangleF location, RectangleF rect);
         /// <summary>

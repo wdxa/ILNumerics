@@ -39,7 +39,7 @@ namespace ILNumerics.Drawing.Graphs {
     /// graph for drawings into ILPanel
     /// </summary>
     /// <remarks>Use the ILGraphCollection returned from ILPanel.Graphs and its Add... functions to create new graphs.</remarks>
-    public abstract class ILGraph : IDisposable, IILPanelConfigurator {
+    public abstract class ILGraph : IDisposable {
 
         #region events 
         
@@ -60,13 +60,16 @@ namespace ILNumerics.Drawing.Graphs {
         protected ILLabel m_label; 
 
         /// <summary>
-        ///  retrieve reference of the label for the graph
+        ///  the label of the graph (readonly)
         /// </summary>
         public ILLabel Label {
             get { 
                 return m_label; 
             }
-        }        
+        }
+        /// <summary>
+        /// data limits of the graphs current data (readonly)
+        /// </summary>
         public ILClippingData Limits {
             get { 
                 return m_localClipping;
@@ -132,7 +135,7 @@ namespace ILNumerics.Drawing.Graphs {
         /// </summary>
         public abstract void Configure();
         /// <summary>
-        /// if called, the graph will execute Configure() right before next draw
+        /// invalidate and recalculate this graphs data, this must be called after changes to relevant graph properties
         /// </summary>
         public virtual void Invalidate() {
             m_isReady = false; 
@@ -157,12 +160,6 @@ namespace ILNumerics.Drawing.Graphs {
         /// </summary>
         /// <returns>true for 3D graphs (f.e. surf, scene graph) and false for 2D graphs (plot2D)</returns>
         public abstract bool Is3DGraph();
-
-        /// <summary>
-        /// configure cetain (optionally) properties when adding this graph 
-        /// </summary>
-        /// <param name="panel">the panel to get configured by the graph</param>
-        public abstract void ConfigurePanel(ILPanel panel); 
 
         #endregion
 

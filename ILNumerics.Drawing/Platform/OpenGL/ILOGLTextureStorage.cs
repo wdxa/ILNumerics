@@ -75,8 +75,8 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// <summary>
         /// store item in texture sheet in GL
         /// </summary>
-        /// <param name="bmp">new item bitmap data, Argb format</param>
-        /// <param name="bmpRect">used rectangle in bitmap</param>
+        /// <param name="bmp">new item bitmap data, ARGB format</param>
+        /// <param name="bmpRectF">rectangle used in bitmap</param>
         /// <param name="rect">rectangle specifying area to store the data into the texture sheet, 
         /// integer pixels coords: range from 0...m_width|m_height (i.e. '512' f.e.)</param>
         protected override void Store(Bitmap bmp,RectangleF bmpRectF, RectangleF rect) {

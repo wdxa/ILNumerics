@@ -38,9 +38,8 @@ namespace ILNumerics.Drawing.Graphs {
             IList<ILSceneGraphNode> {
 
         #region attributes
-        protected List<ILSceneGraphNode> m_childs;
-        protected ILArray<float> m_centers;
-        
+        private List<ILSceneGraphNode> m_childs;
+        private ILArray<float> m_centers;
         #endregion
 
         #region constructors
@@ -139,7 +138,23 @@ namespace ILNumerics.Drawing.Graphs {
             node.Shape = shape;
             m_childs.Add(node);
             Invalidate(); 
+            OnNodeAdded(node); 
         }
+        public virtual void Remove(ILShape shape) {
+            ILSceneGraphNode node = null; 
+            foreach (ILSceneGraphNode n in m_childs) {
+                if (n is ILSceneGraphShapedLeaf) { 
+                    if (object.Equals((n as ILSceneGraphShapedLeaf).Shape,shape)) {
+                        node = n; 
+                        break; 
+                    }
+                }
+            }
+            if (node != null) {
+                m_childs.Remove(node); 
+                OnNodeRemoved(node); 
+            }
+        }      
         #endregion
 
         #region IList<ILSceneGraphNode> Member
@@ -178,6 +193,7 @@ namespace ILNumerics.Drawing.Graphs {
             m_childs.Add(item);
             item.Parent = this;
             item.Invalidate();
+            OnNodeAdded(item);
         }
         /// <summary>
         /// wipe all nodes from the collection 
@@ -199,9 +215,9 @@ namespace ILNumerics.Drawing.Graphs {
             m_childs.CopyTo(array, arrayIndex);
         }
         /// <summary>
-        /// Number of childs this node contains
+        /// Number of children contained in this node
         /// </summary>
-        public int Count {
+        public virtual int Count {
             get { return m_childs.Count; }
         }
         /// <summary>

@@ -49,7 +49,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// <summary>
         /// draw legend into opengl context
         /// </summary>
-        /// <param name="g">if not null, rendering into that graphics object</param>
+        /// <param name="p">rendering properties</param>
         /// <param name="area">area to draw the content into, if g is null, this will be ignored also</param>
         public override void Draw(ILRenderProperties p, System.Drawing.Rectangle area) {
             if (!m_visible) return; 
@@ -142,7 +142,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
             
             for (int i = 0; i < renderer.Count; i++) {
                 IILLegendRenderer rend = renderer[i]; 
-                sampleRect.Height = rend.Label.Size.Height; 
+                sampleRect.Height = rend.LabelSize.Height; 
                 labelRect.Height = sampleRect.Height; 
                 try {
                     rend.DrawToLegend(p,sampleRect,labelRect); 

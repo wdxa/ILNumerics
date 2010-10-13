@@ -25,7 +25,8 @@ using System.Text;
 using ILNumerics.Test;
 using ILNumerics.Algorithms; 
 using ILNumerics.BuiltInFunctions; 
-using ILNumerics.Storage; 
+using ILNumerics.Storage;
+using ILNumerics.Misc; 
 
 namespace ILNumerics.Test {
     public class TESTQuickSort : ILTest {
@@ -33,16 +34,25 @@ namespace ILNumerics.Test {
         System.Diagnostics.Stopwatch m_stopwatch = new System.Diagnostics.Stopwatch();  
         
         public override void Run() {
+            Header(); 
             base.Run();
-            Test_SortSpeed (1000000); 
+            TestQuickSortAscIDX(0,15); 
+            TestQuickSortAscIDX(1,12); 
+            TestQuickSortAscIDX(2,100); 
+            TestQuickSortAscIDX(3,1000); 
+            TestQuickSortDescIDX(0,15); 
+            TestQuickSortDescIDX(1,12); 
+            TestQuickSortDescIDX(2,100); 
+            TestQuickSortDescIDX(3,1000); 
+            TestQuickSortGen(ILMath.rand(2000,1000) * 10,1,true); 
             TestQuickSortDesc();
             TestQuickSortAsc(); 
+            Test_SortSpeed (100000); 
             TestQuickSortDescIDX();
-            TestQuickSortAscIDX(); 
-            TestQuickSortGen(ILMath.rand(2000,1000) * 10,1,true); 
             TestQuickSortGen(ILMath.rand(1,1000000) * 1000000.0,1,true); 
             TestQuickSortLoop(1000,1000); 
             TestQuickSort(ILMath.rand(1,10).m_data); 
+            Footer(); 
         }
 
         public class DescComparerDouble : IComparer {
@@ -59,15 +69,16 @@ namespace ILNumerics.Test {
                 for (int i = 0; i < 10; i++) {
                     A = ILMath.randn(length,1);
                     p.Tic(); 
-                    ResILN = ILMath.sort(A); 
+                    ILMath.sort(A); 
                     p.Toc(); 
                     durILN += p.Duration; 
-                    p.Tic(); 
                     ResCLR = A.C; 
+                    p.Tic(); 
                     Array.Sort(ResCLR.m_data); 
                     p.Toc(); 
                     durCLR += p.Duration; 
                 }
+                ResILN = ILMath.sort(A);
                 if (!ResCLR.Equals(ResILN)) 
                     throw new Exception("invalid values!"); 
                 Info(String.Format("ILNumerics.Net sort {1} needed: {0}ms",durILN / 10,A.Dimensions.ToString())); 
@@ -81,8 +92,8 @@ namespace ILNumerics.Test {
                     ResILN = ILMath.sort(A,true); 
                     p.Toc(); 
                     durILN += p.Duration; 
-                    p.Tic(); 
                     ResCLR = A.C; 
+                    p.Tic(); 
                     Array.Sort(ResCLR.m_data,comparer); 
                     p.Toc(); 
                     durCLR += p.Duration; 
@@ -90,8 +101,10 @@ namespace ILNumerics.Test {
                 if (!ResCLR.Equals(ResILN)) 
                     throw new Exception("invalid values!"); 
  
-                Info(String.Format("ILNumerics.Net sort {1} needed: {0}ms",durILN / 10,A.Dimensions.ToString())); 
-                Info(String.Format("CLR Array.Sort {1} needed: {0}ms",durCLR / 10,A.Dimensions.ToString())); 
+                Info(String.Format("ILNumerics.Net sort {1} desc, needed: {0}ms",durILN / 10,A.Dimensions.ToString())); 
+                Info(String.Format("CLR Array.Sort {1} desc, needed: {0}ms",durCLR / 10,A.Dimensions.ToString())); 
+
+
             } catch (Exception e) {
                 Error(0, e.Message); 
             }
@@ -128,28 +141,55 @@ namespace ILNumerics.Test {
                 Error(0, e.Message); 
             }
         }
-        private void TestQuickSortAscIDX() {
+        private void TestQuickSortAscIDX(int dim, int len) {
             try {
-                ILArray<double> A = ILMath.counter(5,4,3); 
-                System.Diagnostics.Debug.Assert(!A.IsReference); 
+                // asc along dimension (already ordered values) 
+                int[] dims = new int[4] {5,4,3,2}; 
+                dims[dim] = len; 
+                ILArray<double> A = ILMath.counter(dims); 
                 ILArray<double> ind; 
-                ILArray<double> result = ILMath.sort(A,out ind, 1,false); 
-                ILArray<double> expect = A[":;:;:"]; 
+                ILArray<double> result = ILMath.sort(A,out ind, dim, false); 
+                ILArray<double> expect = A.C; 
+                ILArray<double> expectInd; 
                 if (!result.Equals(expect))
                     throw new Exception("invalid values"); 
-                expect = new double[] {0, 1, 2, 3}; 
-                expect = ILMath.repmat(expect,5,1,3); 
-                if (!ind.Equals(expect))
+                int [] dimsEx = new int[dims.Length]; int i; 
+                expectInd = ILMath.counter(0.0,1.0,1, A.Dimensions[dim]);
+                expectInd = ILMath.repmat(expectInd,A.Dimensions.SequentialIndexDistance(dim),1);
+                for (i = 0; i < dimsEx.Length; i++) {
+                    if (i <= dim) dimsEx[i] = dims[i]; 
+                    else dimsEx[i] = 1; 
+                }
+                expectInd = ILMath.reshape(expectInd,dimsEx); 
+                for (i = 0; i < dimsEx.Length; i++) {
+                    if (i <= dim) dimsEx[i] = 1; 
+                    else dimsEx[i] = dims[i]; 
+                }
+                expectInd = ILMath.repmat(expectInd,dimsEx); 
+                if (!ind.Equals(expectInd))
                     throw new Exception("invalid indices"); 
-                // true sortable values... 
-                A = ILMath.counter(60.0,-1.0,5,4,3); 
-                result = ILMath.sort(A,out ind, 1,false); 
-                expect = A[":;3,2,1,0;:"]; 
+                // reverse values ... 
+                A = ILMath.counter(A.Dimensions.NumberOfElements, -1.0, dims); 
+                result = ILMath.sort(A,out ind, dim ,false); 
+                expectInd = ILMath.counter(A.Dimensions[dim]-1,-1.0,1, A.Dimensions[dim]);
+                ILBaseArray[] revDims = new ILBaseArray[dims.Length];
+                revDims[dim] = expectInd; 
+
+                expect = A[revDims]; 
+                expectInd = ILMath.repmat(expectInd,A.Dimensions.SequentialIndexDistance(dim),1);
                 if (!result.Equals(expect))
                     throw new Exception("invalid values"); 
-                expect = new double[] {3, 2, 1, 0}; 
-                expect = ILMath.repmat(expect,5,1,3); 
-                if (!ind.Equals(expect))
+                for (i = 0; i < dimsEx.Length; i++) {
+                    if (i <= dim) dimsEx[i] = dims[i]; 
+                    else dimsEx[i] = 1; 
+                }
+                expectInd = ILMath.reshape(expectInd,dimsEx); 
+                for (i = 0; i < dimsEx.Length; i++) {
+                    if (i <= dim) dimsEx[i] = 1; 
+                    else dimsEx[i] = dims[i]; 
+                }
+                expectInd = ILMath.repmat(expectInd,dimsEx); 
+                if (!ind.Equals(expectInd))
                     throw new Exception("invalid indices"); 
                 // test scalar 
                 A = 3.0; 
@@ -169,6 +209,74 @@ namespace ILNumerics.Test {
                 Success(); 
             } catch (Exception e) {
                 Error(0, e.Message); 
+            }
+        }
+        private void TestQuickSortDescIDX(int dim, int len) {
+            try {
+                // asc along dimension (already ordered values) 
+                int[] dims = new int[4] {5,4,3,2}; 
+                dims[dim] = len; 
+                ILArray<double> A = ILMath.counter(dims); 
+                ILArray<double> ind; 
+                ILArray<double> result = ILMath.sort(A, out ind, dim, true); 
+                ILArray<double> expect = null; 
+                ILArray<double> expectInd; 
+                expectInd = ILMath.counter(A.Dimensions[dim]-1,-1.0,1, A.Dimensions[dim]);
+                ILBaseArray[] revDims = new ILBaseArray[dims.Length];
+                revDims[dim] = expectInd; 
+                expect = A[revDims]; 
+                if (!result.Equals(expect))
+                    throw new Exception("invalid values"); 
+
+                int [] dimsEx = new int[dims.Length];
+                expectInd = ILMath.repmat(expectInd,A.Dimensions.SequentialIndexDistance(dim),1);
+                sortIDXTestHelper001(dim, dims, ref expectInd, dimsEx);
+                expectInd = ILMath.repmat(expectInd,dimsEx); 
+                if (!ind.Equals(expectInd))
+                    throw new Exception("invalid indices"); 
+                // reverse values ... 
+                A = ILMath.counter(A.Dimensions.NumberOfElements, -1.0, dims); 
+                result = ILMath.sort(A,out ind, dim ,true); 
+                if (!result.Equals(A.C))
+                    throw new Exception("invalid values"); 
+
+                expectInd = ILMath.counter(0.0,1.0,1, A.Dimensions[dim]);
+                expectInd = ILMath.repmat(expectInd,A.Dimensions.SequentialIndexDistance(dim),1);
+                sortIDXTestHelper001(dim, dims, ref expectInd, dimsEx);
+                expectInd = ILMath.repmat(expectInd,dimsEx); 
+                if (!ind.Equals(expectInd))
+                    throw new Exception("invalid indices"); 
+                // test scalar 
+                A = 3.0; 
+                result = ILMath.sort(A,out ind,0,true); 
+                if (result != 3.0) {
+                    throw new Exception("invalid values: scalar");
+                }
+                if (ind != 0.0) 
+                    throw new Exception("invalid indices"); 
+                // test empty 
+                A = ILArray<double>.empty(); 
+                if (!ILMath.sort(A,out ind, 0,true).IsEmpty)
+                    throw new Exception("invalid values: empty");
+                if (!ind.IsEmpty) {
+                    throw new Exception("invalid indices"); 
+                }
+                Success(); 
+            } catch (Exception e) {
+                Error(0, e.Message); 
+            }
+        }
+
+        private static void sortIDXTestHelper001(int dim, int[] dims, ref ILArray<double> expectInd, int[] dimsEx) {
+            int i;
+            for (i = 0; i < dimsEx.Length; i++) {
+                if (i <= dim) dimsEx[i] = dims[i];
+                else dimsEx[i] = 1;
+            }
+            expectInd = ILMath.reshape(expectInd, dimsEx);
+            for (i = 0; i < dimsEx.Length; i++) {
+                if (i <= dim) dimsEx[i] = 1;
+                else dimsEx[i] = dims[i];
             }
         }
         private void TestQuickSortDesc() {
@@ -208,6 +316,19 @@ namespace ILNumerics.Test {
                 expect = A[":;3,2,1,0;:"]; 
                 if (!result.Equals(expect))
                     throw new Exception("invalid values");
+                // test ascending values to sort ascending
+                A = ILMath.counter(1.0,1.0,11,2); 
+                result = ILMath.sort(A,0,false); 
+                if (!result.Equals(A)) {
+                    throw new Exception("invalid values"); 
+                }
+                // test descending values to sort ascending
+                A = ILMath.counter(22.0,-1,11,2); 
+                result = ILMath.sort(A,0,false); 
+                expect = ILMath.counter(1.0,1.0,11,2)[":;1,0"]; 
+                if (!result.Equals(expect)) {
+                    throw new Exception("invalid values"); 
+                }
                 // test scalar 
                 A = 3.0; 
                 result = ILMath.sort(A,0,false); 
@@ -218,6 +339,26 @@ namespace ILNumerics.Test {
                 A = ILArray<double>.empty(); 
                 if (!ILMath.sort(A,0,false).IsEmpty)
                     throw new Exception("invalid values: empty");
+                // test nan
+                A = ILMath.counter(1.0,1.0,20,2); 
+                A[2] = double.NaN; 
+                A[4] = double.PositiveInfinity; 
+                A[8] = double.NegativeInfinity; 
+                A[18] = double.NegativeInfinity; 
+                A[14] = double.NaN; 
+                result = ILMath.sort(A,0,false); 
+                expect = ILMath.counter(1.0,1.0,20,2);
+                expect[":;0"] = new double[] { 
+                    double.NegativeInfinity, 
+                    double.NegativeInfinity,
+                    1,2,4,6,7,8,10,11,12,13,14,16,17,18,20,
+                    double.PositiveInfinity,
+                    double.NaN,
+                    double.NaN
+                }; 
+                if (!result.Equals(expect)) {
+                    throw new Exception("invalid values"); 
+                }
                 Success(); 
             } catch (Exception e) {
                 Error(0, e.Message); 
@@ -227,13 +368,24 @@ namespace ILNumerics.Test {
         private void TestQuickSortGen(ILArray<double> input,int dim, bool desc) {
             try {
                 ILArray<int> A = ILMath.toint32( input ); 
+                try {
+                    ILMatFile f1 = new ILMatFile("tempADebugQuickSort.mat");
+                    A = (ILArray<int>)f1["DebugQuickSort"]; 
+                } catch (Exception) {}
+
                 ILArray<int> result;
                 System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch(); 
                 sw.Start();
                 result = ILMath.sort(A,dim,desc); 
                 sw.Stop(); 
-                if (!isSorted(ILMath.todouble(result),dim,desc))
+                if (!isSorted(ILMath.todouble(result),dim,desc)) {
+                    //ILMatFile f = new ILMatFile(); 
+                    //A.Name = "DebugQuickSort"; 
+                    //f.Add(A); 
+                    //System.IO.Stream s = new System.IO.FileStream("tempADebugQuickSort.mat",System.IO.FileMode.CreateNew); 
+                    //f.Write(s); 
                     throw new Exception("invalid values"); 
+                }
                 Success(input.Dimensions.ToString() + "(Int32) needed: " + sw.ElapsedMilliseconds + " ms"); 
             } catch (Exception e) {
                 Error(0, e.Message); 
@@ -267,12 +419,12 @@ namespace ILNumerics.Test {
                 for (int r = 0; r < rep; r++) {
                     double[] p = ILMath.rand(1,len).m_data; 
                     m_stopwatch.Start(); 
-                    ILQuickSort.QuickSortAscSolid(p,0,len-1,1);
+                    ILQuickSort.QuickSortAscSolid_IT(p,0,len-1,1);
                     m_stopwatch.Stop(); 
                     if (! ILMath.IsSorted(p,false))
                         throw new Exception("unsorted values detected (asc). Size: " + p.Length);
                     // descending 
-                    ILQuickSort.QuickSortDescSolid(p,0,len-1,1);
+                    ILQuickSort.QuickSortDescSolid_IT(p,0,len-1,1);
                     if (! ILMath.IsSorted(p,true))
                         throw new Exception("unsorted values detected (desc). Size: " + p.Length);
 
@@ -287,7 +439,7 @@ namespace ILNumerics.Test {
             int errCode = 0; 
             try {
                 m_stopwatch.Reset(); 
-                ILQuickSort.QuickSortAscSolid(p,0,p.Length-1,1);
+                ILQuickSort.QuickSortAscSolid_IT(p,0,p.Length-1,1);
                 m_stopwatch.Stop(); 
                 if (!ILMath.IsSorted(p,false)) 
                     throw new Exception("unsorted values detected. Size: " + p.Length); 

@@ -48,7 +48,7 @@ namespace ILNumerics.Drawing.Shapes {
 
         #region properties 
         /// <summary>
-        /// point size (for all points)
+        /// size (of all points)
         /// </summary>
         public int Width {
             get { return m_width; }
@@ -79,9 +79,8 @@ namespace ILNumerics.Drawing.Shapes {
         /// </summary>
         /// <param name="panel">panel hosting the scene graph</param>
         /// <param name="data">numeric matrix with 1,2 or 3 rows, holding X,Y and Z values respectively</param>
-        /// <param name="sizes">numeric vector with sizes for each point</param>
         /// <param name="colors">3 rowed matrix with RGB values in columns. Values must lay in range 0...255. 
-        /// If a 4th row is provided, it specifies the alpha value for the point (0...255). Otherwise the point will
+        /// If a 4th row is provided, it specifys the alpha value for the points (0...255). Otherwise the points will
         /// be fully opaque. </param>
         public ILPoints (ILPanel panel, ILBaseArray data, ILBaseArray colors) 
             : base (panel, data.Dimensions[1],1) {

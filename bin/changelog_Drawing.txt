@@ -1,3 +1,42 @@
+Changes in version 0.13.02
+===========================
+* renamed: Drawing.Plots.ILLitBox3D 
+       ->  Drawing.Shapes.ILLitBox
+* moved:   Drawing.Graphs.ILBarGraph2D
+       ->  Drawing.Plots.ILBarGraph2D
+* implemented ILPlot (custom plots base)
+* ILPanel.Create() sets Dock=Filled also
+* added new plot: ILLitSink (demo)
+* added ILSceneGraphNode.EventingSuspend()
+* added ILSceneGraphNode.EventingResume()
+* new ILPanel.InteractiveMode: Translating (via CTRL key)
+* renamed ILLitBox3D.Wireframe -> ILLitBox3D.Edges
+* sped up ILLitBox3D
+* added ILPanel.Graph.AddPlot()
+* improved ILPanel event handling
+* ILPanel.AutoZoomContent -> AutoZoomOptions
+* IILPanelConfigurator interface
+* added ILSceneGraph.NodeAdded event
+* added ILSceneGraph.NodeRemoved event
+* removed! scene graph IEnumerable implementation
+  -> use ILSceneGraphNode instead
+* added ILSceneGraphInnerNode.Remove(ILShape)
+* removed! IILLegendRenderer.Label
+* added IILLegendRenderer.LabelSize
+* renamed: IILRenderer -> IILTextRenderer
+* improved stability of axis ticks (NaN, Inf)
+* added Plots.ILBarGraph3D: IILPanelConfigurator
+* some documentation
+* added Plots.ILLitSurface: IILPanelConfigurator
+* improved ILLitSurface performance
+* renamed: Drawing.Plots.ILVectorField
+        -> Drawing.Plots.ILVectorField2D
+* Implemented ILBorderedShape.Update()
+* improved sorting for transparent composite shapes
+* ILLitPolygon, ILPolygon, ILLines accept 
+  changed datalength on Update()
+* ILTriangles, ILQuads: added missing constructors
+
 Changes in version 0.13.01
 ===========================
 * hides labeled ticks also when hiding axis main lines
@@ -23,9 +62,6 @@ Changes in version 0.13.01
 * added ILLabel.Visible property
 * added ILCamera.Top
 * added ILCamera.LookAt
-
-
-
 
 Changes in version 0.12.12
 ===========================

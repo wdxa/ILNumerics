@@ -98,5 +98,25 @@ namespace ILNumerics.Settings {
             }
         }
         private static int m_ILMinimumRefDimensions = 2;
+
+        private static int m_minimumQuicksortLength = 2;
+        /// <summary>
+        /// determine the minimum length for arrays to be sorted via Quicksort algorithm, smaller arrays are sorted via insertion sort
+        /// </summary>
+        public static int MinimumQuicksortLength {
+            get { return ILSettings.m_minimumQuicksortLength; }
+            set {
+                if (value < 1) throw new ILArgumentException("Invalid setting: MinimumQuicksortLength must be positive!"); 
+                ILSettings.m_minimumQuicksortLength = value; 
+            }
+        }
+        private static int m_maxSafeQuicksortRecursionDepth = 100;
+        /// <summary>
+        /// maximal depth a quicksort can go. default: 100 (for array length up to 2^100)
+        /// </summary>
+        public static int MaxSafeQuicksortRecursionDepth {
+            get { return m_maxSafeQuicksortRecursionDepth; }
+            set { m_maxSafeQuicksortRecursionDepth = value; }
+        } 
     }
 }

@@ -33,6 +33,24 @@ using ILNumerics.Drawing.Graphs;
 
 namespace ILNumerics.Drawing {
 
+
+    /// <summary>
+    /// Options for adapting ILPanel view limits 
+    /// </summary>
+    public enum AutoZoomOptions {
+        /// <summary>
+        /// never adapt automatically, the view limits are handled by the user
+        /// </summary>
+        Never,
+        /// <summary>
+        /// Only adapt view limits once at startup, later changes of the data limits will not affect the view limits
+        /// </summary>
+        OnStartup,
+        /// <summary>
+        /// View limits will automatically adapt changes of data limits. (Default)
+        /// </summary>
+        OnDataChanges
+    }
     /// <summary>
     /// modes for projecting the rendering output to the available client area
     /// </summary>
@@ -425,6 +443,7 @@ namespace ILNumerics.Drawing {
         ZoomRectangle, 
         Rotating,
         Selecting,
+        Translating,
         None
     }
     /// <summary>

@@ -32,29 +32,40 @@ using ILNumerics.Drawing;
 using ILNumerics.Drawing.Controls;
 using ILNumerics.Drawing.Graphs;
 using ILNumerics.Exceptions;
-using ILNumerics.Drawing.Misc; 
+using ILNumerics.Drawing.Misc;
+using ILNumerics.Drawing.Interfaces; 
 
 namespace ILNumerics.Drawing.Plots {
-    public class ILBarGraph3D : ILSceneGraphInnerNode {
+    
+    /// <summary>
+    /// Simple 3D Bar Graph - plot
+    /// </summary>
+    public class ILBarGraph3D : ILPlot, IILPanelConfigurator {
 
         #region attributes
         ILLitBox3D[,] m_boxes;
         float m_barLengthX = 1.0f;
         float m_barLengthY = 1.0f;
-        float m_paddingX = 0.2f;
-        float m_paddingY = 0.3f;
+        float m_paddingX = 0.3f;
+        float m_paddingY = 0.4f;
         Color m_barColor = Color.FromArgb(170, 210, 210, 255); 
         Color m_barColorGradient = Color.FromArgb(170, 180, 180, 255);
-        bool m_showTopLabels = true; 
         #endregion
 
+        /// <summary>
+        /// create a new 3D Bar Graph plot, provide data matrix
+        /// </summary>
+        /// <param name="panel">panel hosting the scene</param>
+        /// <param name="data">data matrix, at least 2x2 entries</param>
         public ILBarGraph3D(ILPanel panel, ILBaseArray data) 
         : base(panel) {
             if (data == null)
                 throw new ILArgumentException("data argument must not be null!");
             create(data, Colormaps.ILNumerics); 
         }
-
+        /// <summary>
+        /// get/set opacity of the bars
+        /// </summary>
         public byte Opacity {
             set {
                 foreach (ILLitBox3D box in m_boxes) {
@@ -62,7 +73,12 @@ namespace ILNumerics.Drawing.Plots {
                 }
             }
         }
-
+        /// <summary>
+        /// individual access to each bar (ILLitBox) 
+        /// </summary>
+        /// <param name="row">row index, 0 based</param>
+        /// <param name="col">column index, 0 based</param>
+        /// <returns>lit box shape at specified position</returns>
         public ILLitBox3D this[int row, int col] {
             get { 
                 return m_boxes[row,col];   
@@ -70,58 +86,37 @@ namespace ILNumerics.Drawing.Plots {
         }
 
         #region public interface
-        public void SetDefaultView(ILPanel panel
+        /// <summary>
+        /// set axes labels and tick labels at once
+        /// </summary>
+        /// <param name="panel">panel hosting the plot</param>
+        /// <param name="xlabel">label text for x axis</param>
+        /// <param name="ylabel">label text for y axis</param>
+        /// <param name="zlabel">label text for z axis</param>
+        /// <param name="xtickLabels">collection of strings for columns labels (x-direction)</param>
+        /// <param name="ytickLabels">collection of strings for row labels (x-direction)</param>
+        public void SetLabels(ILPanel panel
                                 , string xlabel, string ylabel, string zlabel
                                 , ICollection<string> xtickLabels
                                 , ICollection<string> ytickLabels
                                 ) {
-            // configure light
-            panel.Lights[0].Enabled = true;
-            panel.Lights[0].Position = new ILPoint3Df(-50, 10, 50);
-            panel.Projection = Projection.Orthographic;
-
-            panel.BackgroundFilled = false;
-            panel.BackColor = Color.Black; 
-            panel.Axes.GridVisible = false;
-            panel.Axes.LinesVisible = false; 
-            // configure X axis
-            panel.Axes[0].LabeledTicks.Mode = TickMode.Manual;
-            panel.Axes[0].LabeledTicks.Color = Color.White;
             panel.Axes[0].LabeledTicks.Clear();
             int counter = 0;
-            foreach (string s in xtickLabels) {
-                panel.Axes[0].LabeledTicks.Add(m_boxes[0, counter].Center.X, s);
-                counter++;
-            }
-            panel.Axes[0].NearLines.Visible = false;
-            panel.Axes[0].FarLines.Visible = false;
-            panel.Axes[0].Label.Color = Color.White;
-            panel.Axes[0].Label.Text = xlabel;
-
-            // configure Y axis
-            panel.Axes[1].LabeledTicks.Mode = TickMode.Manual;
-            panel.Axes[1].LabeledTicks.Color = Color.White;
+            if (xtickLabels != null)
+                foreach (string s in xtickLabels) {
+                    panel.Axes[0].LabeledTicks.Add(m_boxes[0, counter].Center.X, s);
+                    counter++;
+                }
             panel.Axes[1].LabeledTicks.Clear();
             counter = 0;
-            foreach (string s in ytickLabels) {
-                panel.Axes[1].LabeledTicks.Add(m_boxes[counter,0].Center.Y, s);
-                counter++;
-            }
-            panel.Axes[1].NearLines.Visible = false;
-            panel.Axes[1].FarLines.Visible = false;
-            panel.Axes[1].Label.Color = Color.White;
+            if (ytickLabels != null)
+                foreach (string s in ytickLabels) {
+                    panel.Axes[1].LabeledTicks.Add(m_boxes[counter, 0].Center.Y, s);
+                    counter++;
+                }
+            panel.Axes[0].Label.Text = xlabel;
             panel.Axes[1].Label.Text = ylabel;
-            
-            panel.Axes[2].NearLines.Visible = false;
-            panel.Axes[2].FarLines.Visible = false;
-            panel.Axes[2].Grid.Visible = true;
-            panel.Axes[2].Grid.Color = Color.DarkGray;
-            panel.Axes[2].Grid.Antialiasing = true;
-
-            panel.Axes[2].Label.Color = Color.LightGray;
-            panel.Axes[2].Label.Text = zlabel; 
-
-            panel.Axes[2].LabeledTicks.Color = Color.White; 
+            panel.Axes[2].Label.Text = zlabel;
 
         }
 
@@ -156,11 +151,63 @@ namespace ILNumerics.Drawing.Plots {
                     Color topColor = cmap.Map((double)(val - minV) * mult); 
                     ILLitBox3D box = new ILLitBox3D(m_panel,min,max,m_barColor,topColor);
                     box.GradientColor = m_barColorGradient;
+                    box.TopLabel.Color = topColor;
+                    box.TopLabel.Text = ""; 
                     m_boxes[r, c] = box; 
                     Add(box); 
                 }
             }
         }
+        #endregion
+
+
+        #region IILPanelConfigurator Members
+        /// <summary>
+        /// configure default view of panel, called when adding the plot to the panel
+        /// </summary>
+        /// <param name="panel">panel hosting the plot</param>
+        public void ConfigurePanel(ILPanel panel) {
+            panel.BackgroundFilled = false;
+            panel.ClipViewData = false;
+            panel.Axes.LinesVisible = false;
+            panel.Projection = Projection.Perspective;
+            panel.DefaultView.SetDeg(-35, 55, 250);
+
+            // configure light
+            panel.Lights[0].Enabled = true;
+            panel.Lights[0].Position = new ILPoint3Df(0, 0, 250);
+
+            panel.BackgroundFilled = false;
+            panel.BackColor = Color.White;
+            panel.Axes.GridVisible = false;
+            panel.Axes.LinesVisible = false;
+            // configure X axis
+            panel.Axes[0].LabeledTicks.Mode = TickMode.Manual;
+            panel.Axes[0].LabeledTicks.Color = Color.Black;
+            panel.Axes[0].LabeledTicks.Clear(); 
+
+            panel.Axes[1].NearLines.Visible = false;
+            panel.Axes[1].FarLines.Visible = false;
+            panel.Axes[1].Label.Color = Color.Black;
+
+            panel.Axes[2].NearLines.Visible = false;
+            panel.Axes[2].FarLines.Visible = false;
+            panel.Axes[2].Grid.Visible = true;
+            panel.Axes[2].Grid.Color = Color.DarkGray;
+            panel.Axes[2].Grid.Antialiasing = true;
+
+            panel.Axes[2].Label.Color = Color.Black;
+
+            panel.Axes[2].LabeledTicks.Color = Color.Black;
+            panel.Axes[0].NearLines.Visible = false;
+            panel.Axes[0].FarLines.Visible = false;
+            panel.Axes[0].Label.Color = Color.Black;
+
+            // configure Y axis
+            panel.Axes[1].LabeledTicks.Mode = TickMode.Manual;
+            panel.Axes[1].LabeledTicks.Color = Color.Black;
+        }
+
         #endregion
     }
 }

@@ -39,8 +39,8 @@ namespace ILNumerics.Drawing.Interfaces {
         /// <param name="labelArea">area to draw corresponding label into</param>
         void DrawToLegend(ILRenderProperties p, Rectangle sampleArea, Rectangle labelArea); 
         /// <summary>
-        /// Read access to label element
+        /// Size of text label
         /// </summary>
-        ILLabel Label {get; }
+        Size LabelSize {get; }
     }
 }

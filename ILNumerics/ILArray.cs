@@ -1017,7 +1017,18 @@ namespace ILNumerics {
         /// <param name="maxValue">Output: maximum value.</param>
         /// <returns>True if the limits exists and could be computed, false otherwise.</returns>
         /// <remarks>Empty arrays will return false. The output parameter will be default(type).</remarks>
-        public bool GetLimits(out BaseT minValue, out BaseT maxValue) {
+        public bool GetLimits(out BaseT minValue, out BaseT maxValue) { 
+            return GetLimits(out minValue, out maxValue, true); 
+        }
+        /// <summary>
+        /// Get minimum and maximum value of all elements - if existing
+        /// </summary>
+        /// <param name="minValue">Output: minimum value.</param>
+        /// <param name="maxValue">Output: maximum value.</param>
+        /// <param name="includeInfNaNs">true: recognize Inf, NaN values; false: ignore those values</param>
+        /// <returns>True if the limits exists and could be computed, false otherwise.</returns>
+        /// <remarks>Empty arrays will return false. The output parameter will be default(BaseT) then.</remarks>
+        public bool GetLimits(out BaseT minValue, out BaseT maxValue, bool includeInfNaNs) {
             minValue = default(BaseT);   
             maxValue = default(BaseT);
             if (IsEmpty)
@@ -1049,6 +1060,22 @@ namespace ILNumerics {
     <destination><![CDATA[ILArray<byte>]]></destination>
     <destination><![CDATA[ILArray<complex>]]></destination>
     <destination><![CDATA[ILArray<fcomplex>]]></destination>
+</type>
+<type>
+    <source locate="nextline">
+        isInf
+    </source>
+    <destination>if(float.IsInfinity(curVal)) continue;</destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination></destination>
+    <destination>if (complex.IsInfinity(curVal)) continue;</destination>
+    <destination>if (fcomplex.IsInfinity(curVal)) continue;</destination>
 </type>
 <type>
     <source locate="after">
@@ -1114,6 +1141,8 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            /*!HC:isInf*/
+                            if (double.IsInfinity(curVal)) continue; 
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1127,6 +1156,8 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            /*!HC:isInf*/
+                            if (double.IsInfinity(curVal)) continue; 
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1139,7 +1170,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax > /*!HC:negInf*/ Double.NegativeInfinity || curMin < /*!HC:negInf*/ Double.PositiveInfinity ); 
 #endregion HYCALPER LOOPEND
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
@@ -1158,6 +1189,7 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            if (fcomplex.IsInfinity(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1171,6 +1203,7 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            if (fcomplex.IsInfinity(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1183,7 +1216,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax >  new fcomplex(float.NegativeInfinity,float.NegativeInfinity) || curMin <  new fcomplex(float.NegativeInfinity,float.NegativeInfinity) ); 
                  
                 } else if (this is  ILArray<complex> ) {    
                     complex [] data = ( complex [])(object) m_data; 
@@ -1199,6 +1232,7 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            if (complex.IsInfinity(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1212,6 +1246,7 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            if (complex.IsInfinity(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1224,7 +1259,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax >  new complex(Double.NegativeInfinity,Double.NegativeInfinity) || curMin <  new complex(Double.NegativeInfinity,Double.NegativeInfinity) ); 
                  
                 } else if (this is  ILArray<byte> ) {    
                     byte [] data = ( byte [])(object) m_data; 
@@ -1240,6 +1275,7 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1253,6 +1289,7 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1265,7 +1302,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax >  Byte.MinValue || curMin <  Byte.MinValue ); 
                  
                 } else if (this is  ILArray<char> ) {    
                     char [] data = ( char [])(object) m_data; 
@@ -1281,6 +1318,7 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1294,6 +1332,7 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1306,7 +1345,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax >  Char.MinValue || curMin <  Char.MinValue ); 
                  
                 } else if (this is  ILArray<UInt64> ) {    
                     UInt64 [] data = ( UInt64 [])(object) m_data; 
@@ -1322,6 +1361,7 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1335,6 +1375,7 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1347,7 +1388,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax >  UInt64.MinValue || curMin <  UInt64.MinValue ); 
                  
                 } else if (this is  ILArray<UInt32> ) {    
                     UInt32 [] data = ( UInt32 [])(object) m_data; 
@@ -1363,6 +1404,7 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1376,6 +1418,7 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1388,7 +1431,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax >  UInt32.MinValue || curMin <  UInt32.MinValue ); 
                  
                 } else if (this is  ILArray<UInt16> ) {    
                     UInt16 [] data = ( UInt16 [])(object) m_data; 
@@ -1404,6 +1447,7 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1417,6 +1461,7 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1429,7 +1474,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax >  UInt16.MinValue || curMin <  UInt16.MinValue ); 
                  
                 } else if (this is  ILArray<Int64> ) {    
                     Int64 [] data = ( Int64 [])(object) m_data; 
@@ -1445,6 +1490,7 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1458,6 +1504,7 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1470,7 +1517,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax >  Int64.MinValue || curMin <  Int64.MinValue ); 
                  
                 } else if (this is  ILArray<Int32> ) {    
                     Int32 [] data = ( Int32 [])(object) m_data; 
@@ -1486,6 +1533,7 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1499,6 +1547,7 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1511,7 +1560,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax >  Int32.MinValue || curMin <  Int32.MinValue ); 
                  
                 } else if (this is  ILArray<Int16> ) {    
                     Int16 [] data = ( Int16 [])(object) m_data; 
@@ -1527,6 +1576,7 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1540,6 +1590,7 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1552,7 +1603,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax >  Int16.MinValue || curMin <  Int16.MinValue ); 
                  
                 } else if (this is  ILArray<float> ) {    
                     float [] data = ( float [])(object) m_data; 
@@ -1568,6 +1619,7 @@ namespace ILNumerics {
                         for (int i = 0; i < len; i++) { 
                             curInd = m_indexOffset.Map(i);
                             curVal = data[curInd]; 
+                            if(float.IsInfinity(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = curInd; 
@@ -1581,6 +1633,7 @@ namespace ILNumerics {
                         // physical storage
                         for (int i = 0; i < len; i++) { 
                             curVal = data[i]; 
+                            if(float.IsInfinity(curVal)) continue;
                             if (curVal < curMin) { 
                                 curMin = curVal; 
                                 curMinInd = i; 
@@ -1593,7 +1646,7 @@ namespace ILNumerics {
                     }
                     maxValue = m_data[curMaxInd];
                     minValue = m_data[curMinInd]; 
-                    return true; 
+                    return (curMax >  float.NegativeInfinity || curMin <  float.NegativeInfinity ); 
 
 #endregion HYCALPER AUTO GENERATED CODE
             } else 
@@ -1801,7 +1854,7 @@ namespace ILNumerics {
                 return s;
             }
             if (m_dimensions.NumberOfElements < 1)
-                return new StringBuilder("(Empty array)"); 
+                return new StringBuilder("(Empty)"); 
             int[] acc = new int[m_dimensions.NumberOfDimensions];
             int d;
             String sElement;
@@ -1913,7 +1966,7 @@ namespace ILNumerics {
                     if (l > elemLength) elemLength = l; 
                 }
 ]]></destination>
-    <destination><![CDATA[float scaling = (float)(object)MaxValue; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling  = (float)Math.Pow(10,Math.Floor(Math.Log10(scaling))); ]]></destination>
+    <destination>float scaling = (float)getScalingForPrint();</destination>
     <destination>double scaling = 1.0; </destination>
     <destination>double scaling = 1.0; </destination>
     <destination>double scaling = 1.0; </destination>
@@ -1922,8 +1975,8 @@ namespace ILNumerics {
     <destination>double scaling = 1.0; </destination>
     <destination>double scaling = 1.0; </destination>
     <destination>double scaling = 1.0; </destination>
-    <destination><![CDATA[double scaling = ((complex)(object)MaxValue).real; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling = Math.Pow(10,Math.Floor(Math.Log10(scaling))); ]]></destination>
-    <destination><![CDATA[float scaling = ((fcomplex)(object)MaxValue).real; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling  = (float)Math.Pow(10,Math.Floor(Math.Log10(scaling)));]]></destination>
+    <destination>double scaling = getScalingForPrint();</destination>
+    <destination>float scaling = (float)getScalingForPrint();</destination>
     <destination>double scaling = 1.0; </destination>
 </type>
 <type>
@@ -1951,7 +2004,7 @@ namespace ILNumerics {
                 /*!HC:inArr1*/ double [] elements = (this.m_data as /*!HC:inArr1*/ double []);
                 elemLength = /*!HC:HCelemLength*/ 5 ; 
                 /*!HC:tscale*/ 
-                double scaling = (double)(object)MaxValue; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling = Math.Pow(10,Math.Floor(Math.Log10(scaling))); 
+                double scaling = getScalingForPrint(); 
                 while (acc[m_dimensions.NumberOfDimensions - 1] <
                         m_dimensions[m_dimensions.NumberOfDimensions - 1]) {
                     // show only two first dimensions at the same time ... 
@@ -2048,7 +2101,7 @@ namespace ILNumerics {
                 fcomplex element;
                 fcomplex [] elements = (this.m_data as  fcomplex []);
                 elemLength =  24 ; 
-                float scaling = ((fcomplex)(object)MaxValue).real; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling  = (float)Math.Pow(10,Math.Floor(Math.Log10(scaling)));
+                float scaling = (float)getScalingForPrint();
                 while (acc[m_dimensions.NumberOfDimensions - 1] <
                         m_dimensions[m_dimensions.NumberOfDimensions - 1]) {
                     // show only two first dimensions at the same time ... 
@@ -2094,7 +2147,7 @@ namespace ILNumerics {
                 complex element;
                 complex [] elements = (this.m_data as  complex []);
                 elemLength =  36 ; 
-                double scaling = ((complex)(object)MaxValue).real; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling = Math.Pow(10,Math.Floor(Math.Log10(scaling))); 
+                double scaling = getScalingForPrint();
                 while (acc[m_dimensions.NumberOfDimensions - 1] <
                         m_dimensions[m_dimensions.NumberOfDimensions - 1]) {
                     // show only two first dimensions at the same time ... 
@@ -2508,7 +2561,7 @@ namespace ILNumerics {
                 float element;
                 float [] elements = (this.m_data as  float []);
                 elemLength =  5 ; 
-                float scaling = (float)(object)MaxValue; if (scaling < 0) scaling *= -1; if (scaling == 0 || (scaling > 1e-1 && scaling < 1e1)) scaling = 1; scaling  = (float)Math.Pow(10,Math.Floor(Math.Log10(scaling))); 
+                float scaling = (float)getScalingForPrint();
                 while (acc[m_dimensions.NumberOfDimensions - 1] <
                         m_dimensions[m_dimensions.NumberOfDimensions - 1]) {
                     // show only two first dimensions at the same time ... 
@@ -2658,6 +2711,26 @@ namespace ILNumerics {
                 return new StringBuilder ("(Unknown data type.)"); 
            } 
             return s;
+        }
+
+        private double getScalingForPrint() {
+            BaseT min, max; 
+            if (GetLimits(out min, out max, false)) {
+                try {
+                    double scaling = Math.Max(
+                                        Math.Abs(double.Parse(min.ToString())),
+                                        Math.Abs( double.Parse(max.ToString())) 
+                                     ); 
+                    if (scaling == 0  || (scaling > 1e-1 && scaling < 1e1)) 
+                        scaling = 1; 
+                    scaling = Math.Pow(10,Math.Floor(Math.Log10(scaling)));
+                    return scaling; 
+                } catch (Exception) {
+                    return 1.0;
+                }
+            } else {
+                return 1.0; 
+            }
         }
 
         private int GetTypedElementStringProperties(out string format) {
@@ -4490,6 +4563,8 @@ namespace ILNumerics {
         /// <param name="idx">Integer array holding the dimension specifier 
         /// pointing to the value.</param>
         /// <returns>Object in the position pointed to by idx.</returns>
+        /// <remarks>TODO: the interna of this function should be split and seperated 
+        /// to -> ILDimension and -> ILIndexOffset!</remarks>
         public override BaseT GetValue(params int[] idx) {
             if (m_indexOffset == null) {
                 if (idx.Length == 1)

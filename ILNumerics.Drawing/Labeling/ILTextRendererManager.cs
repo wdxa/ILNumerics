@@ -41,7 +41,7 @@ namespace ILNumerics.Drawing.Labeling {
         #region members / properties 
         
         Dictionary<string,string> m_rendererCollection; 
-        Dictionary<string,IILRenderer> m_rendererCache; 
+        Dictionary<string,IILTextRenderer> m_rendererCache; 
         GraphicDeviceType m_graphicsDevice;
         string m_defaultRendererScreen; 
         string m_defaultRendererWorld; 
@@ -70,7 +70,7 @@ namespace ILNumerics.Drawing.Labeling {
             m_graphicsDevice = panel.GraphicDeviceType; 
             m_panel = panel; 
             m_rendererCollection = new Dictionary<string,string>();
-            m_rendererCache = new Dictionary<string,IILRenderer>(); 
+            m_rendererCache = new Dictionary<string,IILTextRenderer>(); 
             foreach (Assembly ass in assemblies) {
                 AddAssemblyTypes(ass); 
             }
@@ -87,9 +87,9 @@ namespace ILNumerics.Drawing.Labeling {
         /// <param name="typeName">full class name of the new text renderer</param>
         /// <param name="assembly">assembly hosting the textrenderer, null for executing assembly</param>
         /// <returns>newly created ILRenderer instance from assembly</returns>
-        public IILRenderer CreateInstance (string typeName, Assembly assembly) {
+        public IILTextRenderer CreateInstance (string typeName, Assembly assembly) {
             if (typeName == null) 
-                throw new ILArgumentException ("The type must be a valid ILRenderer!"); 
+                throw new ILArgumentException ("The type must be a valid ILTextRenderer!"); 
             string key = (assembly==null) 
                 ? typeName : assembly.FullName +  "|" + typeName; 
             if (m_rendererCache.ContainsKey(key))
@@ -97,14 +97,14 @@ namespace ILNumerics.Drawing.Labeling {
             if (assembly == null) 
                 assembly = Assembly.GetExecutingAssembly(); 
             Type type = assembly.GetType(typeName);
-            if (type == null  || type.GetInterface("IILRenderer") == null)
+            if (type == null  || type.GetInterface("IILTextRenderer") == null)
                 throw new ILArgumentException (String.Format(
-                            "The type '{0}' was not found in assembly {1} or is not a valid IILRenderer!"
+                            "The type '{0}' was not found in assembly {1} or is not a valid IILTextRenderer!"
                             ,typeName,assembly)); 
             queryAddRenderer(type); 
             if (!m_rendererCollection.ContainsKey(key)) 
                 throw new ILArgumentException("The renderer could not be loaded. Make sure, to specify the correct assembly and the type is properly decorated by the ILRendererAttribute!");
-            IILRenderer ret = (IILRenderer)type.InvokeMember(
+            IILTextRenderer ret = (IILTextRenderer)type.InvokeMember(
                           typeName, BindingFlags.DeclaredOnly | 
                           BindingFlags.Public | BindingFlags.NonPublic | 
                           BindingFlags.Instance | BindingFlags.CreateInstance, null, null, 
@@ -115,19 +115,19 @@ namespace ILNumerics.Drawing.Labeling {
             return ret; 
         }
         /// <summary>
-        /// Create the default instance of IILRenderer for 
+        /// Create the default instance of IILTextRenderer for 
         /// the current graphics device and a coord system
         /// </summary>
         /// <param name="coords">coord system, the renderer is 
         /// specialized and the default renderer for</param>
-        /// <returns>default IILRenderer object</returns>
-        public IILRenderer GetDefault(CoordSystem coords) {
+        /// <returns>default IILTextRenderer object</returns>
+        public IILTextRenderer GetDefault(CoordSystem coords) {
             string key = (coords == CoordSystem.World3D)  
                  ? m_defaultRendererWorld : m_defaultRendererScreen; 
             if (m_rendererCache.ContainsKey(key) && m_rendererCache[key] != null) 
                 return m_rendererCache[key]; 
             // must create a new instance 
-            IILRenderer ret; 
+            IILTextRenderer ret; 
             switch (coords) {
                 case CoordSystem.World3D:
                     ret = CreateInstance(m_defaultRendererWorld,null);
@@ -140,7 +140,7 @@ namespace ILNumerics.Drawing.Labeling {
             return ret; 
         }
         /// <summary>
-        /// Get a collection of all IILRenderer types and corresponding displayNames available
+        /// Get a collection of all IILTextRenderer types and corresponding displayNames available
         /// </summary>
         public IDictionary<string,string> RendererNames {
             get {
@@ -155,10 +155,10 @@ namespace ILNumerics.Drawing.Labeling {
 
         #region private helper
         /// <summary>
-        /// iterate over types attribute, select IILRenderer attribute, 
+        /// iterate over types attribute, select IILTextRenderer attribute, 
         /// register for later reference, add/overwrite default renderers
         /// </summary>
-        /// <param name="t">IILRenderer type</param>
+        /// <param name="t">IILTextRenderer type</param>
         private void queryAddRenderer(Type t)
         {
             foreach (object att in t.GetCustomAttributes(false)) {
@@ -166,7 +166,7 @@ namespace ILNumerics.Drawing.Labeling {
                     ILRendererAttribute trAttr = (ILRendererAttribute)att; 
                     if (trAttr.GraphicDeviceType == m_graphicsDevice ||
                         trAttr.GraphicDeviceType == GraphicDeviceType.GDI) {
-                        if (t.GetInterface("IILRenderer") == null)
+                        if (t.GetInterface("IILTextRenderer") == null)
                             continue; 
                         if (m_rendererCollection.ContainsKey(t.FullName)) 
                             m_rendererCollection[t.FullName] = trAttr.Name; 

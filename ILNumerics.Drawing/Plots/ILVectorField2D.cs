@@ -11,9 +11,9 @@ using ILNumerics.Drawing.Collections;
 
 namespace ILNumerics.Drawing.Plots {
     /// <summary>
-    /// Class used to visualize a vector field in 2D
+    /// visualizes 2D vector fields
     /// </summary>
-    public class ILVectorField : ILSceneGraphInnerNode, IILPanelConfigurator {
+    public class ILVectorField2D : ILPlot, IILPanelConfigurator {
 
         #region attributes
         ILLines m_lines;
@@ -25,9 +25,12 @@ namespace ILNumerics.Drawing.Plots {
         #endregion
 
         #region properties
+        /// <summary>
+        /// Colormap used to map values to colors
+        /// </summary>
         private ILColormap m_colormap;
         /// <summary>
-        /// get reference to data of all vectors or alter data (restricted to same size)
+        /// gets reference to data of all vectors or sets it (restricted to same size)
         /// </summary>
         public ILBaseArray Data {
             get {
@@ -109,14 +112,14 @@ namespace ILNumerics.Drawing.Plots {
         #region constructors
 
         /// <summary>
-        /// create new vector field plot
+        /// create new vector field (2D) plot 
         /// </summary>
         /// <param name="panel">panel hosting the scene</param>
         /// <param name="data">3d data array: :;:;0 - X coords of vectors, :;:;1 - Y coords</param>
         /// <param name="colormap">Colormap used for coloring, on null: Colormaps.ILNumerics is used as default</param>
         /// <param name="XLabels">labels for X axis, on null: auto labeling</param>
         /// <param name="YLabels">labels for Y axis, on null: auto labeling</param>
-        public ILVectorField(ILPanel panel, ILBaseArray data
+        public ILVectorField2D(ILPanel panel, ILBaseArray data
             , ILColormap colormap, ICollection<string> XLabels
             , ICollection<string> YLabels ) 
         : base (panel) {
@@ -139,13 +142,15 @@ namespace ILNumerics.Drawing.Plots {
         #endregion
 
         #region public interface
+        /// <summary>
+        /// (internal use) reconfigures the plot after changes
+        /// </summary>
         public override void Configure() {
             if (m_invalidated) {
                 ILArray<double> indices;
                 ILArray<double> vertices = Computation.CreateVertices(
                     m_data, out indices, m_beta, m_scaling / 2, m_colormap);
-                m_lines.Update(vertices["0;:"], vertices["1;:"], vertices["2;:"]
-                        , vertices["3:5;:"].T, indices);
+                m_lines.Update(vertices["0;:"], vertices["1;:"], vertices["2;:"], indices, vertices["3:5;:"].T);
                 // configure axes
                 configureAxis(AxisNames.XAxis, XLabels);
                 configureAxis(AxisNames.YAxis, YLabels);
@@ -156,9 +161,12 @@ namespace ILNumerics.Drawing.Plots {
         #endregion
 
         #region IILPanelConfigurator Members
-
+        /// <summary>
+        /// configure the panel, called after the plot was added to the scene
+        /// </summary>
+        /// <param name="panel"></param>
         public void ConfigurePanel(ILPanel panel) {
-            panel.DefaultView.SetDeg(0, 0, -10);
+            panel.DefaultView.SetDeg(0, 0, 100);
         }
 
         #endregion
@@ -188,7 +196,7 @@ namespace ILNumerics.Drawing.Plots {
         #region computation
         public class Computation : ILNumerics.BuiltInFunctions.ILMath {
 
-            public static ILArray<double> CreateVertices(ILBaseArray dataInput 
+            internal static ILArray<double> CreateVertices(ILBaseArray dataInput 
                                             ,out ILArray<double> indices
                                             ,double beta, double scaling
                                             , ILColormap colormap) {
@@ -228,9 +236,15 @@ namespace ILNumerics.Drawing.Plots {
                             (tosingle(l) * colormap.Length).Reshape(1, l.Length, 3) * 255, 4, 1, 1));
                 return ret.Reshape(4 * numRows * numCols, 6).T;
             }
-
-            public static ILArray<double> CreateTestData(int numRows, int numCols) {
-                ILArray<double> Y = repmat(linspace(0, pi * 2, numCols), numRows, 1);
+            /// <summary>
+            /// create data for a simple vector field for demonstration purposes
+            /// </summary>
+            /// <param name="numRows">number of rows</param>
+            /// <param name="numCols">number of colums</param>
+            /// <param name="offs">offset, linearly varing values lets the field 'roll'</param>
+            /// <returns>three dimensional data array</returns>
+            public static ILArray<double> CreateTestData(int numRows, int numCols, float offs) {
+                ILArray<double> Y = repmat(linspace(offs, pi * 2 + offs, numCols), numRows, 1);
                 ILArray<double> X = cos(Y);
                 X[":;:;1"] = sin(Y);
                 // scale vector length

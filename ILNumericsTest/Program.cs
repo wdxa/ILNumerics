@@ -19,6 +19,8 @@ namespace ILNumerics.Test {
         /// <param name="args">The args.</param>
         static void Main(string[] args) {
         	Console.Out.Write(Info());
+            
+            new TESTQuickSort().Run(); 
 
             #region manual test invocation list
             //new TEST_ILMath_max_double().Run(); 
@@ -114,7 +116,6 @@ namespace ILNumerics.Test {
             new TESTILDimension().Run(); 
             
             new TESTILArray().Run();
-            new TESTQuickSort().Run(); 
             new TESTILMath().Run();
             new TESTILFFT().Run(); 
 

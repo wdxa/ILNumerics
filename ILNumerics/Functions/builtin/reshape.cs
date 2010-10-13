@@ -42,5 +42,20 @@ namespace ILNumerics.BuiltInFunctions {
         public static ILArray<T> reshape<T>(ILArray<T> A, params int[] newDimensions) {
             return A.R.Reshape(new ILDimension (newDimensions)); 
         }
+        /// <summary>
+        /// array reshaping
+        /// </summary>
+        /// <param name="A">input array A</param>
+        /// <param name="dim">new dimension</param>
+        /// <returns>reshaped X</returns>
+        /// <remarks>A will not be changed. A new reference array is created, having 
+        /// the size and number of dimension specified by dim. </remarks>
+        /// <exception cref="ILNumerics.Exceptions.ILArgumentSizeException"> 
+        /// if the number of elements in A and the number of elements for the 
+        /// new dimensions specified by <paramref name="dim"/> 
+        /// do not match.</exception>
+        public static ILArray<T> reshape<T>(ILArray<T> A, ILDimension dim) {
+            return A.R.Reshape(dim); 
+        }
     }
 }

@@ -59,7 +59,7 @@ namespace ILNumerics.Drawing.Shapes {
         /// </summary>
         public ILLineProperties Properties {
             get { return m_properties; }
-            set { m_properties = value; }
+            private set { m_properties = value; }
         } 
         /// <summary>
         /// the oldest vertex to be removed on the next Queue() call
@@ -102,6 +102,9 @@ namespace ILNumerics.Drawing.Shapes {
             get { return m_properties.Width; }
             set { m_properties.Width = value; }
         }
+        /// <summary>
+        /// inner color of the line
+        /// </summary>
         public override Color FillColor {
             get {
                 return m_properties.Color;
@@ -113,9 +116,17 @@ namespace ILNumerics.Drawing.Shapes {
         #endregion
 
         #region constructors
+        /// <summary>
+        /// create new simple line with 2 ends
+        /// </summary>
+        /// <param name="panel"></param>
         public ILLine (ILPanel panel) 
             : this (panel,2) { }
-
+        /// <summary>
+        /// create new line, determine number of vertices
+        /// </summary>
+        /// <param name="panel">panel hosting the scene</param>
+        /// <param name="numVertices">number of vertices for the line</param>
         public ILLine (ILPanel panel, int numVertices) 
             : base (panel,numVertices) {
             if (numVertices < 2) 
@@ -129,6 +140,13 @@ namespace ILNumerics.Drawing.Shapes {
             m_autoLimitsUpdateCount = numVertices;
             m_shading = ShadingStyles.Flat; 
         }
+        /// <summary>
+        /// create new line, give vertices positions also
+        /// </summary>
+        /// <param name="panel">panel hosting the scene</param>
+        /// <param name="X">X coordinates</param>
+        /// <param name="Y">Y coordinates</param>
+        /// <param name="Z">Z coordinates</param>
         public ILLine(ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z) 
             : base (panel, X,Y,Z) {
             m_fillColor = Color.Black;
@@ -180,7 +198,20 @@ namespace ILNumerics.Drawing.Shapes {
                 Invalidate();
             }
         }
-
+        /// <summary>
+        /// update vertices, may also alter number of line segments 
+        /// </summary>
+        /// <param name="X">X coordinates</param>                   
+        /// <param name="Y">Y coordinates</param>
+        /// <param name="Z">Z coordinates</param>
+        public override void Update(ILBaseArray X, ILBaseArray Y, ILBaseArray Z) {
+            int newLen = Math.Max(Math.Max(X.Length,Y.Length),Z.Length);
+            if (VertexCount != newLen) {
+                m_numVerticesPerShape = newLen; 
+                Resize(newLen); 
+            }
+            base.Update(X, Y, Z);
+        }
         #endregion
 
 

@@ -1,3 +1,10 @@
+Changes in version 1.4.10
+=========================
+* implemented nonrecursive quicksort
+* some documentation fixes
+* new Settings in ILSettings (rel. sorting)
+* refinements in ILArray.ToString() for NaN/Inf
+
 Changes in version 1.4.09
 =========================
 * switched to .NET 3.5/ VS2008

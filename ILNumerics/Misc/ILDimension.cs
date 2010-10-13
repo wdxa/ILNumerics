@@ -40,6 +40,7 @@ namespace ILNumerics.Misc
 		int m_nrDims = 0;
 		int m_numberOfElements = 0;
         int m_length = 0;
+        int [] m_seqDistancesCache; 
         #endregion
 
         #region constructors
@@ -53,7 +54,7 @@ namespace ILNumerics.Misc
         /// <summary>
         /// create new ILDimension, without trimming trailing singleton dimensions
         /// </summary>
-        /// <param name="keepSingletons">true: trailing singleton 
+        /// <param name="trimSingletons">true: trailing singleton 
         /// dimensions will be trimmed, false: those singleton dimensions will be kept.</param>
         /// <param name="dims">dimension lenght specifiers</param>
         public ILDimension (bool trimSingletons, params int[] dims)  {
@@ -150,7 +151,7 @@ namespace ILNumerics.Misc
 		/// </summary>
 		/// <param name="dim">dimension number to query the element distance for. The
 		/// first dimension has index 0 ('zero')!</param>
-		/// <returns>number of elements between adjacent elementes of dimension dim.
+		/// <returns>number of elements between adjacent elements of dimension dim.
         /// </returns>
         /// <remarks>if dimension index dim is larger than the number of 
         /// dimensions inside this ILDimension, the number of elements will 
@@ -173,7 +174,7 @@ namespace ILNumerics.Misc
         /// in this ILDimension, the array will have minLength elements, 
         /// with elements outside this dimensions repeating the value 
         /// of the last dimension. The length of the array returned will 
-        /// equal min(minLength,NumberOfDimensions).</param>
+        /// be equal or greater than max(minLength,NumberOfDimensions).</param>
         /// <remarks>This is provided for performance reasons and should be 
         /// used internally only. It enables developer of index access routines 
         /// to cache the elements distances directly inside their functions 
@@ -184,16 +185,19 @@ namespace ILNumerics.Misc
         /// the distances by SequentialIndexDistance(int), which will assume 
         /// and return trailing dimensions to be 1.</para></remarks>
 		internal int[] GetSequentialIndexDistances(int minLength) {
-            int[] ret = new int[Math.Max(m_nrDims,minLength)];
-            int tmp = 1,i = 0; 
-            for (; i < m_nrDims; i++) {
-                ret[i] = tmp; 
-                tmp *= m_dims[i];
+            minLength = Math.Max(m_nrDims,minLength);
+            if (m_seqDistancesCache == null || m_seqDistancesCache.Length < minLength){
+                m_seqDistancesCache = new int[minLength]; 
+                int tmp = 1, i = 0; 
+                for (; i < m_nrDims; i++) {
+                    m_seqDistancesCache[i] = tmp; 
+                    tmp *= m_dims[i];
+                }
+                for (; i < m_seqDistancesCache.Length; i++) {
+                    m_seqDistancesCache[i] = tmp; 
+                }
             }
-            for (; i < ret.Length; i++) {
-                ret[i] = tmp; 
-            }
-		    return ret; 
+	        return m_seqDistancesCache; 
         }
 		/// <summary>
 		/// transfer my dimensions to integer array 

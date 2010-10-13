@@ -37,10 +37,10 @@ using ILNumerics.Drawing.Labeling;
 
 namespace ILNumerics.Drawing.Platform.OpenGL {
     /// <summary>
-    /// Basic OpenGL implementation for IILRenderer
+    /// Basic OpenGL implementation for IILTextRenderer
     /// </summary>
     [ILRenderer(GraphicDeviceType.OpenGL,"Outline","OpenGL cached, outlined textures, world coords",true,CoordSystem.World3D)] 
-    public class ILOGLWorldRenderer : IILRenderer {
+    public class ILOGLWorldRenderer : IILTextRenderer {
 
         #region event handling
         /// <summary>
@@ -120,7 +120,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         }
         #endregion
 
-        #region IILRenderer Member
+        #region IILTextRenderer Member
         /// <summary>
         /// Place a new item into the texture cache 
         /// </summary>

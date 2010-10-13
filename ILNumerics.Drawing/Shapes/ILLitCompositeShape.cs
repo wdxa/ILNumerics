@@ -66,6 +66,7 @@ namespace ILNumerics.Drawing.Shapes {
         /// </summary>
         /// <param name="panel">scene hosting the scene</param>
         /// <param name="numVertices">number of overall vertices for the shape</param>
+        /// <param name="verticesPerShape">Number of vertices per shape</param>
         public ILLitCompositeShape (ILPanel panel, int numVertices, int verticesPerShape) 
             : base(panel,numVertices, verticesPerShape) { 
             create(); 
@@ -95,12 +96,13 @@ namespace ILNumerics.Drawing.Shapes {
 
         #region public interface
         public override void Configure() {
-            base.Configure();
-            if (m_autoNormals) {
-                if (m_shapeIndicesIndex == null)
-                    m_shapeIndicesIndex = Computation.CreateShapeIndicesIndex(m_shapeIndices);
-                Computation.CalculateNormals(m_vertices, m_shapeIndices, m_shapeIndicesIndex);
+            if (m_shapeIndicesIndex == null) { // shape was invalidated
+                m_shapeIndicesIndex = Computation.CreateShapeIndicesIndex(m_shapeIndices);
+                if (m_autoNormals) {
+                    Computation.CalculateNormals(m_vertices, m_shapeIndices, m_shapeIndicesIndex);
+                }
             }
+            base.Configure();
         }
         public override void Invalidate() {
             base.Invalidate();
@@ -113,6 +115,15 @@ namespace ILNumerics.Drawing.Shapes {
 
         protected class Computation : ILMath {
 
+            /// <summary>
+            /// Creates the index of the shape indices.
+            /// </summary>
+            /// <param name="shapeIndices">The shape indices.</param>
+            /// <returns>index of shape indices</returns>
+            /// <remarks>The index of shape indices is used for fast facette lookup while (auto) creating
+            /// the normal vectors for the vertices. Therefore, the index of every vertex used in the shape
+            /// serves as index for a list of those facettes, where that vertex occures.
+            /// <para>TODO: may be replaced by a custom data structure in order to decrease memory requirements?</para></remarks>
             public static Dictionary<int, List<int>> CreateShapeIndicesIndex(ILArray<int> shapeIndices) {
                 Dictionary<int, List<int>> ret = new Dictionary<int, List<int>>();
                 int shapeCount = shapeIndices.Dimensions[1];
@@ -131,6 +142,13 @@ namespace ILNumerics.Drawing.Shapes {
                 }
                 return ret; 
             }
+
+            /// <summary>
+            /// Calculates the normals.
+            /// </summary>
+            /// <param name="vertices">vertex array of the shape</param>
+            /// <param name="shapeIndices">The shape mapping indices.</param>
+            /// <param name="shapeIndicesIndex">Index of the shape indices.</param>
             public static void CalculateNormals(
                         VertexType[] vertices
                         ,ILArray<int> shapeIndices
@@ -139,6 +157,7 @@ namespace ILNumerics.Drawing.Shapes {
                 DateTime start = DateTime.Now; 
 #endif
                 System.Diagnostics.Debug.Assert(vertices != null && vertices.Length > 0 && vertices[0].StoresNormals); 
+                // first calculate the normal for all vertices
                 ILPoint3Df[] snormals = new ILPoint3Df[shapeIndices.Dimensions[1]]; 
                 for (int shapeCol = 0; shapeCol < snormals.Length; shapeCol++) {
                     // crossproduct of vertex: (#1 - #0) x (#2 - #0)

@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ILNumerics.Drawing; 
 using ILNumerics.Drawing.Controls; 
 
 namespace ILNumerics.Drawing.Graphs {
@@ -34,6 +35,21 @@ namespace ILNumerics.Drawing.Graphs {
     /// the root node of every scene graph (internal use only) 
     /// </summary>
     internal class ILSceneGraphRoot : ILSceneGraphInnerNode {
+        
+        public event SceneGraphNodeHandler NodeAdded; 
+        public event SceneGraphNodeHandler NodeRemoved;  
+        
         public ILSceneGraphRoot(ILPanel panel) : base(panel) { }
+
+        protected override void OnNodeAdded(ILSceneGraphNode node) {
+            if (NodeAdded != null && !m_eventingSuspended) {
+                NodeAdded(this, new ILSceneGraphNodeEventArgs(node)); 
+            }
+        }
+        protected override void OnNodeRemoved(ILSceneGraphNode node) {
+            if (NodeRemoved != null && !m_eventingSuspended) {
+                NodeRemoved(this, new ILSceneGraphNodeEventArgs(node)); 
+            }
+        }
     }
 }

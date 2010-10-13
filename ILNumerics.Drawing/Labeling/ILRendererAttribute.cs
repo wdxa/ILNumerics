@@ -29,7 +29,7 @@ using System.Text;
 
 namespace ILNumerics.Drawing.Labeling {
     /// <summary>
-    /// attribute used to identify IILRenderer types within assemblies 
+    /// attribute used to identify IILTextRenderer types within assemblies 
     /// </summary>
     public class ILRendererAttribute : Attribute {
         /// <summary>

@@ -48,6 +48,7 @@ namespace ILNumerics.Drawing.Graphs {
         protected bool m_invalidated;
         protected bool m_visible;
         protected ILPanel m_panel; // needed for camera position
+        protected bool m_eventingSuspended; 
         #endregion
 
         #region constructors
@@ -64,7 +65,7 @@ namespace ILNumerics.Drawing.Graphs {
         /// </summary>
         public event EventHandler SizeChanged;
         protected virtual void OnSizeChanged() {
-            if (SizeChanged != null)
+            if (SizeChanged != null && !m_eventingSuspended)
                 SizeChanged(this, new EventArgs());
         }
         /// <summary>
@@ -72,9 +73,32 @@ namespace ILNumerics.Drawing.Graphs {
         /// </summary>
         public event EventHandler Invalidated;
         protected virtual void OnInvalidated() {
-            if (Invalidated != null)
+            if (Invalidated != null && !m_eventingSuspended)
                 Invalidated(this, new EventArgs());
         }
+        protected virtual void OnNodeAdded(ILSceneGraphNode node) {
+            if (m_parent != null && !m_eventingSuspended) {
+                m_parent.OnNodeAdded(node); 
+            }
+        }
+        protected virtual void OnNodeRemoved(ILSceneGraphNode node) {
+            if (m_parent != null && !m_eventingSuspended) {
+                m_parent.OnNodeRemoved(node); 
+            }
+        }
+        /// <summary>
+        /// stop firing events from this node
+        /// </summary>
+        public void EventingSuspend() {
+            m_eventingSuspended = true; 
+        }
+        /// <summary>
+        /// resume firing events from this node
+        /// </summary>
+        public void EventingResume() {
+            m_eventingSuspended = false; 
+        }
+
         #endregion
 
         #region properties
@@ -110,6 +134,7 @@ namespace ILNumerics.Drawing.Graphs {
                 return m_positionMin;
             }
         }
+        /// <summary>
         /// the maximum coordinate of a cube tightly enclosing the node (and all childs) 
         /// </summary>
         /// <returns></returns>

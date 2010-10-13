@@ -51,6 +51,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\ILNumerics.Drawing.xml</DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ILLibrary Release only|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -96,7 +97,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="OpenTK, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\bin\OpenTK.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -117,7 +121,6 @@
     <Compile Include="Controls\ILSubfigure.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Graphs\ILBarGraph2D.cs" />
     <Compile Include="Graphs\ILSceneGraph.cs" />
     <Compile Include="Graphs\ILSceneGraphInnerNode.cs" />
     <Compile Include="Graphs\ILSceneGraphNode.cs" />
@@ -127,6 +130,7 @@
     <Compile Include="Graphs\ILSceneGraphShapedLeaf.cs" />
     <Compile Include="Interfaces\IILPanelConfigurator.cs" />
     <Compile Include="Interfaces\IILSupportsLight.cs" />
+    <Compile Include="Interfaces\IILTextRenderer.cs" />
     <Compile Include="Interfaces\IILVertexDefinition.cs" />
     <Compile Include="Labeling\ILLabel.cs">
       <SubType>Code</SubType>
@@ -152,7 +156,6 @@
     <Compile Include="Misc\ILAction.cs" />
     <Compile Include="Misc\ILActionRamp.cs" />
     <Compile Include="Misc\ILActionRampElement.cs" />
-    <Compile Include="Misc\ILAspectRatio.cs" />
     <Compile Include="Misc\ILClippingData.cs" />
     <Compile Include="Graphs\ILPlot2DGraph.cs" />
     <Compile Include="Graphs\ILFilledGraph.cs" />
@@ -194,9 +197,17 @@
     <Compile Include="Platform\OpenGL\ILOGLZAxis.cs" />
     <Compile Include="Graphs\ILSurfaceGraph.cs" />
     <Compile Include="Platform\OpenGL\ILOGLPointsRendererC4bV3f.cs" />
+    <Compile Include="Plots\ILBarGraph2D.cs" />
+    <Compile Include="Plots\ILLitBox3D.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Plots\ILLitSink.cs" />
+    <Compile Include="Plots\ILLitSurface.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Plots\ILPlot.cs" />
-    <Compile Include="Plots\ILBarGraph3d.cs" />
-    <Compile Include="Plots\ILVectorField.cs" />
+    <Compile Include="Plots\ILBarGraph3D.cs" />
+    <Compile Include="Plots\ILVectorField2D.cs" />
     <Compile Include="Resources\Images.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -218,7 +229,6 @@
     <Compile Include="Controls\ILMovingDockPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Interfaces\IILRenderer.cs" />
     <Compile Include="Platform\OpenGL\ILOGLAxis.cs" />
     <Compile Include="Platform\OpenGL\ILOGLPlot2DGraph.cs" />
     <Compile Include="Platform\OpenGL\ILOGLPanel.cs">
@@ -258,7 +268,6 @@
     <Compile Include="Shapes\ILLine.cs" />
     <Compile Include="Shapes\ILLines.cs" />
     <Compile Include="Shapes\ILLitBorderedShape.cs" />
-    <Compile Include="Plots\ILLitBox3D.cs" />
     <Compile Include="Shapes\ILLitCompositeShape.cs" />
     <Compile Include="Shapes\ILLitPolygon.cs" />
     <Compile Include="Shapes\ILLitQuad.cs">
@@ -268,7 +277,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Shapes\ILLitSphere.cs" />
-    <Compile Include="Plots\ILLitSurface.cs" />
     <Compile Include="Shapes\ILLitTriangle.cs" />
     <Compile Include="Shapes\ILLitTriangles.cs" />
     <Compile Include="Shapes\ILPoints.cs" />
@@ -311,6 +319,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
     <None Include="Resources\Diamond25x25.png" />
     <None Include="Resources\TriangleUp25x25.png" />
     <None Include="Resources\Circle25x25.png" />

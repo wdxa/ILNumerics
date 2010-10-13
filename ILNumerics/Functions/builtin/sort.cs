@@ -143,9 +143,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static /*!HC:outCls*/ ILArray<double> sort (/*!HC:inCls1*/ ILArray<double> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -155,11 +157,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static /*!HC:outCls*/ ILArray<double> sort (/*!HC:inCls1*/ ILArray<double> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -172,9 +177,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static /*!HC:outCls*/ ILArray<double> sort (/*!HC:inCls1*/ ILArray<double> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -192,7 +201,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -200,7 +209,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -212,11 +221,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -259,7 +271,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -267,7 +279,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -281,9 +293,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<UInt64> sort ( ILArray<UInt64> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -293,11 +307,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<UInt64> sort ( ILArray<UInt64> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -310,9 +327,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static  ILArray<UInt64> sort ( ILArray<UInt64> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -330,7 +351,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -338,7 +359,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -350,11 +371,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -397,7 +421,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -405,7 +429,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -416,9 +440,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<UInt32> sort ( ILArray<UInt32> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -428,11 +454,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<UInt32> sort ( ILArray<UInt32> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -445,9 +474,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static  ILArray<UInt32> sort ( ILArray<UInt32> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -465,7 +498,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -473,7 +506,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -485,11 +518,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -532,7 +568,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -540,7 +576,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -551,9 +587,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<UInt16> sort ( ILArray<UInt16> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -563,11 +601,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<UInt16> sort ( ILArray<UInt16> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -580,9 +621,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static  ILArray<UInt16> sort ( ILArray<UInt16> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -600,7 +645,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -608,7 +653,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -620,11 +665,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -667,7 +715,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -675,7 +723,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -686,9 +734,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<Int64> sort ( ILArray<Int64> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -698,11 +748,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<Int64> sort ( ILArray<Int64> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -715,9 +768,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static  ILArray<Int64> sort ( ILArray<Int64> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -735,7 +792,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -743,7 +800,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -755,11 +812,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -802,7 +862,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -810,7 +870,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -821,9 +881,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<Int32> sort ( ILArray<Int32> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -833,11 +895,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<Int32> sort ( ILArray<Int32> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -850,9 +915,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static  ILArray<Int32> sort ( ILArray<Int32> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -870,7 +939,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -878,7 +947,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -890,11 +959,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -937,7 +1009,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -945,7 +1017,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -956,9 +1028,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<Int16> sort ( ILArray<Int16> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -968,11 +1042,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<Int16> sort ( ILArray<Int16> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -985,9 +1062,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static  ILArray<Int16> sort ( ILArray<Int16> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -1005,7 +1086,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1013,7 +1094,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -1025,11 +1106,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -1072,7 +1156,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1080,7 +1164,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -1091,9 +1175,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<float> sort ( ILArray<float> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -1103,11 +1189,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<float> sort ( ILArray<float> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -1120,9 +1209,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static  ILArray<float> sort ( ILArray<float> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -1140,7 +1233,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1148,7 +1241,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -1160,11 +1253,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -1207,7 +1303,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1215,7 +1311,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -1226,9 +1322,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<fcomplex> sort ( ILArray<fcomplex> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -1238,11 +1336,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<fcomplex> sort ( ILArray<fcomplex> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -1255,9 +1356,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static  ILArray<fcomplex> sort ( ILArray<fcomplex> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -1275,7 +1380,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1283,7 +1388,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -1295,11 +1400,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -1342,7 +1450,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1350,7 +1458,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -1361,9 +1469,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<complex> sort ( ILArray<complex> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -1373,11 +1483,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<complex> sort ( ILArray<complex> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -1390,9 +1503,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static  ILArray<complex> sort ( ILArray<complex> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -1410,7 +1527,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1418,7 +1535,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -1430,11 +1547,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -1477,7 +1597,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1485,7 +1605,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -1496,9 +1616,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<char> sort ( ILArray<char> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -1508,11 +1630,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<char> sort ( ILArray<char> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -1525,9 +1650,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static  ILArray<char> sort ( ILArray<char> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -1545,7 +1674,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1553,7 +1682,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -1565,11 +1694,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -1612,7 +1744,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1620,7 +1752,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -1631,9 +1763,11 @@ namespace ILNumerics.BuiltInFunctions {
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+        /// Elements along the columns of A will get sorted independently from each other. A is not altered.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<byte> sort ( ILArray<byte> A) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -1643,11 +1777,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// sort data in A along first non singleton dimension
         /// </summary>
         /// <param name="A">input array, n-dimensional</param>
-        /// <param name="descending">Specifies the direction of sorting</param>
+        /// <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
         /// <returns>sorted array of the same size as A</returns>
         /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the first non singleton dimension will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// along the first non singleton dimension will get sorted independently from data 
+        /// in the next row/column.
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// </remarks>
         public static  ILArray<byte> sort ( ILArray<byte> A, bool descending) {
             int fnsd = A.Dimensions.FirstNonSingleton(); 
             if (fnsd < 0) return A.C; 
@@ -1660,9 +1797,13 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</remarks>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+        /// </remarks>
         public static  ILArray<byte> sort ( ILArray<byte> A, int dim, bool descending) {
             if (object.Equals (A,null)) 
                 throw new Exception("sort: parameter A must not be null");
@@ -1680,7 +1821,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1688,7 +1829,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolid(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolid_IT(ret.m_data,posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }
@@ -1700,11 +1841,14 @@ namespace ILNumerics.BuiltInFunctions {
         /// <param name="A">input array, n-dimensional</param>
         /// <param name="descending">Specifies the direction of sorting</param>
         /// <param name="dim">dimension to sort along</param>
-        /// <param name="Indices">output parameter: returns permutation matrix also</param>
+        /// <param name="Indices">output parameter: returns permutation matrix</param>
         /// <returns>sorted array of the same size as A</returns>
-        /// <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-        /// along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-        /// in the next row/column.</para>
+        /// <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+        /// algorithm.  
+        /// <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+        /// if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+        /// <para>Properties of sorting can be tuned by the settings of <see cref="ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+        /// and <see cref="ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
         /// <para>This overload also returns an array 'Indices' which will hold the indices into the original 
         /// elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
         /// <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -1747,7 +1891,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortDescSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortDescSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             } else {
@@ -1755,7 +1899,7 @@ namespace ILNumerics.BuiltInFunctions {
                 for (int c = 0; c < maxRuns; c++) {
                     if (posInArr >= A.Dimensions.NumberOfElements) 
                         posInArr -= (A.Dimensions.NumberOfElements-1); 
-                    ILQuickSort.QuickSortAscSolidIDX(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
+                    ILQuickSort.QuickSortAscSolidIDX_IT(ret.m_data,Indices.m_data, posInArr,posInArr+(dimLen-1)*inc,inc);    
                     posInArr += dimLen*inc; 
                 }
             }

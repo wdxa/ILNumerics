@@ -46,7 +46,7 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// Constructor - this class should be created only from within ILNumerics assemblies! 
         /// </summary>
         /// <param name="clippingView">panels clipping view</param>
-        /// <param name="layout">instance with layout informations</param>
+        /// <param name="layoutData">instance with layout informations</param>
         /// <param name="panel">the panel containing the axis</param>
         internal ILOGLYAxis (ILClippingData clippingView,
                             ILLayoutData layoutData,
@@ -56,13 +56,13 @@ namespace ILNumerics.Drawing.Platform.OpenGL {
         /// <summary>
         /// draw all lines for the axis 
         /// </summary>
-        /// <param name="g">graphics object (ignored)</param>
+        /// <param name="p">render properties</param>
         /// <param name="background">true: draw lines in the back only, false: draw foreground lines</param>
         protected override void iDrawAxis(ILRenderProperties p, bool background) {
             // create vertex data: main axis and ticks 
             if (m_visible) { 
-                int count = 8; float tickLen;
-                float scale, offse, x, y, z
+                float tickLen;
+                float x, y, z
                     , xmin = m_clipping.XMin
                     , xmax = m_clipping.XMax
                     , ymin = m_clipping.YMin

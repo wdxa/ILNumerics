@@ -33,23 +33,33 @@ using ILNumerics.Exceptions;
 using ILNumerics.Drawing.Misc; 
 using System.Drawing; 
 using ILNumerics.BuiltInFunctions; 
-using ILNumerics.Drawing.Interfaces; 
+using ILNumerics.Drawing.Interfaces;
 using ILNumerics.Drawing.Labeling;
+using ILNumerics.Drawing.Plots;
 
-namespace ILNumerics.Drawing.Graphs {
+namespace ILNumerics.Drawing.Plots {
     /// <summary>
-    /// simple updatable bar graph implementation, fixed number of bars
+    /// simple updatable bar graph implementation, fixed number of bars, simple example implementation derived from ILSceneGraph
     /// </summary>
-    public class ILBarGraph2D : ILSceneGraph, IILLegendRenderer {
+    public class ILBarGraph2D : ILPlot, IILLegendRenderer, IILPanelConfigurator {
 
         #region attributes 
         float m_barWidth; 
-        ILQuad[] m_quads; 
-        ILLabel m_legendLabel; 
-        int m_oldestBarIndex; 
+        ILQuad[] m_quads;
+        ILLabel m_legendSampleLabel;
+        ILLabel m_legendTextLabel; 
+        int m_oldestBarIndex;
+        int m_oldestOpacity; 
         #endregion 
 
         #region properties
+        /// <summary>
+        /// Sets the opacity for the 'oldest' bar. May be used as 'Fading-Out' effect. (Default: 255)
+        /// </summary>
+        int OpacityOldest {
+            get { return m_oldestOpacity; }
+            set { m_oldestOpacity = value; }
+        }
         /// <summary>
         /// padding between graphs 
         /// </summary>
@@ -59,13 +69,13 @@ namespace ILNumerics.Drawing.Graphs {
             }
             set {
                 m_barWidth = value;
-                OnChanged("BarWidth"); 
+                Invalidate(); 
             }
         }
         /// <summary>
         /// number of bars in the graph
         /// </summary>
-        public int Count {
+        public override int Count {
             get {
                 return m_quads.Length; 
             }
@@ -77,15 +87,20 @@ namespace ILNumerics.Drawing.Graphs {
         /// create new 2D bar graph
         /// </summary>
         /// <param name="panel">hosting panel</param>
-        /// <param name="data">numeric vector data, heights + number of bars</param>
+        /// <param name="data">numeric vector data, heights of bars</param>
         public ILBarGraph2D (ILPanel panel, ILBaseArray data) 
-            : base (panel, panel.Graphs.Limits) {
+            : base (panel) {
             // spacing between + width of bars
-            m_barWidth = 0.6f; 
+            m_barWidth = 0.6f;
+            m_oldestOpacity = 255; 
             // create the bars
             createQuads(data); 
-            m_graphType = GraphType.Bar; 
-            m_legendLabel = new ILLabel(m_panel);
+            m_legendSampleLabel = new ILLabel(m_panel);
+            m_legendSampleLabel.Text = "Bars";
+
+            m_legendTextLabel = new ILLabel(m_panel);
+            m_legendTextLabel.Text = "3D";
+
             m_oldestBarIndex = 0; 
         }
         #endregion
@@ -96,7 +111,7 @@ namespace ILNumerics.Drawing.Graphs {
         /// </summary>
         /// <param name="index">index of the bar</param>
         /// <returns>the bar shape as ILQuad</returns>
-        public ILQuad this [int index] {
+        public new ILQuad this [int index] {
             get { return m_quads[index]; }
         }
         /// <summary>
@@ -110,8 +125,10 @@ namespace ILNumerics.Drawing.Graphs {
             for (int i = 0; i < m_quads.Length; i++) {
                 m_quads[i].Translate(offset);
                 // FADE OUt old barsss .... 
-                m_quads[(i + m_oldestBarIndex) % (m_quads.Length - 1)].Opacity 
-                    = (byte)(i * 255.0 / m_quads.Length);
+                m_quads[(i + m_oldestBarIndex) % (m_quads.Length - 1)].Opacity
+                    = (byte)(m_oldestOpacity + i * (255 - m_oldestOpacity) / m_quads.Length);
+                // tell the scene to update its size
+                m_quads[i].Invalidate();
             }
             // configure oldest graph
             ILQuad newestQuad = m_quads[m_oldestBarIndex];
@@ -122,9 +139,6 @@ namespace ILNumerics.Drawing.Graphs {
             newestQuad.Vertices[3].YPosition = value;
             newestQuad.Opacity = 255; 
 
-            // tell the scene to update its size
-            Root.Invalidate(); 
-
             if (++m_oldestBarIndex >= m_quads.Length) 
                 m_oldestBarIndex = 0; 
             return ret;        
@@ -132,29 +146,33 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region IILLegendRenderer Member
-        /* In order to show up in the legend, the graph needs to 
+        /* In order to show up in the legend, the plot needs to 
          * implement the IILLegendRenderer interface. Here this is 
-         * done very simple via 2 labels. The first one simple draws 
+         * done very simple via a ILShapeLabel. The first one simple draws 
          * the text "Bars" in the sample area of the legend. The original 
          * ILLabel of the graph is then used to draw its text into the 
          * label area of the legend. 
+         * Better implementations should check for 
+         * ** the drawing not to exceed the sampleArea and labelArea rectangles
+         * ** use 2 distinct labels instead of one (performance) 
          */ 
         public void DrawToLegend(ILRenderProperties p, Rectangle sampleArea, Rectangle labelArea) {
-            m_legendLabel.Text = "Bars"; 
-            m_legendLabel.Position = sampleArea.Location; 
-            m_legendLabel.Draw(p); 
-            m_label.Position = labelArea.Location;
-            m_label.Draw(p); 
+            m_legendSampleLabel.Position = sampleArea.Location;
+            m_legendSampleLabel.Draw(p);
+
+            m_legendTextLabel.Position = labelArea.Location;
+            m_legendTextLabel.Draw(p); 
         }
+        public Size LabelSize { get { return m_legendTextLabel.Size; } }
         #endregion
 
         #region private helper 
         protected void createQuads(ILBaseArray data) {
             if (data == null || data.Length == 0) {
-                Root.Clear(); 
+                Clear(); 
                 m_quads = new ILQuad[0];
             } else {
-                Root.Clear(); 
+                Clear(); 
                 m_quads = new ILQuad[data.Length]; 
                 ILColorEnumerator colors = new ILColorEnumerator(); 
                 ILArray<float> fData = null; 
@@ -164,7 +182,7 @@ namespace ILNumerics.Drawing.Graphs {
                     fData = ILMath.tosingle(data);
                 }
                 for (int i = 0; i < m_quads.Length; i++) {
-                    m_quads[i] = new ILQuad(Panel); 
+                    m_quads[i] = new ILQuad(m_panel); 
                     m_quads[i].Border.Visible = true; 
                     m_quads[i].FillColor = colors.NextColor(); 
                     ILPoint3Df pos = new ILPoint3Df(); 
@@ -180,14 +198,26 @@ namespace ILNumerics.Drawing.Graphs {
                     m_quads[i].Vertices[3].Position = pos; 
                     // label the bar
                     m_quads[i].Label.Text = i.ToString(); 
-                    m_quads[i].Label.Anchor = new PointF(.5f,0);  // TickLabelAlign.center | TickLabelAlign.top; 
-                    // bars will be transparent,oldest fading out
-                    m_quads[i].Opacity = (byte)(5 + i * 230f / m_quads.Length); 
-                    // add the bar to the (underlying) scene graph
-                    AddNode(m_quads[i]); 
+                    m_quads[i].Label.Anchor = new PointF(.5f,-1);   
+
+                    // bars will be transparent, oldest fading to OpacityOldest
+                    m_quads[i].Opacity = (byte)(m_oldestOpacity + i * (255 - m_oldestOpacity) / m_quads.Length); 
+                    // add the bar to the scene graph node (base)
+                    Add(m_quads[i]); 
                 }
             }
         }
+        #endregion
+
+        #region IILPanelConfigurator Members
+
+        public void  ConfigurePanel(ILPanel panel) {
+            panel.Axes.XAxis.Visible = false;
+            panel.InteractiveMode = InteractiveModes.ZoomRectangle;
+            panel.Axes.YAxis.FarLines.Visible = false;
+            panel.PlotBoxScreenSizeMode = PlotBoxScreenSizeMode.Optimal; 
+        }
+
         #endregion
     }
 }

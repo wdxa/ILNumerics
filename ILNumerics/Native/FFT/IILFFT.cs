@@ -45,16 +45,16 @@ namespace ILNumerics.Native {
         /// performs backward 1-dimensional fft
         /// </summary>
         /// <param name="A">input array</param>
-        /// <param name="nDims">dimensions to perform fft along</param>
+        /// <param name="dim">dimension to perform fft along</param>
         /// <returns>result, same size as A</returns>
-        ILArray<fcomplex> FFTBackward1D(ILArray<fcomplex> A, int alongDim);
+        ILArray<fcomplex> FFTBackward1D(ILArray<fcomplex> A, int dim);
         /// <summary>
         /// performs backward 1-dimensional fft 
         /// </summary>
         /// <param name="A">input array</param>
-        /// <param name="nDims">dimensions to perform fft along</param>
+        /// <param name="dim">dimension to perform fft along</param>
         /// <returns>result, same size as A</returns>
-        ILArray<complex> FFTBackward1D(ILArray<complex> A, int alongDim);
+        ILArray<complex> FFTBackward1D(ILArray<complex> A, int dim);
         /// <summary>
         /// performs backward n-dimensional fft on hermitian sequence
         /// </summary>
@@ -77,20 +77,20 @@ namespace ILNumerics.Native {
         /// performs backward 1-dimensional fft on hermitian sequence
         /// </summary>
         /// <param name="A">input array</param>
-        /// <param name="nDims">dimension to perform fft along</param>
+        /// <param name="dim">dimension to perform fft along</param>
         /// <returns>result, same size as A</returns>
         /// <remarks>This function brings increased performance if the implementation supports it. 
         /// If not, the method will be implemented by repeated calls of (inplace) 1D fft.</remarks>
-        ILArray<float> FFTBackwSym1D(ILArray<fcomplex> A, int alongDim);
+        ILArray<float> FFTBackwSym1D(ILArray<fcomplex> A, int dim);
         /// <summary>
         /// performs backward 1-dimensional fft on hermitian sequence
         /// </summary>
         /// <param name="A">input array</param>
-        /// <param name="nDims">dimension to perform fft along</param>
+        /// <param name="dim">dimension to perform fft along</param>
         /// <returns>result, same size as A</returns>
         /// <remarks>This function brings increased performance if the implementation supports it. 
         /// If not, the method will be implemented by repeated calls of (inplace) 1D fft.</remarks>
-        ILArray<double> FFTBackwSym1D(ILArray<complex> A, int alongDim);
+        ILArray<double> FFTBackwSym1D(ILArray<complex> A, int dim);
         /// <summary>
         /// performs n-dimensional fft
         /// </summary>
@@ -123,30 +123,30 @@ namespace ILNumerics.Native {
         /// performs 1-dimensional fft
         /// </summary>
         /// <param name="A">input array</param>
-        /// <param name="nDims">dimension to perform fft along</param>
+        /// <param name="dim">dimension to perform fft along</param>
         /// <returns>result, same size as A</returns>
-        ILArray<complex> FFTForward1D(ILArray<complex> A, int alongDim);
+        ILArray<complex> FFTForward1D(ILArray<complex> A, int dim);
         /// <summary>
         /// performs 1-dimensional fft
         /// </summary>
         /// <param name="A">input array</param>
-        /// <param name="nDims">dimension to perform fft along</param>
+        /// <param name="dim">dimension to perform fft along</param>
         /// <returns>result, same size as A</returns>
-        ILArray<complex> FFTForward1D(ILArray<double> A, int alongDim);
+        ILArray<complex> FFTForward1D(ILArray<double> A, int dim);
         /// <summary>
         /// performs 1-dimensional fft
         /// </summary>
         /// <param name="A">input array</param>
-        /// <param name="nDims">dimension to perform fft along</param>
+        /// <param name="dim">dimension to perform fft along</param>
         /// <returns>result, same size as A</returns>
-        ILArray<fcomplex> FFTForward1D(ILArray<fcomplex> A, int alongDim);
+        ILArray<fcomplex> FFTForward1D(ILArray<fcomplex> A, int dim);
         /// <summary>
         /// performs 1-dimensional fft
         /// </summary>
         /// <param name="A">input array</param>
-        /// <param name="nDims">dimension to perform fft along</param>
+        /// <param name="dim">dimension to perform fft along</param>
         /// <returns>result, same size as A</returns>
-        ILArray<fcomplex> FFTForward1D(ILArray<float> A, int alongDim);
+        ILArray<fcomplex> FFTForward1D(ILArray<float> A, int dim);
         /// <summary>
         /// true, if the implementation caches plans between subsequent calls
         /// </summary>

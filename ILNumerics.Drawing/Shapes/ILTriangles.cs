@@ -41,24 +41,77 @@ namespace ILNumerics.Drawing.Shapes {
     public class ILTriangles 
         : ILCompositeShape<C4bV3f> {
  
-        #region eventing 
-        #endregion
-
-        #region attributes
-        #endregion
-
-        #region properties
-        #endregion
-
         #region constructors
+        /// <summary>
+        /// create triangles, for delayed vertex definition
+        /// </summary>
+        /// <param name="panel">hosting panel</param>
+        /// <param name="numVertices">number of vertices to create. Vertices must be filled 
+        /// with data manually afterwards.</param>
         public ILTriangles (ILPanel panel, int numTriangles) 
             : base (panel, numTriangles * 3, 3) {
             m_fillColor = Color.Blue;    
         }
+        /// <summary>
+        /// create triangles 
+        /// </summary>
+        /// <param name="panel">hosting panel</param>
+        /// <param name="X">x coordinates vector </param>
+        /// <param name="Y">y coordinates vector </param>
+        /// <param name="Z">z coordinates vector </param>
         public ILTriangles (ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z) 
             : base (panel,3, X,Y,Z) { }
+        /// <summary>
+        /// create triangles, indexed storage
+        /// </summary>
+        /// <param name="panel">hosting panel</param>
+        /// <param name="X">x coordinates vector </param>
+        /// <param name="Y">y coordinates vector </param>
+        /// <param name="Z">z coordinates vector </param>
+        /// <param name="mapping">Mapping of shapes, composes triangles out of vertices. Matrix having  
+        /// 3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+        /// The 3 elements in a column therefore compose a single triangle. Vertices may 
+        /// get used arbitrary times (or not at all). All elements must be positive integer values in 
+        /// range 0...[<see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         public ILTriangles (ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray mapping) 
             : base (panel, 3,X,Y,Z,mapping) { }
+        /// <summary>
+        /// create triangles, flat shading
+        /// </summary>
+        /// <param name="panel">hosting panel</param>
+        /// <param name="X">x coordinates vector </param>
+        /// <param name="Y">y coordinates vector </param>
+        /// <param name="Z">z coordinates vector </param>
+        /// <param name="color">Fill color for all shapes.</param>
+        /// <param name="mapping">Mapping of shapes, composes lit triangles out of vertices. Matrix having  
+        /// 3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+        /// The 3 elements in a column therefore compose a single lit triangle. Vertices may 
+        /// get used arbitrary times (or not at all). All elements must be positive integer values in 
+        /// range 0...[<see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        public ILTriangles (ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, Color color, ILBaseArray mapping) 
+            : base (panel,3,X,Y,Z,mapping) {
+            m_fillColor = color;
+        }
+        /// <summary>
+        /// create lit triangles, interpolated shading
+        /// </summary>
+        /// <param name="panel">hosting panel</param>
+        /// <param name="X">x coordinates vector </param>
+        /// <param name="Y">y coordinates vector </param>
+        /// <param name="Z">z coordinates vector </param>
+        /// <param name="colors">matrix with <see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/> 
+        /// rows, 3 columns for (R,G,B) or 4 columns for 
+        /// (A,R,G,B) for every vertex specified by X,Y,Z. Elements must range from 0..255. If colors 
+        /// has 3 columns only, alpha values of 255 are used as default.</param>
+        /// <param name="mapping">Mapping of shapes, composes triangles out of vertices. Matrix having  
+        /// 3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+        /// The 3 elements in a column therefore compose a single triangle. Vertices may 
+        /// get used arbitrary times (or not at all). All elements must be positive integer values in 
+        /// range 0...[<see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
+        public ILTriangles (ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, ILBaseArray colors, ILBaseArray mapping) 
+            : base (panel,3,X,Y,Z,colors,mapping) {
+            m_fillColor = Color.Yellow;
+        }
         #endregion
 
     }

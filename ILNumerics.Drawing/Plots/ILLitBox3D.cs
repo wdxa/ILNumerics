@@ -36,9 +36,9 @@ using System.Drawing;
 
 namespace ILNumerics.Drawing.Plots {
     /// <summary>
-    /// scene graph node, displying a colored lit 3D box
+    /// plot, displaying a simple colored lit 3D box
     /// </summary>
-     public class ILLitBox3D : ILSceneGraphInnerNode {
+     public class ILLitBox3D : ILPlot {
 
          #region attributes
          ILLitQuad[] m_quads;
@@ -51,16 +51,10 @@ namespace ILNumerics.Drawing.Plots {
          ILShapeLabel m_topLabel; 
          #endregion
 
-         private static class QuadIndices {
-             public static readonly int front = 0;
-             public static readonly int right = 1;
-             public static readonly int back = 2;
-             public static readonly int left = 3;
-             public static readonly int top = 4;
-             public static readonly int bottom = 5;
-         }
-
          #region properties
+         /// <summary>
+         /// get the opacity for the box or set it
+         /// </summary>
          public byte Opacity {
              get { return m_opacity; }
              set {
@@ -82,11 +76,17 @@ namespace ILNumerics.Drawing.Plots {
                 updateColors(); 
              }
          }
-         public ILLineProperties Wireframe {
+         /// <summary>
+         /// properties of the edge lines 
+         /// </summary>
+         public ILLineProperties Edges {
              get {
                  return m_lineProperties; 
              }
          }
+         /// <summary>
+         /// overall fill color (bottom and lower area of color gradient) 
+         /// </summary>
          public Color FillColor {
              get { return m_fillColor; }
              set {
@@ -94,6 +94,9 @@ namespace ILNumerics.Drawing.Plots {
                  updateColors(); 
              }
          }
+         /// <summary>
+         /// top color (top and upper area of color gradient)
+         /// </summary>
          public Color TopColor {
              get { return m_topColor; }
              set {
@@ -193,7 +196,7 @@ namespace ILNumerics.Drawing.Plots {
              quad.Vertices[3].Position = new ILPoint3Df(min.X, max.Y, min.Z);
              m_quads[QuadIndices.bottom] = quad;
              #endregion
-
+             EventingSuspend();
              foreach (ILLitQuad s in m_quads) {
                  s.Label.Text = "";
                  s.Shading = ShadingStyles.Interpolate;
@@ -204,12 +207,17 @@ namespace ILNumerics.Drawing.Plots {
                  s.Border.Antialiasing = false; 
                  Add(s); 
              }
+             EventingResume(); 
              m_fillColor = fillColor;
              updateColors();
          }
          #endregion
 
          #region public interface
+         /// <summary>
+         /// (internally used) draws the plot 
+         /// </summary>
+         /// <param name="props"></param>
          public override void Draw(ILRenderProperties props) {
              base.Draw(props);
              m_valLabel.Draw(props);
@@ -220,12 +228,31 @@ namespace ILNumerics.Drawing.Plots {
          #endregion
 
          #region private helpers
+         /// <summary>
+         /// enum for all 
+         /// </summary>
+         private static class QuadIndices {
+             public static readonly int front = 0;
+             public static readonly int right = 1;
+             public static readonly int back = 2;
+             public static readonly int left = 3;
+             public static readonly int top = 4;
+             public static readonly int bottom = 5;
+         }
+         /// <summary>
+         /// update all quad borders with new settings
+         /// </summary>
+         /// <param name="sender"></param>
+         /// <param name="e"></param>
          void m_lineProperties_Changed(object sender, EventArgs e) {
              foreach (ILLitQuad quad in m_quads) {
                  quad.Border.CopyFrom(m_lineProperties); 
              }
 
          }
+         /// <summary>
+         /// distribute changed color settings to all quads 
+         /// </summary>
          private void updateColors() {
              SetColorGradient(m_quads[QuadIndices.front], m_fillColor, m_topColor, m_topColor, m_gradColor);
              SetColorGradient(m_quads[QuadIndices.right], m_fillColor, m_topColor, m_topColor, m_gradColor);
@@ -234,6 +261,14 @@ namespace ILNumerics.Drawing.Plots {
              SetColorGradient(m_quads[QuadIndices.top], m_topColor, m_topColor, m_topColor, m_topColor);
              SetColorGradient(m_quads[QuadIndices.bottom], m_topColor, m_topColor, m_topColor, m_topColor); 
          }
+         /// <summary>
+         /// color settings helper
+         /// </summary>
+         /// <param name="quad">quad index</param>
+         /// <param name="col0">color 1</param>
+         /// <param name="col1">color 2</param>
+         /// <param name="col2">color 3</param>
+         /// <param name="col3">color 4</param>
          private void SetColorGradient(
                         ILLitQuad quad, Color col0, Color col1, Color col2, Color col3) {
                 quad.Vertices[0].Color = col0; 

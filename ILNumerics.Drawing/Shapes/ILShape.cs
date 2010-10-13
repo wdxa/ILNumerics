@@ -45,7 +45,7 @@ namespace ILNumerics.Drawing.Shapes {
         #region attributes 
         protected VertexType[] m_vertices; 
         protected VertexType m_sampleVertex = new VertexType(); 
-        protected readonly int m_numVerticesPerShape;
+        protected int m_numVerticesPerShape;
         #endregion
 
         #region properties
@@ -150,7 +150,7 @@ namespace ILNumerics.Drawing.Shapes {
             }
         }
         /// <summary>
-        /// set position if single vertex 
+        /// set position of single vertex 
         /// </summary>
         /// <param name="vertexID">index of vertex in vertex array</param>
         /// <param name="position">new position </param>
@@ -160,7 +160,7 @@ namespace ILNumerics.Drawing.Shapes {
             m_vertices[vertexID] = vert; 
         }
         /// <summary>
-        /// set normal vector for single vertex
+        /// set normal vector of single vertex
         /// </summary>
         /// <param name="vertexID">index of vertex in vertex array</param>
         /// <param name="normal">new normal vector</param>
@@ -253,15 +253,20 @@ namespace ILNumerics.Drawing.Shapes {
         protected ILShapeLabel m_label; 
         protected bool m_vertexStoresColor;
         private bool m_invalidated; 
-        /// <summary>
-        /// panel hosting the scene (for current camera position and size updates)
-        /// </summary>
         protected int m_vertCount;
         protected ILVertexRenderer m_renderer;
         protected ILSceneGraphShapedLeaf m_sceneNode; 
+        protected bool m_visible; 
         #endregion 
 
         #region properties 
+        /// <summary>
+        /// Gets visibility of the shape or sets it
+        /// </summary>
+        public bool Visible {
+            get { return m_visible; }
+            set { m_visible = value; }
+        }
         /// <summary>
         /// returns the scene graph node holding this shape
         /// </summary>
@@ -298,6 +303,8 @@ namespace ILNumerics.Drawing.Shapes {
         /// </summary>
         public ILPoint3Df Center {
             get {
+                if (m_useCustomCenter && !m_customCenter.IsEmtpy())
+                    return m_customCenter; 
                 if (m_positionCenter.IsEmtpy())
                     ComputeLimits();
                 return m_positionCenter;
@@ -372,7 +379,8 @@ namespace ILNumerics.Drawing.Shapes {
             m_label = new ILShapeLabel(panel);
             m_label.Changed += new EventHandler(m_label_Changed); 
             m_label.Text = GetType().Name + " " + GetHashCode();
-            m_shading = ShadingStyles.Flat; 
+            m_shading = ShadingStyles.Flat;
+            m_visible = true; 
             Invalidate(); 
         }
         #endregion
@@ -385,31 +393,31 @@ namespace ILNumerics.Drawing.Shapes {
         /// <summary>
         /// Query single vertex via IILVertexDefinition interface 
         /// </summary>
-        /// <param name="i">index of vertex in vertex array</param>
+        /// <param name="id">index of vertex in vertex array</param>
         /// <returns>vertex definition</returns>
         public abstract IILVertexDefinition GetVertex(int id);
         /// <summary>
         /// set color for single vertex (color only, no alpha!)
         /// </summary>
-        /// <param name="vertexID">index of vertex in vertex array</param>
+        /// <param name="id">index of vertex in vertex array</param>
         /// <param name="color">new color</param>
         public abstract void SetColor(int id, Color color);
         /// <summary>
         /// set position if single vertex 
         /// </summary>
-        /// <param name="vertexID">index of vertex in vertex array</param>
+        /// <param name="id">index of vertex in vertex array</param>
         /// <param name="position">new position </param>
         public abstract void SetPosition(int id, ILPoint3Df position);
         /// <summary>
         /// set normal vector for single vertex
         /// </summary>
-        /// <param name="vertexID">index of vertex in vertex array</param>
+        /// <param name="id">index of vertex in vertex array</param>
         /// <param name="normal">new normal vector</param>
         public abstract void SetNormal(int id, ILPoint3Df normal);
         /// <summary>
         /// alter single vertex via IILVertexDefinition interface
         /// </summary>
-        /// <param name="vertexIdx">index of vertex in vertex array</param>
+        /// <param name="vertexID">index of vertex in vertex array</param>
         /// <param name="vertex">new vertex definition</param>
         public abstract void SetVertex(int vertexID, IILVertexDefinition vertex);
         /// <summary>
@@ -422,8 +430,10 @@ namespace ILNumerics.Drawing.Shapes {
         /// </summary>
         /// <param name="props"></param>
         public void Draw (ILRenderProperties props) {
-            IntDrawShape(props); 
-            IntDrawLabel(props); 
+            if (m_visible) {
+                IntDrawShape(props); 
+                IntDrawLabel(props);
+            }
         }
         /// <summary>
         /// configure this shape (internal use)
@@ -432,7 +442,6 @@ namespace ILNumerics.Drawing.Shapes {
         /// is invalidated, this causes IntConfigure to be called on the shape.</remarks>
         public virtual void Configure() {
             if (m_invalidated) {
-                IntConfigure();
                 m_invalidated = false;
             }
         }
@@ -448,12 +457,6 @@ namespace ILNumerics.Drawing.Shapes {
                 m_sceneNode.Invalidate(false); 
             }
         }
-        #endregion
-
-        #region private helpers
-        void m_label_Changed(object sender, EventArgs e) {
-            OnChanged(); 
-        }
         protected virtual void IntDrawLabel(ILRenderProperties p) {
             if (!String.IsNullOrEmpty(m_label.Text)) 
                 m_label.Draw(p, Center); 
@@ -462,10 +465,12 @@ namespace ILNumerics.Drawing.Shapes {
             m_renderer.Draw(p,this);
         }
         protected abstract void ComputeLimits();
-        /// <summary>
-        /// Internal Configure: prepare the shape for rendering (vertex creation, sorting etc.)
-        /// </summary>
-        protected abstract void IntConfigure(); 
+        #endregion
+
+        #region private helpers
+        void m_label_Changed(object sender, EventArgs e) {
+            OnChanged(); 
+        }
         #endregion
     }
     #endregion

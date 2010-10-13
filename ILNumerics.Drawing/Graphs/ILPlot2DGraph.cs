@@ -38,7 +38,7 @@ namespace ILNumerics.Drawing.Graphs {
     /// <summary>
     /// 2D line &amp; point graph
     /// </summary>
-    public abstract class ILPlot2DGraph : ILGraph, IILLegendRenderer {
+    public abstract class ILPlot2DGraph : ILGraph, IILLegendRenderer, IILPanelConfigurator {
 
         #region attributes
         protected C4bV3f[] m_vertices; 
@@ -96,7 +96,7 @@ namespace ILNumerics.Drawing.Graphs {
         /// <summary>
         /// draws a small example of the visual output 
         /// </summary>
-        /// <param name="g">graphics object, if this is null, drawing into current GL context</param>
+        /// <param name="p">render properties</param>
         /// <param name="sampleArea">area to draw the line + marker into</param>
         /// <param name="labelArea">area to draw corresponding label into</param>
         /// <remarks>derived classes implement this for current device contexts</remarks>
@@ -104,12 +104,19 @@ namespace ILNumerics.Drawing.Graphs {
             //if (g == null) throw new ILArgumentException ("ILGraph: DrawIntoLegend: invalid graphics object (null)"); 
             //throw new NotImplementedException ("ILGraph cannot draw to bitmap yet!"); 
         }
+
+        /// <summary>
+        /// Size of label
+        /// </summary>
+        /// <value>size</value>
+        public Size LabelSize { get { return m_label.Size; } }
         #endregion
 
         #region constructor
         /// <summary>
         /// [internal] constructor - do not use this! Use ILPanel.Graphs.Add...() instead!
         /// </summary>
+        /// <param name="panel">panel hosting the scene</param>
         /// <param name="sourceArray">data array</param>
         /// <param name="clippingContainer">hosting panels clipping data</param>
         public ILPlot2DGraph (ILPanel panel, ILBaseArray sourceArray,
@@ -145,6 +152,7 @@ namespace ILNumerics.Drawing.Graphs {
         /// <summary>
         /// [internal] constructor - do not use this! Use ILPanel.Graphs.Add...() instead!
         /// </summary>
+        /// <param name="panel">panel hosting the scene</param>
         /// <param name="XData">x data array</param>
         /// <param name="YData">y data array</param>
         /// <param name="clippingContainer">hosting panels clipping data</param>
@@ -200,7 +208,6 @@ namespace ILNumerics.Drawing.Graphs {
                 m_startID = 0; 
             }
             if (m_updateCount++ < m_autoLimitsUpdateCount) {
-                bool signal = false; 
                 m_localClipping.Update(vertex.Position,vertex.Position); 
             } else {
                 m_updateCount = 0; 
@@ -256,7 +263,7 @@ namespace ILNumerics.Drawing.Graphs {
         #endregion
 
         #region IILPanelConfigurator
-        public override void ConfigurePanel(ILPanel panel) {
+        public void ConfigurePanel(ILPanel panel) {
             panel.InteractiveMode = InteractiveModes.ZoomRectangle;
             panel.AspectRatio = AspectRatioMode.StretchToFill;
             panel.PlotBoxScreenSizeMode = PlotBoxScreenSizeMode.StrictOptimal;

@@ -38,7 +38,7 @@ namespace ILNumerics.Drawing.Shapes {
     /// <summary>
     /// A simple lit polygon, rendering arbitrary number of corners, bordered, supports light
     /// </summary>
-    public class ILLitPolygon : ILLitBorderedShape<C4bV3f> {
+    public class ILLitPolygon : ILLitBorderedShape<C4fN3fV3f> {
 
         #region constructors
         public ILLitPolygon (ILPanel panel, int numVertices) 
@@ -46,6 +46,21 @@ namespace ILNumerics.Drawing.Shapes {
             
         }
         #endregion
+        
+        /// <summary>
+        /// update vertices, may also alter number of edges 
+        /// </summary>
+        /// <param name="X">X coordinates</param>                   
+        /// <param name="Y">Y coordinates</param>
+        /// <param name="Z">Z coordinates</param>
+        public override void Update(ILBaseArray X, ILBaseArray Y, ILBaseArray Z) {
+            int newLen = Math.Max(Math.Max(X.Length,Y.Length),Z.Length);
+            if (VertexCount != newLen) {
+                m_numVerticesPerShape = newLen; 
+                Resize(newLen); 
+            }
+            base.Update(X, Y, Z);
+        }
 
     }
 }

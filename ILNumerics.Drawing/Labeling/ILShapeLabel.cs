@@ -45,7 +45,7 @@ namespace ILNumerics.Drawing.Labeling {
         ILArray<int> m_fringeOffsets;
         #endregion
 
-        #region propeerties
+        #region properties
         /// <summary>
         /// get/set the color used for drawing a fringe around glyphs, empty: no fringe
         /// </summary>
@@ -113,7 +113,7 @@ namespace ILNumerics.Drawing.Labeling {
         /// <param name="dest"></param>
         /// <param name="textOrientation"></param>
         /// <param name="m_color"></param>
-        private void drawFringed(IILRenderer m_renderer, object m_rendererQueue, Point dest, TextOrientation textOrientation, Color m_color) {
+        private void drawFringed(IILTextRenderer m_renderer, object m_rendererQueue, Point dest, TextOrientation textOrientation, Color m_color) {
             m_renderer.ColorOverride = m_fringeColor; 
             for (int i = 0; i < m_fringeOffsets.Dimensions[0]; i++) {
                 m_renderer.Draw(m_renderQueue

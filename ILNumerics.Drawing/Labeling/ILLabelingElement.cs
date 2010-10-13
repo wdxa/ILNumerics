@@ -60,7 +60,7 @@ namespace ILNumerics.Drawing.Labeling {
         internal PointF m_anchor; 
         protected TextOrientation m_orientation; 
         protected IILTextInterpreter m_interpreter; 
-        protected IILRenderer m_renderer;
+        protected IILTextRenderer m_renderer;
         protected ILRenderQueue m_renderQueue; 
 
 #endregion
@@ -141,7 +141,7 @@ namespace ILNumerics.Drawing.Labeling {
         /// <summary>
         /// device dependent renderer, used to draw the labeling bitmap onto panel
         /// </summary>
-        public IILRenderer Renderer {
+        public IILTextRenderer Renderer {
             get { return m_renderer; }
             set { 
                 if (value != null) {
@@ -294,11 +294,11 @@ namespace ILNumerics.Drawing.Labeling {
         /// return offset according to current setting of m_alignment
         /// </summary>
         /// <param name="size">size of an element to align</param>
+        /// <param name="p">point inside rectangle of size 'size'</param>
         /// <returns>offset according to Alignment property</returns>
         protected Point offsetAlignment(Size size, Point p) {
-            Point ret = new Point(p.X, p.Y); 
-            offsetAlignment(size, ref ret); 
-            return ret; 
+            offsetAlignment(size, ref p); 
+            return p; 
         }
         /// <summary>
         /// interprete the expression and cache render queue

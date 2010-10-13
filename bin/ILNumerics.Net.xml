@@ -2201,6 +2201,16 @@
             <returns>True if the limits exists and could be computed, false otherwise.</returns>
             <remarks>Empty arrays will return false. The output parameter will be default(type).</remarks>
         </member>
+        <member name="M:ILNumerics.ILArray`1.GetLimits(`0@,`0@,System.Boolean)">
+            <summary>
+            Get minimum and maximum value of all elements - if existing
+            </summary>
+            <param name="minValue">Output: minimum value.</param>
+            <param name="maxValue">Output: maximum value.</param>
+            <param name="includeInfNaNs">true: recognize Inf, NaN values; false: ignore those values</param>
+            <returns>True if the limits exists and could be computed, false otherwise.</returns>
+            <remarks>Empty arrays will return false. The output parameter will be default(BaseT) then.</remarks>
+        </member>
         <member name="M:ILNumerics.ILArray`1.CreateReference">
             <summary>
             Create referencing copy of this array.
@@ -2669,6 +2679,8 @@
             <param name="idx">Integer array holding the dimension specifier 
             pointing to the value.</param>
             <returns>Object in the position pointed to by idx.</returns>
+            <remarks>TODO: the interna of this function should be split and seperated 
+            to -> ILDimension and -> ILIndexOffset!</remarks>
         </member>
         <member name="M:ILNumerics.ILArray`1.GetValueSeq(System.Int32,System.Int32[]@)">
             <summary>
@@ -6152,10 +6164,155 @@
             and FFTW3 (prepared, optional modules, not included due to licensing conflicts).</para>
             </remarks>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:ILNumerics.BuiltInFunctions.ILMath.fftn(ILNumerics.ILArray{System.Double},System.Int32[])" -->
-        <!-- Badly formed XML comment ignored for member "M:ILNumerics.BuiltInFunctions.ILMath.fftn(ILNumerics.ILArray{ILNumerics.complex},System.Int32[])" -->
-        <!-- Badly formed XML comment ignored for member "M:ILNumerics.BuiltInFunctions.ILMath.ifftn(ILNumerics.ILArray{ILNumerics.complex},System.Int32[])" -->
-        <!-- Badly formed XML comment ignored for member "M:ILNumerics.BuiltInFunctions.ILMath.ifftnsym(ILNumerics.ILArray{ILNumerics.complex},System.Int32[])" -->
+        <member name="M:ILNumerics.BuiltInFunctions.ILMath.fftn(ILNumerics.ILArray{System.Double},System.Int32[])">
+            <summary>
+            fast fourier transform (n-D, specific size)
+            </summary>
+            <param name="A">input array, n-D</param>
+            <param name="dims">transformation lengths, specifies the length of the dimensions 
+            for the transformation array. The length of dims must be &gt; or equal to the number of 
+            dimensions of A. For elements in dim beeing smaller than corresponding dimension 
+            length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
+            <returns>transformation result of size specified by 'dims' parameter, complex hermitian</returns>
+            <remarks>
+            <para>The n-dimensional transformation is computed for the n-dimensional array A. 
+            Before the transform, the input is resized according to the 'dims' parameter. 
+            Dimensions larger than corresponding entries in 'dim' are truncated, dimensions
+            smaller than corresponding entries in 'dim' are zero padded.</para>
+            <para>The n-dimensional transformation is equivalent to repeatedly (inplace) 
+            computing one dimensional transformations along all dimensions of A.
+            However, using this 
+            function may be of magnitudes faster than using 1D transformations. This 
+            depends on the algorithm and API provided by the underlying native library.</para>
+            <para>The forward fourier transform and the inverse fourier transform of 
+            a given data array A are mathematically equivalent. It's only a 
+            scaling factor which is needed to make sure, A equals ifft(fft(A)). That 
+            scaling is introduced in the inverse transform.</para>
+            <para>The transformation is computed by use of the native library 
+            which currently is set up for your processor and OS version. The underlying 
+            library is automatically choosen at ILNumerics.Net startup and accessed via the 
+            static member ILMath.FFT. See the online documentation for more 
+            details in how to tune/configure and select dedicated native libraries. 
+            Currently supported libraries are: Intel MKL (included), AMD ACML 
+            and FFTW3 (prepared, optional modules, not included due to licensing conflicts).</para>
+            </remarks>
+            <exception cref="T:ILNumerics.Exceptions.ILArgumentException">is thrown if the 
+            dim parameter is null, its length is less then the number of dimensions of A 
+            or any element of dims is non-negative</exception>
+        </member>
+        <member name="M:ILNumerics.BuiltInFunctions.ILMath.fftn(ILNumerics.ILArray{ILNumerics.complex},System.Int32[])">
+            <summary>
+            fast fourier transform (n-D, specific size)
+            </summary>
+            <param name="A">input array, n-D</param>
+            <param name="dims">transformation lengths, specifies the length of the dimensions 
+            for the transformation array. The length of dims must be &gt; or equal to  the number of 
+            dimensions of A. For elements in dim beeing smaller than corresponding dimension 
+            length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
+            <returns>transformation result of size specified by 'dims' parameter</returns>
+            <remarks>
+            <para>The n-dimensional transformation is computed for the n-dimensional array A. 
+            Before the transform, the input is resized according to the 'dims' parameter. 
+            Dimensions larger than corresponding entries in 'dim' are truncated, dimensions
+            smaller than corresponding entries in 'dim' are zero padded.</para>
+            <para>The n-dimensional transformation is equivalent to repeatedly (inplace) 
+            computing one dimensional transformations along all dimensions of A.
+            However, using this 
+            function may be of magnitudes faster than using 1D transformations. This 
+            depends on the algorithm and API provided by the underlying native library.</para>
+            <para>The forward fourier transform and the inverse fourier transform of 
+            a given data array A are mathematically equivalent. It's only a 
+            scaling factor which is needed to make sure, A equals ifft(fft(A)). That 
+            scaling is introduced in the inverse transform.</para>
+            <para>The transformation is computed by use of the native library 
+            which currently is set up for your processor and OS version. The underlying 
+            library is automatically choosen at ILNumerics.Net startup and accessed via the 
+            static member ILMath.FFT. See the online documentation for more 
+            details in how to tune/configure and select dedicated native libraries. 
+            Currently supported libraries are: Intel MKL (included), AMD ACML 
+            and FFTW3 (prepared, optional modules, not included due to licensing conflicts).</para>
+            </remarks>
+            <exception cref="T:ILNumerics.Exceptions.ILArgumentException">is thrown if the 
+            dim parameter is null, its length is less then the number of dimensions of A 
+            or any element of dims is non-negative</exception>
+        </member>
+        <member name="M:ILNumerics.BuiltInFunctions.ILMath.ifftn(ILNumerics.ILArray{ILNumerics.complex},System.Int32[])">
+            <summary>
+            inverse fast fourier transform (n-D, specific size)
+            </summary>
+            <param name="A">input array, n-D</param>
+            <param name="dims">transformation lengths, specifies the length of the dimensions 
+            for the transformation array. The length of dims must be &gt; or equal to  the number of 
+            dimensions of A. For elements in dim beeing smaller than corresponding dimension 
+            length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
+            <returns>transformation result of size specified by 'dims' parameter</returns>
+            <remarks>
+            <para>The n-dimensional transformation is computed for the n-dimensional array A. 
+            Before the transform, the input is resized according to the 'dims' parameter. 
+            Dimensions larger than corresponding entries in 'dim' are truncated, dimensions
+            smaller than corresponding entries in 'dim' are zero padded.</para>
+            <para>The n-dimensional transformation is equivalent to repeatedly (inplace) 
+            computing one dimensional transformations along all dimensions of A.
+            However, using this 
+            function may be of magnitudes faster than using 1D transformations. This 
+            depends on the algorithm and API provided by the underlying native library.</para>
+            <para>The forward fourier transform and the inverse fourier transform of 
+            a given data array A are mathematically equivalent. It's only a 
+            scaling factor which is needed to make sure, A equals ifft(fft(A)). That 
+            scaling is introduced in the inverse transform.</para>
+            <para>The transformation is computed by use of the native library 
+            which currently is set up for your processor and OS version. The underlying 
+            library is automatically choosen at ILNumerics.Net startup and accessed via the 
+            static member ILMath.FFT. See the online documentation for more 
+            details in how to tune/configure and select dedicated native libraries. 
+            Currently supported libraries are: Intel MKL (included), AMD ACML 
+            and FFTW3 (prepared, optional modules, not included due to licensing conflicts).</para>
+            </remarks>
+            <exception cref="T:ILNumerics.Exceptions.ILArgumentException">is thrown if the 
+            dim parameter is null, its length is less then the number of dimensions of A 
+            or any element of dims is non-negative</exception>
+        </member>
+        <member name="M:ILNumerics.BuiltInFunctions.ILMath.ifftnsym(ILNumerics.ILArray{ILNumerics.complex},System.Int32[])">
+            <summary>
+            inverse fast fourier transform (n-D, complex hermitian, specific size)
+            </summary>
+            <param name="A">complex hermitian input array, n-D</param>
+            <param name="dims">transformation lengths, specifies the length of the dimensions 
+            for the transformation array. The length of dims must be &gt; or equal to  the number of 
+            dimensions of A. For elements in dim beeing smaller than corresponding dimension 
+            length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
+            <returns>transformation result, real array of the size specified by the 'dims' parameter</returns>
+            <remarks>
+            <para>The n-dimensional transformation is computed for the n-dimensional array A. 
+            Before the transform, the input is resized according to the 'dims' parameter. 
+            Dimensions larger than corresponding entries in 'dim' are truncated, dimensions
+            smaller than corresponding entries in 'dim' are zero padded.</para>
+            <para>The n-dimensional transformation is equivalent to repeatedly (inplace) 
+            computing one dimensional transformations along all dimensions of A.
+            However, using this 
+            function may be of magnitudes faster than using 1D transformations. This 
+            depends on the algorithm and API provided by the underlying native library.</para>
+            <para>Since a transform of complex hermitian input data results in the 
+            output having the imaginary part equals zero, only the real part is 
+            returned for convenience reasons.</para>
+            <para>No check is made for A beeing hermitian! If A is not hermitian (by means 
+            of round-off errors), the result will be wrong!</para>
+            <para>The forward fourier transform and the inverse fourier transform of 
+            a given data array A are mathematically equivalent. It's only a 
+            scaling factor which is needed to make sure, A equals ifft(fft(A)). That 
+            scaling is introduced in the inverse transform.</para>
+            <para>The transformation is computed by use of the native library 
+            which currently is set up for your processor and OS version. The underlying 
+            library is automatically choosen at ILNumerics.Net startup and accessed via the 
+            static member ILMath.FFT. See the online documentation for more 
+            details in how to tune/configure and select dedicated native libraries. 
+            Currently supported libraries are: Intel MKL (included), AMD ACML 
+            and FFTW3 (prepared, optional modules, not included due to licensing conflicts).</para>
+            </remarks>
+            <exception cref="T:ILNumerics.Exceptions.ILArgumentException">is thrown if the 
+            dim parameter is null, its length is less then the number of dimensions of A 
+            or any element of dims is non-negative</exception>
+        </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.fft(ILNumerics.ILArray{System.Single})">
             <summary>
             fast fourier transform (1D)
@@ -6712,10 +6869,155 @@
             and FFTW3 (prepared, optional modules, not included due to licensing conflicts).</para>
             </remarks>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:ILNumerics.BuiltInFunctions.ILMath.fftn(ILNumerics.ILArray{System.Single},System.Int32[])" -->
-        <!-- Badly formed XML comment ignored for member "M:ILNumerics.BuiltInFunctions.ILMath.fftn(ILNumerics.ILArray{ILNumerics.fcomplex},System.Int32[])" -->
-        <!-- Badly formed XML comment ignored for member "M:ILNumerics.BuiltInFunctions.ILMath.ifftn(ILNumerics.ILArray{ILNumerics.fcomplex},System.Int32[])" -->
-        <!-- Badly formed XML comment ignored for member "M:ILNumerics.BuiltInFunctions.ILMath.ifftnsym(ILNumerics.ILArray{ILNumerics.fcomplex},System.Int32[])" -->
+        <member name="M:ILNumerics.BuiltInFunctions.ILMath.fftn(ILNumerics.ILArray{System.Single},System.Int32[])">
+            <summary>
+            fast fourier transform (n-D, specific size)
+            </summary>
+            <param name="A">input array, n-D</param>
+            <param name="dims">transformation lengths, specifies the length of the dimensions 
+            for the transformation array. The length of dims must be &gt; or equal to the number of 
+            dimensions of A. For elements in dim beeing smaller than corresponding dimension 
+            length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
+            <returns>transformation result of size specified by 'dims' parameter, complex hermitian</returns>
+            <remarks>
+            <para>The n-dimensional transformation is computed for the n-dimensional array A. 
+            Before the transform, the input is resized according to the 'dims' parameter. 
+            Dimensions larger than corresponding entries in 'dim' are truncated, dimensions
+            smaller than corresponding entries in 'dim' are zero padded.</para>
+            <para>The n-dimensional transformation is equivalent to repeatedly (inplace) 
+            computing one dimensional transformations along all dimensions of A.
+            However, using this 
+            function may be of magnitudes faster than using 1D transformations. This 
+            depends on the algorithm and API provided by the underlying native library.</para>
+            <para>The forward fourier transform and the inverse fourier transform of 
+            a given data array A are mathematically equivalent. It's only a 
+            scaling factor which is needed to make sure, A equals ifft(fft(A)). That 
+            scaling is introduced in the inverse transform.</para>
+            <para>The transformation is computed by use of the native library 
+            which currently is set up for your processor and OS version. The underlying 
+            library is automatically choosen at ILNumerics.Net startup and accessed via the 
+            static member ILMath.FFT. See the online documentation for more 
+            details in how to tune/configure and select dedicated native libraries. 
+            Currently supported libraries are: Intel MKL (included), AMD ACML 
+            and FFTW3 (prepared, optional modules, not included due to licensing conflicts).</para>
+            </remarks>
+            <exception cref="T:ILNumerics.Exceptions.ILArgumentException">is thrown if the 
+            dim parameter is null, its length is less then the number of dimensions of A 
+            or any element of dims is non-negative</exception>
+        </member>
+        <member name="M:ILNumerics.BuiltInFunctions.ILMath.fftn(ILNumerics.ILArray{ILNumerics.fcomplex},System.Int32[])">
+            <summary>
+            fast fourier transform (n-D, specific size)
+            </summary>
+            <param name="A">input array, n-D</param>
+            <param name="dims">transformation lengths, specifies the length of the dimensions 
+            for the transformation array. The length of dims must be &gt; or equal to  the number of 
+            dimensions of A. For elements in dim beeing smaller than corresponding dimension 
+            length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
+            <returns>transformation result of size specified by 'dims' parameter</returns>
+            <remarks>
+            <para>The n-dimensional transformation is computed for the n-dimensional array A. 
+            Before the transform, the input is resized according to the 'dims' parameter. 
+            Dimensions larger than corresponding entries in 'dim' are truncated, dimensions
+            smaller than corresponding entries in 'dim' are zero padded.</para>
+            <para>The n-dimensional transformation is equivalent to repeatedly (inplace) 
+            computing one dimensional transformations along all dimensions of A.
+            However, using this 
+            function may be of magnitudes faster than using 1D transformations. This 
+            depends on the algorithm and API provided by the underlying native library.</para>
+            <para>The forward fourier transform and the inverse fourier transform of 
+            a given data array A are mathematically equivalent. It's only a 
+            scaling factor which is needed to make sure, A equals ifft(fft(A)). That 
+            scaling is introduced in the inverse transform.</para>
+            <para>The transformation is computed by use of the native library 
+            which currently is set up for your processor and OS version. The underlying 
+            library is automatically choosen at ILNumerics.Net startup and accessed via the 
+            static member ILMath.FFT. See the online documentation for more 
+            details in how to tune/configure and select dedicated native libraries. 
+            Currently supported libraries are: Intel MKL (included), AMD ACML 
+            and FFTW3 (prepared, optional modules, not included due to licensing conflicts).</para>
+            </remarks>
+            <exception cref="T:ILNumerics.Exceptions.ILArgumentException">is thrown if the 
+            dim parameter is null, its length is less then the number of dimensions of A 
+            or any element of dims is non-negative</exception>
+        </member>
+        <member name="M:ILNumerics.BuiltInFunctions.ILMath.ifftn(ILNumerics.ILArray{ILNumerics.fcomplex},System.Int32[])">
+            <summary>
+            inverse fast fourier transform (n-D, specific size)
+            </summary>
+            <param name="A">input array, n-D</param>
+            <param name="dims">transformation lengths, specifies the length of the dimensions 
+            for the transformation array. The length of dims must be &gt; or equal to  the number of 
+            dimensions of A. For elements in dim beeing smaller than corresponding dimension 
+            length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
+            <returns>transformation result of size specified by 'dims' parameter</returns>
+            <remarks>
+            <para>The n-dimensional transformation is computed for the n-dimensional array A. 
+            Before the transform, the input is resized according to the 'dims' parameter. 
+            Dimensions larger than corresponding entries in 'dim' are truncated, dimensions
+            smaller than corresponding entries in 'dim' are zero padded.</para>
+            <para>The n-dimensional transformation is equivalent to repeatedly (inplace) 
+            computing one dimensional transformations along all dimensions of A.
+            However, using this 
+            function may be of magnitudes faster than using 1D transformations. This 
+            depends on the algorithm and API provided by the underlying native library.</para>
+            <para>The forward fourier transform and the inverse fourier transform of 
+            a given data array A are mathematically equivalent. It's only a 
+            scaling factor which is needed to make sure, A equals ifft(fft(A)). That 
+            scaling is introduced in the inverse transform.</para>
+            <para>The transformation is computed by use of the native library 
+            which currently is set up for your processor and OS version. The underlying 
+            library is automatically choosen at ILNumerics.Net startup and accessed via the 
+            static member ILMath.FFT. See the online documentation for more 
+            details in how to tune/configure and select dedicated native libraries. 
+            Currently supported libraries are: Intel MKL (included), AMD ACML 
+            and FFTW3 (prepared, optional modules, not included due to licensing conflicts).</para>
+            </remarks>
+            <exception cref="T:ILNumerics.Exceptions.ILArgumentException">is thrown if the 
+            dim parameter is null, its length is less then the number of dimensions of A 
+            or any element of dims is non-negative</exception>
+        </member>
+        <member name="M:ILNumerics.BuiltInFunctions.ILMath.ifftnsym(ILNumerics.ILArray{ILNumerics.fcomplex},System.Int32[])">
+            <summary>
+            inverse fast fourier transform (n-D, complex hermitian, specific size)
+            </summary>
+            <param name="A">complex hermitian input array, n-D</param>
+            <param name="dims">transformation lengths, specifies the length of the dimensions 
+            for the transformation array. The length of dims must be &gt; or equal to  the number of 
+            dimensions of A. For elements in dim beeing smaller than corresponding dimension 
+            length in A, the dimensions will be truncated, otherwise zeros will be padded.</param>
+            <returns>transformation result, real array of the size specified by the 'dims' parameter</returns>
+            <remarks>
+            <para>The n-dimensional transformation is computed for the n-dimensional array A. 
+            Before the transform, the input is resized according to the 'dims' parameter. 
+            Dimensions larger than corresponding entries in 'dim' are truncated, dimensions
+            smaller than corresponding entries in 'dim' are zero padded.</para>
+            <para>The n-dimensional transformation is equivalent to repeatedly (inplace) 
+            computing one dimensional transformations along all dimensions of A.
+            However, using this 
+            function may be of magnitudes faster than using 1D transformations. This 
+            depends on the algorithm and API provided by the underlying native library.</para>
+            <para>Since a transform of complex hermitian input data results in the 
+            output having the imaginary part equals zero, only the real part is 
+            returned for convenience reasons.</para>
+            <para>No check is made for A beeing hermitian! If A is not hermitian (by means 
+            of round-off errors), the result will be wrong!</para>
+            <para>The forward fourier transform and the inverse fourier transform of 
+            a given data array A are mathematically equivalent. It's only a 
+            scaling factor which is needed to make sure, A equals ifft(fft(A)). That 
+            scaling is introduced in the inverse transform.</para>
+            <para>The transformation is computed by use of the native library 
+            which currently is set up for your processor and OS version. The underlying 
+            library is automatically choosen at ILNumerics.Net startup and accessed via the 
+            static member ILMath.FFT. See the online documentation for more 
+            details in how to tune/configure and select dedicated native libraries. 
+            Currently supported libraries are: Intel MKL (included), AMD ACML 
+            and FFTW3 (prepared, optional modules, not included due to licensing conflicts).</para>
+            </remarks>
+            <exception cref="T:ILNumerics.Exceptions.ILArgumentException">is thrown if the 
+            dim parameter is null, its length is less then the number of dimensions of A 
+            or any element of dims is non-negative</exception>
+        </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.eig(ILNumerics.ILArray{System.Double})">
             <summary>
             compute eigenvalues of general square matrix A
@@ -16008,20 +16310,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Double},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Double},System.Int32,System.Boolean)">
             <summary>
@@ -16031,9 +16338,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Double},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16042,11 +16353,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -16067,20 +16381,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.UInt64},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.UInt64},System.Int32,System.Boolean)">
             <summary>
@@ -16090,9 +16409,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.UInt64},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16101,11 +16424,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -16126,20 +16452,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.UInt32},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.UInt32},System.Int32,System.Boolean)">
             <summary>
@@ -16149,9 +16480,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.UInt32},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16160,11 +16495,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -16185,20 +16523,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.UInt16},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.UInt16},System.Int32,System.Boolean)">
             <summary>
@@ -16208,9 +16551,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.UInt16},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16219,11 +16566,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -16244,20 +16594,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Int64},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Int64},System.Int32,System.Boolean)">
             <summary>
@@ -16267,9 +16622,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Int64},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16278,11 +16637,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -16303,20 +16665,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Int32},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Int32},System.Int32,System.Boolean)">
             <summary>
@@ -16326,9 +16693,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Int32},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16337,11 +16708,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -16362,20 +16736,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Int16},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Int16},System.Int32,System.Boolean)">
             <summary>
@@ -16385,9 +16764,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Int16},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16396,11 +16779,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -16421,20 +16807,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Single},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Single},System.Int32,System.Boolean)">
             <summary>
@@ -16444,9 +16835,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Single},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16455,11 +16850,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -16480,20 +16878,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{ILNumerics.fcomplex},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{ILNumerics.fcomplex},System.Int32,System.Boolean)">
             <summary>
@@ -16503,9 +16906,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{ILNumerics.fcomplex},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16514,11 +16921,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -16539,20 +16949,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{ILNumerics.complex},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{ILNumerics.complex},System.Int32,System.Boolean)">
             <summary>
@@ -16562,9 +16977,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{ILNumerics.complex},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16573,11 +16992,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -16598,20 +17020,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Char},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Char},System.Int32,System.Boolean)">
             <summary>
@@ -16621,9 +17048,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Char},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16632,11 +17063,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -16657,20 +17091,25 @@
             </summary>
             <param name="A">input array, n-dimensional</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted in ascending order using quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted in ascending order using a non-recursive quick sort algorithm. 
+            Elements along the columns of A will get sorted independently from each other. A is not altered.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Byte},System.Boolean)">
             <summary>
             sort data in A along first non singleton dimension
             </summary>
             <param name="A">input array, n-dimensional</param>
-            <param name="descending">Specifies the direction of sorting</param>
+            <param name="descending">Determine the direction of sorting (ascending/ descending)</param>
             <returns>sorted array of the same size as A</returns>
             <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the first non singleton dimension will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            along the first non singleton dimension will get sorted independently from data 
+            in the next row/column.
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Byte},System.Int32,System.Boolean)">
             <summary>
@@ -16680,9 +17119,13 @@
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</remarks>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
+            </remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.sort(ILNumerics.ILArray{System.Byte},ILNumerics.ILArray{System.Double}@,System.Int32,System.Boolean)">
             <summary>
@@ -16691,11 +17134,14 @@
             <param name="A">input array, n-dimensional</param>
             <param name="descending">Specifies the direction of sorting</param>
             <param name="dim">dimension to sort along</param>
-            <param name="Indices">output parameter: returns permutation matrix also</param>
+            <param name="Indices">output parameter: returns permutation matrix</param>
             <returns>sorted array of the same size as A</returns>
-            <remarks><para>The data in A will be sorted using the quick sort algorithm. Data 
-            along the dimension <paramref name="dim"/> will therefore get sorted independently from data 
-            in the next row/column.</para>
+            <remarks>The data in A will be sorted along the dimension <paramref name="dim"/> using a non-recursive quicksort 
+            algorithm.  
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para>
+            <para>Properties of sorting can be tuned by the settings of <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/> 
+            and <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/>.</para>
             <para>This overload also returns an array 'Indices' which will hold the indices into the original 
             elements <b>after sorting</b>. Elements of 'Indices' are of type double.</para>
             <example><code>ILArray&lt;double&gt; A = ILMath.rand(1,5); 
@@ -17339,6 +17785,20 @@
             <exception cref="T:ILNumerics.Exceptions.ILArgumentSizeException"> 
             if the number of elements in A and the number of elements for the 
             new dimensions specified by <paramref name="newDimensions"/> 
+            do not match.</exception>
+        </member>
+        <member name="M:ILNumerics.BuiltInFunctions.ILMath.reshape``1(ILNumerics.ILArray{``0},ILNumerics.Misc.ILDimension)">
+            <summary>
+            array reshaping
+            </summary>
+            <param name="A">input array A</param>
+            <param name="dim">new dimension</param>
+            <returns>reshaped X</returns>
+            <remarks>A will not be changed. A new reference array is created, having 
+            the size and number of dimension specified by dim. </remarks>
+            <exception cref="T:ILNumerics.Exceptions.ILArgumentSizeException"> 
+            if the number of elements in A and the number of elements for the 
+            new dimensions specified by <paramref name="dim"/> 
             do not match.</exception>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.isnan(ILNumerics.ILArray{System.Double})">
@@ -18167,7 +18627,8 @@
             </summary>
             <param name="x">Vector of x values</param>
             <param name="y">Vector of y values</param>
-            <returns>A List of two arrays, the x vector values along the first dimension of the first array, and y vector values along the second dimension of the second array</returns>
+            <returns>A List of two arrays, the x vector values along the first dimension of the first array, 
+            and y vector values along the second dimension of the second array</returns>
             <remarks></remarks>
         </member>
         <member name="M:ILNumerics.BuiltInFunctions.ILMath.meshgrid(ILNumerics.ILArray{System.Double},ILNumerics.ILArray{System.Double},ILNumerics.ILArray{System.Double})">
@@ -18807,7 +19268,7 @@
             <summary>
             create new ILDimension, without trimming trailing singleton dimensions
             </summary>
-            <param name="keepSingletons">true: trailing singleton 
+            <param name="trimSingletons">true: trailing singleton 
             dimensions will be trimmed, false: those singleton dimensions will be kept.</param>
             <param name="dims">dimension lenght specifiers</param>
         </member>
@@ -18833,7 +19294,7 @@
             </summary>
             <param name="dim">dimension number to query the element distance for. The
             first dimension has index 0 ('zero')!</param>
-            <returns>number of elements between adjacent elementes of dimension dim.
+            <returns>number of elements between adjacent elements of dimension dim.
             </returns>
             <remarks>if dimension index dim is larger than the number of 
             dimensions inside this ILDimension, the number of elements will 
@@ -18848,7 +19309,7 @@
             in this ILDimension, the array will have minLength elements, 
             with elements outside this dimensions repeating the value 
             of the last dimension. The length of the array returned will 
-            equal min(minLength,NumberOfDimensions).</param>
+            be equal or greater than max(minLength,NumberOfDimensions).</param>
             <remarks>This is provided for performance reasons and should be 
             used internally only. It enables developer of index access routines 
             to cache the elements distances directly inside their functions 
@@ -19567,7 +20028,7 @@
             performs backward 1-dimensional fft
             </summary>
             <param name="A">input array</param>
-            <param name="nDims">dimensions to perform fft along</param>
+            <param name="dim">dimension to perform fft along</param>
             <returns>result, same size as A</returns>
         </member>
         <member name="M:ILNumerics.Native.IILFFT.FFTBackward1D(ILNumerics.ILArray{ILNumerics.complex},System.Int32)">
@@ -19575,7 +20036,7 @@
             performs backward 1-dimensional fft 
             </summary>
             <param name="A">input array</param>
-            <param name="nDims">dimensions to perform fft along</param>
+            <param name="dim">dimension to perform fft along</param>
             <returns>result, same size as A</returns>
         </member>
         <member name="M:ILNumerics.Native.IILFFT.FFTBackwSym(ILNumerics.ILArray{ILNumerics.fcomplex},System.Int32)">
@@ -19603,7 +20064,7 @@
             performs backward 1-dimensional fft on hermitian sequence
             </summary>
             <param name="A">input array</param>
-            <param name="nDims">dimension to perform fft along</param>
+            <param name="dim">dimension to perform fft along</param>
             <returns>result, same size as A</returns>
             <remarks>This function brings increased performance if the implementation supports it. 
             If not, the method will be implemented by repeated calls of (inplace) 1D fft.</remarks>
@@ -19613,7 +20074,7 @@
             performs backward 1-dimensional fft on hermitian sequence
             </summary>
             <param name="A">input array</param>
-            <param name="nDims">dimension to perform fft along</param>
+            <param name="dim">dimension to perform fft along</param>
             <returns>result, same size as A</returns>
             <remarks>This function brings increased performance if the implementation supports it. 
             If not, the method will be implemented by repeated calls of (inplace) 1D fft.</remarks>
@@ -19655,7 +20116,7 @@
             performs 1-dimensional fft
             </summary>
             <param name="A">input array</param>
-            <param name="nDims">dimension to perform fft along</param>
+            <param name="dim">dimension to perform fft along</param>
             <returns>result, same size as A</returns>
         </member>
         <member name="M:ILNumerics.Native.IILFFT.FFTForward1D(ILNumerics.ILArray{System.Double},System.Int32)">
@@ -19663,7 +20124,7 @@
             performs 1-dimensional fft
             </summary>
             <param name="A">input array</param>
-            <param name="nDims">dimension to perform fft along</param>
+            <param name="dim">dimension to perform fft along</param>
             <returns>result, same size as A</returns>
         </member>
         <member name="M:ILNumerics.Native.IILFFT.FFTForward1D(ILNumerics.ILArray{ILNumerics.fcomplex},System.Int32)">
@@ -19671,7 +20132,7 @@
             performs 1-dimensional fft
             </summary>
             <param name="A">input array</param>
-            <param name="nDims">dimension to perform fft along</param>
+            <param name="dim">dimension to perform fft along</param>
             <returns>result, same size as A</returns>
         </member>
         <member name="M:ILNumerics.Native.IILFFT.FFTForward1D(ILNumerics.ILArray{System.Single},System.Int32)">
@@ -19679,7 +20140,7 @@
             performs 1-dimensional fft
             </summary>
             <param name="A">input array</param>
-            <param name="nDims">dimension to perform fft along</param>
+            <param name="dim">dimension to perform fft along</param>
             <returns>result, same size as A</returns>
         </member>
         <member name="M:ILNumerics.Native.IILFFT.FreePlans">
@@ -19839,12 +20300,14 @@
             increase the number of triangles by doubling existing triangles
             </summary>
             <param name="vertices">vertices</param>
-            <param name="indices">triangle index definitions</param>
-            <returns>increased number of vertices and triangles</returns>
-            <remarks><para>Incoming triangles are expected not to be degenerated. This means: 
-            Every edge is used only twice at most. No triangle shares more than 2 
+            <param name="triangles">triangle index definitions</param>
+            <param name="iterations">number of iterations, each iteration will make 4 triangles out of each triangle</param>
+            <param name="outVertices">output, vertices.</param>
+            <param name="outTriangles">output, triangles</param>
+            <remarks><para>Incoming triangles are expected not to be degenerated. This means:
+            Every edge is used only twice at most. No triangle shares more than 2
             corners with some other triangle. </para>
-            <para>None of the incoming arrays will get altered</para></remarks>
+            	<para>None of the incoming arrays will get altered</para></remarks>
         </member>
         <member name="T:ILNumerics.Storage.ILIteratorPositions">
             <summary>
@@ -20519,8 +20982,896 @@
         </member>
         <member name="T:ILNumerics.Algorithms.ILQuickSort">
             <summary>
-            internal quick sort implementation
+            the class provides a number of one dimensional quicksort implementations for several datatypes/ properties
             </summary>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(System.Double[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(System.Double[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(System.UInt64[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(System.UInt64[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(System.UInt64[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(System.UInt64[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(System.UInt32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(System.UInt32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(System.UInt32[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(System.UInt32[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(System.UInt16[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(System.UInt16[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(System.UInt16[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(System.UInt16[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(System.Int64[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(System.Int64[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(System.Int64[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(System.Int64[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(System.Int32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(System.Int32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(System.Int32[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(System.Int32[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(System.Int16[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(System.Int16[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(System.Int16[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(System.Int16[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(System.Single[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(System.Single[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(System.Single[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(System.Single[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(ILNumerics.fcomplex[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(ILNumerics.fcomplex[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(ILNumerics.fcomplex[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(ILNumerics.fcomplex[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(ILNumerics.complex[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(ILNumerics.complex[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(ILNumerics.complex[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(ILNumerics.complex[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(System.Char[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(System.Char[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(System.Char[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(System.Char[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolid_IT(System.Byte[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, ascending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolid_IT(System.Byte[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline one dimensional quick sort, descending, arbitrary element spacing
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortAscSolidIDX_IT(System.Byte[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, ascending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
+        </member>
+        <member name="M:ILNumerics.Algorithms.ILQuickSort.QuickSortDescSolidIDX_IT(System.Byte[],System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            inline 1 dimensional quick sort, descending, arbitrary element spacing, indices aware
+            </summary>
+            <param name="vecP">data array, 1dim, replaced on output with sorted values</param>
+            <param name="lo">lowest index of sorting range</param>
+            <param name="hi">highest index of sorting range</param>
+            <param name="idxP">indices vector, content will implace be sorted along with <paramref name="vecP"/></param>
+            <param name="inc">spacing between elements (dimension specifier)</param>
+            <remarks><para>Quick sort algorithm is used for ranges of minimum lengths specified by 
+            <see cref="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength"/> and above. 
+            Below that length, a simple insertion sort is used instead.</para>
+            <para>The algorithm implements a non-recursive quicksort variant. Therefore a small amount of 
+            memory is needed to perform the sorting. That 'stack' memory is preserved from the ILMemoryPool. 
+            The size is determined by the value of 
+            <see cref="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth"/>.</para>
+            <para><b>Handling of NaN values (for double,float,complex or fcomplex arrays element datatypes only):</b> 
+            if the input array contains any NaN values, those elements will be sorted to the end of the array on output.</para></remarks>
         </member>
         <member name="T:ILNumerics.Algorithms.ILBucketSort">
             <summary>
@@ -20777,6 +22128,16 @@
             <b>copies</b> and not <b>references</b> of all storage objects with non singleton 
             dimensions less then MinimumRefDimensions.
             </remarks>
+        </member>
+        <member name="P:ILNumerics.Settings.ILSettings.MinimumQuicksortLength">
+            <summary>
+            determine the minimum length for arrays to be sorted via Quicksort algorithm, smaller arrays are sorted via insertion sort
+            </summary>
+        </member>
+        <member name="P:ILNumerics.Settings.ILSettings.MaxSafeQuicksortRecursionDepth">
+            <summary>
+            maximal depth a quicksort can go. default: 100 (for array length up to 2^100)
+            </summary>
         </member>
         <member name="T:ILNumerics.ILArrayDebuggerProxy`1">
             <summary>
