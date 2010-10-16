@@ -187,12 +187,12 @@ namespace ILNumerics.Drawing.Controls {
             Invalidate(true);
         }
         protected void SetDefaults () {
-            BackColor = System.Drawing.Color.FromArgb(179,220,244); 
-            m_title.Text = "ILSubfigure"; 
+            BackColor = System.Drawing.Color.FromArgb(250,250,250); 
+            m_title.Text = "ILNumerics.Drawing Subfigure"; 
             m_title.Visible = true; 
             m_title.Dock = DockStyle.Top; 
-            m_title.BackColor = Color.CornflowerBlue; 
-            m_title.ForeColor = Color.Cornsilk; 
+            m_title.BackColor = Color.White; 
+            m_title.ForeColor = Color.DarkBlue; 
             m_colorbar.Dock = DockStyle.Left; 
         }
         /// <summary>

@@ -1770,15 +1770,17 @@ namespace ILNumerics {
             return new ILArray<BaseT>(data, dimension);
         }
         /// <summary>
-        /// Create empty array, size (0x0).
+        /// Create empty array, arbitrary size
         /// </summary>
+        /// <param name="dims">requested size of the array, at least one dimension in dims must be 0.</param>
         /// <returns>Empty ILArray.</returns>
         public static ILArray<BaseT> empty(ILDimension dims) {
             return new ILArray<BaseT>(new BaseT [0],dims);
         }
         /// <summary>
-        /// Create empty array, size (0x0)
+        /// Create empty array, arbitrary size
         /// </summary>
+        /// <param name="dims">requested size of the array, at least one dimension must be 0.</param>
         /// <returns>Empty ILArray.</returns>
         public static ILArray<BaseT> empty(params int[] dims) {
             if (dims == null || dims.Length == 0) 
@@ -4881,11 +4883,11 @@ namespace ILNumerics {
         /// <item>If indices.Length &gt; 1: index array access.</item></list></param>
         /// <returns>Scalar ILArray of same type as this array containg the accessed element.</returns>
         /// <remarks>If indices contains only one element, the array will be accessed via sequential index access. 
-        /// This is sometimes alternately called 'linear' index access. Sequential index access reflects the indexing of the internal storage: 
+        /// This is sometimes alternatively called 'linear' index access. Sequential index access reflects the indexing of the internal storage: 
         /// the way in which the data are actually organized in memory. This access method is mainly convenient for vectors where you are not interested in orientation.
         /// The following example demonstrates sequential index access: 
         /// <example><code>
-        /// ILArray&lt;double&gt; A = new ILArray&lt;double&gt;(1.0,12.0);
+        /// ILArray&lt;double&gt; A = ILMath.counter(1,12);
         /// A[2] gives: 3.0
         /// </code>But
         /// <code>
@@ -4893,7 +4895,7 @@ namespace ILNumerics {
         /// </code> 
         /// For matrices and N-dimensional arrays this holds as well: 
         /// <code>
-        /// ILArray&lt;double&gt; A = new ILArray&lt;double&gt;(1.0,12.0);
+        /// ILArray&lt;double&gt; A = ILMath.counter(1,12);
         /// A = 
         /// [1.0 4.0
         ///  2.0 5.0 

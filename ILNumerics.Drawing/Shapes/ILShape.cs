@@ -365,14 +365,19 @@ namespace ILNumerics.Drawing.Shapes {
             }
         }
         /// <summary>
-        /// number of vertices contained in this shape
+        /// number of vertices a shape (or all components of a shape) of this type is made out of
         /// </summary>
+        /// <remarks>For triangle shapes and related (lit triangles, triangles etc.) this is 3, for quads it is 4 and so on...</remarks>
         public int VertexCount { 
             get { return m_vertCount; }
         }
         #endregion
 
         #region constructors
+        /// <summary>
+        /// create new shape (protected) 
+        /// </summary>
+        /// <param name="panel">panel hosting the scene</param>
         protected ILShape (ILPanel panel) {
             m_panel = panel; 
             m_fillColor = Color.White;

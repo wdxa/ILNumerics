@@ -266,7 +266,7 @@ namespace ILNumerics.Drawing.Graphs {
         public void ConfigurePanel(ILPanel panel) {
             panel.InteractiveMode = InteractiveModes.ZoomRectangle;
             panel.AspectRatio = AspectRatioMode.StretchToFill;
-            panel.PlotBoxScreenSizeMode = PlotBoxScreenSizeMode.StrictOptimal;
+            panel.PlotBoxScreenSizeMode = PlotBoxScreenSizeMode.Optimal;
             panel.ClipViewData = true;
             panel.DefaultView.Set(0f, 0f, panel.DefaultView.Distance);
         }

@@ -288,7 +288,7 @@ namespace ILNumerics.Drawing.Collections {
                             m_clippingData.EventingResume(); 
                         }
                         // trigger change event
-                        OnChange(ret[0],GraphCollectionChangeReason.Added,null); 
+                        OnChange(ret[0],GraphCollectionChangeReason.Added,ret[0] as IILPanelConfigurator); 
                         break; 
                     case GraphType.Surf: 
                         if (!data.IsMatrix) 
@@ -306,7 +306,7 @@ namespace ILNumerics.Drawing.Collections {
                         newGraph.Changed += new ILGraphChangedEvent(GraphChanged);
                         // trigger change event
                         ret.Add(newGraph);
-                        OnChange(newGraph,GraphCollectionChangeReason.Added,null); 
+                        OnChange(newGraph,GraphCollectionChangeReason.Added, newGraph as IILPanelConfigurator); 
                         break;
                     case GraphType.Imagesc:
                         if (!data.IsMatrix) 
@@ -321,7 +321,7 @@ namespace ILNumerics.Drawing.Collections {
                         Add(newGraph);
                         newGraph.Changed += new ILGraphChangedEvent(GraphChanged);
                         // trigger change event
-                        OnChange(newGraph,GraphCollectionChangeReason.Added,null); 
+                        OnChange(newGraph,GraphCollectionChangeReason.Added, newGraph as IILPanelConfigurator); 
                         ret.Add(newGraph);
                         break;
                     default: 

@@ -1,3 +1,9 @@
+Changes in version 1.4.11
+=========================
+* small docu bugfix: ILArray<T>[int] (contributed)
+* added AutoTestCaseGeneration project 
+  (permutes all parameter for all Core functions) 
+
 Changes in version 1.4.10
 =========================
 * implemented nonrecursive quicksort

@@ -1,0 +1,114 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{089D7181-24D8-4A12-AB2F-2F395D35C3F6}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ILAutoTestCaseGeneration</RootNamespace>
+    <AssemblyName>ILAutoTestCaseGeneration</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ILResultOverride.cs" />
+    <Compile Include="ILTestCaseBase.cs" />
+    <Compile Include="ILTestParameterDefinition.cs" />
+    <Compile Include="Providers\ILTestArrayProvider.cs" />
+    <Compile Include="ILTestCaseDefinition.cs" />
+    <Compile Include="ILTestAutoGenerator.cs" />
+    <Compile Include="Providers\ILTestPermutingArrayProvider.cs" />
+    <Compile Include="Providers\ILTestProviderByte.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Providers\ILTestProviderChar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Providers\ILTestProviderCharMaxUInt8.cs" />
+    <Compile Include="Providers\ILTestProviderComplex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Providers\ILTestProviderDouble.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Providers\ILTestProviderFComplex.cs" />
+    <Compile Include="Providers\ILTestProviderInt16.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Providers\ILTestProviderInt32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Providers\ILTestProviderUInt32MaxChar.cs" />
+    <Compile Include="Providers\ILTestProviderInt64.cs" />
+    <Compile Include="Providers\ILTestProviderInt64MaxInt64.cs" />
+    <Compile Include="Providers\ILTestProviderSingle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Providers\ILTestProviderUInt16.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Providers\ILTestProviderUInt32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Providers\ILTestProviderUInt64.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Providers\ILTestProviderUInt64MaxUInt32.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestDefinitions\add.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestDefinitions\divide.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestDefinitions\max_min.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestDefinitions\multiplyElements.cs" />
+    <Compile Include="TestDefinitions\subtract.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ILNumerics\ILNumerics.Net.csproj">
+      <Project>{3D3902F7-8F28-43AC-8584-4F515A5697C6}</Project>
+      <Name>ILNumerics.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

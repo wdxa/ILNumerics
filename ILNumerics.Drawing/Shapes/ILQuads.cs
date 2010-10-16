@@ -80,21 +80,21 @@ namespace ILNumerics.Drawing.Shapes {
             m_fillColor = Color.Green;    
         }
         /// <summary>
-        /// create lit triangles, flat shading
+        /// create quads, flat shading
         /// </summary>
         /// <param name="panel">hosting panel</param>
         /// <param name="X">x coordinates vector </param>
         /// <param name="Y">y coordinates vector </param>
         /// <param name="Z">z coordinates vector </param>
         /// <param name="color">Fill color for all shapes.</param>
-        /// <param name="mapping">Composes shapes out of given vertices. Matrix having [verticesPerShape] rows.
+        /// <param name="mapping">Composes shapes out of given vertices. Matrix having 4 rows.
         /// Every element in a column specifies the index of a vertex according to its position in X,Y,Z. 
-        /// The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
+        /// The 4 elements in a column therefore compose a single quad. Vertices may 
         /// get used arbitrary times (or not at all). All elements must be positive integer values in 
         /// range 0...[vertCount-1].</param>
-        /// <param name="mapping">Mapping of shapes, composes lit triangles out of vertices. Matrix having  
-        /// 3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
-        /// The 3 elements in a column therefore compose a single lit triangle. Vertices may 
+        /// <param name="mapping">Mapping composes quads out of vertices. Matrix having  
+        /// 4 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+        /// The 4 elements in a column therefore compose a single quad. Vertices may 
         /// get used arbitrary times (or not at all). All elements must be positive integer values in 
         /// range 0...[<see cref="ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         public ILQuads (ILPanel panel, ILBaseArray X, ILBaseArray Y, ILBaseArray Z, Color color, ILBaseArray mapping) 

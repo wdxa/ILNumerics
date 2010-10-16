@@ -62,11 +62,11 @@ namespace ILNumerics.Drawing.Plots {
 
         #region attributes
         float m_lowCut; 
-        int m_res;
+        protected int m_res;
         ILLineProperties m_gridProperties;
-        float m_max;
-        float m_gridSpacing; 
-        float m_linesPositionOffset; 
+        protected float m_max;
+        protected float m_gridSpacing; 
+        protected float m_linesPositionOffset = 0.5f; 
         bool m_linesUpdateNeeded; 
         Timer m_timer; 
         // the shapes and other plots contained in this plot

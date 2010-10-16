@@ -605,8 +605,7 @@ namespace ILNumerics.Drawing.Graphs {
 
         protected override void OnChanged(string source) {
             base.OnChanged(source);
-            if (source == "Shading")    
-                m_vertexReady = false; 
+            m_vertexReady = false; 
         }
 
         protected void m_wireLines_Changed(object sender, EventArgs args) {

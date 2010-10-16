@@ -1,3 +1,12 @@
+Changes in version 0.13.03
+===========================
+* reset defaults for ILSubfigure 
+* reset defaults for Plot2dGraph
+* lots of documentation fixes
+* aligned web/html docu and chm files
+* fixed IILPanelConfigurator for older graphs
+* added > 10 examples to SVN repos.
+
 Changes in version 0.13.02
 ===========================
 * renamed: Drawing.Plots.ILLitBox3D 

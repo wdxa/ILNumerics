@@ -808,6 +808,12 @@
             abstract base class for all shapes 
             </summary>
         </member>
+        <member name="M:ILNumerics.Drawing.Shapes.ILShape.#ctor(ILNumerics.Drawing.Controls.ILPanel)">
+            <summary>
+            create new shape (protected) 
+            </summary>
+            <param name="panel">panel hosting the scene</param>
+        </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILShape.Dispose">
             <summary>
             may be overwritten in derived classes to clean up ressources
@@ -941,8 +947,9 @@
         </member>
         <member name="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount">
             <summary>
-            number of vertices contained in this shape
+            number of vertices a shape (or all components of a shape) of this type is made out of
             </summary>
+            <remarks>For triangle shapes and related (lit triangles, triangles etc.) this is 3, for quads it is 4 and so on...</remarks>
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILShape`1.GetVertex(System.Int32)">
             <summary>
@@ -3843,21 +3850,21 @@
         </member>
         <member name="M:ILNumerics.Drawing.Shapes.ILQuads.#ctor(ILNumerics.Drawing.Controls.ILPanel,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,ILNumerics.ILBaseArray,System.Drawing.Color,ILNumerics.ILBaseArray)">
             <summary>
-            create lit triangles, flat shading
+            create quads, flat shading
             </summary>
             <param name="panel">hosting panel</param>
             <param name="X">x coordinates vector </param>
             <param name="Y">y coordinates vector </param>
             <param name="Z">z coordinates vector </param>
             <param name="color">Fill color for all shapes.</param>
-            <param name="mapping">Composes shapes out of given vertices. Matrix having [verticesPerShape] rows.
+            <param name="mapping">Composes shapes out of given vertices. Matrix having 4 rows.
             Every element in a column specifies the index of a vertex according to its position in X,Y,Z. 
-            The [verticesPerShape] elements in a column therefore compose a single shape. Vertices may 
+            The 4 elements in a column therefore compose a single quad. Vertices may 
             get used arbitrary times (or not at all). All elements must be positive integer values in 
             range 0...[vertCount-1].</param>
-            <param name="mapping">Mapping of shapes, composes lit triangles out of vertices. Matrix having  
-            3 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
-            The 3 elements in a column therefore compose a single lit triangle. Vertices may 
+            <param name="mapping">Mapping composes quads out of vertices. Matrix having  
+            4 rows. Every element in a column specifies the index of a vertex according to its position in X,Y,Z.
+            The 4 elements in a column therefore compose a single quad. Vertices may 
             get used arbitrary times (or not at all). All elements must be positive integer values in 
             range 0...[<see cref="P:ILNumerics.Drawing.Shapes.ILShape.VertexCount"/>-1].</param>
         </member>

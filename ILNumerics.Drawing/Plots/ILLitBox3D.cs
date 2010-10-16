@@ -40,6 +40,20 @@ namespace ILNumerics.Drawing.Plots {
     /// </summary>
      public class ILLitBox3D : ILPlot {
 
+         #region public enums
+         /// <summary>
+         /// enum for all 
+         /// </summary>
+         public static class QuadIndices {
+             public static readonly int front = 0;
+             public static readonly int right = 1;
+             public static readonly int back = 2;
+             public static readonly int left = 3;
+             public static readonly int top = 4;
+             public static readonly int bottom = 5;
+         }
+        #endregion
+
          #region attributes
          ILLitQuad[] m_quads;
          ILLineProperties m_lineProperties;
@@ -117,6 +131,12 @@ namespace ILNumerics.Drawing.Plots {
          /// </summary>
          public ILShapeLabel TopLabel {
              get { return m_topLabel; }
+         }
+         /// <summary>
+         /// get reference to the quads, the lit box is assembled out of
+         /// </summary>
+         public ILLitQuad[] Quads {
+             get { return m_quads; }
          }
          #endregion
 
@@ -228,17 +248,6 @@ namespace ILNumerics.Drawing.Plots {
          #endregion
 
          #region private helpers
-         /// <summary>
-         /// enum for all 
-         /// </summary>
-         private static class QuadIndices {
-             public static readonly int front = 0;
-             public static readonly int right = 1;
-             public static readonly int back = 2;
-             public static readonly int left = 3;
-             public static readonly int top = 4;
-             public static readonly int bottom = 5;
-         }
          /// <summary>
          /// update all quad borders with new settings
          /// </summary>
