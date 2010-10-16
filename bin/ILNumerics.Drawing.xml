@@ -5275,6 +5275,11 @@
             label drawn in screen coords on top of the lit box
             </summary>
         </member>
+        <member name="P:ILNumerics.Drawing.Plots.ILLitBox3D.Quads">
+            <summary>
+            get reference to the quads, the lit box is assembled out of
+            </summary>
+        </member>
         <member name="T:ILNumerics.Drawing.Plots.ILLitBox3D.QuadIndices">
             <summary>
             enum for all 
