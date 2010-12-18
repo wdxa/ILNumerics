@@ -2299,79 +2299,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -(/*!HC:inArr2*/ double in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -(/*!HC:inArr2*/ double in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -2474,79 +2474,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -( UInt64 in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -( UInt64 in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -2646,79 +2646,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -( UInt32 in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -( UInt32 in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -2818,79 +2818,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -( UInt16 in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -( UInt16 in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -2990,79 +2990,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -( Int64 in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -( Int64 in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -3162,79 +3162,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -( Int32 in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -( Int32 in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -3334,79 +3334,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -( Int16 in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -( Int16 in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -3506,79 +3506,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -( float in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -( float in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -3678,79 +3678,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -( fcomplex in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -( fcomplex in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -3850,79 +3850,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -( complex in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -( complex in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -4022,79 +4022,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -( char in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -( char in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -4194,79 +4194,79 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 with difference of elements for 
         /// <code>in1 - in2</code></returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>]]></remarks>
-        public static ILArray<BaseT> operator -( byte in2, ILArray<BaseT> in1)
+        public static ILArray<BaseT> operator -( byte in1, ILArray<BaseT> in2)
         {
-            if (in1 is ILArray<double>)
+            if (in2 is ILArray<double>)
             {
                 ILArray<double> temp = new ILArray<double>(1);
-                temp.m_data[0] = (double)in2;
-                return (ILMath.subtract(in1 as ILArray<double>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<double>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<byte>)
+            else if (in2 is ILArray<byte>)
             {
                 ILArray<byte> temp = new ILArray<byte>(1);
-                temp.m_data[0] = (byte)in2;
-                return (ILMath.subtract(in1 as ILArray<byte>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<char>)
+            else if (in2 is ILArray<char>)
             {
                 ILArray<char> temp = new ILArray<char>(1);
-                temp.m_data[0] = (char)in2;
-                return (ILMath.subtract(in1 as ILArray<char>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<char>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<complex>)
+            else if (in2 is ILArray<complex>)
             {
                 ILArray<complex> temp = new ILArray<complex>(1);
-                temp.m_data[0] = (complex)in2;
-                return (ILMath.subtract(in1 as ILArray<complex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<fcomplex>)
+            else if (in2 is ILArray<fcomplex>)
             {
                 ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
-                temp.m_data[0] = (fcomplex)in2;
-                return (ILMath.subtract(in1 as ILArray<fcomplex>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<float>)
+            else if (in2 is ILArray<float>)
             {
                 ILArray<float> temp = new ILArray<float>(1);
-                temp.m_data[0] = (float)in2;
-                return (ILMath.subtract(in1 as ILArray<float>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<float>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int16>)
+            else if (in2 is ILArray<Int16>)
             {
                 ILArray<Int16> temp = new ILArray<Int16>(1);
-                temp.m_data[0] = (Int16)in2;
-                return (ILMath.subtract(in1 as ILArray<Int16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int32>)
+            else if (in2 is ILArray<Int32>)
             {
                 ILArray<Int32> temp = new ILArray<Int32>(1);
-                temp.m_data[0] = (Int32)in2;
-                return (ILMath.subtract(in1 as ILArray<Int32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<Int64>)
+            else if (in2 is ILArray<Int64>)
             {
                 ILArray<Int64> temp = new ILArray<Int64>(1);
-                temp.m_data[0] = (Int64)in2;
-                return (ILMath.subtract(in1 as ILArray<Int64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt16>)
+            else if (in2 is ILArray<UInt16>)
             {
                 ILArray<UInt16> temp = new ILArray<UInt16>(1);
-                temp.m_data[0] = (UInt16)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt16>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt32>)
+            else if (in2 is ILArray<UInt32>)
             {
                 ILArray<UInt32> temp = new ILArray<UInt32>(1);
-                temp.m_data[0] = (UInt32)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt32>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
             }
-            else if (in1 is ILArray<UInt64>)
+            else if (in2 is ILArray<UInt64>)
             {
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
-                temp.m_data[0] = (UInt64)in2;
-                return (ILMath.subtract(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.subtract(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator - not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -6434,6 +6434,93 @@ namespace ILNumerics
                      + in1.GetType().Name + " and " + in2.GetType().Name);
         }
 
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
+        /// <summary>
+        /// Elementwise division
+        /// </summary>
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /(/*!HC:inArr2*/ double in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
+
         #endregion HYCALPER LOOPEND DIVISION
 #region HYCALPER AUTO GENERATED CODE
 // DO NOT EDIT INSIDE THIS REGION !! CHANGES WILL BE LOST !! 
@@ -6519,6 +6606,93 @@ namespace ILNumerics
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
                 temp.m_data[0] = (UInt64)in2;
                 return (ILMath.divide(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
+
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
+        /// <summary>
+        /// Elementwise division
+        /// </summary>
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /( UInt64 in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator / not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -6620,6 +6794,93 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
         /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /( UInt32 in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
+
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
+        /// <summary>
+        /// Elementwise division
+        /// </summary>
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
         public static ILArray<BaseT> operator /(ILArray<BaseT> in1,  UInt16 in2)
         {
             if (in1 is ILArray<double>)
@@ -6693,6 +6954,93 @@ namespace ILNumerics
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
                 temp.m_data[0] = (UInt64)in2;
                 return (ILMath.divide(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
+
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
+        /// <summary>
+        /// Elementwise division
+        /// </summary>
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /( UInt16 in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator / not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -6794,6 +7142,93 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
         /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /( Int64 in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
+
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
+        /// <summary>
+        /// Elementwise division
+        /// </summary>
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
         public static ILArray<BaseT> operator /(ILArray<BaseT> in1,  Int32 in2)
         {
             if (in1 is ILArray<double>)
@@ -6867,6 +7302,93 @@ namespace ILNumerics
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
                 temp.m_data[0] = (UInt64)in2;
                 return (ILMath.divide(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
+
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
+        /// <summary>
+        /// Elementwise division
+        /// </summary>
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /( Int32 in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator / not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -6968,6 +7490,93 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
         /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /( Int16 in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
+
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
+        /// <summary>
+        /// Elementwise division
+        /// </summary>
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
         public static ILArray<BaseT> operator /(ILArray<BaseT> in1,  float in2)
         {
             if (in1 is ILArray<double>)
@@ -7041,6 +7650,93 @@ namespace ILNumerics
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
                 temp.m_data[0] = (UInt64)in2;
                 return (ILMath.divide(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
+
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
+        /// <summary>
+        /// Elementwise division
+        /// </summary>
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /( float in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator / not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -7142,6 +7838,93 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
         /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /( fcomplex in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
+
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
+        /// <summary>
+        /// Elementwise division
+        /// </summary>
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
         public static ILArray<BaseT> operator /(ILArray<BaseT> in1,  complex in2)
         {
             if (in1 is ILArray<double>)
@@ -7215,6 +7998,93 @@ namespace ILNumerics
                 ILArray<UInt64> temp = new ILArray<UInt64>(1);
                 temp.m_data[0] = (UInt64)in2;
                 return (ILMath.divide(in1 as ILArray<UInt64>, temp) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
+
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
+        /// <summary>
+        /// Elementwise division
+        /// </summary>
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /( complex in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
             }
             throw new Exception("Operator / not defined for "
                      + in1.GetType().Name + " and " + in2.GetType().Name);
@@ -7316,6 +8186,93 @@ namespace ILNumerics
         /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
         /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
         /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /( char in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
+
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
+        /// <summary>
+        /// Elementwise division
+        /// </summary>
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
         public static ILArray<BaseT> operator /(ILArray<BaseT> in1,  byte in2)
         {
             if (in1 is ILArray<double>)
@@ -7394,15 +8351,92 @@ namespace ILNumerics
                      + in1.GetType().Name + " and " + in2.GetType().Name);
         }
 
+        /// <overloads>This operator is overloaded for all numeric types.</overloads>
         /// <summary>
-        /// implicit cast IronPython list to ILArray (vector)
+        /// Elementwise division
         /// </summary>
-        /// <param name="list">IronPython list</param>
-        /// <returns>ILArray</returns>
-        //public static implicit operator ILArray<BaseT>(IronPython.Runtime.List list)
-        //{
-        //    return new ILArray<BaseT>(list);
-        //}
+        /// <param name="in1">dividend</param>
+        /// <param name="in2">divisor</param>
+        /// <returns>New ILArray of same type as in1 of the same size than in1 and in2 holding 
+        /// the elementwise division of both arrays: (return array = dividend ./ in2)</returns>
+        /// <remarks>This operator is overloaded for all numeric datatypes: <![CDATA[ILArray<double>,ILArray<float>,ILArray<complex>,ILArray<fcomplex>,ILArray<byte>,ILArray<char>,ILArray<Int16>,ILArray<Int32>,ILArray<Int64>,ILArray<UInt16>,ILArray<UInt32>,ILArray<UInt64>,]]></remarks>
+        public static ILArray<BaseT> operator /( byte in1, ILArray<BaseT> in2)
+        {
+            if (in2 is ILArray<double>)
+            {
+                ILArray<double> temp = new ILArray<double>(1);
+                temp.m_data[0] = (double)in1;
+                return (ILMath.divide(temp, in2 as ILArray<double>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<byte>)
+            {
+                ILArray<byte> temp = new ILArray<byte>(1);
+                temp.m_data[0] = (byte)in1;
+                return (ILMath.divide(temp, in2 as ILArray<byte>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<char>)
+            {
+                ILArray<char> temp = new ILArray<char>(1);
+                temp.m_data[0] = (char)in1;
+                return (ILMath.divide(temp, in2 as ILArray<char>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<complex>)
+            {
+                ILArray<complex> temp = new ILArray<complex>(1);
+                temp.m_data[0] = (complex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<complex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<fcomplex>)
+            {
+                ILArray<fcomplex> temp = new ILArray<fcomplex>(1);
+                temp.m_data[0] = (fcomplex)in1;
+                return (ILMath.divide(temp, in2 as ILArray<fcomplex>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<float>)
+            {
+                ILArray<float> temp = new ILArray<float>(1);
+                temp.m_data[0] = (float)in1;
+                return (ILMath.divide(temp, in2 as ILArray<float>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int16>)
+            {
+                ILArray<Int16> temp = new ILArray<Int16>(1);
+                temp.m_data[0] = (Int16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int32>)
+            {
+                ILArray<Int32> temp = new ILArray<Int32>(1);
+                temp.m_data[0] = (Int32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<Int64>)
+            {
+                ILArray<Int64> temp = new ILArray<Int64>(1);
+                temp.m_data[0] = (Int64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<Int64>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt16>)
+            {
+                ILArray<UInt16> temp = new ILArray<UInt16>(1);
+                temp.m_data[0] = (UInt16)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt16>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt32>)
+            {
+                ILArray<UInt32> temp = new ILArray<UInt32>(1);
+                temp.m_data[0] = (UInt32)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt32>) as ILArray<BaseT>);
+            }
+            else if (in2 is ILArray<UInt64>)
+            {
+                ILArray<UInt64> temp = new ILArray<UInt64>(1);
+                temp.m_data[0] = (UInt64)in1;
+                return (ILMath.divide(temp, in2 as ILArray<UInt64>) as ILArray<BaseT>);
+            }
+            throw new Exception("Operator / not defined for "
+                     + in1.GetType().Name + " and " + in2.GetType().Name);
+        }
 
 
 #endregion HYCALPER AUTO GENERATED CODE
