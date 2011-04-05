@@ -49,6 +49,7 @@ namespace ILNumerics {
     /// like '+','-','/','*' and the relational operators: '==','>','>=' etc. Also there are some 
     /// explicit and some implicit casting operators from / to fcomplex value into system 
     /// value types. </remarks>
+    [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public struct fcomplex {
         /// <summary>
