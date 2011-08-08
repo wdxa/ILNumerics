@@ -9,12 +9,16 @@ namespace HycalperConsole {
 
         private Dictionary<string, string[]> m_pattern;
         private Dictionary<string, string> m_locate;
+        private Dictionary<string, Dictionary<string,string>> m_attributes; 
         private int m_patternCount = 0;
         private string m_prefix = ""; 
+        private Dictionary<string,string> m_endMarkOverride; 
         public Types(XmlDocument xml) {
             XmlNamespaceManager nsm = new XmlNamespaceManager(xml.NameTable); 
             m_pattern = new Dictionary<string, string[]>();
             m_locate = new Dictionary<string, string>();
+            m_attributes = new Dictionary<string,Dictionary<string,string>>(); 
+            m_endMarkOverride = new Dictionary<string,string>(); 
             XmlNodeList nl = xml.SelectNodes("hycalper/type", nsm);
             int lastLength = -1;
             foreach (XmlNode n in nl) {
@@ -25,10 +29,10 @@ namespace HycalperConsole {
                 if (lastLength > -1) {
                     if (dest.Length != lastLength)
                         throw new Exception("The number of destination pattern "
-                                    + "must be the same for all search pattern! Check: '" 
+                                    + "must be the same for all search patterns! Check number of patternd given for: '" 
                                     + (n["source"].InnerText).Trim().Replace(Environment.NewLine,"")
                                     + "'! It was expected to contain exact " + lastLength 
-                                    + " destination definitions!");
+                                    + " destination definitions (according to the first type definition in the block!");
                 } else {
                     lastLength = dest.Length;
                 }
@@ -42,9 +46,20 @@ namespace HycalperConsole {
                 } else {
                     m_locate.Add(key,"after"); 
                 }
+                if (!m_attributes.ContainsKey(key)) 
+                    m_attributes.Add(key,new Dictionary<string,string>()); 
+                foreach (XmlAttribute att in srcNode.Attributes) {
+                    m_attributes[key].Add(att.Name,att.Value); 
+                }
                 XmlAttribute prefix = srcNode.Attributes["prefix"];
                 if (prefix != null) {
                     m_prefix = (string)prefix.Value; 
+                }
+                XmlAttribute endMarkOverrideAttr = srcNode.Attributes["endmark"]; 
+                if (!m_endMarkOverride.ContainsKey(key))
+                    m_endMarkOverride.Add(key,HycalperConsole.DEFAULT_ENDREGION_CHARS); 
+                if (endMarkOverrideAttr != null && !string.IsNullOrEmpty(endMarkOverrideAttr.Value)) {
+                    m_endMarkOverride[key] = endMarkOverrideAttr.Value; 
                 }
             }
             m_patternCount = lastLength; 
@@ -63,7 +78,16 @@ namespace HycalperConsole {
                 }
             }
         }
-
+        public Dictionary<string, Dictionary<string,string>> Attributes {
+            get {
+                return m_attributes; 
+            } 
+        }
+        public Dictionary<string,string> EndMark {
+            get {
+                return m_endMarkOverride; 
+            }
+        }
         public Dictionary<string, string[]> Pattern {
             get {
                 return m_pattern;

@@ -327,20 +327,20 @@ namespace ILNumerics.Native {
                 }
             }
             // spacing between elements
-            int tmp = A.Dimensions.SequentialIndexDistance(dim); 
-            int[] stride = new int[]{0,tmp}; 
+            int inc = A.Dimensions.SequentialIndexDistance(dim);
+            int[] stride = new int[] { 0, inc }; 
             MKLImports.DftiSetValue(descriptor,MKLParameter.INPUT_STRIDES, __arglist(stride)); 
             error = MKLImports.DftiSetValue(descriptor,MKLParameter.OUTPUT_STRIDES, __arglist(stride)); 
             if (isMKLError(error)) {
                 throw new ILInvalidOperationException ("error: " + MKLImports.DftiErrorMessage(error)); 
             }
             // storage of subsequent transformations
-            tmp = inDim * tmp; 
-            MKLImports.DftiSetValue(descriptor,MKLParameter.INPUT_DISTANCE, __arglist(tmp)); 
-            MKLImports.DftiSetValue(descriptor,MKLParameter.OUTPUT_DISTANCE, __arglist(tmp)); 
+            int dist = inDim * inc; 
+            MKLImports.DftiSetValue(descriptor,MKLParameter.INPUT_DISTANCE, __arglist(dist));
+            MKLImports.DftiSetValue(descriptor, MKLParameter.OUTPUT_DISTANCE, __arglist(dist)); 
             // how many transformations ? 
-            tmp = A.Dimensions.NumberOfElements / tmp; 
-            MKLImports.DftiSetValue(descriptor,MKLParameter.NUMBER_OF_TRANSFORMS, __arglist(tmp)); 
+            int nrTransforms = A.Dimensions.NumberOfElements / inDim;
+            MKLImports.DftiSetValue(descriptor, MKLParameter.NUMBER_OF_TRANSFORMS, __arglist(nrTransforms)); 
             //error = MKLImports.DftiSetValue(descriptor,MKLParameter.PLACEMENT,MKLValues.NOT_INPLACE); 
             /*!HC:HCbackwScale*/
 
@@ -350,10 +350,12 @@ namespace ILNumerics.Native {
             }
             // do the transform(s)
             unsafe {
-                tmp = A.Dimensions.SequentialIndexDistance(dim); 
-                fixed (/*!HC:HCretArr*/ complex * retArr = ret.m_data) {
-                    for (int i = 0; i < tmp && error == 0; i++)
-                        error =  /*!HC:dftiFunc*/ MKLImports.DftiComputeForward (descriptor, __arglist(retArr + i));
+                tmp = A.Dimensions.SequentialIndexDistance(dim);
+                fixed (/*!HC:HCretArr*/ complex* retArr = ret.m_data) {
+                    for (int i = 0; i < nrTransforms && error == 0; i++) {
+                        int pos = (int)(((long)inDim * i * inc) % (A.Dimensions.NumberOfElements - 1));
+                        error =  /*!HC:dftiFunc*/ MKLImports.DftiComputeForward(descriptor, __arglist(retArr + pos));
+                    }
                 }
             }
             if (isMKLError(error)) {
@@ -1428,7 +1430,7 @@ namespace ILNumerics.Native {
 #endregion HYCALPER AUTO GENERATED CODE
 
         #endregion
-        
+         
         #region IILFFT Member - Misc
         
         public bool CachePlans {

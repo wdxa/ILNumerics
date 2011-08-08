@@ -145,9 +145,15 @@ namespace ILNumerics.Misc {
         /// <typeparam name="T">value type</typeparam>
         /// <param name="length">length of array</param>
         /// <returns>System.Array - either from the pool or a newly created array</returns>
-        /// <remarks><para>If a suitable System.Array was found in the pool, this object is returned. Otherwise a new array is created.</para>
-        /// <para>There is no way of determining, if the array was recalimed from pool or newly created! If you must be sure, the element values are set to default(T), call the overloaded version <see cref="ILNumerics.Misc.ILMemoryPool.New&lt;T&gt;(int, bool, out bool)"/> instead!</para>
-        /// <para>If a new array could not get created due to an OutOfMemoryException, a garbage collection is triggered and the array is again requested from the pool. If this failes again, another attempt to create the array is done. Exceptions may thrown from this last attempt are not catched and transported back to the callee.</para></remarks>
+        /// <remarks><para>If a suitable System.Array was found in the pool, this object is returned. 
+        /// Otherwise a new array is created.</para>
+        /// <para>There is no way of determining, if the array was recalimed from pool or newly created! 
+        /// If you must be sure, the element values are set to default(T), call the overloaded version 
+        /// <see cref="ILNumerics.Misc.ILMemoryPool.New&lt;T&gt;(int, bool, out bool)"/> instead!</para>
+        /// <para>If a new array could not get created due to an OutOfMemoryException, a garbage collection
+        /// is triggered and the array is again requested from the pool. If this again failes, another attempt 
+        /// to create the array is done. Exceptions may thrown from this last attempt are not catched and 
+        /// given back to the callee.</para></remarks>
         public T[] New<T>(int length) {
             T[] ret = null; 
             // try to find a suitable object in the pool first 
@@ -179,8 +185,13 @@ namespace ILNumerics.Misc {
         /// <param name="iscleared">out paramater determining if the array returned has been cleared</param>
         /// <returns>System.Array - either from the pool or a newly created array</returns>
         /// <remarks><para>If a suitable System.Array was found in the pool, this object is returned. Otherwise a new array is created.</para>
-        /// <para>If the <paramref name="clear">clear </paramref> parameter was set to false, the <paramref name="iscleared">iscleared</paramref> parameter can be used to determine, if the object was returnd from the pool and may need extra clearing.</para>
-        /// <para>If a new array could not get created due to an OutOfMemoryException, a garbage collection is triggered and the array is again requested from the pool. If this failes again, another attempt to create the array is done. Exceptions eventually thrown from this last attempt are not catched and transported back to the callee.</para></remarks>
+        /// <para>If the <paramref name="clear">clear </paramref> parameter was set to false, the
+        /// <paramref name="iscleared">iscleared</paramref> parameter can be used to determine, if the object
+        /// was returnd from the pool and may need extra clearing.</para>
+        /// <para>If a new array could not get created due to an OutOfMemoryException, a garbage 
+        /// collection is triggered and the array is again requested from the pool. If this again failes, 
+        /// another attempt to create the array is done. Exceptions eventually thrown from this last 
+        /// attempt are not catched and given back to the callee.</para></remarks>
         public T[] New<T>(int length, bool clear, out bool iscleared) {
             T[] ret = null; 
             // try to find a suitable object in the pool first 
