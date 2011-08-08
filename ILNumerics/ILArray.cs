@@ -36,7 +36,7 @@ using ILNumerics.Misc;
 using ILNumerics.Exceptions;
 using ILNumerics.BuiltInFunctions; 
 
-[assembly:InternalsVisibleTo("ILNumericsTest, PublicKey=0024000004800000940000000602000000240000525341310004000001000100bb4dc9610b0cfe6f698d933c322979c2c69d17f119c94e6a182426ead00f8972014ef3cf8ba4c2499eaf3c314775b32d152a67375d0a48f4d2617c82b72e0a8fa0684c757366bbda6adc6a0c4fed35e73eece3c55e3dd51636dc32acf0d443a0a8033f9206854cfec8e35b8c8c2f7447cac8c52b6d88fcd3d4f72b64e295e2b2")]
+[assembly:InternalsVisibleTo("ILNumericsTest")]
 
 namespace ILNumerics {
     /// <summary>

@@ -350,7 +350,7 @@ namespace ILNumerics.Native {
             }
             // do the transform(s)
             unsafe {
-                tmp = A.Dimensions.SequentialIndexDistance(dim);
+                int tmp = A.Dimensions.SequentialIndexDistance(dim);
                 fixed (/*!HC:HCretArr*/ complex* retArr = ret.m_data) {
                     for (int i = 0; i < nrTransforms && error == 0; i++) {
                         int pos = (int)(((long)inDim * i * inc) % (A.Dimensions.NumberOfElements - 1));
